@@ -32,7 +32,7 @@ classvars:
    vrIcon = storagebox_icon_rsc
    vrDesc = storagebox_desc_rsc
 
-   viBulk_hold_max = 4000
+   viBulk_hold_max = 60000000
    viWeight_hold_max = $
 
 properties:

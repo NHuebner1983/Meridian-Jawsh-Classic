@@ -28,17 +28,17 @@ properties:
 
    // piMoneyFactor: How much money should be given out?  Raise this number to
    //  increase the amount of money given out.
-   piMoneyFactor = 100
+   piMoneyFactor = 500
 
    // Increase this to increase the number of items dropped from monster deaths.
-   piItemFactor = 100
+   piItemFactor = 200
 
    // Modifier to the chance for items to be generated.
    piMagicItemModifier = 50
 
    // Changed the wait for monsters to spawn.  A decrease means things
    //  spawn faster (less time waiting between spawns).
-   piSpawnRate = 100
+   piSpawnRate = 200
 
    //
    // Player advancement
@@ -48,7 +48,7 @@ properties:
    piKillKarmaSwingMonster = 6
    piKillKarmaSwingPlayer = 10
 
-   pbMonsterFactionEnabled = TRUE
+   pbMonsterFactionEnabled = FALSE
 
    pbAtrophyOn = FALSE
    
@@ -68,15 +68,15 @@ properties:
    // DefaultDeathCost:  Should always be a value between 1 and 100.  Lowering
    //  this will lower the odds of a dead player losing health and skill/spell
    //  percents.
-   piDefaultDeathCost = 100
+   piDefaultDeathCost = 50
 
    // piAdvancementRate: Determines how fast or slow advancement goes for all
    //  spells and skills.  This is a percent of normal, and only affects the
    //  secondary chance.
-   piAdvancementRate = 100
+   piAdvancementRate = 600
 
    // The training points we grant players each day to reward them for logging on.
-   piLogonBonus = 50
+   piLogonBonus = 150
 
    // The maximum amount of unbound energy we can absorb
    piUnboundMax = 500
@@ -134,7 +134,7 @@ properties:
    piRescueBaseDelaySec = 5
 
    // If true, spellpower and duration are displayed for all spells cast.
-   pbDisplaySpellData = FALSE
+   pbDisplaySpellData = TRUE
 
    // If true, JoF regains hits when players kill mobs.
    pbFrozRechargeOnKill = TRUE
