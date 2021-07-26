@@ -41,7 +41,7 @@ classvars:
       | MOB_NOMOVE | MOB_RECEIVE | MOB_VAULTMAN
    viOccupation = MOB_ROLE_VAULTMAN
 
-   viVault = VID_KOCATAN
+   viVault = VID_BARLOQUE
 
 properties:
    
@@ -104,7 +104,7 @@ messages:
    GetVaultDepositFee(what=$)
    "Default cost is 1 gp per stone."
    {
-      return 2*Send(what,@GetBulk);
+      return Send(what,@GetBulk);
    }
 
    GetVaultRetrievalFee(what=$)

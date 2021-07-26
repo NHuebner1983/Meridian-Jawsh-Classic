@@ -45,7 +45,7 @@ classvars:
       | MOB_NOMOVE | MOB_RECEIVE | MOB_BANKER
    viOccupation = MOB_ROLE_BANKER
 
-   viBank = BID_KOCATAN
+   viBank = BID_TOS
 
    vrUnwanted_give = kocatanbanker_unwanted_give
 

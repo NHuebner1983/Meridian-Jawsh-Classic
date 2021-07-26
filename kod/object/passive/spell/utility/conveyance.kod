@@ -66,7 +66,7 @@ messages:
 
    CastSpell(who = $, lTargets = $)
    {
-      local oTarget, oRoom, oVault, iFee, oMoney, iCash;
+      local oTarget, oVault, iFee, oMoney, iCash;
 
       if (lTargets = $)
       {
@@ -97,18 +97,8 @@ messages:
          return;
       }
 
-      oRoom = Send(who,@GetOwner);
-      if oRoom = $
-         OR Send(oRoom,@GetRegion) <> RID_KOCATAN
-      {
-         oVault = Send(SYS,@FindVaultByNum,#num=VID_BARLOQUE);
-         iFee = Send(oTarget,@GetBulk);
-      }
-      else
-      {
-         oVault = Send(SYS,@FindVaultByNum,#num=VID_KOCATAN);
-         iFee = Send(oTarget,@GetBulk) * 2;
-      }
+      oVault = Send(SYS,@FindVaultByNum,#num=VID_BARLOQUE);
+      iFee = Send(oTarget,@GetBulk);
 
       if iFee = $
          OR iFee = 0

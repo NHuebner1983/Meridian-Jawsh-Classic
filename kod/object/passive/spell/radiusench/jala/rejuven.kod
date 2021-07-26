@@ -54,8 +54,8 @@ classvars:
    viSpell_level = 5
 
    viMana = 5           // Mana is amount used upon inititiation
-   viManaDrain = 8      // Drain is amount used every viDrainTime milliseconds
-   viDrainTime = 5000   // Drain some mana every viDrainTime milliseconds
+   viManaDrain = 1      // Drain is amount used every viDrainTime milliseconds
+   viDrainTime = 1000   // Drain some mana every viDrainTime milliseconds
 
    viSpellExertion = 3
    viChance_To_Increase = 20

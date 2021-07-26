@@ -76,12 +76,12 @@ messages:
             Create(&Waterskin),
 
             Create(&Sapphire,#number=1),
-            Create(&Emerald,#number=2),
-            Create(&PurpleMushroom,#number=2),
-            Create(&BlueMushroom,#number=4),
-            Create(&Mushroom,#number=4),
-            Create(&Elderberry,#number=4),
-            Create(&Herbs,#number=4)
+            Create(&Emerald,#number=1),
+            Create(&PurpleMushroom,#number=1),
+            Create(&BlueMushroom,#number=1),
+            Create(&Mushroom,#number=1),
+            Create(&Elderberry,#number=1),
+            Create(&Herbs,#number=1)
          ],
          $,$,$];
 

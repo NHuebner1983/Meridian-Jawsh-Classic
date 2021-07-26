@@ -274,7 +274,7 @@ BEGIN
     EDITTEXT        1150,93,114,143,13,ES_AUTOHSCROLL
     DEFPUSHBUTTON   "Einloggen",1080,137,131,100,14
     ICON            IDI_ICON,-1,6,6,20,20
-    LTEXT           "Solltest Du noch kein Meridian59-Account haben, so kannst Du Dich auf https://www.meridian59.us/ kostenfrei anmelden.",-1,36,6,206,18
+    LTEXT           "Solltest Du noch kein Meridian59-Account haben, so kannst Du Dich auf http://meridian59.us/ kostenfrei anmelden.",-1,36,6,206,18
     GROUPBOX        "Neu in Meridian",1196,37,33,207,35
     LTEXT           "Wenn Du bisher keinen Account hast, klicke hier.",-1,45,47,87,18
     LTEXT           "Benutzername:",-1,43,88,50,10
@@ -792,7 +792,7 @@ BEGIN
     180                     "Wähle die Gegenstände zum Hinterlegen aus."
     187                     "Unable to send an HTTP request for the file %s to the server %s."
     188                     "Unable to get size of file %s from the server %s."
-    189                     "https://www.meridian59.us/phpbb3/"
+    189                     "http://meridian59.us/phpbb3/"
     190                     "http://wiki.meridian59.de/"
     191                     "Kann Patchfile nicht laden %s. Fehler: %s."
 END
@@ -816,11 +816,11 @@ END
 
 STRINGTABLE
 BEGIN
-    160                     "https://www.meridian59.us/"
+    160                     "http://meridian59.us/"
     161                     "Datenaustausch zwischen Computern braucht immer eine gewisse Zeit. Dieser Zeitraum wird als Lag bezeichnet. Deine Verbindungsqualität hängt von verschiedenen Faktoren ab und kann sich jederzeit ändern."
     162                     "~r< Der Textfilter wurde aktiviert >"
     163                     "Die Nachricht wurde gefiltert.\n\nSie enthät Wörter, die im Textfilter eingegeben wurden. Bitte überprüfe Deine Nachricht."
-    164                     "https://www.meridian59.us/"
+    164                     "http://meridian59.us/"
 END
 
 #endif    // German resources
@@ -1651,7 +1651,7 @@ BEGIN
     IDS_MISSINGRESOURCE     "The game has changed since you logged in.\nSelecting ""Yes"" will automatically download the changed files.\nSelecting ""No"" will continue the game with your outdated files.\n\nAutomatically download new game files?\n\nIf you continue to receive this message, contact an administrator.\n\n"
     IDS_NOROOMFILE          "There is a problem with your file %s.  Please contact a system administrator to get the correct version."
     IDS_DUPRESOURCE         "Duplicate resource #%d in file %s."
-    IDS_SOCKETOPEN          "Unable to connect to server (port #%d on %s).\n\nThe server might be down; please check its status at https://www.meridian59.us/ ."
+    IDS_SOCKETOPEN          "Unable to connect to server (port #%d on %s).\n\nThe server might be down; please check its status at http://meridian59.us/ ."
     IDS_LOSTSERVER          "Lost server connection!"
     IDS_SOCKETMESSAGE       "Unexpected socket message type."
 END
@@ -1751,14 +1751,14 @@ BEGIN
     IDS_DEPOSIT_ITEMS       "Select Items to Deposit"
     IDS_CANTSENDREQUEST     "Unable to send an HTTP request for the file %s to the server %s."
     IDS_CANTGETFILESIZE     "Unable to get size of file %s from the server %s."
-    IDS_FORUMURL            "https://www.meridian59.us/phpbb3/"
+    IDS_FORUMURL            "http://meridian59.us/phpbb3/"
     IDS_WIKIURL             "http://wiki.meridian59.de/"
     IDS_JSONERROR           "Unable to load patch file %s. Error: %s."
 END
 
 STRINGTABLE
 BEGIN
-    IDS_CANTUPDATE          "Unable to run the patcher to update Meridian 59.\nPlease contact the admins at https://www.meridian59.us/phpbb3/."
+    IDS_CANTUPDATE          "Unable to run the patcher to update Meridian 59.\nPlease contact the admins at http://meridian59.us/phpbb3/."
     IDS_NEEDNEWVERSION      "You need to get an updated version of Meridian 59.\nDo you want to retrieve it automatically now?"
     IDS_CANTMOVE            "Can't move the downloaded file %s to %s.\n\nTry again?"
     IDS_LONGCMDLINE         "The automatic update program will fail because its command line is too long.\nPlease report the following command line:\n\n%s"
@@ -1802,11 +1802,11 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_LAGBOXURL           "https://www.meridian59.us/"
+    IDS_LAGBOXURL           "http://meridian59.us/"
     IDS_LAGBOXDESC          "Sending information between computers always takes some amount of time. This time-delay is called latency. Your connection quality may vary, depending on many factors. This meter shows your current approximate latency while you play."
     IDS_PROFANITYREMOVED    "~r< ~Iprofane message blocked~I >"
     IDS_PROFANITYWARNING    "The message was blocked.\n\nIt used language listed as profanity.  Review your profanity filter options and/or reconsider your message."
-    IDS_HOMEPAGEURL         "https://www.meridian59.us/"
+    IDS_HOMEPAGEURL         "http://meridian59.us/"
 END
 
 STRINGTABLE

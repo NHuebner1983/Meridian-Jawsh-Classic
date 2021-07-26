@@ -34,8 +34,8 @@ properties:
    piItemFactor = 200
 
    // Modifier to the chance for items to be generated.
-   piMagicItemModifier = 50
-
+   piMagicItemModifier = 75
+   
    // Changed the wait for monsters to spawn.  A decrease means things
    //  spawn faster (less time waiting between spawns).
    piSpawnRate = 200
