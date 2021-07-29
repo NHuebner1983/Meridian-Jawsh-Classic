@@ -30,7 +30,7 @@ classvars:
    vrDesc = BattleBow_desc_rsc
 
    viWeaponDamage = 2
-   viRange = 17 * FINENESS
+   viRange = 20 * FINENESS
    viHit_roll_modifier = 0
 
    viValue_average = 3000
