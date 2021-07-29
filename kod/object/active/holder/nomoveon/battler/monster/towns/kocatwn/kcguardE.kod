@@ -47,7 +47,7 @@ classvars:
    vrIcon = KocatanCaptainEvil_icon_rsc
    vrDesc = KocatanCaptainEvil_desc_rsc
 
-   viMerchant_markup = MERCHANT_RIPOFF
+   viMerchant_markup = MERCHANT_BARGAIN
 
    viAttributes = \
       MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN \

@@ -55,7 +55,7 @@ classvars:
 
    vrUnwanted_give = fivecon_unwanted_give
    
-   viMerchant_markup = MERCHANT_RIPOFF
+   viMerchant_markup = MERCHANT_BARGAIN
 
 properties:
 

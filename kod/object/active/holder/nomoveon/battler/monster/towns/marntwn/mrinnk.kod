@@ -62,7 +62,7 @@ classvars:
    vrName = MarionInnkeep_name_rsc
    vrIcon = MarionInnkeep_icon_rsc
    vrDesc = MarionInnkeep_desc_rsc
-   viMerchant_Markup = MERCHANT_RIPOFF
+   viMerchant_Markup = MERCHANT_BARGAIN
    viAttributes = \
       MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_BUYER \
          | MOB_SELLER | MOB_LISTEN_MOB | MOB_FULL_TALK

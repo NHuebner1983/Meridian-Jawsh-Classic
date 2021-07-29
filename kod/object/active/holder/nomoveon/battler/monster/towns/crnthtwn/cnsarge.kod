@@ -53,7 +53,7 @@ classvars:
    vrIcon = cornothsergeant_icon_rsc
    vrDesc = cornothsergeant_desc_rsc
 
-   viMerchant_markup = MERCHANT_RIPOFF
+   viMerchant_markup = MERCHANT_BARGAIN
 
    viAttributes = \
       MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_TEACHER \

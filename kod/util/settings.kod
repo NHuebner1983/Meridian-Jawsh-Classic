@@ -28,7 +28,7 @@ properties:
 
    // piMoneyFactor: How much money should be given out?  Raise this number to
    //  increase the amount of money given out.
-   piMoneyFactor = 500
+   piMoneyFactor = 150
 
    // Increase this to increase the number of items dropped from monster deaths.
    piItemFactor = 200

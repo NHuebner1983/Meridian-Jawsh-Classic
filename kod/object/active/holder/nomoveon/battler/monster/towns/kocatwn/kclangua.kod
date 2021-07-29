@@ -36,7 +36,7 @@ classvars:
    vrName = KocatanLanguageMaster_name_rsc
    vrIcon = KocatanLanguageMaster_icon_rsc
    vrDesc = KocatanLanguageMaster_desc_rsc
-   viMerchant_markup = MERCHANT_RIPOFF
+   viMerchant_markup = MERCHANT_BARGAIN
 
    viAttributes = \
       MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM \
