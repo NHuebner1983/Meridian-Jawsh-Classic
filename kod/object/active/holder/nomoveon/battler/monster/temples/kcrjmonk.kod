@@ -222,15 +222,16 @@ messages:
    {
       local bWorthy, i, iAbility;
 
-      bWorthy = FALSE;
+      bWorthy = TRUE;
 
-      foreach i in Send(who,@GetPlayerUsing)
-      {
-         if IsClass(i,&RiijaSword) AND Send(i,@GetQuester) = who
-         {
-            bWorthy = TRUE;
-         }
-      }
+      //foreach i in Send(who,@GetPlayerUsing)
+      //{
+	     // IsClass(i,&RiijaSword) AND 
+         //if Send(i,@GetQuester) = who
+         //{
+         //   bWorthy = TRUE;
+         //}
+      //}
 
       if report
          AND ptWorthyTimer = $
