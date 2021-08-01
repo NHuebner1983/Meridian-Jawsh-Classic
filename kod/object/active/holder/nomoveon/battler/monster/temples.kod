@@ -55,17 +55,17 @@ messages:
          return FALSE;
       }
       
-      if Send(oSpell,@GetLevel) > 2 
-         AND NOT Send(self,@HasDoneLearnQuest,#who=who)
-      {
-         if report
-         {
-            Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                  #string=vrTeach_quest_needed);
-         }
+      //if Send(oSpell,@GetLevel) > 2 
+      //   AND NOT Send(self,@HasDoneLearnQuest,#who=who)
+      //{
+      //   if report
+      //   {
+      //      Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+      //            #string=vrTeach_quest_needed);
+      //   }
 
-         return FALSE;
-      }
+      //   return FALSE;
+      //}
 
       propagate;
    }

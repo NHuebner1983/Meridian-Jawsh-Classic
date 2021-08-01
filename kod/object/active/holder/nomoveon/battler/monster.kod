@@ -5556,18 +5556,18 @@ messages:
          return FALSE;
       }
 
-      if (NOT bSkill) AND IsClass(self,&Temples)
-         AND Send(oAbility,@GetLevel) > 2
-         AND NOT Send(self,@HasDoneLearnQuest,#who=who)
-      {
+      //if (NOT bSkill) AND IsClass(self,&Temples)
+      //   AND Send(oAbility,@GetLevel) > 2
+      //   AND NOT Send(self,@HasDoneLearnQuest,#who=who)
+      //{
          // Player needs to do a quest for the priestess to gain this spell or
          //  skill.
          
-         Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-              #string=vrTeach_quest_needed,#parm1=Send(oAbility,@GetName));
+      //   Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+      //        #string=vrTeach_quest_needed,#parm1=Send(oAbility,@GetName));
 
-         return FALSE;
-      }
+      //   return FALSE;
+      //}
 
       // KLUDGE: This should be handled in the individual subclasses.
       //         This makes baby Jesus cry.
