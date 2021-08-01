@@ -48,7 +48,7 @@ constants:
    // Formula:   10000 / FOOD_USE_RATE
    // Currently: 833 sec = 13.9 min
    // Note:      Need empty stomach to get vigor boost from food
-   BASE_REGEN_TIME = 150000
+   BASE_REGEN_TIME = 100000
 
    // Rate at which stomach empties.
    FOOD_USE_RATE = 12
