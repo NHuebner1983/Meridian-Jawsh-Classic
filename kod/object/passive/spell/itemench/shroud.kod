@@ -43,7 +43,7 @@ classvars:
    viSpell_level = 3
    viMana = 10
    viSpellExertion = 3
-   viCast_time = 6000
+   viCast_time = 0
 
    viChance_To_Increase = 25
 
@@ -54,8 +54,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Mushroom,2],plReagents);
-      plReagents = Cons([&Elderberry,2],plReagents);
+      plReagents = Cons([&Mushroom,3],plReagents);
+      plReagents = Cons([&Elderberry,3],plReagents);
 
       return;
    }
