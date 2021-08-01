@@ -1324,7 +1324,7 @@ messages:
 
    GetFactionRegenBonus(who=$, hpregen=TRUE)
    {
-      local iBonus, iFaction;
+      local iBonus, iFaction, iRegenBonus;
 
       // Rationale behind the numbers:
       // This number is subtracted from regeneration time (measured in miliseconds).
@@ -1340,8 +1340,7 @@ messages:
       iBonus = 0;
 
       iFaction = send(who,@GetFaction);
-      if (iFaction = FACTION_DUKE)
-         OR ((iFaction = FACTION_PRINCESS) AND (hpregen))
+      if ((iFaction = FACTION_PRINCESS) AND (hpregen))
          OR ((iFaction = FACTION_REBEL) AND (NOT hpregen))
       {
          return 0;
@@ -1352,8 +1351,28 @@ messages:
       {
          return 200;
       }
-    
-      iBonus = Send(self,@CalcFactionBonus,#base=700,#faction=iFaction);
+	  
+	  iRegenBonus = 100;
+      
+	  if (iFaction = FACTION_PRINCESS) AND (NOT hpregen)
+	  {
+		 // Princess mana regen
+	     iRegenBonus = 850;
+	  }
+	  
+	  if (iFaction = FACTION_DUKE) AND (NOT hpregen)
+	  {
+	     // Duke mana regen
+	     iRegenBonus = 350;
+	  }
+	  
+	  if (iFaction = FACTION_REBEL) AND (NOT hpregen)
+	  {
+	     // Jonas mana regen
+	     iRegenBonus = 0;
+	  }
+	  	  
+      iBonus = Send(self,@CalcFactionBonus,#base=iRegenBonus,#faction=iFaction);
 
       if Random(0,100) = 0 AND iFaction <> FACTION_NEUTRAL
       {
