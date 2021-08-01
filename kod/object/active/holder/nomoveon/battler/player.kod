@@ -48,7 +48,7 @@ constants:
    // Formula:   10000 / FOOD_USE_RATE
    // Currently: 833 sec = 13.9 min
    // Note:      Need empty stomach to get vigor boost from food
-   BASE_REGEN_TIME = 100000
+   BASE_REGEN_TIME = 1000
 
    // Rate at which stomach empties.
    FOOD_USE_RATE = 12
@@ -87,7 +87,7 @@ constants:
    BASE_NEED = 105
 
    // If vigor gets this low, see if second wind skill kicks in.
-   SECONDWIND_THRESHOLD = 25
+   SECONDWIND_THRESHOLD = 60
    
    // How steep is the curve for learning new levels of spells?
    //  A higher number means a greater slope (less points at low levels)
@@ -6795,10 +6795,10 @@ messages:
    CalculateHealthTime()
    "Calculate # of milliseconds until user will gain a health point"
    {
-      local iTime, iMaxHealth, lRadiusState;
+      local iTime, iMaxHealth, lRadiusState, iMinTime, iMaxTime;
 
       // Faster regen with higher vigor
-      iTime = ((200-piVigor)*(200-piVigor))/6 + 1000;
+      iTime = ((200-piVigor)*(200-piVigor))/6 + 500;
 
       iTime = ((125-Send(self,@GetStamina)) * iTime)/100;
       iMaxHealth = bound(piMax_health,40,100);
@@ -6807,7 +6807,17 @@ messages:
       iTime = iTime - Send(Send(SYS,@GetParliament),@GetFactionRegenBonus,
                            #who=self,#hpregen=TRUE);
 
-      return bound(iTime,1000,60000);
+	  iMinTime = 1000;
+	  iMaxTime = 4000;
+	  
+      if ptRest <> $
+      {
+		 // Gain HP faster while resting
+         iMinTime = 200;
+		 iMaxTime = 1000;
+      }
+
+      return bound(iTime,iMinTime,iMaxTime);
    }
 
    CalculateManaTime()
