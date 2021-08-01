@@ -179,6 +179,7 @@ messages:
       // Template #14 is shal'ille disciple quest, come back
       // QNT_ID_SHAL_DISCIPLE_THREE
       if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+	           #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &DiscipleRobe, 1, SS_SHALILLE ] ],
                #timelimit=piTimeLimit,
                #quest_node_index=QNT_ID_SHAL_DISCIPLE_THREE)
       {

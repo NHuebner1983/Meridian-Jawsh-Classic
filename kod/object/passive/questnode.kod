@@ -1191,7 +1191,7 @@ messages:
 
    AwardPrizeOrPenalty( prize = $, recipients = $ )
    {
-      local i, iPrizeStat, iPrizeType, cPrizeClass, oPrize, iAmount, iDays,
+      local i, iPrizeStat, iPrizeType, cPrizeClass, oPrize, iAmount, iSchool, iDays,
             oBoon, iBoonNum, iPrizeBoon, iPrizeFaction, oQuestEngine, oQuester,
             oLich, oNewLich, oQuestTemplate;
 
@@ -1216,10 +1216,27 @@ messages:
          cPrizeClass = Nth(prize,2);
          iAmount = Nth(prize,3);
 
+		 iSchool = $;
+
+		 if Length(prize) = 4
+		 {
+			// To make school-specific item awards
+			iSchool = Nth(prize,4);
+		 }
+
          foreach oQuester in recipients
          {
-            oPrize = Create(cPrizeClass,#number=iAmount,#guildMember=oQuester,
+            if iSchool <> $
+            {
+				oPrize = Create(cPrizeClass,#school=iSchool,#number=iAmount,#guildMember=oQuester,
                             #quester=oQuester);
+            }
+			else 
+			{
+				oPrize = Create(cPrizeClass,#number=iAmount,#guildMember=oQuester,
+                            #quester=oQuester);
+            }
+			
             Send(oQuester,@NewHold,#what=oPrize);
          }
 
