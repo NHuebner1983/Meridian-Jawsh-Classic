@@ -66,7 +66,7 @@ classvars:
    vbScaleHitrollBonus = TRUE
 
     // Jof recharges victim level/viRechargeFactor hits on kills.
-   viRechargeFactor = 15
+   viRechargeFactor = 50
 
 properties:
 
