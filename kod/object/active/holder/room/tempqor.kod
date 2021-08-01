@@ -123,10 +123,6 @@ messages:
          {
             send(send(SYS,@FindRoomByNum,#num=i),@OpenQorTemple);
          }
-         else
-         {
-            send(send(SYS,@FindRoomByNum,#num=i),@CloseQorTemple);
-         }
       }
 
       plYell_Zone = [ piCurrentExit ];
