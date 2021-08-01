@@ -88,6 +88,7 @@ properties:
 
    piIntellectChange = 0
    piMysticismChange = 0
+   piAimChange = 0
 
 messages:
 
@@ -99,8 +100,10 @@ messages:
          // Reset owner's stats
          Send(poOwner,@AddIntellect,#points=-piIntellectChange);
          Send(poOwner,@AddMysticism,#points=-piMysticismChange);
+	     Send(poOwner,@AddAim,#points=-piAimChange);
          piIntellectChange = 0;
          piMysticismChange = 0;
+	     piAimChange = 0;
       }
 
       return;
@@ -137,14 +140,21 @@ messages:
       {
          iNewAdjustment = Send(poOwner,@AddIntellect,
                                  #points=(iStatAdjustment-piIntellectChange));
-         piIntellectChange = piIntellectChange + iNewAdjustment;
+         piIntellectChange += iNewAdjustment;
       }
 
       if iStatAdjustment <> piMysticismChange
       {
          iNewAdjustment = Send(poOwner,@AddMysticism,
                                  #points=(iStatAdjustment-piMysticismChange));
-         piMysticismChange = piMysticismChange + iNewAdjustment;
+         piMysticismChange += iNewAdjustment;
+      }
+
+      if iStatAdjustment <> piAimChange
+      {
+         iNewAdjustment = Send(poOwner,@AddAim,
+                                 #points=(iStatAdjustment-piAimChange));
+         piAimChange += iNewAdjustment;
       }
 
       return;

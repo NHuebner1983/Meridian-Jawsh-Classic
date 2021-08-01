@@ -89,6 +89,7 @@ properties:
 
    piMightChange = 0
    piAimChange = 0
+   piAgilityChange = 0
 
 messages:
 
@@ -100,8 +101,10 @@ messages:
          // Reset owner's stats
          Send(poOwner,@AddMight,#points=-piMightChange);
          Send(poOwner,@AddAim,#points=-piAimChange);
+	     Send(poOwner,@AddAgility,#points=-piAgilityChange);
          piMightChange = 0;
          piAimChange = 0;
+	     piAgilityChange = 0;
       }
 
       return;
@@ -148,6 +151,13 @@ messages:
          piAimChange += iNewAdjustment;
       }
 
+      if iStatAdjustment <> piAgilityChange
+      {
+         iNewAdjustment = Send(poOwner,@AddAgility,
+                                 #points=(iStatAdjustment-piAgilityChange));
+         piAgilityChange += iNewAdjustment;
+      }
+
       // Might need to redraw armor.
       Send(poOwner,@DrawArmor);
 
@@ -157,8 +167,8 @@ messages:
    ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
    "Sets piDamage_reduce for damage reduction in the superclass."
    {
-      // This ranges from 2-4.  At low end, we absorb 0-2 damage.  At high end, 1-4.
-      piDamage_reduce = viDamage_base + ((piFactionRank / 3) - 1);
+      // This ranges from 2-4.  At low end, we absorb 0-2 damage.  At high end, 1-4. (maybe 3-5 now)
+      piDamage_reduce = viDamage_base + ((piFactionRank / 2) - 1);
 
       propagate;
    }

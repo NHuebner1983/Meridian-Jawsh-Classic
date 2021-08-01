@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 DukeShield is SoldierShield
 
-// Stats affected: Intellect and Stamina
+// Stats affected: Intellect, Stamina and Agility
 // Special bonus: This shield gives a bonus 20 Spellpower to all spells.
 
 constants:
@@ -89,6 +89,7 @@ properties:
 
    piStaminaChange = 0
    piAgilityChange = 0
+   piIntellectChange = 0
 
 messages:
 
@@ -100,8 +101,10 @@ messages:
          // Reset owner's stats
          Send(poOwner,@AddStamina,#points=-piStaminaChange);
          Send(poOwner,@AddAgility,#points=-piAgilityChange);
+	     Send(poOwner,@AddIntellect,#points=-piIntellectChange);
          piStaminaChange = 0;
          piAgilityChange = 0;
+	     piIntellectChange = 0;
       }
 
       return;
@@ -138,14 +141,21 @@ messages:
       {
          iNewAdjustment = Send(poOwner,@AddAgility,
                                  #points=(iStatAdjustment-piAgilityChange));
-         piAgilityChange = piAgilityChange + iNewAdjustment;
+         piAgilityChange += iNewAdjustment;
       }
 
       if iStatAdjustment <> piStaminaChange
       {
          iNewAdjustment = Send(poOwner,@AddStamina,
                                  #points=(iStatAdjustment-piStaminaChange));
-         piStaminaChange = piStaminaChange + iNewAdjustment;
+         piStaminaChange += iNewAdjustment;
+      }
+
+      if iStatAdjustment <> piIntellectChange
+      {
+         iNewAdjustment = Send(poOwner,@AddIntellect,
+                                 #points=(iStatAdjustment-piIntellectChange));
+         piIntellectChange += iNewAdjustment;
       }
 
       return;
@@ -158,6 +168,15 @@ messages:
       iModifier = ((15 * piFactionRank) / 10);
 
       return iModifier;
+   }
+
+   GetSpellManaReduction()
+   {
+      local iReduction;
+
+      iReduction = ((piFactionRank / 3) - 1);
+
+      return iReduction;
    }
 
 end
