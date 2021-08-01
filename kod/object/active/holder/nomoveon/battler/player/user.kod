@@ -6505,7 +6505,9 @@ messages:
 
       if piFlags & PFLAG_TRANCE
       {
-         Send(self,@BreakTrance,#event=EVENT_CAST,#what=oSpell);
+         //Send(self,@BreakTrance,#event=EVENT_CAST,#what=oSpell);
+	     // Don't fizzle recasting the same spell.
+		 return;
       }
 
       if ((piFlags & PFLAG_NO_MAGIC)
