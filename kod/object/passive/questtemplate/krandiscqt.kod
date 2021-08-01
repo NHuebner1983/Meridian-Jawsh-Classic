@@ -117,8 +117,8 @@ messages:
       // Template #11 is kraanan disciple quest, kill monster
       // QNT_ID_KRAN_DISCIPLE_TWO
       if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MONSTER,
-	           #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &DiscipleRobe, 1, SS_KRAANAN ] ],
                #NPC_modifier=QN_NPCMOD_SAME,#timelimit=piTimeLimit,
+	           #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &DiscipleRobe, 1, SS_KRAANAN ] ],
                #monsterlist=[&FungusBeast, &RedAnt, &Skeleton],
                #quest_node_index=QNT_ID_KRAN_DISCIPLE_TWO)
       {

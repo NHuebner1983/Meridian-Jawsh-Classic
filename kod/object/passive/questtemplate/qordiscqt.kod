@@ -172,8 +172,9 @@ messages:
       // Template #44 is qor disciple quest, come back
       // QNT_ID_QOR_DISCIPLE_THREE
       if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
-	           #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &DiscipleRobe, 1, SS_QOR ] ],
-               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_QOR_DISCIPLE_THREE)
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_QOR_DISCIPLE_THREE,
+	           #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &DiscipleRobe, 1, SS_QOR ] ]
+			   )
       {
          Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_QOR_DISCIPLE_THREE,
                #new_mod=QN_NPCMOD_PREVIOUS);
