@@ -356,12 +356,12 @@ messages:
          AND NOT (IsClass(what,&DM) AND Send(what,@PlayerIsImmortal))
       {
          /// on the bridge.  Do they have a sword of riija?
-         if isClass(what,&Monster)  
-         {
-            Send(what,@Killed);
-            
-            return;
-         }
+         //if isClass(what,&Monster)  
+         //{
+         //   Send(what,@Killed);
+         //   
+         //   return;
+         //}
                   
          foreach i in Send(what,@GetPlayerUsing)
          {
@@ -373,7 +373,7 @@ messages:
          } 
 
          // No sword.  Kill 'em
-         Send(self,@PlayerHurledSelfOffCliffs,#what=what);   
+         //Send(self,@PlayerHurledSelfOffCliffs,#what=what);   
       }
       
       propagate;
