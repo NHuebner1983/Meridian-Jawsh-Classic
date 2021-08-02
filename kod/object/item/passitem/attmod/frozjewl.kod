@@ -65,9 +65,6 @@ classvars:
    viAttack_bonus = 200
    vbScaleHitrollBonus = TRUE
 
-    // Jof recharges victim level/viRechargeFactor hits on kills.
-   viRechargeFactor = 50
-
 properties:
 
    vrDesc = frozjewel_desc_rsc
@@ -398,8 +395,8 @@ messages:
          return;
       }
 
-      piHits = Bound(piHits + (Send(what,@GetLevel) / viRechargeFactor),
-                     1, Send(self,@GetMaxHits));
+      piHits = Send(self,@GetMaxHits);
+	  
       if (poOwner <> $)
       {
          Send(poOwner,@MsgSendUser,#message_rsc=frozjewel_recharge_rsc);
