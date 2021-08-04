@@ -117,7 +117,7 @@ messages:
       iStamina = Send(self,@GetRequisiteStat,#who=who);
       iWaitTime = ((100-iStamina) * Send(who,@GetSkillAbility,#Skill_num=viSkill_num)/100) + iStamina;
       // 5 to 10 minutes wait time before you can leap into the action again.
-      iWaitTime = (600 - (iWaitTime*3)) * 1000;
+      iWaitTime = (600 - (iWaitTime*3)) * 1; // * 1000
 
       return iWaitTime;
    }
