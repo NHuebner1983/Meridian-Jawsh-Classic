@@ -201,7 +201,7 @@ messages:
          oRisen = Create(&DaemonSkeleton);
       }
 
-      Send(oRisen,@SetIllusion,#value=TRUE);
+      Send(oRisen,@SetIllusion,#value=FALSE);
 
       // Place the minion
       Send(oRoom,@NewHold,#what=oRisen,#new_row=Send(oTarget,@GetRow),
