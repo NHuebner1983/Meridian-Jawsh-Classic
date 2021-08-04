@@ -1625,11 +1625,11 @@ messages:
 
       // If we cannot gain vigor (probably due to Second Wind), return
       // out if trying to take away exertion
-      if ((ptSecondWind <> $) AND (amount < 0))
-         OR Send(self,@IsInCannotInteractMode)
-      {
-         return;
-      }
+      //if ((ptSecondWind <> $) AND (amount < 0))
+      //   OR Send(self,@IsInCannotInteractMode)
+      //{
+      //   return;
+      //}
 
       if piVigor > piVigor_rest_threshold
       {
@@ -1639,7 +1639,7 @@ messages:
       iAmount = Amount;
       if Send(poOwner,@CheckRoomFlag,#flag=ROOM_SANCTUARY) AND amount < 0
       {
-         iAmount = 2 * Amount;
+         iAmount = 3 * Amount;
       }
 
       if Send(poOwner,@CheckRoomFlag,#flag=ROOM_TRIPLE_HEAL) AND amount < 0
@@ -6823,7 +6823,7 @@ messages:
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, oSpell, iSpellPower;
+      local iTime, oSpell, iSpellPower, iMinTime, iMaxTime;
 
       if piMana > piMax_mana
       {
@@ -6838,7 +6838,17 @@ messages:
          iTime = iTime - Send(Send(SYS,@GetParliament),@GetFactionRegenBonus,
                               #who=self,#hpregen=FALSE);
 
-         iTime = Bound(iTime,1000,60000);
+         iMinTime = 1000;
+		 iMaxTime = 40000;
+		  
+		 if ptRest <> $
+		 {
+			// Gain HP faster while resting
+			iMinTime = 600;
+			iMaxTime = 30000;
+		 }
+			
+		 iTime = Bound(iTime,iMinTime,iMaxTime);
 
          // Mana Focus will adjust mana regen time based on its spellpower.
          // Flag check for speed.
@@ -12036,7 +12046,7 @@ messages:
       }
 
       iAmount = 80 + ((Send(self,@GetSkillAbility,
-                           #Skill_num=SKID_SECOND_WIND) + 1) / 5);
+                           #Skill_num=SKID_SECOND_WIND) + 1) / 2);
       Send(self,@SetVigorRestThreshold,#amount=iAmount);
 
       Send(self,@EndCrystalizeManaSurge);
