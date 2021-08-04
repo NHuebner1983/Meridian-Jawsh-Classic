@@ -86,7 +86,7 @@ messages:
    {
       if (who <> $)
       {
-         Send(who,@RestAddExertion,#amount=-1000);
+         Send(who,@RestAddExertion,#amount=-10000);
       }
 
       return;
