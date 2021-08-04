@@ -232,7 +232,14 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
          s->rsb_hash[len] = 0; /* null terminate string */
       }
 
-      SynchedAcceptLogin(s,name,password);
+      if (s->version_major > 50 || s->version_minor > 59) {
+          HangupSession(s);
+      }
+      else 
+      {
+          SynchedAcceptLogin(s, name, password);
+      }
+
       break;
    case AP_GETCLIENT :
       eprintf("SynchedProtocolParse AP_GETCLIENT no longer supported\n");
