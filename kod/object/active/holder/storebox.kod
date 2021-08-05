@@ -164,14 +164,15 @@ messages:
       propagate;
    }
 
-   ReqNewHold(what = $, who = $)
+   ReqNewHold(what = $, who = $, isConveyance = $)
    {
       local oWhoOwner;
 
       // The player's owner.
       oWhoOwner = Send(who,@GetOwner);
 
-      if (NOT Send(oWhoOwner,@LineOfSight,#obj1=who,#obj2=self))
+      if ((isConveyance <> $ AND NOT isConveyance) OR isConveyance = $)
+	      AND (NOT Send(oWhoOwner,@LineOfSight,#obj1=who,#obj2=self))
       {
          Debug("ALERT!  ",Send(who,@GetTrueName),who," in RID ",
                Send(oWhoOwner,@GetRoomNum),
