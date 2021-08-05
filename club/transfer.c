@@ -296,7 +296,7 @@ Bool TransferStart(void)
          return False;
       }
    }
-   //debug(("machine name %s, path name %s\n", transfer_machine.c_str(), transfer_path.c_str()));
+   debug(("machine name %s, path name %s\n", transfer_machine.c_str(), transfer_path.c_str()));
 
    // Successfully loaded patch file, check the update program (club.exe).
    json_array_foreach(PatchInfo, array_index, it)
@@ -312,7 +312,7 @@ Bool TransferStart(void)
       filename.assign(json_string_value(json_object_get(it, "Filename")));
 
       // Also skip the updater itself - this is checked by the client.
-      if (filename == "club.exe")
+      if (filename == "update.exe")
          continue;
 
       basepath.assign(json_string_value(json_object_get(it, "Basepath")));

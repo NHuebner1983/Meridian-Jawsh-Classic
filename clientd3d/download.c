@@ -35,7 +35,7 @@ static char format[256];
 
 extern int  connection;        /* Type of connection (serial, etc.) */
 
-static char update_program[] = "club.exe";  // Program to run to update the client executable
+static char update_program[] = "update.exe";  // Program to run to update the client executable
 static char update_filename[] = "blakston.arq"; // Name to call updated archive
 
 #define PING_DELAY 30000       // # of milliseconds between pings to server
