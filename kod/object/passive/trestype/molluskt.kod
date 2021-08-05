@@ -29,8 +29,10 @@ messages:
    {
       plTreasure = [ [ &GreenMushroom, 1 ],
                    [ &BlueDragonScale, 37],
-                   [ &Ruby, 28],
-                   [ &InkyCap, 34]
+                   [ &Ruby, 26],
+                   [ &InkyCap, 30],
+                   [ &MysticSword, 5],
+                   [ &AcidArrow, 1]
                  ];
 
       propagate;

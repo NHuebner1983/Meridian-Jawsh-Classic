@@ -27,15 +27,18 @@ messages:
 
    Constructed()
    {
-      plTreasure = [ [ &BlueDragonScale, 18],
-                     [ &DarkAngelFeather, 18],
-                     [ &PurpleMushroom, 16],
-                     [ &InkyCap, 14],
-                     [ &NightVisionPotion, 5],
-                     [ &BerserkerRing, 5],
+      plTreasure = [ [ &BlueDragonScale, 13],
+                     [ &DarkAngelFeather, 13],
+                     [ &PurpleMushroom, 13],
+                     [ &InkyCap, 13],
+                     [ &NightVisionPotion, 6],
+                     [ &FreeActionPotion, 6],
+                     [ &BerserkerRing, 6],
                      [ &Emerald, 10],
                      [ &RedMushroom, 10],
-                     [ &MysticSword, 4]
+                     [ &MysticSword, 6],
+                     [ &FireArrow, 3],
+                     [ &DaemonHelm, 1]
                    ];
 
       propagate;

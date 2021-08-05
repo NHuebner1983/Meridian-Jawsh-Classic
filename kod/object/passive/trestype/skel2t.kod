@@ -28,11 +28,12 @@ messages:
    Constructed()
    {
       plTreasure = [ [ &MetalShield, 9 ],
-                     [ &NeruditeArrow, 45 ],
+                     [ &NeruditeArrow, 40 ],
                      [ &InkyCap, 19 ],
                      [ &Knightshield, 3 ],
                      [ &Scimitar, 23 ],
-                     [ &DiscordScroll, 1 ]
+                     [ &DiscordScroll, 1 ],
+		             [ &DarkAngelFeather, 5 ]
                    ];
 
       propagate;
