@@ -56,7 +56,7 @@ classvars:
    viSpell_level = 1
 
    viMana = 2
-   viManaDrain = 2
+   viManaDrain = 0
    viDrainTime = 5000
 
    viSpellExertion = 1
