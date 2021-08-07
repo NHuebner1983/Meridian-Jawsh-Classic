@@ -127,12 +127,7 @@ messages:
 
    ModifyDefensePower(who=$,what=$,defense_power=0,state=$)
    {
-      if (state = $)
-      {
-         return defense_power;
-      }
-
-      return (defense_power + 25 + state);
+      return (defense_power + 25 + Send(who,@GetEnchantedState,#what=self));
    }
 
    ModifyDefenseDamage(who=$,what=$,damage=$)
