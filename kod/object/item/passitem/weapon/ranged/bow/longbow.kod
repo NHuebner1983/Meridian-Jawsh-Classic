@@ -28,15 +28,15 @@ classvars:
    vrName = Longbow_name_rsc
    vrDesc = Longbow_desc_rsc
 
-   viWeaponDamage = 0
+   viWeaponDamage = 1
    viRange = 100 * FINENESS
-   viHit_roll_modifier = 100
+   viHit_roll_modifier = 75
 
    viValue_average = 2500
    viBulk = 80
    viWeight = 70
 
-   viSpell_modifier = -20
+   viSpell_modifier = -15
 
    // What's the basic color of the wood?
    viBaseXLAT = XLAT_TO_SKIN2

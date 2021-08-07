@@ -35,19 +35,19 @@ classvars:
 
    vrWeaponBroke = NeruditeBow_shatters
 
-   viWeaponDamage = 3
-   viRange = 20 * FINENESS
-   viHit_roll_modifier = 0
+   viWeaponDamage = 4
+   viRange = 60 * FINENESS
+   viHit_roll_modifier = 35
 
    viValue_average = 3500
    viBulk = 100
    viWeight = 100
 
    // This is about 50// normal durability.
-   viHits_init_min = 100
-   viHits_init_max = 150
+   viHits_init_min = 370
+   viHits_init_max = 750
 
-   viSpell_modifier = -30
+   viSpell_modifier = -10
 
    // What's the basic color of the bow?
    viBaseXLAT = XLAT_TO_GREEN

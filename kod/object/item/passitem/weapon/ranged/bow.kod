@@ -59,7 +59,7 @@ classvars:
    viBulk = 80
    viWeight = 70
 
-   viSpell_modifier = -25
+   viSpell_modifier = -20
 
    // What's the basic color of the wood?
    viBaseXLAT = XLAT_TO_SKIN4

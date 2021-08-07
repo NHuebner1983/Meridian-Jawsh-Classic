@@ -29,15 +29,15 @@ classvars:
    vrName = BattleBow_name_rsc
    vrDesc = BattleBow_desc_rsc
 
-   viWeaponDamage = 2
-   viRange = 20 * FINENESS
-   viHit_roll_modifier = 0
+   viWeaponDamage = 3
+   viRange = 40 * FINENESS
+   viHit_roll_modifier = 25
 
    viValue_average = 3000
    viBulk = 80
    viWeight = 70
 
-   viSpell_modifier = -30
+   viSpell_modifier = -25
 
    // What's the basic color of the wood?
    viBaseXLAT = XLAT_TO_SKIN4

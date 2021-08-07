@@ -31,10 +31,12 @@ classvars:
    viBulk = 70
    viWeight = 70
 
+   viSpell_modifier = -5 
+
 properties:
 
-   viWeaponDamage = 1
-   viRange = 100 * FINENESS
+   viWeaponDamage = 2
+   viRange = 75 * FINENESS
    viHit_roll_modifier = 100
 
    // What's the basic color of the wood?
