@@ -181,7 +181,8 @@ messages:
          return FALSE;
       }
 
-      if IsClass(who,&User)
+      if ((isConveyance <> $ AND NOT isConveyance) OR isConveyance = $)
+	     AND IsClass(who,&User)
          AND NOT IsClass(who,&Admin)
          AND IsClass(oWhoOwner,&Room)
          AND IsClass(poOwner,&Room)
