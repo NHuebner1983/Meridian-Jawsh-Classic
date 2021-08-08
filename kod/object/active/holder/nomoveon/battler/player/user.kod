@@ -10718,7 +10718,7 @@ messages:
       }
          
       // Quick check for too many points in stats
-      if ((might + intellect + stamina + agility + mysticism + aim) > 200 )
+      if ((might + intellect + stamina + agility + mysticism + aim) > 220 )
       {
          Debug("Points Check: FAIL!");
          return FALSE;

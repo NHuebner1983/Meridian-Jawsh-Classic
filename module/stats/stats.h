@@ -34,7 +34,7 @@ void AbortCharDialogs(void);
 #define NUM_CHAR_STATS 6
 #define NUM_CHAR_SCHOOLS 7
 
-#define STAT_POINTS_INITIAL    50   // Initial # of available stat points
+#define STAT_POINTS_INITIAL    70   // Initial # of available stat points
 
 void MakeStats(int *stats_in, int *levels_in);
 void initStatsFromServer(int *stats_in, int *levels_in);

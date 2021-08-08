@@ -2656,7 +2656,7 @@ messages:
          OR Nth(lStats,4) < 1 OR Nth(lStats,4) > 50
          OR Nth(lStats,5) < 1 OR Nth(lStats,5) > 50
          OR Nth(lStats,6) < 1 OR Nth(lStats,6) > 50
-         OR iPoints > 200
+         OR iPoints > 220
       {
          // they hacked their char.dll
          piMight = 3;
