@@ -63,12 +63,12 @@ messages:
          return FALSE;
       }
 
-      if Send(poOwner,@GetKarma) > -50
-      {
-         Send(poOwner,@MsgSendUser,#message_rsc=ringinvisibility_cant);
+      //if Send(poOwner,@GetKarma) > -50
+      //{
+      //   Send(poOwner,@MsgSendUser,#message_rsc=ringinvisibility_cant);
 
-         return FALSE;
-      }
+      //   return FALSE;
+      //}
 
       propagate;
    }
