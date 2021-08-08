@@ -40,7 +40,7 @@ classvars:
 
    viCast_time = 0
 
-   viSpell_num = SID_GUILDCONVEYANCE
+   viSpell_num = SID_TRANSFERENCE
    viSpell_level = 1
    viSchool = SS_KRAANAN
    viMana = 0
