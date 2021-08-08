@@ -57,7 +57,7 @@ classvars:
 properties:
 
    pbPurgeNoRemove = FALSE
-   pbRemoveWithPercentChance = TRUE
+   pbRemoveWithPercentChance = FALSE
 
 messages:
 
