@@ -173,7 +173,7 @@ void initStatsFromServer(int *stats_in, int *levels_in)
       stats[i].val = stats_in[i];
       sum = sum + stats_in[i];
    }
-   stat_points = 200 - sum;
+   stat_points = 220 - sum;
    
    for (i = 0; i < NUM_CHAR_SCHOOLS; i++)
    {
