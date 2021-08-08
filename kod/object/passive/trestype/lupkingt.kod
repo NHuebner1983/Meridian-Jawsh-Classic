@@ -39,9 +39,10 @@ messages:
                      [ &FineLute, 5 ],
                      [ &IvyCirclet, 5 ],
                      [ &JalaNecklace, 10 ],
-                     [ &DiscordScroll, 3 ],
+                     [ &DiscordScroll, 2 ],
                      [ &TruceScroll, 3 ],
-		             [ &NeruditeBow, 3 ]
+		             [ &NeruditeBow, 3 ],
+					 [ &MagicBow, 1 ]
                    ];
 
       propagate;
