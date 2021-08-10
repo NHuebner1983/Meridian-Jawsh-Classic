@@ -44,7 +44,7 @@ classvars:
    vrDead_icon = lupogg_dead_icon_rsc
    vrDead_name = lupogg_dead_name_rsc
 
-   viTreasure_type = TID_VERY_TOUGH
+   viTreasure_type = TID_POGG
    viAttack_type = ATCK_WEAP_BITE
    viSpeed = 4
    viAttributes = 0

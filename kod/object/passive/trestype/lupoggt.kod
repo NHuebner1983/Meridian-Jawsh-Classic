@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-VeryToughTreasure is TreasureType
+LupoggTreasure is TreasureType
 
 constants:
 
@@ -16,30 +16,30 @@ constants:
 
 classvars:
 
-   viTreasure_num = TID_VERY_TOUGH
+   viTreasure_num = TID_POGG
 
 properties:
 
-   /// good chance of getting an outstanding item
-   piItem_att_chance = 12
+   /// decent chance of getting an outstanding item
+   piItem_att_chance = 5
    piDIff_seed = 8
 
 messages:
 
    Constructed()
    {
-      plTreasure = [ [ &InkyCap, 19 ],
+      plTreasure = [ [ &InkyCap, 14],
                      [ &PurpleMushroom, 13 ],
-                     [ &Sapphire, 10 ],
-                     [ &Diamond, 8 ],
+                     [ &Sapphire, 9 ],
+                     [ &Diamond, 9 ],
                      [ &Ruby, 7 ],
-                     [ &BlueDragonScale, 13 ],
-                     [ &DarkAngelFeather, 13 ],
-		             [ &LightningWand, 3 ],
-                     [ &MysticSword, 7 ],
-		             [ &TrollMask, 1 ],
-		             [ &XeoMask, 1 ],
-		             [ &RatMask, 1 ],
+                     [ &BlueDragonScale, 15],
+                     [ &DarkAngelFeather, 15],
+                     [ &HoldWand, 1],
+		             [ &BlindWand, 1 ],
+                     [ &MysticSword, 5 ],
+		             [ &DispellIllusionScroll, 3 ],
+		             [ &ShadowFormPotion, 5 ],
                      [ &PlateArmor, 3 ]
                    ];
 
