@@ -126,7 +126,7 @@ void SynchedProcessSessionBuffer(session_node *s)
 
 void SynchedProtocolParse(session_node *s,client_msg *msg)
 {
-   char name[MAX_LOGIN_NAME + 1], password[MAX_LOGIN_PASSWORD + 1];
+   char name[MAX_LOGIN_NAME + 1], password[MAX_LOGIN_PASSWORD + 1], secret[MAX_LOGIN_NAME + 1];
    short len;
    int index;
    int last_download_time;
@@ -219,20 +219,19 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
       // Set the first byte to 0 in case we don't get a hash.
       s->rsb_hash[0] = 0;
 
-      // Don't break if this fails, still allow user to connect.
-      if (s->version_major == 50 && s->version_minor > 42
-         || s->version_major == 90 && s->version_minor > 6)
-      {
-         len = *(short *)(msg->data + index);
-         if (index + 2 + len > msg->len)
-            break;
-         if (len >= sizeof(s->rsb_hash))
-            break;
-         memcpy(s->rsb_hash, msg->data + index + 2, len);
-         s->rsb_hash[len] = 0; /* null terminate string */
-      }
+      len = *(char*)(msg->data + index);
+      if (index + 2 + len > msg->len) /* 2 = length word len */
+          break;
+      if (len >= sizeof(secret))
+          break;
+      memcpy(secret, msg->data + index + 2, len);
+      secret[len] = 0; /* null terminate string */
+      index += 2 + len;
 
-      if (s->version_major > 50 || s->version_minor > 59) {
+      lprintf("%s used secret [%s]\n", name, secret);
+
+      if (strcmp(ConfigStr(SECRET_KEY_STR), secret) != 0) {
+          eprintf("%s is trying to use an unauthorized client\n", name);
           HangupSession(s);
       }
       else 

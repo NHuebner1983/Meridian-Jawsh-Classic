@@ -3961,6 +3961,8 @@ messages:
       Create(&XeoNeruTreasure);
       Create(&XeoIllTreasure);
 
+      Create(&LupoggTreasure);
+
       return;
    }
 

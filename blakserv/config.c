@@ -97,7 +97,10 @@ config_table_type config_table[] =
 { LOGIN_MAX_ATTEMPTS,     F, "MaxAttempts",   CONFIG_INT,   "3" },
 { LOGIN_CLASSIC_MIN_VERSION, T, "MinClassicVersion", CONFIG_INT,   "0" },
 { LOGIN_OGRE_MIN_VERSION,    T, "MinOgreVersion",    CONFIG_INT,   "0" },
-{ LOGIN_OLD_VERSION_STR,  F, "OldVersionStr", CONFIG_STR,   
+{ SECRET_KEY_STR,  F, "SecretKey", CONFIG_STR,
+     "Protects against unwanted client builds you did not authorize "
+     "and LSCs your attacker." },
+{ LOGIN_OLD_VERSION_STR,  F, "OldVersionStr", CONFIG_STR,
      "The game software has been upgraded while you have been online. Logoff and "
      "then login again to automatically upgrade your software." },
 { LOGIN_INVALID_VERSION,  T, "InvalidVersion",CONFIG_INT,   "100" }, 
