@@ -78,8 +78,7 @@ messages:
 
    CreateDestinationList()
    {
-      plDestinations = [ [RID_A1, 24, 46], [RID_F7, 4, 16], [RID_A6, 20, 32],
-                         [RID_I7, 32, 7]  ];
+      plDestinations = [[RID_I7, 32, 7]];
       return;
    }
    
