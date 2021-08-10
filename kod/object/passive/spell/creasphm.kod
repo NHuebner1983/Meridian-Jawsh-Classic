@@ -70,7 +70,7 @@ messages:
    {
       local iLongevity;
 
-      iLongevity = 10 + ((50 * iSpellpower) / 100);  // lasts 10 - 60 minutes
+      iLongevity = 70 + ((50 * iSpellpower) / 100);  // lasts 10 - 60 minutes
       iLongevity = iLongevity * 60 * 1000;  // Convert to ms
 
       return iLongevity;   

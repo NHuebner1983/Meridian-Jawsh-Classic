@@ -68,8 +68,8 @@ messages:
 
       if iLongevity = $
       {
-         // Default is 1 hour.
-         iLongevity = 3600000;
+         // Default is 2 hours.
+         iLongevity = 7200000;
       }
 
       if iToHitBonus <> $
