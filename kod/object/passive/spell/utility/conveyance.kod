@@ -80,8 +80,7 @@ messages:
          return;
       }
 
-      if NOT IsClass(oTarget,&NumberItem)
-         OR NOT Send(oTarget,@CanBeStoredInVault)
+      if NOT Send(oTarget,@CanBeStoredInVault)
          OR IsClass(oTarget,&Money)
       {
          Send(who,@MsgSendUser,#message_rsc=conveyance_cant,
