@@ -78,8 +78,8 @@ classvars:
 
    viKarma = 80
    viWimpy = 8
-   viCashmin = -1800
-   viCashmax = 1250
+   viCashmin = 600
+   viCashmax = 1200
    vrSound_hit = avar_sound_hit
    vrSound_miss = avar_sound_miss
    vrSound_aware = avar_sound_aware

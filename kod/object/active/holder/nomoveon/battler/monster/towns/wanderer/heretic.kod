@@ -78,7 +78,7 @@ messages:
 
    CreateDestinationList()
    {
-      plDestinations = [[RID_I7, 32, 7]];
+      plDestinations = [ [RID_I7, 32, 7], [RID_I7, 32, 7] ];
       return;
    }
    

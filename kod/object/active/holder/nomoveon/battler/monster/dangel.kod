@@ -62,8 +62,8 @@ classvars:
    vrDead_name = DarkAngel_dead_name_rsc
 
    viTreasure_type = TID_DARK_ANGEL
-   viCashmin = 0
-   viCashmax = 0
+   viCashmin = 3000
+   viCashmax = 4000
    viSpeed = SPEED_FASTER
    viAttack_type = ATCK_WEAP_MAGIC
    viAttack_spell = ATCK_SPELL_FIRE

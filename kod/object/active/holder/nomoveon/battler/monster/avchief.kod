@@ -83,7 +83,7 @@ classvars:
    viDefault_behavior = \
       AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE\
       | AI_FIGHT_WIZARD_KILLER | AI_FIGHT_MONSTERS
-   viLevel = 135
+   viLevel = 150
    viDifficulty = 9
    viVisionDistance = 28
 
@@ -91,9 +91,9 @@ classvars:
    viAttackRange = 192
 
    viKarma = 85
-   viCashmin = 650
-   viCashmax = 2000
-
+   viCashmin = 2000
+   viCashmax = 4000
+   
    vrSound_hit = avarchief_sound_hit
    vrSound_miss = avarchief_sound_miss
    vrSound_aware = avarchief_sound_aware

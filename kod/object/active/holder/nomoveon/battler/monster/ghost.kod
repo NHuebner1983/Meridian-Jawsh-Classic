@@ -63,8 +63,8 @@ classvars:
    viAttackRange = 192
    viKarma = -100
    vbIsUndead = TRUE
-   viCashmin = 1000
-   viCashmax = 5500
+   viCashmin = 2500
+   viCashmax = 7500
    vrSound_hit = ghost_sound_hit
    vrSound_miss = ghost_sound_miss
    vrSound_aware = ghost_sound_aware

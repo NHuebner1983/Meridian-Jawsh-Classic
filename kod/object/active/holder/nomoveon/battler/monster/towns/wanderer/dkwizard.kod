@@ -93,7 +93,7 @@ messages:
 
    CreateDestinationList()
    {
-      plDestinations = [[RID_DUKE3, 13, 20]];
+      plDestinations = [ [RID_DUKE3, 13, 20], [RID_DUKE3, 13, 20] ];
 
       return;
    }

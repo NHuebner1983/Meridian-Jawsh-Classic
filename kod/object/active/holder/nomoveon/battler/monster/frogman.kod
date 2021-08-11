@@ -55,8 +55,8 @@ classvars:
    viDifficulty = 5
    viVisionDistance = 20
    viKarma = 70
-   viCashmin = 150
-   viCashmax = 500
+   viCashmin = 200
+   viCashmax = 600
    vrSound_hit = frogman_sound_hit
    vrSound_miss = frogman_sound_miss
    vrSound_aware = frogman_sound_aware
