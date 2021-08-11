@@ -95,7 +95,7 @@ messages:
 
    SomethingTryGo(what=$,row=$,col=$)
    {
-      local i, lPassive, each_obj;
+      local i, lPassive, each_obj, oBraxPortal;
       
       if isClass(what,&User) AND NOT pbDoorOpen
       {
@@ -124,32 +124,37 @@ messages:
          }
       }
 
-   // Brax enterance
-   //   if IsClass(what,&Player)
-   //   {
-   //      if row = 28 AND col=73
-   //      {
-   //         lPassive = send(what,@GetHolderPassive);
-   //         foreach i in lPassive
-   //         {
-   //            each_obj = send(what,@HolderExtractObject,#data=i);
-   //            if isClass(each_obj,&SanctuaryKey)
-   //            {
-   //               send(each_obj,@Delete);
-   //               send(what,@MsgSendUser,#message_rsc=cave3_key_disappears);
-   //               Send(SYS,@UtilGoNearSquare,#what=what,
-   //               #where=Send(SYS,@FindRoomByNum,#num=RID_NECROAREA1),
-   //               #new_row=3,#new_col=43,#new_angle=ANGLE_WEST);
-   //
-   //               return TRUE;
-   //            }
-   //         }
-   //
-   //         send(what,@MsgSendUser,#message_rsc=cave3_locked_door);
-   //
-   //         return TRUE;
-   //      }
-   //   }
+      if IsClass(what,&Player)
+      {
+         if row = 68 AND (col=37 OR col=38)
+         {
+            lPassive = send(what,@GetHolderPassive);
+            foreach i in lPassive
+            {
+               each_obj = send(what,@HolderExtractObject,#data=i);
+               if isClass(each_obj,&SanctuaryKey)
+               {
+                  send(each_obj,@Delete);
+                  send(what,@MsgSendUser,#message_rsc=cave3_key_disappears);
+                  Send(SYS,@UtilGoNearSquare,#what=what,
+                  #where=Send(SYS,@FindRoomByNum,#num=RID_NECROAREA1),
+                  #new_row=3,#new_col=43,#new_angle=ANGLE_WEST);
+   
+                  return TRUE;
+               }
+            }
+   
+            send(what,@MsgSendUser,#message_rsc=cave3_locked_door);
+   
+            return TRUE;
+         }
+      }
+   
+   	  oBraxPortal = Create(&Portal,#dest_room_num=RID_NECROAREA1,#dest_row=1,#dest_col=30,
+		#dest_fine_row=30, #dest_fine_col=31);
+
+	  Send(self,@NewHold,#what=oBraxPortal,#new_row=35, #new_col=38,
+		#fine_row=26,#fine_col=1,#new_angle=ANGLE_NORTH);
    
       propagate;
    }
