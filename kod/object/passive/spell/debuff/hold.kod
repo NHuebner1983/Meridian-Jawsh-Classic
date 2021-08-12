@@ -55,6 +55,8 @@ classvars:
    // In seconds, since it works off GetTime()
    viPostCast_time = 1 // 103 value 2.
 
+   viCast_time = 0
+   
 properties:
 
    piBaseDuration = 2000 // 103 value 2000.
