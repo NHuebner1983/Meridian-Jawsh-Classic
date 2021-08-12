@@ -107,6 +107,9 @@ messages:
       // Just construct the Node.  We can find and place it later.
       Create(&ManaNode,#node_num=NODE_i9,#name_rsc=i9_node_name,
              #desc_rsc=i9_node_desc,#iRoomNum=piRoom_num);
+	  
+	  // Create the Nexus Node (Martyr's Battleground Node)
+	  Create(&ManaNode,#node_num=NODE_Q,#iRoomNum=piRoom_num);
 
       propagate;
    }
@@ -225,13 +228,21 @@ messages:
 
    Delete()
    {
-      local oNode;
+      local oNodeI, oNodeQ;
 
-      oNode = Send(SYS,@FindNodeByNum,#num=NODE_I9);
-      if oNode <> $
+      oNodeI = Send(SYS,@FindNodeByNum,#num=NODE_I9);
+      oNodeQ = Send(SYS,@FindNodeByNum,#num=NODE_Q);
+	  
+      if oNodeI <> $
       {
          // delete 'our' node
-         Send(oNode,@Delete);
+         Send(oNodeI,@Delete);
+      }
+	  
+      if oNodeQ <> $
+      {
+         // delete 'our' node
+         Send(oNodeQ,@Delete);
       }
 
       poNode = $;
@@ -247,7 +258,7 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local iHour,iLight_effect, i, bFound;
+      local iHour,iLight_effect, i, bFound, oNodeQ;
 
       iHour = Send(SYS,@GetHour);
 
@@ -265,8 +276,13 @@ messages:
       if iHour = 0 AND poNode = $
       {
          poNode = Send(SYS,@FindNodeByNum,#num=NODE_I9);
+		 oNodeQ = Send(SYS,@FindNodeByNum,#num=NODE_Q);
+		 
          Send(poNode,@NodeAppear,#where=self,#row=27,#col=61,
                #fine_row=48,#fine_col=40);
+
+         Send(oNodeQ,@NodeAppear,#where=self,#row=50,#col=53,
+               #fine_row=49,#fine_col=18);
 
          foreach i in plActive
          {
