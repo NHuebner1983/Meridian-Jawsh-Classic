@@ -53,15 +53,16 @@ classvars:
    viSpeed = SPEED_NONE
    viAttributes = MOB_NOMOVE
    viDefault_behavior = AI_NOMOVE | AI_FIGHT_KARMA_AGGRESSIVE
-   viLevel = 50
    viDifficulty = 4
    viVisionDistance = 14
-   viKarma = 40
-   viCashmin = 100
-   viCashmax = 500
-
-   // 1 in x chance to cast a spell.
-   viSpellChance = 9
+   
+   
+   viLevel = 60
+   viKarma = 50
+   viCashmin = 200
+   viCashmax = 600
+   viSpellChance = 8
+   
 
    vrSound_hit = ent_sound_hit
    vrSound_miss = ent_sound_miss

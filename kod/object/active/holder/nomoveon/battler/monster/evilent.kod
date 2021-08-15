@@ -52,12 +52,14 @@ classvars:
    viSpeed = SPEED_NONE
    viAttributes = MOB_NOMOVE
    viDefault_behavior = AI_NOMOVE | AI_FIGHT_KARMA_AGGRESSIVE
-   viLevel = 50
    viDifficulty = 4
    viVisionDistance = 14
-   viKarma = -40
-   viCashmin = 125
-   viCashmax = 500
+   
+   viLevel = 60
+   viKarma = -50
+   viCashmin = 200
+   viCashmax = 600
+
    vrSound_hit = EvilEnt_sound_hit
    vrSound_miss = EvilEnt_sound_miss
    vrSound_aware = EvilEnt_sound_aware
