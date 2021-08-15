@@ -27,9 +27,11 @@ messages:
 
    Constructed()
    {
-      plTreasure = [ [ &Solagh, 40],
+      plTreasure = [ [ &Solagh, 30],
                      [ &DragonflyEye, 30],
-                     [ &UncutSeraphym, 30] ];
+                     [ &UncutSeraphym, 30], 
+		             [ &SlitherWand, 5 ],
+		             [ &EnfeebleWand, 5] ];
 
       propagate;
    }
