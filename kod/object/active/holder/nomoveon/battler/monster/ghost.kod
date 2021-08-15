@@ -56,15 +56,15 @@ classvars:
 
    viTreasure_type = TID_GHOST
    viSpeed = SPEED_FAST
-   viLevel = 200
+   viLevel = 220
    viDifficulty = 9
    viVisionDistance = 60
    // Attack range of 192, or 3 row/col.
    viAttackRange = 192
    viKarma = -100
    vbIsUndead = TRUE
-   viCashmin = 2500
-   viCashmax = 7500
+   viCashmin = 4000
+   viCashmax = 8500
    vrSound_hit = ghost_sound_hit
    vrSound_miss = ghost_sound_miss
    vrSound_aware = ghost_sound_aware
@@ -76,7 +76,7 @@ classvars:
       | AI_FIGHT_WIZARD_KILLER | AI_MOVE_FLEE_FRIGHTENERS
 
    // 1 in x chance to cast a spell.
-   viSpellChance = 4
+   viSpellChance = 3
    
 properties:
 
@@ -84,12 +84,12 @@ properties:
    piGroup = 1
    piDrawEffectFlag = OF_FLICKERING
    piDrawfx = DRAWFX_TRANSLUCENT_75
-   piMinDamage = 6
+   piMinDamage = 8
    piMaxDamage = 16
    vrDesc = ghost_desc_rsc
 
    piSpellPower = 99
-   piMax_mana = 20
+   piMax_mana = 25
 
    piReputationGroup = REP_FARNOHL
    
