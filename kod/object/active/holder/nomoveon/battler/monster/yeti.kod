@@ -52,16 +52,16 @@ classvars:
    viSpeed = SPEED_SLOW
    viAttack_type = ATCK_WEAP_CLAW
    viAttributes = 0
-   viLevel = 170
+   viLevel = 190
    viDifficulty = 9
-   viVisionDistance = 15
+   viVisionDistance = 20
    // Attack range of 192, or 3 row/col.
    viAttackRange = 192
    viKarma = 0
    viDefault_behavior = \
       AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_SWITCHALOT
-   viCashmin = 7000
-   viCashmax = 10000
+   viCashmin = 8000
+   viCashmax = 11000
    vrSound_hit = yeti_sound_hit
    vrSound_miss = yeti_sound_miss
    vrSound_aware = yeti_sound_aware
@@ -85,7 +85,7 @@ messages:
                         [ATCK_WEAP_THRUST, 90],
                         [ATCK_WEAP_SLASH, 90],
                         [ATCK_WEAP_PIERCE, 90],
-                        [-ATCK_SPELL_FIRE, -45 ]
+                        [-ATCK_SPELL_FIRE, -35 ]
                       ];
 
       propagate;
