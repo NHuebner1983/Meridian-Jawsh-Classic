@@ -47,7 +47,7 @@ classvars:
    viSpell_num = SID_GAZE_OF_THE_BASILISK
    viSchool = SS_QOR
    viMana = 15
-   viCast_Time = 4000
+   viCast_Time = 1000
    viSpell_Exertion = 15
    viSpell_level = 6
 
@@ -109,7 +109,7 @@ messages:
       if what <> $
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
-         iDuration = Bound(state * Random(20,25),500,2500);
+         iDuration = Bound(state * Random(20,45),1300,4500);
 
          // TODO: Make chance to paralyze based on if caster is facing opponent?
 
@@ -162,7 +162,7 @@ messages:
       iState = Send(who,@GetEnchantedState,#what=self);
 
       AddPacket(4,gaze_enchantment_rsc, 4,Send(self,@GetName),
-                4,Bound(iState * 20,500,2500), 4,Bound(iState * 25,500,2500));
+                4,Bound(iState * 20,1300,2500), 4,Bound(iState * 25,1300,4500));
 
       return;
    }
