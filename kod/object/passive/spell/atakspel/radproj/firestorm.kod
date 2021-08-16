@@ -80,22 +80,22 @@ properties:
 
    piSpeed = 6
 
-   piDamageMin = 22
-   piDamageMax = 30
+   piDamageMin = 12
+   piDamageMax = 28
 
    piNumber = 16
 
-   pbAccessible = FALSE
-   pbEnabled = FALSE
+   pbAccessible = TRUE
+   pbEnabled = TRUE
 
 messages:
 
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&RedMushroom,2],plReagents);
-      plReagents = Cons([&OrcTooth,2],plReagents);
-      plReagents = Cons([&GreenMushroom,1],plReagents);
+      plReagents = Cons([&RedMushroom,4],plReagents);
+      plReagents = Cons([&OrcTooth,4],plReagents);
+      plReagents = Cons([&GreenMushroom,2],plReagents);
 
       return;
    }
