@@ -245,7 +245,7 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
             lvitem.pszText = article->poster;
             ListView_SetItem(hList, &lvitem);
          
-            DateFromSeconds(article->time, date);
+            DateFromSeconds(article->time + 211458440, date);
             lvitem.iSubItem = 2;
             lvitem.pszText = date;
             ListView_SetItem(hList, &lvitem);
