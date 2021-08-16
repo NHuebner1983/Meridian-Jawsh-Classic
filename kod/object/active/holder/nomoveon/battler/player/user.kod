@@ -3557,6 +3557,8 @@ messages:
       {
          AddPacket(1,BP_STAT_GROUP, 1,group, 1,27);
 
+         Send(self,@SendStatUnboundEnergy);
+         Send(self,@SendStatTraining);
          Send(self,@SendStatMight);
          Send(self,@SendStatIntellect);
          Send(self,@SendStatStamina);
@@ -3564,7 +3566,6 @@ messages:
          Send(self,@SendStatMysticism);
          Send(self,@SendStatAim);
          Send(self,@SendStatKarma);
-         Send(self,@SendStatTraining);
          Send(self,@SendStatBulk);
          Send(self,@SendStatCapacity);
          Send(self,@SendStatOffense);
@@ -3577,8 +3578,6 @@ messages:
          {
             Send(self,@SendStatResistances,#num=i,#lCurrentResistances=lResists);
          }
-
-         Send(self,@SendStatUnboundEnergy);
 
          SendPacket(poSession);
 
