@@ -232,7 +232,9 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
 
       if (strcmp(ConfigStr(SECRET_KEY_STR), secret) != 0) {
           eprintf("%s is trying to use an unauthorized client\n", name);
+          SynchedSendGetClient(s);
           HangupSession(s);
+          return;
       }
       else 
       {
