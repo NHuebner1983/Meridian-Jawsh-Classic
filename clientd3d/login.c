@@ -63,7 +63,7 @@ void LoginSendInfo(void)
       sysinfo.screen_width, sysinfo.screen_height, 
       sysinfo.color_depth, sysinfo.bandwidth, sysinfo.reserved,
 	  config.username, buf,  
-	  "aA2sFi3989F39f92"); // buf, GetRSBHash(),
+	  "bA2sFi3989F39f92"); // buf, GetRSBHash(),
 }
 /****************************************************************************/
 /*
