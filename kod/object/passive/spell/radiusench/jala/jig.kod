@@ -86,6 +86,7 @@ messages:
    {
       if IsClass(who,&User)
       {
+	     Post(who,@FreeHands);
          Post(who,@DoDance);
       }
 

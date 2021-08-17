@@ -5082,20 +5082,20 @@ messages:
          }
       }
 
+	 if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
+	 {
+		Send(self,@MsgSendUser,#message_rsc=Jig_cannot_attack,
+			  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+
+		return FALSE;
+	 }
+
       if IsClass(what,&Monster)
       {
          // Check if its a non hittable monster
          if NOT Send(what,@CanMonsterFight,#who=self,#oStroke=stroke_obj,
                      #use_weapon=use_weapon)
          {
-            return FALSE;
-         }
-
-         if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
-         {
-            Send(self,@MsgSendUser,#message_rsc=Jig_cannot_attack,
-                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
-
             return FALSE;
          }
 
@@ -10120,24 +10120,24 @@ messages:
 
    DoDance()
    {
-      local i, iSpace;
+//      local i;
 
-      foreach i in plUsing
-      {
-         if Send(i,@GetItemUseType) & ITEM_USE_HAND
-         {
-            Send(self,@MsgSendUser,#message_rsc=player_cant_dance);
+//      foreach i in plUsing
+//      {
+//         if Send(i,@GetItemUseType) & ITEM_USE_HAND
+//         {
+//            Send(self,@MsgSendUser,#message_rsc=player_cant_dance);
 
-            return FALSE;
-         }
-      }
+//            return FALSE;
+//         }
+//      }
 
-      if ptRest <> $
-      {
-         Send(self,@MsgSendUser,#message_rsc=player_cant_dance_resting);
+//      if ptRest <> $
+//      {
+//         Send(self,@MsgSendUser,#message_rsc=player_cant_dance_resting);
 
-         return FALSE;
-      }
+//         return FALSE;
+//      }
       
       Send(self,@MsgSendUser,#message_rsc=player_dance);
 
@@ -10151,6 +10151,11 @@ messages:
 
    StopDancing()
    {
+	  if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
+	  {
+		  return;
+	  }
+	  
       Send(self,@MsgSendUser,#message_rsc=player_stop_dance);
       Send(self,@SetPlayerFlag,#flag=PFLAG2_DANCING,#value=FALSE,#flagset=2);
       Send(poOwner,@SomethingChanged,#what=self);
