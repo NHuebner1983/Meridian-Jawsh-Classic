@@ -63,7 +63,7 @@ void LoginSendInfo(void)
       sysinfo.screen_width, sysinfo.screen_height, 
       sysinfo.color_depth, sysinfo.bandwidth, sysinfo.reserved,
 	  config.username, buf,  
-	  "bA2sFi3989F39f92"); // buf, GetRSBHash(),
+	  "EXAMPLE_KEY_HERE"); // buf, GetRSBHash(), PUT 16-CHARACTER KEY HERE
 }
 /****************************************************************************/
 /*
