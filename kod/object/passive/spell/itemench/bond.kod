@@ -84,6 +84,7 @@ messages:
       oTarget = First(lTargets);
 
       if NOT Send(oTarget,@CanMend)
+	     AND NOT IsClass(oTarget,&Item)
       {
          Send(who,@MsgSendUser,#message_rsc=bond_bad_target);
 
