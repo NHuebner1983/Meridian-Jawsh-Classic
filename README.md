@@ -4,6 +4,16 @@ Andrew Kirmse and Chris Kirmse
 Copyright 1994-2012 Andrew Kirmse and Chris Kirmse
 All rights reserved.  Meridian is a registered trademark.
 
+READ FIRST: Security Modifications
+--------------
+This repository implemented a security feature that will require you to complete the following steps in order to build Classic and Blakserv. Without completing these steps, your client will fail to build and your server will fail to build.
+
+1. Rename clientd3d/login.c-example to login.c
+2. Edit login.c and look for "EXAMPLE_KEY_HERE", replace with a 16 character string such as `abcdefghijklmnop` - Save, compile.
+3. Rename blakserv/blakserv.cfg-example to blakserv.cfg
+4. Edit blakserv.cfg and look for "EXAMPLE_KEY_HERE", replace with a 16 character string such as `abcdefghiklmnop` - Save, compile.
+
+When a client connects to your server, this key is checked. If the keys do not match, the client is redirected to update and disconnected. This is to prevent hackers / recompilers from connecting to your server without knowledge of your server's key.
 
 Play Meridian 59
 --------------
