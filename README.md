@@ -10,8 +10,12 @@ This repository implemented a security feature that will require you to complete
 
 1. Rename clientd3d/login.c-example to login.c
 2. Edit login.c and look for "EXAMPLE_KEY_HERE", replace with a 16 character string such as `abcdefghijklmnop` - Save, compile.
-3. Rename blakserv/blakserv.cfg-example to blakserv.cfg
-4. Edit blakserv.cfg and look for "EXAMPLE_KEY_HERE", replace with a 16 character string such as `abcdefghiklmnop` - Save, compile.
+3. Edit run/server/blakserv.cfg
+4. Update your configuration file section as shown below (update the key to match the key you put in the client)
+```
+[Login]              
+SecretKey            EXAMPLE_KEY_HERE
+```
 
 When a client connects to your server, this key is checked. If the keys do not match, the client is redirected to update and disconnected. This is to prevent hackers / recompilers from connecting to your server without knowledge of your server's key.
 
