@@ -9,7 +9,6 @@ BOFS = animate.bof \
        apparitn.bof \
        atakspel.bof \
        bait.bof \
-       boon.bof \
        brittle.bof \
        brthlife.bof \
        cdisease.bof \

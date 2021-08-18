@@ -1,0 +1,118 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Bond is ItemEnchantment
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   include bond.lkod
+
+   Bond_name_rsc = "bond"
+   Bond_icon_rsc = ibond.bgf
+   Bond_desc_rsc = \
+      "Infuses an item with a soft white light.  However, the "
+      "bond requires terrific amounts of energy to form.  A heartstone and "
+      "50 polished serphym and 50 diamonds must be crushed to amplify "
+      "the caster's mystical energy. The item to be bonded must be targetted. "
+      "Once the casting is complete the item will follow its owner to hell itself."
+   
+   Bond_sound = sbond.ogg
+
+   bond_bad_target = "You can't bond that."
+   bond_failed = \
+      "You feel the magical bond begin to reach out in vain for one of its targets, "
+      "but finding nothing it dissipates."
+   bond_already_bonded = "This item is already bonded."
+
+   bond_successful_casters = "You feel a magical bond form between %s%s and %s."
+   bond_successful_bondee = "You feel a magical bond form between you and your %s."
+
+   bond_report_room = "Somehow, you sense that your %s is in %s."
+   bond_report_user = "Somehow, you sense that your %s is in %q's possession."
+
+classvars:
+
+   vrName = Bond_name_rsc
+   vrIcon = Bond_icon_rsc
+   vrDesc = Bond_desc_rsc
+
+   vrSucceed_wav = Bond_sound
+
+   viMana = 50
+
+   viSpell_num = SID_BOND
+   viSchool = SS_SHALILLE
+   viSpell_level = 6
+
+   viSpellExertion = 50
+   viCast_time = 500
+   viChance_To_Increase = 66
+
+properties:
+
+   pbAccessible = TRUE
+   pbEnabled = TRUE
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&PolishedSeraphym,50],plReagents);
+      plReagents = Cons([&Diamond,50],plReagents);
+      plReagents = Cons([&Heartstone,1],plReagents);
+
+      return;
+   }
+
+   CanPayCosts(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oTarget;
+
+      oTarget = First(lTargets);
+
+      if NOT Send(oTarget,@CanMend)
+      {
+         Send(who,@MsgSendUser,#message_rsc=bond_bad_target);
+
+         return FALSE;
+      }
+
+      if Send(oTarget,@HasAttribute,#ItemAtt=IA_TRANSCENDANT)
+      {
+         Send(who,@MsgSendUser,#message_rsc=bond_already_bonded);
+
+         return FALSE;
+      }	  
+
+      propagate;
+   }
+
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
+   {
+      local iCurrentSpell, oWeapon, oWeapAtt, iDuration, oEnchantedWeapAtt, iEnchanted;
+
+      oWeapon = First(lTargets);
+
+	  Send(Send(SYS,@FindItemAttByNum,#Num=IA_TRANSCENDANT),@AddToItem,
+           #oItem=oWeapon);
+
+      Send(who,@MsgSendUser,#message_rsc=bond_successful_bondee,
+             #parm1=Send(oWeapon,@GetName));
+
+      propagate;
+   }
+end
+////////////////////////////////////////////////////////////////////////////////

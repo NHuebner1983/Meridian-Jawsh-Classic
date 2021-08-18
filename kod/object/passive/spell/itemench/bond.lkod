@@ -9,8 +9,6 @@ Bond_desc_rsc = de \
    "Spruch erfolgreich war, bleibt der Gegenstand sogar bis in die "
    "Unterwelt an Deiner Seite."
 bond_bad_target = de "Du kannst nur Gegenstände an Spieler binden."
-bond_no_prism = de \
-   "Die magische Energie des Prismas erlaubt es nicht es zu binden."
 bond_failed = de "Es hat leider nicht geklappt den Gegenstand zu binden."
 bond_already_bonded = de "Dieser Gegenstand ist bereits gebunden."
 bond_successful_casters = de "Du fühlst die Verbindung zwischen %s%s und %s."
