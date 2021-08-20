@@ -42,6 +42,14 @@ classvars:
    viTreasure_type = TID_ICE_ELE
 
    viAttack_Spell = ATCK_SPELL_COLD
+   
+   viSpeed = SPEED_FAST
+
+   viLevel = 120
+   viDifficulty = 7
+
+   viCashmin = 3000
+   viCashmax = 12000
 
 properties:
 

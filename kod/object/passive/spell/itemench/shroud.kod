@@ -25,7 +25,7 @@ resources:
    shroud_icon_rsc = ishroud.bgf
    shroud_desc_rsc = \
       "Used to protect a warrior's tools against polluting magics.  "
-      "Requires two mushrooms and two elderberries to cast."
+      "Requires five mushrooms and five elderberries to cast."
 
    shroud_label_rsc = "Shrouder"
 
@@ -54,8 +54,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Mushroom,3],plReagents);
-      plReagents = Cons([&Elderberry,3],plReagents);
+      plReagents = Cons([&Mushroom,5],plReagents);
+      plReagents = Cons([&Elderberry,5],plReagents);
 
       return;
    }
