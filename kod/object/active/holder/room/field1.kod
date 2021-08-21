@@ -72,12 +72,6 @@ messages:
       Send(self,@NewHold,#what=Create(&Chest),#new_row=30,#new_col=10);
       Send(self,@NewHold,#what=Create(&Chest),#new_row=29,#new_col=10);
 
-      Send(self,@NewHold,#what=Create(&Minstrel),#new_row=15,#new_col=9);
-      Send(self,@NewHold,#what=Create(&Heretic),#new_row=17,#new_col=9);
-      Send(self,@NewHold,#what=Create(&DarkWizard),#new_row=15,#new_col=11);
-      Send(self,@NewHold,#what=Create(&HunterGhost),#new_row=21,#new_col=11);
-      Send(self,@NewHold,#what=Create(&Izzio),#new_row=19,#new_col=9);
-
       propagate;
    }
 
