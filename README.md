@@ -4,10 +4,9 @@ Andrew Kirmse and Chris Kirmse
 Copyright 1994-2012 Andrew Kirmse and Chris Kirmse
 All rights reserved.  Meridian is a registered trademark.
 
-BEFORE BUILDING
+Before You Build
 --------------
-1. Install Visual Studio 2019 with C++ Support (important).
-2. Run the Developer Command Prompt for VS 2019
+Install Visual Studio 2015 with Visual C++ Support (important).
 
 READ FIRST: Security Modifications
 --------------
