@@ -23,8 +23,8 @@ constants:
 
    include blakston.khd
 
-   AIM_CHANGE = 5
-   MIGHT_CHANGE = 2
+   AIM_CHANGE = 10
+   MIGHT_CHANGE = 4
 
 resources:
 

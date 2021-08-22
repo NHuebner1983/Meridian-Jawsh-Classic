@@ -18,8 +18,8 @@ constants:
 
    include blakston.khd
 
-   MIGHT_CHANGE = 5
-   AGILITY_CHANGE = 2
+   MIGHT_CHANGE = 10
+   AGILITY_CHANGE = 4
 
 resources:
 
