@@ -1792,7 +1792,8 @@
    TID_XEO_ILL       = 73
 
    TID_POGG = 74
-
+   TID_NECRO = 75
+   
    // English articles
 
    ARTICLE_NONE = 0

@@ -45,9 +45,10 @@ classvars:
    vbIsUndead = TRUE
    viDefault_behavior = AI_FIGHT_NEWBIESAFE | AI_MOVE_REGROUP
    viVisionDistance = 18
-   viCashmin = 100
-   viCashmax = 200
-   viChanceFemale = 60  // percentage chance to be female
+   viTreasure_type = TID_NECRO
+   viCashmin = 3000
+   viCashmax = 4000
+   viChanceFemale = 5  // percentage chance to be female
 
    viColorTranslate1 = XLAT_TO_GRAY     // Shirt
    viColorTranslate2 = XLAT_TO_BLACK   // Pants
@@ -63,8 +64,9 @@ classvars:
 
 properties:
 
-   piBaseLevel = 60
-   piBaseDifficulty = 4
+   piBaseLevel = 150
+   viLevel = 200
+   piBaseDifficulty = 8
 
    //Here so they can be set
    viLevel = 60         // piBaseLevel
