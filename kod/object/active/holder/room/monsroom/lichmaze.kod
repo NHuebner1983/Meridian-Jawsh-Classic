@@ -61,7 +61,7 @@ messages:
    {
       local oMovingSector,lSectorIDs, IDs, lTemp;
 
-      plMonsters = [ [&DaemonSkeleton, 50], [&NecromancerTroop, 50] ];
+      plMonsters = [ [&DaemonSkeleton, 5], [&NecromancerTroop, 75], [&DarkAngel, 20] ];
 
       include lichmaze.kmn ;
 
