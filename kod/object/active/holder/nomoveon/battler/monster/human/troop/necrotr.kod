@@ -48,7 +48,7 @@ classvars:
    viTreasure_type = TID_NECRO
    viCashmin = 3000
    viCashmax = 4000
-   viChanceFemale = 5  // percentage chance to be female
+   viChanceFemale = 1  // percentage chance to be female
 
    viColorTranslate1 = XLAT_TO_GRAY     // Shirt
    viColorTranslate2 = XLAT_TO_BLACK   // Pants
@@ -65,8 +65,8 @@ classvars:
 properties:
 
    piBaseLevel = 150
-   viLevel = 200
-   piBaseDifficulty = 8
+   viLevel = 150
+   piBaseDifficulty = 7
 
    //Here so they can be set
    viLevel = 60         // piBaseLevel
