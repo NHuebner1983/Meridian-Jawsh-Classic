@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-RatTreasure is TreasureType
+RatSoldierTreasure is TreasureType
 
 constants:
 
@@ -16,7 +16,7 @@ constants:
 
 classvars:
 
-   viTreasure_num = TID_RAT
+   viTreasure_num = TID_RAT_SOLDIER
 
 properties:
 
@@ -24,14 +24,10 @@ messages:
 
    Constructed()
    {
-      plTreasure = [ [ &Herbs, 30 ],
-                     [ &Mushroom, 25],
-                     [ &Elderberry, 20 ],
-                     [ &Snack, 5],
-                     [ &BlueMushroom, 5],
-                     [ &Cheese, 10],
-                     [ &RedMushroom, 5 ] 
-				   ];
+      plTreasure = [ 
+                     [ &Cheese, 99 ],
+		             [ &RatMask, 1 ]
+                   ];
 
       propagate;
    }

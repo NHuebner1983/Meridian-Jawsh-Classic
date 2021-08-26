@@ -1793,6 +1793,7 @@
 
    TID_POGG = 74
    TID_NECRO = 75
+   TID_RAT_SOLDIER = 76
    
    // English articles
 
