@@ -2230,6 +2230,8 @@
    SID_UNHOLY_TOUCH = 188
    SID_TRANSFERENCE = 189
    
+   SID_VAULT_LOADOUT = 200
+   
    // Depreciated spell IDs
    SID_LIGHTNING = 1                   // use SID_LIGHTNING_BOLT
    SID_NIGHTVISION = 4                 // use SID_NIGHT_VISION
