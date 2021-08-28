@@ -61,18 +61,18 @@ classvars:
    vrDead_icon = DarkAngel_dead_icon_rsc
    vrDead_name = DarkAngel_dead_name_rsc
 
-   viTreasure_type = TID_DARK_ANGEL
+   viTreasure_type = TID_GHOST
    viCashmin = 3000
    viCashmax = 4000
    viSpeed = SPEED_FASTER
    viAttack_type = ATCK_WEAP_MAGIC
    viAttack_spell = ATCK_SPELL_FIRE
-   viLevel = 200
-   viDifficulty = 9
+   viLevel = 150
+   viDifficulty = 7
    viVisionDistance = 28
 
    // Attack range of 448, or 7 row/col.
-   viAttackRange = 448
+   viAttackRange = 348
 
    viKarma = -100
    viDefault_behavior = AI_FIGHT_NEWBIESAFE | AI_FIGHT_AGGRESSIVE \

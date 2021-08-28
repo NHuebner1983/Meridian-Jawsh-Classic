@@ -24,7 +24,7 @@ resources:
    Bond_desc_rsc = \
       "Infuses an item with a soft white light.  However, the "
       "bond requires terrific amounts of energy to form.  Requires one heartstone, "
-      "50 polished serphym, 50 diamonds and one yellow mushroom crushed to amplify "
+      "50 polished serphym, 50 diamonds and ten yellow mushroom crushed to amplify "
       "the caster's mystical energy. The item to be bonded must be targetted. "
       "Once the casting is complete the item will follow its owner to hell itself."
    
@@ -73,7 +73,7 @@ messages:
       plReagents = Cons([&PolishedSeraphym,50],plReagents);
       plReagents = Cons([&Diamond,50],plReagents);
       plReagents = Cons([&Heartstone,1],plReagents);
-	  plReagents = Cons([&YellowMushroom,1],plReagents);
+	  plReagents = Cons([&YellowMushroom,10],plReagents);
 
       return;
    }
@@ -115,6 +115,93 @@ messages:
              #parm1=Send(oWeapon,@GetName));
 
       propagate;
+   }
+
+   // This message is not used any more.  But since it is part of the whole
+   // bond infrastructre I'm leaving it for now.
+   // It should eventually be moved somewhere better.
+   BondedItemReport(BondedItem=$,BondedPlayer=$,BondedItemOwner=$)
+   {
+      if BondedPlayer = $
+      {
+         Debug("tried to report to a $ player!");
+
+         return;
+      }
+
+      if BondedItem = $
+      {
+         Debug("tried to report to ",Send(BondedPlayer,@GetTrueName),
+               " on a $ item!  Clearing bond.");
+         Send(BondedPlayer,@ClearBondedItem);
+
+         return;
+      }
+
+      // Check if the item is in its owner's inventory.
+      if Send(BondedPlayer,@IsHolding,#what=BondedItem)
+      {
+         return;
+      }
+
+      if BondedItemOwner = $
+      {
+         BondedItemOwner = Send(BondedItem,@GetOwner);
+      }
+
+      if BondedItemOwner = $
+      {
+         Debug(Send(BondedItem,@GetTrueName)," bonded to ",
+               Send(BondedPlayer,@GetTrueName)," has no owner!  Clearing bond.");
+         Send(BondedPlayer,@ClearBondedItem);
+
+         return;
+      }
+
+      if Send(BondedItem,@GetHits) = 0
+      {
+         Send(BondedPlayer,@ClearBondedItem);
+
+         return;
+      }
+
+      if IsClass(BondedItemOwner,&StorageBox)
+      {
+         BondedItemOwner = Send(SYS,@UtilGetRoomRecurse,#what=BondedItemOwner);
+      }
+
+      if IsClass(BondedItemOwner,&Room)
+      {
+         Send(BondedPlayer,@MsgSendUser,#message_rsc=bond_report_room,
+               #parm1=Send(BondedItem,@GetName),
+               #parm2=Send(BondedItemOwner,@GetName));
+
+         return;
+      }
+
+      if IsClass(BondedItemOwner,&SafetyDepositBox)
+      {
+         BondedItemOwner = Send(BondedItemOwner,@GetSafeBoxOwner);
+      }
+
+      if IsClass(BondedItemOwner,&User)
+      {
+         Send(BondedPlayer,@MsgSendUser,#message_rsc=bond_report_user,
+               #parm1=Send(BondedItem,@GetName),
+               #parm2=Send(BondedItemOwner,@GetName),#type2=STRING_RESOURCE);
+
+         return;
+      }
+
+      Debug(Send(BondedItem,@GetTrueName)," bonded to ",
+            Send(BondedPlayer,@GetTrueName),
+            " not in room or in player's possession!  In ",
+            Send(BondedItemOwner,@GetTrueName));
+      Send(BondedPlayer,@MsgSendUser,#message_rsc=bond_report_room,
+            #parm1=Send(BondedItem,@GetName),
+            #parm2=Send(BondedItemOwner,@GetName));
+
+      return;
    }
 end
 ////////////////////////////////////////////////////////////////////////////////

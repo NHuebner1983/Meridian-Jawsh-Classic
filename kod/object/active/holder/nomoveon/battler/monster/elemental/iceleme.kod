@@ -48,8 +48,8 @@ classvars:
    viLevel = 120
    viDifficulty = 7
 
-   viCashmin = 3000
-   viCashmax = 12000
+   viCashmin = 700
+   viCashmax = 1500
 
 properties:
 

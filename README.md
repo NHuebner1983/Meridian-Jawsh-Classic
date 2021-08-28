@@ -4,9 +4,13 @@ Andrew Kirmse and Chris Kirmse
 Copyright 1994-2012 Andrew Kirmse and Chris Kirmse
 All rights reserved.  Meridian is a registered trademark.
 
+Before You Build
+--------------
+Install Visual Studio 2015 with Visual C++ Support (important).
+
 READ FIRST: Security Modifications
 --------------
-This repository implemented a security feature that will require you to complete the following steps in order to build Classic and Blakserv. Without completing these steps, your client will fail to build and your server will fail to build.
+This repository implemented a security feature that will require you to complete the following steps in order to build Classic and Blakserv. Without completing these steps, your client will fail to build and will fail to connect to the server.
 
 1. Rename clientd3d/login.c-example to login.c
 2. Edit login.c and look for "EXAMPLE_KEY_HERE", replace with a 16 character string such as `abcdefghijklmnop` - Save, compile.

@@ -116,8 +116,8 @@ classvars:
    viBulk = 50
    viWeight = 70
 
-   viDamage_min = 10    // Damage done to the user if unworthy.
-   viDamage_max = 20
+   viDamage_min = 15    // Damage done to the user if unworthy.
+   viDamage_max = 30
 
    viHits_init_min = 500
    viHits_init_max = 500

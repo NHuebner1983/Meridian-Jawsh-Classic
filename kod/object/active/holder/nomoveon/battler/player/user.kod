@@ -51,7 +51,7 @@ constants:
 
    // What's the "speed" of movement for the client?
    USER_WALKING_SPEED = 25
-   USER_RUNNING_SPEED = 50
+   USER_RUNNING_SPEED = 100
 
    // How many packets incoming per second do we allow?
    INCOMING_PACKET_THROTTLE = 25
@@ -62,7 +62,7 @@ constants:
 
    // Speedhack/cheating detection:
    // What's the maximum number of times we should log a violation?
-   MAX_LOGGED_THRESHOLD = 50
+   MAX_LOGGED_THRESHOLD = 5
 
 resources:
 
@@ -551,6 +551,23 @@ properties:
    // keep track of how much this player triggers flood protection
    piFloodCount = 0
 
+	// These are only used for players who are in "Monster" mode (such as AI-Players).
+	piBehavior = $
+	piState = $
+	viSpeed = 50
+	piTargetLocationRow = $
+	piTargetLocationCol = $
+	piTargetLocationFineRow = $
+	piTargetLocationFineCol = $
+	poTarget = $
+	iMonsterModeInterval = 3000
+	tMonsterMode = $
+	bMonsterMode = FALSE
+	tAutoAttack = $
+	bAutoAttacking = FALSE
+	bMonsterHuntReady = FALSE
+	iMonsterTimers = 0
+	
 messages:
 
    Constructor(name = $,icon = $)
@@ -10076,6 +10093,16 @@ messages:
       return;
    }
 
+   IsMurderer()
+   {
+       if piFlags & PFLAG_MURDERER
+       {
+          return TRUE;
+       }
+          
+      return FALSE;
+   }
+  
    RemoveCurrentQuest(index=$)
    "Deletes a quest from the user's plActiveQuests."
    {
@@ -10970,5 +10997,380 @@ messages:
       return;
    }
 
+   // Monster movements copied from Monster KOD 
+   // to be able to control players in an AI-Like state.
+   MoveTowards(oTarget = $, face_target=TRUE, face_away=FALSE,
+               to_master=FALSE)
+   {
+	  if NOT pbLogged_On
+	  {
+		  Send(self,@StopBeingMonster);
+		   
+		  return;
+	  }
+
+	  if oTarget = $ 
+      { 
+         Debug("Bad info passed to MoveTowards!");
+         return FALSE; 
+      }
+	  
+	  //Debug(Send(self,@GetName),"moving towards object",Send(oTarget,@GetName));
+	  
+      return Send(self, @MoveTowardsCoords,
+                   #iRow=Send(oTarget,@GetRow),
+                   #iCol=Send(oTarget,@GetCol),
+                   #iFineRow=Send(oTarget,@GetFineRow),
+                   #iFineCol=Send(oTarget,@GetFineCol),
+                   #face_target=TRUE);
+   }
+   
+   MoveTowardsCoords(iRow=$, iCol=$, iFineRow=FINENESS_HALF, iFineCol=FINENESS_HALF,
+                     face_target=TRUE, face_away=FALSE, to_master=FALSE)
+   {
+      if (iRow = $ or iCol = $)
+      {
+         return;
+      }
+
+	   if NOT pbLogged_On
+	   {
+		   Send(self,@StopBeingMonster);
+		   
+		   return;
+	   }
+	  
+	  //Debug(Send(self,@GetName),"moving towards coords",iRow,iCol,iFineRow,iFineCol);
+	  
+	  Send(self,@UserMove,#new_row=iRow,#new_col=iCol,#fine_row=iFineRow,#fine_col=iFineCol,#speed=50);
+	  
+		/*Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
+			#new_row=iRow,
+			#new_col=iCol,
+			#fine_row=iFineRow,
+			#fine_col=iFineCol);
+*/
+		Send(self,@MonsterOrient,#new_row=iRow,#new_col=iCol,
+			#new_finerow=iFineRow,#new_finecol=iFineCol);
+
+	  //Send(self,@UserMove,#new_row=iRow,#new_col=iCol,#fine_row=iFineRow,#fine_col=iFineCol,#speed=50);
+	  
+	  return TRUE;
+   }
+
+   GotoCoords(iRow=$,iCol=$,iFineRow=FINENESS_HALF,iFineCol=FINENESS_HALF)
+   "Move to a specific row and column. warning! fineness really"
+   "isn't accurate as the monster will stop when it reaches the destination"
+   "row and column"
+   {
+      if (iRow = $ OR iCol = $)
+      {
+         return;
+      }
+
+	   if NOT pbLogged_On
+	   {
+		   Send(self,@StopBeingMonster);
+		   
+		   return;
+	   }
+	  
+      piTargetLocationRow = iRow;
+      piTargetLocationCol = iCol;
+      piTargetLocationFineRow = iFineRow;
+      piTargetLocationFineCol = iFineCol;
+      //Send(self,@SetBehaviorFlag,#flag=AI_HAS_TARGET_LOCATION,#value=TRUE);
+
+      return;
+   }
+   
+   MonsterOrient(new_row = $,new_col = $,new_finerow = FINENESS_HALF,
+                 new_finecol=FINENESS_HALF,face_target = TRUE, face_away=FALSE)
+   "Called by monster moving code before and after a real move"
+   {
+      local drow, dcol, iAngle;
+
+	  if poTarget = $
+	  {
+		  // You must have a target for orientation
+		  return;
+	  }
+	  
+	   if NOT pbLogged_On
+	   {
+		   Send(self,@StopBeingMonster);
+		   
+		   return;
+	   }
+	  
+      // aiming towards a target or away from it
+      if (NOT (poTarget = $)) AND (face_target OR face_away)
+      { 
+         // build face towards (in fine-units)
+         drow = (Send(poTarget,@GetRow) * FINENESS) + Send(poTarget,@GetFineRow);
+         dcol = (Send(poTarget,@GetCol) * FINENESS) + Send(poTarget,@GetFineCol);
+         drow = drow - ((piRow * FINENESS) + piFine_row);
+         dcol = dcol - ((piCol * FINENESS) + piFine_col);
+
+         // rotate 180??, if we face away
+         if face_away
+         { 
+            drow = -drow;
+            dcol = -dcol;
+         }
+      }
+      else
+      {
+         drow = (new_row * FINENESS) + new_finerow;
+         dcol = (new_col * FINENESS) + new_finecol;
+         drow = drow - ((piRow * FINENESS) + piFine_row);
+         dcol = dcol - ((piCol * FINENESS) + piFine_col);
+      }
+
+      if poOwner <> $
+      {
+         iAngle = Send(SYS,@UtilGetAngleTowards,#row=drow,#col=dcol);
+         Send(poOwner,@SomethingTurned,#what=self,#new_angle=iAngle);
+      }
+
+      return;
+   }
+
+   FindNextMonster()
+   {
+	   local lActive, i, iFlags, oNewTarget, iClosest, iDistance;
+	   
+	   if NOT pbLogged_On
+	   {
+		   Send(self,@StopBeingMonster);
+		   
+		   return FALSE;
+	   }
+	   	   
+	   lActive = Send(poOwner,@GetplActive);
+	   
+	   if Length(lActive) <= 0
+	   {
+		   poTarget = $;
+
+		   //Debug("No monsters around");
+
+		   return FALSE;
+	   }
+	   
+	   iClosest = 1000000;
+	   
+	   foreach i in lActive
+	   {
+		   if IsClass(First(i),&Monster) AND Send(First(i),@GetCurrentState) <> 1
+		   {
+			   if First(i) = poTarget
+			   {
+				   // Do not change targets, we're already on the one from before...
+				//Debug("same target",poTarget,Send(poTarget,@GetName));
+				   
+				   return TRUE;
+			   }
+			   
+			   iFlags = Send(First(i),@GetObjectFlags,#what=self);
+			   
+			   if iFlags & OF_ATTACKABLE
+			   {
+				   iDistance = Send(self,@SquaredDistanceTo,#what=First(i));
+				   
+				   if iDistance < iClosest
+				   {
+					   oNewTarget = First(i);
+					   iClosest = iDistance;
+				   }
+			   }
+		   }
+	   }
+	   
+	   if oNewTarget <> $
+	   {
+		   poTarget = oNewTarget;
+		   
+		   //Debug("Picked new target",poTarget,Send(poTarget,@GetName));
+		   
+		   return TRUE;
+	   }
+	   
+	   // False means nothing was targeted.
+	   return FALSE;
+   }
+   
+   SendMonsterAttacks()
+   {
+	   if NOT pbLogged_On
+	   {
+		   Send(self,@StopBeingMonster);
+		   
+		   return;
+	   }
+	   
+	   if poTarget <> $ AND NOT bAutoAttacking
+	   {
+		   tAutoAttack = CreateTimer(self,@AttackMonster,500);
+		   bAutoAttacking = TRUE;
+	   }
+	   
+	   return;
+   }
+   
+   AttackMonster()
+   {
+	   local bMonsterAttacked, bTargetReady;
+	   
+	   bMonsterAttacked = FALSE;
+	   bTargetReady = FALSE;
+	   
+	   if NOT pbLogged_On
+	   {
+		   Send(self,@StopBeingMonster);
+		   
+		   return;
+	   }
+	   
+	   if poTarget <> $ AND Send(poTarget,@GetCurrentState) = 1
+	   {
+		   // Looks like we're trying to kill a dead body.
+		   bTargetReady = Send(self,@FindNextMonster);
+	   }
+	   else
+	   {
+		   if poTarget <> $
+		   {
+			   bTargetReady = TRUE;
+		   }
+	   }
+	   
+	   if poTarget <> $ AND bTargetReady
+	   {
+		   bMonsterAttacked = Send(self,@UserAttack,#what=poTarget);
+		   
+		   if NOT bMonsterAttacked
+		   {
+			   // Probably can't see target
+			   Send(self,@MoveTowards,#oTarget=poTarget);
+		   }
+		   
+		   bAutoAttacking = TRUE;
+		   
+		   tAutoAttack = CreateTimer(self,@AttackMonster,500);
+	   }
+	   else
+	   {
+		   bAutoAttacking = FALSE;
+		   tAutoAttack = $;
+	   }
+	   	   
+	   return;	   
+   }
+   
+   
+   AsMonsterContinue(iInterval=$)
+   {
+	   local iIntervalUse;
+	   
+	   if NOT pbLogged_On
+	   {
+		   Send(self,@StopBeingMonster);
+		   
+		   return;
+	   }
+	   
+	   if bMonsterMode
+	   {
+		   iIntervalUse = iMonsterModeInterval;
+		   
+		   if iInterval <> $ AND iInterval > 0
+		   {
+			   iIntervalUse = iInterval;
+		   }
+
+		   tMonsterMode = CreateTimer(self,@AsMonsterHunt,iIntervalUse);
+	   }
+	   
+	   return;
+   }
+   
+   AsMonsterHunt()
+   {
+	   local bTargetReady;
+	   
+	   bTargetReady = FALSE;
+	   
+	   if NOT pbLogged_On
+	   {
+		   Send(self,@StopBeingMonster);
+		   
+		   //Debug("No longer logged in");
+		   
+		   return;
+	   }
+	   
+	   if bMonsterMode
+	   {
+		   bTargetReady = Send(self,@FindNextMonster);
+		   
+		   if poTarget <> $ AND bTargetReady
+		   {
+			   Send(self,@MoveTowards,#oTarget=poTarget);
+			   Send(self,@SendMonsterAttacks);
+		   }
+		   else
+		   {
+//			   Debug("no targets as monster");
+		   }
+	   }
+	   
+	   // Continue the automatic fighting cycle...
+	   Send(self,@AsMonsterContinue);
+	   	   
+	   return;
+   }
+   
+   BecomeMonster()
+   {
+	   if NOT pbLogged_On
+	   {
+		   Send(self,@StopBeingMonster);
+		   
+		   return;
+	   }
+
+	   Send(self,@StopBeingMonster);
+	   
+	   Debug(Send(self,@GetName),"Became monster");
+	   	   
+	   bMonsterMode = TRUE;
+	   
+	   Send(self,@AsMonsterContinue);
+	   
+	   return;
+   }
+   
+   StopBeingMonster()
+   {
+	   if NOT bMonsterMode
+	   {
+		   return;
+	   }
+	   
+	   iMonsterTimers = 0;
+	   bMonsterMode = FALSE;
+	   bAutoAttacking = FALSE;
+
+	   poTarget = $;
+	   
+	   tMonsterMode = $;
+
+	   tAutoAttack = $;
+	   
+	   Debug("Stop being monster");
+
+	   return;
+   }
 end
 ////////////////////////////////////////////////////////////////////////////////

@@ -55,8 +55,8 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&NarthylWorm, 60], [&DaemonSkeleton, 40] ];
-      plGenerators = [ [ 4, 6 ], [ 5, 7 ] ];
+      plMonsters = [ [&NarthylWorm, 10], [&DaemonSkeleton, 90] ];
+      plGenerators = [ [ 4, 6 ], [ 5, 7 ], [ 3, 5 ], [ 3, 2 ], [ 8, 8] ];
       plLooping_sounds = [[ Necropolis3a_loop, 0, 0, 200, 100 ]];
 
       propagate;

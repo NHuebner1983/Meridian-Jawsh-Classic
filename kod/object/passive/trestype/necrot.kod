@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-RatTreasure is TreasureType
+NecroTreasure is TreasureType
 
 constants:
 
@@ -16,22 +16,25 @@ constants:
 
 classvars:
 
-   viTreasure_num = TID_RAT
+   viTreasure_num = TID_NECRO
 
 properties:
+
+
+   piDiff_seed = 9
+   piItem_att_chance = 9
 
 messages:
 
    Constructed()
    {
-      plTreasure = [ [ &Herbs, 30 ],
-                     [ &Mushroom, 25],
-                     [ &Elderberry, 20 ],
-                     [ &Snack, 5],
-                     [ &BlueMushroom, 5],
-                     [ &Cheese, 10],
-                     [ &RedMushroom, 5 ] 
-				   ];
+      plTreasure = [ [ &PurpleMushroom, 35 ],
+		             [ &DarkAngelFeather, 36],
+                     [ &Scimitar, 20],
+                     [ &VampireWand, 2],
+                     [ &HoldWand, 1],
+		             [ &DaemonHelm, 5] 
+                   ];
 
       propagate;
    }

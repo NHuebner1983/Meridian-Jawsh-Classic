@@ -65,6 +65,9 @@ properties:
    // Is this a room where monsters grow in strength?
    piLevel = 0
 
+   // Monster Portals
+   oDuskRatPortal = $
+
 messages:
 
    Delete()

@@ -491,6 +491,8 @@ properties:
 
    // 20 seconds default for players, 60 for monsters
    piHurtMeTime = 60000
+   
+     viCurrentState = STATE_WAIT
 
 messages:
 
@@ -592,6 +594,11 @@ messages:
       propagate;
    }
 
+   GetCurrentState()
+   {
+	   return viCurrentState;
+   }
+   
    SetPatrolPath(lPath = $)
    {
       if (lPath <> $)
@@ -5347,6 +5354,8 @@ messages:
 
       piState = piState & STATE_ZERO_MASK;
       piState = piState | bit;
+
+         viCurrentState = bit;
 
       return;
    }

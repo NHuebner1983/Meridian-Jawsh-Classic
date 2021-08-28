@@ -41,8 +41,8 @@ classvars:
    vrDesc = dHelm_desc_rsc
    vrIcon = dhelm_icon_male_rsc
 
-   viHits_init_min = 250
-   viHits_init_max = 275
+   viHits_init_min = 450
+   viHits_init_max = 800
 
    viValue_average = 100
    viWeight = 100

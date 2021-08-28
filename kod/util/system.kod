@@ -3913,6 +3913,7 @@ messages:
       Create(&OrcTreasure);
       Create(&FairyTreasure);
       Create(&RatTreasure);
+      Create(&RatSoldierTreasure);
       Create(&ZombieTreasure);
       Create(&EntTreasure);
       Create(&MummyTreasure);
@@ -3964,6 +3965,7 @@ messages:
       Create(&XeoIllTreasure);
 
       Create(&LupoggTreasure);
+      Create(&NecroTreasure);
 
       return;
    }

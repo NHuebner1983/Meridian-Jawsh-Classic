@@ -25,7 +25,11 @@ messages:
    Constructed()
    {
       plTreasure = [ [ &Scimitar, 30 ],
-                     [ &RedMushroom, 5 ] ];
+                     [ &DarknessScroll, 5 ],
+                     [ &RatMask, 40 ],
+                     [ &DuskRatMask, 5],
+                     [ &Cheese, 20 ]
+		   ];
 
       propagate;
    }

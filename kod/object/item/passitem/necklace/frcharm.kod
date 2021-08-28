@@ -17,8 +17,8 @@ constants:
 
    include blakston.khd
 
-   STAMINA_CHANGE = 5
-   AIM_CHANGE = 2
+   STAMINA_CHANGE = 10
+   AIM_CHANGE = 4
 
 resources:
 
