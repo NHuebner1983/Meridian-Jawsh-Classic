@@ -395,7 +395,6 @@ messages:
       bFound = FALSE;
       bSentErrorMsg = FALSE;
 
-
       oItem = GetListElemByClass(Send(oSafeBox,@GetHolderPassive), class);
       if (oItem = $)
       {
@@ -405,6 +404,8 @@ messages:
       iCanHold = Send(who,@GetNumberCanHold,#what=oItem);
       iNumInChest = Send(oItem,@GetNumber);
       bFound = TRUE;
+
+      iGetNumber = number;
 
       if iGetNumber > iNumInChest
       {
