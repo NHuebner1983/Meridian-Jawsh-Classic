@@ -65,7 +65,6 @@ messages:
 
    // Called by player, for normal 3rd-person overlays on user.
    GetOverlay(animation = $)
-   
    {
       if Send(poOwner,@GetGender) = GENDER_FEMALE
       {
@@ -139,7 +138,7 @@ messages:
          OR iSchool = SS_RIIJA
          OR iSchool = SS_JALA)
       {
-         return -20;
+         return -5;
       }
 
       return 0;
