@@ -77,6 +77,13 @@ properties:
 
 messages:
 
+   Constructed()
+   {
+		Send(self,@SetResistances);
+		
+		propagate;
+   }
+   
    SetSkinColor()
    // Sets skin to one of the four skin colors.
    {
@@ -92,10 +99,24 @@ messages:
    // Overwrites base class
    SetKarma()
    {
-      viKarma = -40;
+      viKarma = -150;
 
       return;
    }
 
+   SetResistances()
+   {
+      plResistances = [ [ATCK_WEAP_PIERCE, 70 ],
+                        [ATCK_WEAP_THRUST, 20 ],
+                        [-ATCK_SPELL_UNHOLY, 70 ],
+                        [-ATCK_SPELL_SHOCK, 70 ],
+                        [-ATCK_SPELL_COLD, 70 ],
+                        [-ATCK_SPELL_FIRE, -10 ],
+                        [-ATCK_SPELL_HOLY, -20 ],
+                        [ATCK_WEAP_BLUDGEON, -20 ]
+                      ];
+
+      return;
+   }
 end
 ////////////////////////////////////////////////////////////////////////////////
