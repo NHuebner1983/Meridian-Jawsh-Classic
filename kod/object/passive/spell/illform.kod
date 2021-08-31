@@ -67,13 +67,27 @@ messages:
    {
       // check for enchantment already applied
 
-      if Send(who,@IsEnchanted,#what=self)
-         OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      // Are they already morphed?
+      if Send(who,@IsEnchanted,#byClass=&Morph)
       {
-         Send(who,@MsgSendUser,#message_rsc=illusionaryform_already_affected);
-
-         return FALSE;
+         // Remove Morph
+         Send(who,@RemoveEnchantmentClass,#class=&Morph);
       }
+
+      // Are they already enchanted by Illusionary form?
+      if Send(who,@IsEnchanted,#byClass=&IllusionaryForm)
+      {
+         // Remove Illusionary form
+         Send(who,@RemoveEnchantmentClass,#class=&IllusionaryForm);
+      }
+
+//      if Send(who,@IsEnchanted,#what=self)
+//         OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+//      {
+//         Send(who,@MsgSendUser,#message_rsc=illusionaryform_already_affected);
+
+//         return FALSE;
+//      }
 
       propagate;
    }
@@ -95,6 +109,13 @@ messages:
       if iSpellPower = $
       { DEBUG("Something funky is up here."); return; }
 
+      // Are they already enchanted by Illusionary form?
+      if Send(victim,@IsEnchanted,#byClass=&IllusionaryForm)
+      {
+         // Remove Illusionary form
+         Send(victim,@RemoveEnchantmentClass,#class=&IllusionaryForm);
+      }
+	  
       if iIllusion_type = $
       {
          iIllusion_type = Send(self,@CalculateIllusionType,
