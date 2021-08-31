@@ -64,7 +64,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&NecromancerTroop, 75], [&DarkAngel, 25] ];
+      plMonsters = [ [&NecromancerTroop, 100] ];
       plGenerators = [ [8,18], [15,18], [15,32], [8,31] ];
 
       plLooping_sounds = [ [Necropolis5_loop, 0, 0, 200, 100] ];
