@@ -3406,6 +3406,8 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_CONVEYANCE,#class=&Conveyance);
 	  Send(self,@CreateOneSpellIfNew,#num=SID_TRANSFERENCE,#class=&Transference);
       Send(self,@CreateOneSpellIfNew,#num=SID_PHASE,#class=&Phase);
+	  
+      Send(self,@CreateOneSpellIfNew,#num=SID_VAULT_LOADOUT,#class=&VaultLoadout);
 
       // Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
