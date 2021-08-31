@@ -66,7 +66,7 @@ properties:
 
    piBaseLevel = 150
    viLevel = 150
-   piBaseDifficulty = 7
+   piBaseDifficulty = 2
 
    //Here so they can be set
    viLevel = 60         // piBaseLevel
