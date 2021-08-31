@@ -14,7 +14,7 @@ constants:
 
    include blakston.khd
 
-   MORPH_PAIN_TIME = 2000
+   MORPH_PAIN_TIME = 250
 
 resources:
 
@@ -57,7 +57,7 @@ classvars:
    viSchool = SS_RIIJA
    viMana = 20
    viSpellExertion = 4
-   viCast_time = 20000
+   viCast_time = 10000
    viChance_to_increase = 35
    viMeditate_ratio = 50
 
@@ -76,14 +76,28 @@ messages:
 
    CanPayCosts(who = $, lTargets = $)
    {
-      // Check for enchantment already applied
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      // Are they already enchanted by Illusionary form?
+      if Send(who,@IsEnchanted,#byClass=&IllusionaryForm)
       {
-         Send(who,@MsgSendUser,#message_rsc=morph_already_enchanted,
-              #parm1=Send(self,@GetIndef),#parm2=Send(self,@GetName));
-         
-         return FALSE;
+         // Remove Illusionary form
+         Send(who,@RemoveEnchantmentClass,#class=&IllusionaryForm);
       }
+   
+      // Are they already morphed?
+      if Send(who,@IsEnchanted,#byClass=&Morph)
+      {
+         // Remove Morph
+         Send(who,@RemoveEnchantmentClass,#class=&Morph);
+      }
+   
+      // Check for enchantment already applied
+//      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+//      {
+//         Send(who,@MsgSendUser,#message_rsc=morph_already_enchanted,
+//              #parm1=Send(self,@GetIndef),#parm2=Send(self,@GetName));
+         
+//         return FALSE;
+//      }
 
       propagate;
    }
@@ -127,6 +141,13 @@ messages:
          Send(victim,@RemoveEnchantmentClass,#class=&IllusionaryForm);
       }
    
+      // Are they already morphed?
+      if Send(victim,@IsEnchanted,#byClass=&Morph)
+      {
+         // Remove Morph
+         Send(victim,@RemoveEnchantmentClass,#class=&Morph);
+      }
+
       oRoom = Send(victim,@GetOwner);
 
       lPlayerUsed = Send(victim,@GetPlayerUsing);
