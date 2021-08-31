@@ -41,11 +41,11 @@ properties:
    piBaseLight = LIGHT_MIN
    piOutside_factor = 0
 
-   piGen_time = 25000
-   piGen_percent = 80
+   piGen_time = 5000
+   piGen_percent = 100
 
    piInit_count_min = 7
-   piInit_count_max = 9
+   piInit_count_max = 15
 
    piMonster_count_max = 25
 
@@ -55,7 +55,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&NarthylWorm, 10], [&DaemonSkeleton, 90] ];
+      plMonsters = [ [&DaemonSkeleton, 100] ];
       plGenerators = [ [ 4, 6 ], [ 5, 7 ], [ 3, 5 ], [ 3, 2 ], [ 8, 8] ];
       plLooping_sounds = [[ Necropolis3a_loop, 0, 0, 200, 100 ]];
 
