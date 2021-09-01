@@ -93,7 +93,8 @@ messages:
             SID_BOND,
             SID_SILENCE,
             SID_HOLY_BLAZE,
-            SID_RING_OF_FLAMES
+            SID_RING_OF_FLAMES,
+			SID_FIRE_STORM
          ],
       $];
       return;
