@@ -9162,15 +9162,19 @@ messages:
 
             if monster_level > 150
             {
-               piTraining_points = piTraining_points + 3;
+               piTraining_points = piTraining_points + 9;
             }
             else if monster_level > 120
             {
-               piTraining_points = piTraining_points + 2;
+               piTraining_points = piTraining_points + 6;
             }
             else if monster_level > 75
             {
-               ++piTraining_points;
+               piTraining_points = piTraining_points + 3;
+			}
+            else if monster_level > 20
+            {
+               piTraining_points = piTraining_points + 2;
             }
          }
 
