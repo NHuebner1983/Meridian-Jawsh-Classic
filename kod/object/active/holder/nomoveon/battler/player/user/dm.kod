@@ -56,6 +56,7 @@ resources:
 
    // Commands
    dm_makemonster = "monster"
+   dm_makemonsters = "monster"
    dm_event_sign_command = "event sign"
    dm_makeitem = "item"
    dm_createsignet = "item signet ring"
@@ -1144,6 +1145,17 @@ messages:
       // DMs with DMFLAG_ALLOW_CREATE_MOB can create anything, DMs with
       // DMFLAG_ALLOW_MOB_BUDGET have a set limit of mobs. DMs without
       // either of these flags cannot create monsters.
+      if StringContain(string,dm_makemonsters)
+         AND NOT StringContain(string,dm_monster_authorize_command)
+      {
+         Send(self,@DMSayMakeMonster,#string=string);
+         Send(self,@DMSayMakeMonster,#string=string);
+         Send(self,@DMSayMakeMonster,#string=string);
+         Send(self,@DMSayMakeMonster,#string=string);
+         Send(self,@DMSayMakeMonster,#string=string);
+
+         return;
+      }
       if StringContain(string,dm_makemonster)
          AND NOT StringContain(string,dm_monster_authorize_command)
       {
