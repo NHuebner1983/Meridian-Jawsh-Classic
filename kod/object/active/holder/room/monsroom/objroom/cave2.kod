@@ -69,8 +69,6 @@ messages:
    {
       plObject_gen = $;
       plObject_gen = Cons([ &Chalice, GEN_ONE, 0, 23, 11, 16, 48 ],plObject_gen);
-      plObject_gen = Cons([ &PurpleMushroom, GEN_INF, 3, 24, 49 ],plObject_gen);
-      plObject_gen = Cons([ &PurpleMushroom, GEN_INF, 3, 25, 53 ],plObject_gen);
 
       propagate;
    }
