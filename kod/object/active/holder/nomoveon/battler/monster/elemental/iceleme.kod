@@ -45,8 +45,8 @@ classvars:
    
    viSpeed = SPEED_FAST
 
-   viLevel = 120
-   viDifficulty = 7
+   viLevel = 130
+   viDifficulty = 8
 
    viCashmin = 700
    viCashmax = 1500
@@ -59,13 +59,9 @@ messages:
 
    Constructed()
    {
-      if plResistances = $
-      {
-         plResistances = [ [-ATCK_SPELL_FIRE, -60 ],
-                           [-ATCK_SPELL_ALL, 70 ],
-                           [ATCK_WEAP_SLASH, -50],
-                           [ATCK_WEAP_ALL, 60 ] ];
-      }
+	 plResistances = [ [-ATCK_SPELL_FIRE, -80 ],
+					   [ATCK_WEAP_SLASH, -50],
+					   [ATCK_WEAP_ALL, 60 ] ];
 
       propagate;
    }
