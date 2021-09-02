@@ -56,7 +56,7 @@ resources:
 
    // Commands
    dm_makemonster = "monster"
-   dm_makemonsters = "monster"
+   dm_makemonsters = "monsters"
    dm_event_sign_command = "event sign"
    dm_makeitem = "item"
    dm_createsignet = "item signet ring"
