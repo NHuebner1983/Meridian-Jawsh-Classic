@@ -229,6 +229,7 @@ messages:
    {
       plFor_sale = [
          [
+            Create(&VaultLoadoutScroll,#labelled=TRUE),
             Create(&LoadoutScroll,#labelled=TRUE),
             Create(&SetScroll,#labelled=TRUE),
             Create(&PantsC,#translation=PT_GRAY_TO_LRED),

@@ -149,7 +149,8 @@ messages:
             SID_HASTE,
             SID_RESIST_POISON,
             SID_GLOW_WEAPON,
-            SID_FREE_ACTION
+            SID_FREE_ACTION,
+			SID_VAULT_LOADOUT
          ],
       $];
 

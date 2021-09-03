@@ -79,6 +79,7 @@ messages:
    {
       plFor_sale = [
          [ 
+            Create(&VaultLoadoutScroll,#labelled=TRUE),
             Create(&LoadoutScroll,#labelled=TRUE),
             Create(&SetScroll,#labelled=TRUE),
             Create(&Stew,#number=4)
