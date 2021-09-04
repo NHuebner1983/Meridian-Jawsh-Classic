@@ -103,7 +103,7 @@ classvars:
    viPermanent_flags = ROOM_SAFELOGOFF
 
    // Number of seconds before players can exit a newly created arena.
-   viCreationLeaveDelaySec = 25
+   viCreationLeaveDelaySec = 1
 
 properties:
 
