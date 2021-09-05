@@ -70,7 +70,15 @@ messages:
 
    Constructed()
    {
+	  local oBraxPortal;
+	  
       plLooping_sounds = [[ waterfall_soundCave3, 50, 67, 60, 100 ]];
+
+   	  oBraxPortal = Create(&Portal,#dest_room_num=RID_NECROAREA1,#dest_row=1,#dest_col=30,
+		#dest_fine_row=30, #dest_fine_col=31);
+
+	  Send(self,@NewHold,#what=oBraxPortal,#new_row=35, #new_col=38,
+		#fine_row=26,#fine_col=1,#new_angle=ANGLE_NORTH);
 
       propagate;
    }
@@ -95,7 +103,7 @@ messages:
 
    SomethingTryGo(what=$,row=$,col=$)
    {
-      local i, lPassive, each_obj, oBraxPortal;
+      local i, lPassive, each_obj;
       
       if isClass(what,&User) AND NOT pbDoorOpen
       {
@@ -149,13 +157,7 @@ messages:
             return TRUE;
          }
       }
-   
-   	  oBraxPortal = Create(&Portal,#dest_room_num=RID_NECROAREA1,#dest_row=1,#dest_col=30,
-		#dest_fine_row=30, #dest_fine_col=31);
-
-	  Send(self,@NewHold,#what=oBraxPortal,#new_row=35, #new_col=38,
-		#fine_row=26,#fine_col=1,#new_angle=ANGLE_NORTH);
-   
+      
       propagate;
    }
 
