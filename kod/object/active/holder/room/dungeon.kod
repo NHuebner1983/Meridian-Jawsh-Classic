@@ -14,7 +14,7 @@ constants:
 
    include blakston.khd
 
-   HOURS_PER_TOY = 100
+   HOURS_PER_TOY = 50
 
 resources:
 
