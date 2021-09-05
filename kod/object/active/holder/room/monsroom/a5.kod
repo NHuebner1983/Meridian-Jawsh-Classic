@@ -74,6 +74,8 @@ messages:
       ptDiscord = CreateTimer(self,@DiscordTimer,
                       random(DISCORD_TIME_MIN,DISCORD_TIME_MAX));
 
+      Send(self,@NewHold,#what=Create(&Chest),#new_row=8,#new_col=15);
+
       propagate;
    }
 
