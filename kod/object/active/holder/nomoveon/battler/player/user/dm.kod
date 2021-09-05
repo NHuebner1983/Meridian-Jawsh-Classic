@@ -55,6 +55,7 @@ resources:
    dm_makesignetfail = "You were unable to create a signet ring at this time."
 
    // Commands
+   dm_portal = "portal"
    dm_makemonster = "monster"
    dm_makemonsters = "monsters"
    dm_event_sign_command = "event sign"
@@ -1141,6 +1142,11 @@ messages:
          return;
       }
 
+      if StringContain(string,dm_portal)
+      {
+	     Send(self,@DMSayPortal,#string=string);
+	  }
+
       // Monster making command.
       // DMs with DMFLAG_ALLOW_CREATE_MOB can create anything, DMs with
       // DMFLAG_ALLOW_MOB_BUDGET have a set limit of mobs. DMs without
@@ -2051,6 +2057,37 @@ messages:
       Send(self,@ResetPlayerFlagList);
 
       return;
+   }
+
+   DMSayPortal(string=$)
+   {
+      local oPortal, lRooms, iRoomNum, lRoomNum, room;
+	  
+      StringSubstitute(string,dm_portal,"");
+      StringSubstitute(string," ","");
+	  
+      lRoomNum = StringToNumber(string);
+	  
+	  lRooms = Send(SYS, @GetRooms);
+	  
+	  foreach room in lRooms
+	  {
+	  	  iRoomNum = Send(room, @GetRoomNum);
+		  
+		  if iRoomNum = lRoomNum
+		  {
+			 oPortal = Create(&Portal,#dest_room_num=iRoomNum,
+				#dest_row=Send(room,@GetTeleportRow),
+				#dest_col=Send(room,@GetTeleportCol));
+
+			 Send(poOwner,@NewHold,#what=oPortal,#new_row=piRow, #new_col=piCol,
+				#fine_row=piFine_row,#fine_col=piFine_col,#new_angle=ANGLE_NORTH);
+			 
+		     break;
+		  }
+	  }
+	  
+	  return;
    }
 
    DMSayDisguise(string=$)
