@@ -21,7 +21,7 @@ resources:
    createfood_icon_rsc = icrefood.bgf
    createfood_desc_rsc = \
       "The power of Kraanan is summoned to materialize various nourishing foods.  "
-      "Requires elderberries and herbs to cast."
+      "Requires nothing but free will to cast."
 
    createfood_spell_intro = "Kraanan Lv. 1: Turns basic elderberries into food for you to eat and increase your vigor."
 
@@ -58,8 +58,6 @@ messages:
       // separate message so can change, then set from admin mode
 
       plReagents = $;
-      plReagents = Cons([&ElderBerry,2],plReagents);
-      plReagents = Cons([&Herbs,2],plReagents);
 
       return;
    }
