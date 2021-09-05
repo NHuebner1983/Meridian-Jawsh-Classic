@@ -43,6 +43,13 @@ properties:
 
 messages:
 
+   Constructed()
+   {
+        Send(self,@NewHold,#what=Create(&Chest),#new_row=8,#new_col=3);
+
+		propagate;
+   }
+
    CreateStandardExits()
    {
       plExits = $;
