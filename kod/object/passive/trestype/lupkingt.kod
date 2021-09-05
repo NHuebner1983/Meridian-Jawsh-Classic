@@ -38,10 +38,10 @@ messages:
                      [ &MysticSword, 10 ],
                      [ &FineLute, 5 ],
                      [ &IvyCirclet, 5 ],
-                     [ &JalaNecklace, 10 ],
+                     [ &JalaNecklace, 12 ],
                      [ &DiscordScroll, 2 ],
                      [ &TruceScroll, 3 ],
-		             [ &NeruditeBow, 3 ],
+		             [ &NeruditeBow, 1 ],
 					 [ &MagicBow, 1 ]
                    ];
 
