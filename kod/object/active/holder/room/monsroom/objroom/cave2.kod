@@ -77,7 +77,7 @@ messages:
    {
       piLastIllusionReplaceTime = GetTime();
 
-      plMonsters = [ [&Orc, 99], [&Spider, 1] ];
+      plMonsters = [ [&Orc, 99], [&OrcWizard, 1] ];
 
       plGenerators = [ [51, 14], [50, 34], [18, 50], [27, 47], [23, 39],
                        [19, 30], [25, 26], [25, 33], [32, 35], [31, 31],
