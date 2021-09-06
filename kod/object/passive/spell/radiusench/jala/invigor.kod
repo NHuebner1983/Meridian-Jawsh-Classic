@@ -84,7 +84,7 @@ messages:
 
    PeriodicEffect(who = $)
    {
-      if (who <> $)
+      if who <> $ AND NOT IsClass(who, &Monster)
       {
          Send(who,@RestAddExertion,#amount=-10000);
       }
