@@ -53,7 +53,7 @@ classvars:
    viVisionDistance = 18
    // Attack range of 192, or 3 row/col.
    viAttackRange = 192
-   viKarma = 75
+   viKarma = 100
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
    viCashmin = 500
    viCashmax = 1200
