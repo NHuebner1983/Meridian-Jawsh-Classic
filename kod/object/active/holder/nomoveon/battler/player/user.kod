@@ -6519,7 +6519,7 @@ messages:
          Send(self,@NotifyMonstersOfPresence);
       }
 
-      if piFlags & PFLAG_TRANCE
+      if (piFlags & PFLAG_TRANCE) AND NOT PFLAG_MANA_FOCUS
       {
          //Send(self,@BreakTrance,#event=EVENT_CAST,#what=oSpell);
 	     // Don't fizzle recasting the same spell.
