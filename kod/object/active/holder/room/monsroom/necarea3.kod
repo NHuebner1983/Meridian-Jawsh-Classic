@@ -101,8 +101,8 @@ messages:
       plExits = $;
 
       // Locked gate to the north
-      plExits = Cons([ 5, 20, ROOM_LOCKED_DOOR, Necropolis3_locked_gate ],plExits);
-      plExits = Cons([ 5, 21, ROOM_LOCKED_DOOR, Necropolis3_locked_gate ],plExits);
+      plExits = Cons([ 5, 20, RID_NECROAREA6, 32, 11, ROTATE_NONE ],plExits);
+      plExits = Cons([ 5, 21, RID_NECROAREA6, 32, 11, ROTATE_NONE ],plExits);
 
       // Southwest abandoned building
       plExits = Cons([ 19, 12, ROOM_LOCKED_DOOR, Necropolis3_locked_door ],plExits);
