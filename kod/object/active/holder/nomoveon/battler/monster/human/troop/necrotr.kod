@@ -66,6 +66,7 @@ properties:
 
    piBaseLevel = 150
    viLevel = 150
+   viKarma = -150
    piBaseDifficulty = 2
    viDifficulty = 4
 
