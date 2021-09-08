@@ -67,10 +67,7 @@ properties:
    piBaseLevel = 150
    viLevel = 150
    piBaseDifficulty = 2
-
-   //Here so they can be set
-   viLevel = 60         // piBaseLevel
-   viDifficulty = 4     // piBaseDifficulty
+   viDifficulty = 4
 
    piBody_translations = 0
    vrSound_aware = NecromancerTroop_sound_aware
