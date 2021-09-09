@@ -5321,6 +5321,8 @@ messages:
       plMonsterTemplates = cons(create(&DaemonSkeleton),plMonsterTemplates);
       plMonsterTemplates = cons(create(&NarthylWorm),plMonsterTemplates);
       plMonsterTemplates = cons(create(&DeathSpider),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DuskSkeleton),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&GhostSkeleton),plMonsterTemplates);
 
       plMonsterTemplates = cons(create(&GroundWorm),plMonsterTemplates);
       plMonsterTemplates = cons(create(&GroundWormLarva),plMonsterTemplates);

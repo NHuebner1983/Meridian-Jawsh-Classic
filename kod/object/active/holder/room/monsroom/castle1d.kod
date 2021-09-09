@@ -36,7 +36,7 @@ properties:
 
    prMusic = castle1d_music
 
-   piBaseLight = LIGHT_ALMOST_NONE
+   piBaseLight = LIGHT_MIN
    piOutside_factor = 0
 
    prRoom = room_castle1d
@@ -46,6 +46,10 @@ messages:
 
    Constructed()
    {
+      plMonsters = [ [&DuskSkeleton, 50], [&GhostSkeleton, 50] ];
+
+      plGenerators = [ [11, 7], [3, 8], [5, 5], [10, 5] ];
+
       propagate;
    }
 
