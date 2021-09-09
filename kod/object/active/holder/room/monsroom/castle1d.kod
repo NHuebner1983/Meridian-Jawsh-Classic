@@ -24,8 +24,8 @@ classvars:
 
    vrName = room_name_castle1d
 
-   viTeleport_row = 8
-   viTeleport_col = 13
+   viTeleport_row = 7
+   viTeleport_col = 15
 
    viTerrain_type = TERRAIN_CASTLE
 
@@ -46,7 +46,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&DuskSkeleton, 50], [&GhostSkeleton, 50] ];
+      plMonsters = [ [&Skeleton, 100] ];
 
       plGenerators = [ [11, 7], [3, 8], [5, 5], [10, 5] ];
 
