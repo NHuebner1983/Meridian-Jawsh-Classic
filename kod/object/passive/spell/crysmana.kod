@@ -224,7 +224,8 @@ messages:
       iWaitTime = 396 - (Send(who,@GetSpellAbility,
                               #spell_num=SID_CRYSTALIZE_MANA) * 2);
 
-      return iWaitTime * 1000;
+      // 30% of original timer, was 1000
+	  return iWaitTime * 300;
    }
 
    SuccessChance(who=$)
