@@ -140,7 +140,7 @@ messages:
 
    CanBeStoredInVault()
    {
-      return FALSE;
+      return TRUE;
    }
 
    DestroyDisposable()
