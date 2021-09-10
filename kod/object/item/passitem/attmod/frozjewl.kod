@@ -388,6 +388,8 @@ messages:
    KilledSomething(what=$)
    "Called when our owner killed something. Recharges hits on the JOF."
    {
+      local i;
+	  
       if (what = $
          OR NOT Send(SETTINGS_OBJECT,@CanFrozRechargeOnKill)
          OR (IsClass(what,&Monster) AND Send(what,@IsIllusion)))
@@ -395,15 +397,27 @@ messages:
          return;
       }
 
+	  foreach i in Send(poOwner,@GetPlayerUsing)
+	  {
+		 if IsClass(i,&JewelOfFroz)
+		 {
+		    Send(i,@Recharge);
+		 }
+ 	  }   
+
+      return;
+   }
+   
+   Recharge()
+   {
       piHits = Send(self,@GetMaxHits);
 	  
       if (poOwner <> $)
       {
          Send(poOwner,@MsgSendUser,#message_rsc=frozjewel_recharge_rsc);
       }
-
-      return;
+	  
+	  return;
    }
-
 end
 ////////////////////////////////////////////////////////////////////////////////
