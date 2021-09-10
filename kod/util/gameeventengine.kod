@@ -76,6 +76,7 @@ messages:
       plRandomEvents = Cons(&RatInvasion,plRandomEvents);
       plRandomEvents = Cons(&OrcInvasion,plRandomEvents);
       plRandomEvents = Cons(&SpiderInvasion,plRandomEvents);
+      plRandomEvents = Cons(&SkeletonInvasion,plRandomEvents);
 
       return;
    }
@@ -572,6 +573,13 @@ messages:
                   piActiveEventsFlagLo | GAMEEVENT_LOBYTE_SPIDER_INVASION;
                break;
 
+            case &SkeletonInvasion:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi | GAMEEVENT_HIBYTE_SKELETON_INVASION;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo | GAMEEVENT_LOBYTE_SKELETON_INVASION;
+               break;
+
             case &Qormas:
                piActiveEventsFlagHi = 
                   piActiveEventsFlagHi | GAMEEVENT_HIBYTE_QORMAS;
@@ -678,6 +686,13 @@ messages:
                   piActiveEventsFlagHi & ~GAMEEVENT_HIBYTE_SPIDER_INVASION;
                piActiveEventsFlagLo = 
                   piActiveEventsFlagLo & ~GAMEEVENT_LOBYTE_SPIDER_INVASION;
+               break;
+
+            case &SkeletonInvasion:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi & ~GAMEEVENT_HIBYTE_SKELETON_INVASION;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo & ~GAMEEVENT_LOBYTE_SKELETON_INVASION;
                break;
 
             case &Qormas:
@@ -813,6 +828,12 @@ messages:
    {
       return ((piActiveEventsFlagHi & GAMEEVENT_HIBYTE_SPIDER_INVASION)
          AND (piActiveEventsFlagLo & GAMEEVENT_LOBYTE_SPIDER_INVASION));
+   }
+
+   IsSkeletonInvasionActive()
+   {
+      return ((piActiveEventsFlagHi & GAMEEVENT_HIBYTE_SKELETON_INVASION)
+         AND (piActiveEventsFlagLo & GAMEEVENT_LOBYTE_SKELETON_INVASION));
    }
 
    IsQormasActive()
