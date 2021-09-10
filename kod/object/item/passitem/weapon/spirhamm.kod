@@ -77,7 +77,7 @@ messages:
          piHitBonus = iToHitBonus;
       }
 
-      ptLongevity = CreateTimer(self,@WeaponExpires,iLongevity);
+      ptLongevity = CreateTimer(self,@WeaponExpires,7200000);
 
       Send(self,@SetSpellFlag,#flag=ATCK_SPELL_HOLY,#value=TRUE);
 
