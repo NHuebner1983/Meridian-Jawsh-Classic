@@ -75,6 +75,7 @@ messages:
       Debug("Creating Events");
       plRandomEvents = Cons(&RatInvasion,plRandomEvents);
       plRandomEvents = Cons(&OrcInvasion,plRandomEvents);
+      plRandomEvents = Cons(&SpiderInvasion,plRandomEvents);
 
       return;
    }
@@ -564,6 +565,13 @@ messages:
                   piActiveEventsFlagLo | GAMEEVENT_LOBYTE_ORC_INVASION;
                break;
 
+            case &SpiderInvasion:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi | GAMEEVENT_HIBYTE_SPIDER_INVASION;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo | GAMEEVENT_LOBYTE_SPIDER_INVASION;
+               break;
+
             case &Qormas:
                piActiveEventsFlagHi = 
                   piActiveEventsFlagHi | GAMEEVENT_HIBYTE_QORMAS;
@@ -663,6 +671,13 @@ messages:
                   piActiveEventsFlagHi & ~GAMEEVENT_HIBYTE_ORC_INVASION;
                piActiveEventsFlagLo = 
                   piActiveEventsFlagLo & ~GAMEEVENT_LOBYTE_ORC_INVASION;
+               break;
+
+            case &SpiderInvasion:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi & ~GAMEEVENT_HIBYTE_SPIDER_INVASION;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo & ~GAMEEVENT_LOBYTE_SPIDER_INVASION;
                break;
 
             case &Qormas:
@@ -792,6 +807,12 @@ messages:
    {
       return ((piActiveEventsFlagHi & GAMEEVENT_HIBYTE_ORC_INVASION)
          AND (piActiveEventsFlagLo & GAMEEVENT_LOBYTE_ORC_INVASION));
+   }
+
+   IsSpiderInvasionActive()
+   {
+      return ((piActiveEventsFlagHi & GAMEEVENT_HIBYTE_SPIDER_INVASION)
+         AND (piActiveEventsFlagLo & GAMEEVENT_LOBYTE_SPIDER_INVASION));
    }
 
    IsQormasActive()

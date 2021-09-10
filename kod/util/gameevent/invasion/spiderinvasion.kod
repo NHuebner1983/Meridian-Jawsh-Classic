@@ -46,7 +46,7 @@ properties:
    plEventRooms = $
    piBabySpiders = 50
    piSpiders = 50
-   piBlackSpiders = 25
+   piBlackSpiders = 50
    piMotherSpiders = 10
    piActiveRoom = RID_TOS
    piPhase = 0
@@ -72,6 +72,14 @@ messages:
 
       propagate;
    }
+
+   MonsterKilled(dead_monster=$,killing_player=$,corpse=$)
+   {
+      Send(self,@Update);
+	  
+      return;
+   }
+
 
    // OPTIONAL, DO NOT CALL DIRECTLY!  The engine will call this after it ends
    // your event
