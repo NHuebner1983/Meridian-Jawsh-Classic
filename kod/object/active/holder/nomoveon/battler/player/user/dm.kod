@@ -821,7 +821,15 @@ messages:
    {
 	   local i;
 
-         foreach i in Send(self,@GetPlayerUsing)
+         foreach i in plActive
+         {
+            if Send(i,@InUse)
+            {
+               Send(i,@SetItemColor,#flags=color);
+            }
+         }
+
+         foreach i in plPassive
          {
             if Send(i,@InUse)
             {

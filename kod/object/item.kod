@@ -1036,6 +1036,8 @@ messages:
 
    NewUsed()
    {
+      pbIn_use = TRUE;
+
       Send(self,@DoPlayerArt);
       If IsClass(poOwner,&Player)
       {
@@ -1097,6 +1099,8 @@ messages:
 
    NewUnused()
    {
+      pbIn_use = FALSE;
+	  
       Send(self,@UndoPlayerArt);
 
       return;
@@ -1588,11 +1592,11 @@ messages:
    }
 
    ReqDMDelete()
-   "Will this item be deleted by a DM Clear Inventory command?"
+   "By default this item can be removed."
    {
-      return TRUE;
+      return NOT (piUsed = 1 OR pbIn_use OR pbColored);
    }
-
+   
    // An item can format a text effect for players in the room to see,
    //  whether held by a player or not.  If range is specified,
    //  only players within that range will see the effect.
