@@ -134,6 +134,12 @@ properties:
    plItem_attributes = $
    piItem_flags = 0
 
+   piUsed = 2
+   pbIn_use = FALSE
+
+   // Item is colored
+   pbColored = FALSE
+
 messages:
 
    Constructor(corpse=$, oDMCreator=$)
@@ -1356,6 +1362,16 @@ messages:
       
       return;
    }
+
+   SetItemColor(flags = $)
+   {
+	   piItem_flags = flags;
+
+	   pbColored = TRUE;
+
+	   return;
+   }
+   
 
    CanIdentify()
    {
@@ -2588,6 +2604,16 @@ messages:
       GodLog(Send(self,@GetTrueName)," weight: ",viWeight," bulk: ",viBulk);
 
       return;
+   }
+
+   InUse()
+   {
+	   return (piUsed = 1 OR pbIn_use);
+   }
+   
+   IsColored()
+   {
+	   return pbColored;
    }
 
 end

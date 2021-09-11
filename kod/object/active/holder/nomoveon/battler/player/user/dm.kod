@@ -86,6 +86,17 @@ resources:
    dm_none = "none"
    dm_clear_abilities_command = "clear abilities"
    dm_clear_inventory_command = "clear inventory"
+   
+   // Item color commands for targetted item   
+   dm_color_yellow_command="color yellow"
+   dm_color_blue_command="color blue"
+   dm_color_red_command="color red"
+   dm_color_purple_command="color purple"
+   dm_color_green_command="color green"
+   dm_color_black_command="color black"
+   dm_color_white_command="color white"
+   dm_get_robes_command = "get robes"
+   
    dm_get_spells_command = "get spells"
    dm_get_skills_command = "get skills"
    dm_get_money_command = "get money"
@@ -812,6 +823,21 @@ messages:
       return (prRank = dm_moderator);
    }
 
+   SetActiveInventoryObjectsColor(color=$)
+   {
+	   local i;
+
+         foreach i in Send(self,@GetPlayerUsing)
+         {
+            if Send(i,@InUse)
+            {
+               Send(i,@SetItemColor,#flags=color);
+            }
+         }
+
+		 return;
+   }
+   
    UserSay(string=$,type=$)
    {
       local i;
@@ -903,6 +929,50 @@ messages:
 
          return;
       }
+
+      if StringEqual(string,dm_color_black_command)
+      {
+		 Send(self,@SetActiveInventoryObjectsColor,#color=44);
+		 
+         return;
+      }
+      if StringEqual(string,dm_color_white_command)
+      {
+		 Send(self,@SetActiveInventoryObjectsColor,#color=PT_FRST_WHT3);
+		 
+         return;
+      }
+      if StringEqual(string,dm_color_yellow_command)
+      {
+		 Send(self,@SetActiveInventoryObjectsColor,#color=PT_ITEM_XLAT_BLUE_TO_YELLOW);
+		 
+         return;
+      }
+      if StringEqual(string,dm_color_green_command)
+      {
+		 Send(self,@SetActiveInventoryObjectsColor,#color=PT_MET_GREEN);
+		 
+         return;
+      }
+      if StringEqual(string,dm_color_red_command)
+      {
+		 Send(self,@SetActiveInventoryObjectsColor,#color=PT_MET_RED);
+		 
+         return;
+      }
+      if StringEqual(string,dm_color_blue_command)
+      {
+		 Send(self,@SetActiveInventoryObjectsColor,#color=PT_MET_BLUE);
+		 
+         return;
+      }
+      if StringEqual(string,dm_color_purple_command)
+      {
+		 Send(self,@SetActiveInventoryObjectsColor,#color=XLAT_TO_PURPLE);
+		 
+         return;
+      }
+	  
 
       if StringEqual(string,"get coords")
       {
