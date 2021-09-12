@@ -36,8 +36,8 @@ messages:
                      [ &BerserkerRing, 6],
                      [ &Emerald, 10],
                      [ &RedMushroom, 10],
-                     [ &MysticSword, 6],
-                     [ &FireArrow, 3],
+                     [ &MysticSword, 8],
+                     [ &FireArrow, 1],
                      [ &DaemonHelm, 1]
                    ];
 
