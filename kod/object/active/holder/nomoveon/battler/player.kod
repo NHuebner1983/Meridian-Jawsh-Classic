@@ -10754,7 +10754,8 @@ messages:
    RefreshPlayerVisualGear()
    {
       local n, lRefreshItemTypes, i, iHighestLayer, oHighestGear,
-            iLowestLayer, oLowestGear, oSoldierShield, bSoldierShieldSlung;
+            iLowestLayer, oLowestGear, oSoldierShield, bSoldierShieldSlung,
+            iFrozCount;
 
       lRefreshItemTypes = [ITEM_USE_SHIRT,ITEM_USE_BODY,ITEM_USE_LEGS];
 
@@ -10809,12 +10810,19 @@ messages:
       oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
       if oSoldierShield <> $
       {
+         iFrozCount = 0;
          foreach i in plUsing
          {
+            if IsClass(i,&JewelOfFroz)
+            {
+               iFrozCount++;
+            }
+
             if (IsClass(i,&Shield)
                AND NOT IsClass(i,&SoldierShield))
                OR IsClass(i,&Bow)
                OR IsClass(i,&Lute)
+               OR iFrozCount > 1
             {
                Send(oSoldierShield,@SlingOnBack,#report=FALSE);
                bSoldierShieldSlung = TRUE;
