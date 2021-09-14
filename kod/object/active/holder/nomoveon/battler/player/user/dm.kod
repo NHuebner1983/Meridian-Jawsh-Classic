@@ -2239,7 +2239,7 @@ messages:
       {
 	     sName = Send(i,@GetName);
 		 
-         if StringContain(sName, string)
+         if StringEqual(sName, string)
          {
 		    bFound = TRUE;
             bAllowed = FALSE;
