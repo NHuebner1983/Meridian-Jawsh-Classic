@@ -2224,7 +2224,7 @@ messages:
 
    DMSayMakeMonster(string=$)
    {
-      local bAllowed, bFound, i, lTemplate, oObject;
+      local bAllowed, bFound, i, lTemplate, oObject, sName;
 
       if (string = $)
       {
@@ -2233,12 +2233,15 @@ messages:
 
       bFound = FALSE;
       lTemplate = Send(SYS,@GetMonsterTemplates);
-
+	  StringSubstitute(string, "monster ", "");
+	  
       foreach i in lTemplate
       {
-         if StringContain(string,Send(i,@GetName))
+	     sName = Send(i,@GetName);
+		 
+         if StringContain(sName, string)
          {
-            bFound = TRUE;
+		    bFound = TRUE;
             bAllowed = FALSE;
 
             // Two levels of mob creation abilities:
@@ -2296,8 +2299,6 @@ messages:
                         #string=dm_void,#parm1=vrName,
                         #parm2=Send(i,@GetIndef),#parm3=Send(i,@GetName));
                }
-
-               return;
             }
          }
       }
