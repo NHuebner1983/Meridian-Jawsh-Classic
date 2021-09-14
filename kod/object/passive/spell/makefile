@@ -8,6 +8,7 @@ DEPEND = ..\spell.bof
 BOFS = animate.bof \
        apparitn.bof \
        atakspel.bof \
+	   boon.bof \
        bait.bof \
        brittle.bof \
        brthlife.bof \
