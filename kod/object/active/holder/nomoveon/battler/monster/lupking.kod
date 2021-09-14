@@ -98,6 +98,9 @@ classvars:
    viHoldDurationMax = 28000  // Milliseconds.
    viHoldDurationMin = 17000  // Milliseconds.
 
+   viBonusXP = 2000
+   viBonusTP = 10
+
 properties:
 
    piAnimation = ANIM_NONE
