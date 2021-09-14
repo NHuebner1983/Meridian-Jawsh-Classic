@@ -77,7 +77,7 @@ classvars:
    viFatigueStrength = 3000
    viFatigueDuration = 8000
 
-   viBonusXP = 100
+   viBonusXP = 500
    viBonusTP = 10
 
 properties:
