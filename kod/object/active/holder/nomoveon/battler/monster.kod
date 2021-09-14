@@ -364,7 +364,10 @@ classvars:
    viFaction = FACTION_NEUTRAL
 
    vbIsAreaEffect = FALSE
-
+      
+   viBonusXP = 0
+   viBonusTP = 0
+	  
 properties:
 
    piVisionDistance
@@ -593,7 +596,17 @@ messages:
 
       propagate;
    }
-
+   
+   GetBonusXP()
+   {
+       return viBonusXP;
+   }
+   
+   GetBonusTP()
+   {
+      return viBonusTP;
+   }
+   
    GetCurrentState()
    {
 	   return viCurrentState;

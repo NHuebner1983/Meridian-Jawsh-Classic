@@ -8953,7 +8953,7 @@ messages:
    "stamina, all the way down to half for those with high staminas."
    {
       local i, iMaxHealth, dodgeskill, oSkill, monster_level, iXP, oWeapon,
-            iItemBonus, iUnbound, iDist, iDifference;
+            iItemBonus, iUnbound, iDist, iDifference, iBonusXP, iBonusTP;
 
       iXP = 0;
       iItemBonus = 0;
@@ -8971,10 +8971,14 @@ messages:
       {
          // Set a reasonable upper bound to handle event characters.
          monster_level = Bound(Send(what,@GetBaseMaxHealth),MIN_HP,1000);
+		 iBonusXP = 0;
+		 iBonusTP = 0;
       }
       else
       {
          monster_level = Send(what,@GetLevel);
+		 iBonusXP = Send(what,@GetBonusXP);
+		 iBonusTP = Send(what,@GetBonusTP);
       }
 
       if ((piFlags & PFLAG_DID_DAMAGE)
@@ -9099,6 +9103,8 @@ messages:
          iXP = iXP * Bound(Send(SETTINGS_OBJECT,@GetXPPercent),50,1000) / 100;
          // Add in XP bonus from items after this.
          iXP += iItemBonus;
+		 iXP += iBonusXP;
+		 
          // AddXP checks for HP gain and redraws the XP bar.
          // NOTE: iMaxHealth could be wrong after this point.
          Send(self,@AddXP,#iAmount=iXP);
@@ -9177,6 +9183,9 @@ messages:
                piTraining_points = piTraining_points + 2;
             }
          }
+         
+		 // Add bonus training points
+         piTraining_points += iBonusTP;
 
          // Let the player know how many training points they have, if they
          // either reached the max, or a multiple of 100.
