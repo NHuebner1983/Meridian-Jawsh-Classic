@@ -43,11 +43,11 @@ classvars:
    viBulk = 4
    viWeight = 4
    
-   viMinDamage = 2
-   viMaxDamage = 6
+   viMinDamage = 1
+   viMaxDamage = 4
    
-   viMiniceDamage = 3
-   viMaxiceDamage = 8
+   viMiniceDamage = 2
+   viMaxiceDamage = 6
 
 properties:
 
