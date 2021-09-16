@@ -69,6 +69,8 @@ classvars:
 
    // 1 in x chance to cast a spell.
    viSpellChance = 3
+   
+   viBonusXP = 700
 
 properties:
 
