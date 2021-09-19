@@ -81,6 +81,8 @@ messages:
 
    Constructed()
    {
+      local oNexusPortal;
+	  
       plMonsters = [ [&Troll, 100] ];
 
       plGenerators = [ [9, 50], [11, 30], [6, 22], [24, 31], [25, 50],
@@ -107,9 +109,12 @@ messages:
       // Just construct the Node.  We can find and place it later.
       Create(&ManaNode,#node_num=NODE_i9,#name_rsc=i9_node_name,
              #desc_rsc=i9_node_desc,#iRoomNum=piRoom_num);
-	  
-	  // Create the Nexus Node (Martyr's Battleground Node)
-	  Create(&ManaNode,#node_num=NODE_Q,#iRoomNum=piRoom_num);
+
+   	  oNexusPortal = Create(&Portal,#dest_room_num=RID_CANYON2,#dest_row=3,#dest_col=64,
+		#dest_fine_row=37, #dest_fine_col=14);
+
+	  Send(self,@NewHold,#what=oNexusPortal,#new_row=53, #new_col=54,
+		#fine_row=16,#fine_col=50,#new_angle=ANGLE_NORTH);
 
       propagate;
    }
@@ -228,21 +233,13 @@ messages:
 
    Delete()
    {
-      local oNodeI, oNodeQ;
+      local oNode;
 
-      oNodeI = Send(SYS,@FindNodeByNum,#num=NODE_I9);
-      oNodeQ = Send(SYS,@FindNodeByNum,#num=NODE_Q);
-	  
-      if oNodeI <> $
+      oNode = Send(SYS,@FindNodeByNum,#num=NODE_I9);
+      if oNode <> $
       {
          // delete 'our' node
-         Send(oNodeI,@Delete);
-      }
-	  
-      if oNodeQ <> $
-      {
-         // delete 'our' node
-         Send(oNodeQ,@Delete);
+         Send(oNode,@Delete);
       }
 
       poNode = $;
@@ -258,7 +255,7 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local iHour,iLight_effect, i, bFound, oNodeQ;
+      local iHour,iLight_effect, i, bFound;
 
       iHour = Send(SYS,@GetHour);
 
@@ -276,13 +273,8 @@ messages:
       if iHour = 0 AND poNode = $
       {
          poNode = Send(SYS,@FindNodeByNum,#num=NODE_I9);
-		 oNodeQ = Send(SYS,@FindNodeByNum,#num=NODE_Q);
-		 
          Send(poNode,@NodeAppear,#where=self,#row=27,#col=61,
                #fine_row=48,#fine_col=40);
-
-         Send(oNodeQ,@NodeAppear,#where=self,#row=50,#col=53,
-               #fine_row=49,#fine_col=18);
 
          foreach i in plActive
          {
@@ -314,7 +306,7 @@ messages:
       piPortal_counter = piPortal_counter - 1;
       if (piPortal_counter <= 0)
       {
-         Send(self,@ClosePortalToTemple);
+         //Send(self,@ClosePortalToTemple);
       }
 
       propagate;

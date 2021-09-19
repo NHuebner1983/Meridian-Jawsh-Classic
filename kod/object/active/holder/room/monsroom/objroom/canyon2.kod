@@ -87,6 +87,8 @@ messages:
                         #dest_room_num=RID_HERMIT_HUT,#dest_row=5,#dest_col=4);
       Send(self,@Newhold,#what=oPortal,#new_row=25,#new_col=61);
 
+      Send(self,@ActivatePortal);
+	  
       propagate;
    }
 
