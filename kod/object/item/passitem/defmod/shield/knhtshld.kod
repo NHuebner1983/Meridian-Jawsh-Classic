@@ -34,8 +34,8 @@ classvars:
    vrIcon = knightshield_icon_rsc
    vrDesc = knightshield_desc_rsc
 
-   viHits_init_min = 250
-   viHits_init_max = 300
+   viHits_init_min = 600
+   viHits_init_max = 750
 
    viValue_average = 800
    viWeight = 175

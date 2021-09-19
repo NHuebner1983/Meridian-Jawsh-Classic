@@ -39,8 +39,8 @@ classvars:
    vrIcon = OrcShield_icon_rsc
    vrDesc = OrcShield_desc_rsc
 
-   viHits_init_min = 250
-   viHits_init_max = 300
+   viHits_init_min = 600
+   viHits_init_max = 750
 
    viValue_average = 1000
    viWeight = 250
