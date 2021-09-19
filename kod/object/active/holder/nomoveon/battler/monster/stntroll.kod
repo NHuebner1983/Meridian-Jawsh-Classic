@@ -52,15 +52,15 @@ classvars:
    viTreasure_type = TID_MEDIUM_HUMAN
    viSpeed = SPEED_FAST
    viAttributes = 0
-   viLevel = 120
+   viLevel = 140
    viDifficulty = 8
    viVisionDistance = 20
    // Attack range of 192, or 3 row/col.
    viAttackRange = 192
-   viKarma = -100
+   viKarma = 100
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
-   viCashmin = 500
-   viCashmax = 1000
+   viCashmin = 1000
+   viCashmax = 1500
    vrSound_hit = StoneTroll_sound_hit
    vrSound_miss = StoneTroll_sound_miss
    vrSound_aware = StoneTroll_sound_aware
