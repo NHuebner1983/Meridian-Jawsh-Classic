@@ -61,9 +61,10 @@ messages:
    GetResistanceModifiers()
    {
       return [ [ATCK_WEAP_THRUST,15],
-               [ATCK_WEAP_SLASH,10],
-			   [ATCK_WEAP_PIERCE,5],
+               [ATCK_WEAP_SLASH,15],
+               [ATCK_WEAP_BLUDGEON,10],
                [-ATCK_SPELL_FIRE,-10],
+               [ATCK_WEAP_PIERCE,10],
                [-ATCK_SPELL_SHOCK,-15]
              ];
    }
