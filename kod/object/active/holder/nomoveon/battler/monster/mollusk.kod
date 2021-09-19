@@ -91,6 +91,8 @@ classvars:
    // Chance to do a rock throw
    viSpellChance = 4
 
+   viBonusXP = 500
+
 properties:
 
    piAnimation = ANIM_NONE
