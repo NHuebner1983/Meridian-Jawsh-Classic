@@ -49,6 +49,9 @@ classvars:
    viInventory_group = 3
    viBroken_group = 2
 
+   viDamage_min = 15
+   viDamage_max = 30
+
 properties:
 
    piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_SLASH
