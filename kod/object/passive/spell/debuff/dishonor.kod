@@ -131,7 +131,7 @@ messages:
                #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
          // Make sure hps aren't over maximum.  Post this so enchantment is finished.
-         //Post(oTarget,@NewHealth);
+         Post(oTarget,@NewHealth);
       }
       else
       {
