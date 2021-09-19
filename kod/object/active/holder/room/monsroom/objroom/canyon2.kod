@@ -73,7 +73,7 @@ messages:
    Constructed()
    {
       local oPortal;
-      plMonsters = [ [&StoneTroll, 85], [&GroundwormQueen, 15] ];
+      plMonsters = [ [&StoneTroll, 99], [&GroundwormQueen, 1] ];
 
       plGenerators = [ [9, 50], [11, 30], [6, 22], [24, 31], [25, 50],
                        [30, 53], [52, 53], [36, 59], [50, 36], [42, 15],
