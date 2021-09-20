@@ -5670,6 +5670,7 @@ messages:
       plItemTemplates = cons(create(&TeloFruit),plItemTemplates);
 
       plItemTemplates = cons(create(&EasterEgg),plItemTemplates);
+      plItemTemplates = cons(create(&TikiTribute),plItemTemplates);
 
       // Head
       plItemTemplates = cons(create(&Helm),plItemTemplates);
