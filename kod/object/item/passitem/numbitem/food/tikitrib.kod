@@ -20,7 +20,7 @@ resources:
    tiki_tribute_icon_rsc = TikiTrib.bgf
    tiki_tribute_desc_rsc = \
       "To honor the memory of Tiki, a dear lost friend. May we drink in his name.  "
-	  "Rest in piece - Riki Tiki Tavi - April 2021"
+	  "Rest in peace - Riki Tiki Tavi - April 2021"
    tiki_tribute_name_plural_rsc = "Tiki Tributes"
    
    tiki_tribute_disp_name = "Large Tiki of booze"
