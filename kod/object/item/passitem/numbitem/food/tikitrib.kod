@@ -17,7 +17,7 @@ constants:
 resources:
 
    tiki_tribute_name_rsc = "Tiki Tribute"
-   tiki_tribute_icon_rsc = TikiTrib.bgf
+   tiki_tribute_icon_rsc = tikitrib.bgf
    tiki_tribute_desc_rsc = \
       "To honor the memory of Tiki, a dear lost friend. May we drink in his name.  "
 	  "Rest in peace - Riki Tiki Tavi - April 2021"
