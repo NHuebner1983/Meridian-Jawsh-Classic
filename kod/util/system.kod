@@ -5655,6 +5655,7 @@ messages:
       plItemTemplates = cons(create(&StoutGoblet),plItemTemplates);
       plItemTemplates = cons(create(&Mug),plItemTemplates);
       plItemTemplates = cons(create(&Waterskin),plItemTemplates);
+      plItemTemplates = cons(create(&TikiTribute),plItemTemplates);
 
       plItemTemplates = cons(create(&Mint),plItemTemplates);
       plItemTemplates = cons(create(&InkyCap),plItemTemplates);
