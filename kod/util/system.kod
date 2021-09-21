@@ -3967,6 +3967,7 @@ messages:
 
       Create(&LupoggTreasure);
       Create(&NecroTreasure);
+      Create(&EarthDragonTreasure);
 
       Create(&MimicTreasure);
 
@@ -5366,6 +5367,7 @@ messages:
       plMonsterTemplates = cons(create(&IceElementalChampion),plMonsterTemplates);
       plMonsterTemplates = cons(create(&NeruElemental),plMonsterTemplates);
       plMonsterTemplates = cons(create(&NeruElementalChampion),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&EarthDragon),plMonsterTemplates);
 
       plMonsterTemplates = cons(create(&Mimic),plMonsterTemplates);
 
@@ -5653,6 +5655,7 @@ messages:
       plItemTemplates = cons(create(&StoutGoblet),plItemTemplates);
       plItemTemplates = cons(create(&Mug),plItemTemplates);
       plItemTemplates = cons(create(&Waterskin),plItemTemplates);
+      plItemTemplates = cons(create(&TikiTribute),plItemTemplates);
 
       plItemTemplates = cons(create(&Mint),plItemTemplates);
       plItemTemplates = cons(create(&InkyCap),plItemTemplates);
