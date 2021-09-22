@@ -1,0 +1,47 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Weed is NumberItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Weed_name_one_rsc = "weed"
+   Weed_name_many_rsc = "bunch of weed"
+   
+   Weed_icon_rsc = weed.bgf
+   Weed_desc_rsc = \
+      "You already knwo what it is.  "
+
+
+classvars:
+
+   vrName = Weed_name_one_rsc
+   vrIcon = Weed_icon_rsc
+   vrDesc = Weed_desc_rsc
+
+   vrName_plural = Weed_name_many_rsc
+
+   viBulk = 0
+   viWeight = 0
+
+   viValue_average = 100
+
+   viUse_type = ITEM_CANT_USE
+
+properties:
+
+messages:
+
+end
+////////////////////////////////////////////////////////////////////////////////

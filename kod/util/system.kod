@@ -5741,6 +5741,7 @@ messages:
 
       plItemTemplates = cons(create(&ShieldRod),plItemTemplates);
       plItemTemplates = cons(create(&DamageRod),plItemTemplates);
+      plItemTemplates = cons(create(&Weed),plItemTemplates);
 
       return;
    }
