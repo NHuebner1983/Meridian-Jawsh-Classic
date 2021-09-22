@@ -136,7 +136,8 @@ messages:
             Create(&Cheese,#number=2),
             Create(&WineGoblet),
             Create(&Mug,#number=4),
-            Create(&Waterskin,#number=4)
+            Create(&Waterskin,#number=4),
+            Create(&BeerMug)
          ],
       $,$,$];
 

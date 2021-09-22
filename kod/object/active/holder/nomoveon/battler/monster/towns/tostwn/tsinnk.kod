@@ -112,7 +112,8 @@ messages:
             Create(&LoadoutScroll,#labelled=TRUE),
             Create(&SetScroll,#labelled=TRUE),
             Create(&Cheese,#number=3),
-            Create(&Mug)
+            Create(&Mug),
+            Create(&BeerMug)
          ],
       $,$,$];
 

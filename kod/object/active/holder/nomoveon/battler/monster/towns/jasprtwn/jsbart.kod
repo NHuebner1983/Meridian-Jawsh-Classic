@@ -105,7 +105,8 @@ messages:
             Create(&Chess),
             Create(&MeatPie,#number=4),
             Create(&Bread,#number=4),
-            Create(&StoutGoblet)
+            Create(&StoutGoblet),
+            Create(&BeerMug)
          ],
       $,$,$];
       

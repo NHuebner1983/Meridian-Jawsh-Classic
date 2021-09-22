@@ -180,7 +180,8 @@ messages:
          [
             Create(&Meatpie),
             Create(&Bread),
-            Create(&Mug,#number=4)
+            Create(&Mug,#number=4),
+            Create(&BeerMug)
          ],
       $,$,$];
 
