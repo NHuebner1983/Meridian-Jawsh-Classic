@@ -89,7 +89,8 @@ messages:
       plFor_sale = [ 
          [ 
             Create(&Bread,#number=4),
-            Create(&KocatanMug,#number=4)
+            Create(&KocatanMug,#number=4),
+            Create(&BeerMug)
          ], 
       $,$,$];
 
