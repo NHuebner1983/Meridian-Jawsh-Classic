@@ -16,13 +16,16 @@ constants:
 
 resources:
 
-   Weed_name_one_rsc = "weed"
-   Weed_name_many_rsc = "bunch of weed"
+   Weed_name_one_rsc = "Riija C-Strain"
+   Weed_name_many_rsc = "A few ounces of Riija C-Strain"
    
    Weed_icon_rsc = weed.bgf
    Weed_desc_rsc = \
-      "You already knwo what it is.  "
-
+      "This is a special strain of cannabis home grown by Cyrus  "
+      "in a grow room hidden under the temple of Riija.  With  "
+      "Riijas magic combining with the herbs I assure you stoned  "
+      "isn't all you'll be.  \nBetter return this to Cyrus, unless  "
+      "you wana owe him more than you can afford.  "
 
 classvars:
 
