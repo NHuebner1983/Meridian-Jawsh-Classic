@@ -894,6 +894,11 @@ resources:
       "A plaque below the model reads:\n"
       "This regal woman bears a small resemblance to Princess Kateriina."
 
+   oo_weed_plant_name = "Cannabis Plant"
+   oo_weed_plant_icon = weedplant.bgf
+   oo_weed_plant_desc = \
+      "A special cannabis plant grown by Cyrus himself know as C-strain."
+
 classvars:
 
 properties:
@@ -2021,6 +2026,11 @@ messages:
          vrName = oo_hist_hermit_name;
          vrIcon = oo_hist_hermit_icon;
          vrDesc = oo_hist_hermit_desc;
+         break;
+      case OO_WEED_PLANT:
+         vrName = oo_weed_plant_name;
+         vrIcon = oo_weed_plant_icon;
+         vrDesc = oo_weed_plant_desc;
          break;
       }
 
