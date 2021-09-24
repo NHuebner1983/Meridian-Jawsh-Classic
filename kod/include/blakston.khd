@@ -1797,8 +1797,8 @@
    TID_POGG = 74
    TID_NECRO = 75
    TID_RAT_SOLDIER = 76
-
    TID_MIMIC = 77
+   TID_EARTH_DRAGON = 78
    
    // English articles
 
