@@ -43,14 +43,17 @@ messages:
 
    ReqUseSomething(what = $)
    {
-      if IsClass(what, &Ring)
+      local i;
+	  
+	  if IsClass(what, &Ring)
       {
-         if Send(poOwner, @TryUnuseItem, #what = self)
-         {
-            propagate;
-         }
-         
-         return FALSE;
+	     foreach i in Send(poOwner,@GetPlayerUsing)
+	     {
+			if GetClass(i) = GetClass(what)
+            {
+               return FALSE;
+            }
+	     }
       }
       
       propagate;
