@@ -7,11 +7,11 @@ constants:
 
 resources:
 
-   Weed_name_one_rsc = "Jala C-Strain"
-   Weed_name_many_rsc = "A few ounces of Jala C-Strain"
+   Weed5_name_one_rsc = "Jala C-Strain"
+   Weed5_name_many_rsc = "A few ounces of Jala C-Strain"
    
-   Weed_icon_rsc = weed5.bgf
-   Weed_desc_rsc = \
+   Weed5_icon_rsc = weed5.bgf
+   Weed5_desc_rsc = \
       "This is a special strain of cannabis home grown by Cyrus in "
       "a hidden grow room. Rumors say only Parrin can find it.  This   "
       "strain is played music its entier growth cycle. The genre  "

@@ -7,11 +7,11 @@ constants:
 
 resources:
 
-   Weed_name_one_rsc = "Weapons grade C-Strain"
-   Weed_name_many_rsc = "A few ounces of Weaapons grade"
+   Weed7_name_one_rsc = "Weapons grade C-Strain"
+   Weed7_name_many_rsc = "A few ounces of Weaapons grade"
    
-   Weed_icon_rsc = weed7.bgf
-   Weed_desc_rsc = \
+   Weed7_icon_rsc = weed7.bgf
+   Weed7_desc_rsc = \
       "This is a special strain of cannabis home grown by Cyrus  "
       "in a grow room hidden in the back of Rooks.  This herd is  "
       "lectured by Rook daily on the art of battle daily. The herb  "
