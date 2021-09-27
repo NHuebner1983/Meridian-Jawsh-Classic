@@ -351,12 +351,10 @@ messages:
             return FALSE;
          }
 
-        return True;
+        return TRUE;
       }
 
-      Debug("Tried to put an amulet on a non-user: ",Send(what,@GetName));
-
-      return False;
+      return FALSE;
    }
 
    NewUsed(what = $)
@@ -420,7 +418,7 @@ messages:
          plStatmods = [0,0,0,0,0,0];
       }
 
-      iStatMod = (105 * iModifier / 1000);
+      iStatMod = (110 * iModifier / 1000);
       if (iStatMod -  Nth(plStatmods,2)) <> 0
       {
          iStatMod = Send(poOwner,@AddIntellect,#points=(iStatMod - Nth(plStatmods,2)))
@@ -428,7 +426,7 @@ messages:
          SetNth(plStatmods,2,iStatMod);
       }
 
-      iStatMod = (105 * iModifier / 1000);
+      iStatMod = (110 * iModifier / 1000);
       if (iStatMod - Nth(plStatmods,6)) <> 0
       {
          iStatMod = Send(poOwner,@AddMysticism,#points=(iStatMod - Nth(plStatmods,6)))
@@ -452,7 +450,7 @@ messages:
          SetNth(plStatmods,4,iStatMod);
       }
 
-      iStatMod = (39 * iModifier / 1000) - 2;
+      iStatMod = (59 * iModifier / 1000) - 2;
       if (iStatMod - Nth(plStatmods,5)) <> 0
       {
          iStatMod = Send(poOwner,@AddStamina,#points=(iStatMod - Nth(plStatmods,5)))
@@ -460,7 +458,7 @@ messages:
          SetNth(plStatmods,5,iStatMod);
       }
 
-      iStatMod = (39 * iModifier / 1000) - 2;
+      iStatMod = (59 * iModifier / 1000) - 2;
       if (iStatMod - Nth(plStatmods,3)) <> 0
       {
          iStatMod = Send(poOwner,@AddAgility,#points=(iStatMod - Nth(plStatmods,3)))
@@ -516,6 +514,11 @@ messages:
       return;
    }
 
+   GetBaseSpellModifier(oSpell=$)
+   {
+      return 10;
+   }
+   
    AdjustColor()
    {
       local Xlat;
