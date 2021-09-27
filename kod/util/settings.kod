@@ -315,6 +315,11 @@ properties:
    // the flag needs to be manually removed from players.
    pbPvPOptOutEnabled = TRUE
 
+   // Do spell items cost mana to use?
+   // Mana costs were added mainly in response to ogre being
+   // much more powerful with these items.
+   pbSpellItemsCostMana = FALSE
+
 messages:
 
    Constructor()
@@ -780,6 +785,11 @@ messages:
    PvPOptOutEnabled()
    {
       return pbPvPOptOutEnabled;
+   }
+
+   GetSpellItemsCostMana()
+   {
+      return pbSpellItemsCostMana;
    }
 
 end
