@@ -717,3 +717,6 @@ oo_hist_princess_desc = de \
     "Auf einem Schild unter dem Modell steht:\n"
     "Diese königliche Frau hat eine kleine Ähnlichkeit mit "
     "Prinzessin Kateriina."
+oo_weed_plant_name = de "Cannabis Plant"
+oo_weed_plant_desc = de \
+  "A special cannabis plant grown by Cyrus himself know as C-strain."
