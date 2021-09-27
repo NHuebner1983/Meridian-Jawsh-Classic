@@ -1420,7 +1420,7 @@ messages:
          return 50;
       }
 
-      iBonus = Send(self,@CalcFactionBonus,#base=200,#faction=iFaction);
+      iBonus = 100 + Send(self,@CalcFactionBonus,#base=200,#faction=iFaction);
 
       if Random(0,100) = 0 AND iFaction <> FACTION_NEUTRAL
       {
