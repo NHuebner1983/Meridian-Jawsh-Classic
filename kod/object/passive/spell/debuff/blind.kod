@@ -103,7 +103,7 @@ messages:
 
    DoSpell(what=$,oTarget=$,iDuration=0)
    {
-      local oSpell;
+      local oSpell, oHelm;
 
       oSpell = Send(SYS,@FindSpellByNum,#NUM=SID_EAGLE_EYES);
       if Send(oTarget,@IsEnchanted,#what=oSpell)
@@ -122,6 +122,12 @@ messages:
 
       if IsClass(oTarget,&User)
       {
+         oHelm = Send(oTarget,@FindUsing,#class=&Helm);
+         if oHelm <> $
+         {
+            iDuration = Bound((iDuration * (100-Send(oHelm,@GetBlindReductionPercentage)))/100,1,$);
+         }
+
          if NOT (IsClass(oTarget,&DM) AND Send(oTarget,@PlayerIsImmortal))
          {
             Send(oTarget,@MsgSendUser,#message_rsc=vrEnchantment_On);
