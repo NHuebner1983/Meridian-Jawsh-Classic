@@ -60,8 +60,8 @@ properties:
    piDeviation = 10 // 103 value 0
 
    // Min and max values for Dazzle duration.
-   piMinDazzle = 3000
-   piMaxDazzle = 10000
+   piMinDazzle = 4000  // Same as blind
+   piMaxDazzle = 18000 // Same as blind
 
    // Duration of the red pain effect after spell wears off.
    piPainDuration = 1000 // 103 value 8000

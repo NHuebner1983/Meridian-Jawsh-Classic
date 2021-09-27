@@ -63,7 +63,7 @@ properties:
 
    // Min and max values for Blind duration.
    piMinBlind = 4000 // 103 value 3000
-   piMaxBlind = 12000// 103 value 20000
+   piMaxBlind = 18000// 103 value 20000
 
 messages:
 
