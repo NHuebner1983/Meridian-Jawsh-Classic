@@ -48,7 +48,7 @@ classvars:
    viMana = 0
    viMana_bonus = 10
 
-   viCast_time = 10000
+   viCast_time = 0
    viChance_to_Increase = 25
    viMeditate_ratio = 30
 
