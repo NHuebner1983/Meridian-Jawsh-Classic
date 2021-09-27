@@ -1319,7 +1319,7 @@ messages:
               #parm1=Send(self,@GetFactionLiege,#faction=iFaction));
       }
       
-      return 2;
+      return Bound(100 + Send(self,@CalcFactionBonus,#base=140,#faction=iFaction),100,300);
    }
 
    GetFactionRegenBonus(who=$, hpregen=TRUE)
