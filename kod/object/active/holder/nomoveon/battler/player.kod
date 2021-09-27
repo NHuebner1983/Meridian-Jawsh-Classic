@@ -5523,10 +5523,10 @@ messages:
                               #state=Nth(i,3),#damage=iDamageBonus);
       }
 
-      iDamageBonus += Send(Send(SYS,@GetParliament),@GetFactionDamageBonus,#who=self);
-
       // Convert to high precision. Super dirty, will be cleaned up shortly.
       iDamageBonus *= 100;
+
+      iDamageBonus += Send(Send(SYS,@GetParliament),@GetFactionDamageBonus,#who=self);
 
       iDamage += iDamageBonus;
 
