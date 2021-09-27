@@ -80,10 +80,10 @@ properties:
    piClaimRetry = 30
 
    // Minimum number of users needed online before you can take a flag
-   piMinUsers = 10
+   piMinUsers = 1
 
    // Minimum number of allies you must have in the same room to make a claim
-   piMinAllies = 1
+   piMinAllies = 0
 
    plFlagStates = $
 
