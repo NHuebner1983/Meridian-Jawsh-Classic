@@ -90,7 +90,7 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_PIERCE,10],
+      return [ [ATCK_WEAP_PIERCE,20],
                [ATCK_WEAP_SLASH,10],
                [ATCK_WEAP_THRUST,5],
                [-ATCK_SPELL_HOLY,-20]
