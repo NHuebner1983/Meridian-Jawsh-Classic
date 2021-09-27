@@ -57,6 +57,7 @@ properties:
 
    viSpell_modifier = 5
    piBlindReductionPercentage = 15
+   piHoldReductionPercentage = 15
 
 messages:
 
@@ -110,6 +111,11 @@ messages:
    GetBlindReductionPercentage()
    {
       return piBlindReductionPercentage;
+   }
+
+   GetHoldReductionPercentage()
+   {
+      return piHoldReductionPercentage;
    }
 
 end
