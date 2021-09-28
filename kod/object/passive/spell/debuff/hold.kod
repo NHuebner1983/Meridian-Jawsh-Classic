@@ -90,7 +90,7 @@ messages:
    DoSpell(what=$,oTarget=$,iDuration=$,report=TRUE,bAllowFreeAction=TRUE)
    "Holds target for duration seconds."
    {
-      local i, oSpell;
+      local i, oSpell, oHelm;
 
       if oTarget = $
       {
@@ -124,6 +124,15 @@ messages:
             }
 
             iDuration = Bound(iDuration,500,10000);
+         }
+      }
+      
+      if IsClass(oTarget,&User)
+      {
+         oHelm = Send(oTarget,@FindUsing,#class=&Helm);
+         if oHelm <> $
+         {
+            iDuration = Bound((iDuration * (100-Send(oHelm,@GetBlindReductionPercentage)))/100,1,$);
          }
       }
 
