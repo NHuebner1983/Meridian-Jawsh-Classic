@@ -111,9 +111,19 @@ messages:
          return;
       }
 
-      // if no body animation
+	  if piAnimation = ANIM_IDLE
+	  {
+			AddPacket(1,ANIMATE_CYCLE,4,100,2,2,2,9);
 
-      propagate;
+			// Send animation info to user.  Default is no animation, display with
+	  }     //  group 1.
+	  else
+	  {
+			AddPacket(1, ANIMATE_NONE, 2, 1);
+	  }
+
+		return;
+		
    }
    
    IsAlly(target = $)
