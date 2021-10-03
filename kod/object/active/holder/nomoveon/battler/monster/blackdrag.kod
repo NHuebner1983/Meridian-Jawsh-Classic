@@ -19,7 +19,10 @@ resources:
    BlackDragon_name_rsc = "black dragon"
    BlackDragon_icon_rsc = blckdrag.bgf
    BlackDragon_desc_rsc = \
-   "His wings arn't the only thing big and black.  "
+   "Vicious and Vile, this Black Dragon drips death and  "
+   "consumes souls.  Razor sharp claws, Daggers for teeth,  "
+   "and an unimaginable rage against anyone who trespasses. "
+   "Warrior Beware."
 
    BlackDragon_dead_icon_rsc = blckdragX.bgf
    BlackDragon_dead_name_rsc = "dead black dragon"
