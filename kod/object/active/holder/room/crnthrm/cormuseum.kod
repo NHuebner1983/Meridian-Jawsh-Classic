@@ -288,16 +288,16 @@ messages:
             #new_row=22,#new_col=13,#fine_row=46,#fine_col=25,#new_angle=ANGLE_EAST);
 
       // Portals from left to right
-      Send(self,@NewHold,#what=Create(&Portal,#dest_row=21,#dest_col=11),
-            #new_row=20,#new_col=1,#fine_row=0,#fine_col=48,#new_angle=ANGLE_EAST);
-      Send(self,@NewHold,#what=Create(&Portal,#dest_row=21,#dest_col=11),
-            #new_row=18,#new_col=1,#fine_row=40,#fine_col=48,#new_angle=ANGLE_EAST);
-      Send(self,@NewHold,#what=Create(&Portal,#dest_row=21,#dest_col=11),
-            #new_row=17,#new_col=1,#fine_row=16,#fine_col=48,#new_angle=ANGLE_EAST);
-      Send(self,@NewHold,#what=Create(&Portal,#dest_row=21,#dest_col=11),
-            #new_row=16,#new_col=1,#fine_row=0,#fine_col=48,#new_angle=ANGLE_EAST);
-      Send(self,@NewHold,#what=Create(&Portal,#dest_row=21,#dest_col=11),
-            #new_row=14,#new_col=1,#fine_row=32,#fine_col=48,#new_angle=ANGLE_EAST);
+      //Send(self,@NewHold,#what=Create(&Portal,#dest_row=21,#dest_col=11),
+      //      #new_row=20,#new_col=1,#fine_row=0,#fine_col=48,#new_angle=ANGLE_EAST);
+      //Send(self,@NewHold,#what=Create(&Portal,#dest_row=21,#dest_col=11),
+      //      #new_row=18,#new_col=1,#fine_row=40,#fine_col=48,#new_angle=ANGLE_EAST);
+      //Send(self,@NewHold,#what=Create(&Portal,#dest_row=21,#dest_col=11),
+      //      #new_row=17,#new_col=1,#fine_row=16,#fine_col=48,#new_angle=ANGLE_EAST);
+      //Send(self,@NewHold,#what=Create(&Portal,#dest_row=21,#dest_col=11),
+      //      #new_row=16,#new_col=1,#fine_row=0,#fine_col=48,#new_angle=ANGLE_EAST);
+      //Send(self,@NewHold,#what=Create(&Portal,#dest_row=21,#dest_col=11),
+      //      #new_row=14,#new_col=1,#fine_row=32,#fine_col=48,#new_angle=ANGLE_EAST);
 
       //some more deco
       Send(self,@NewHold,#what=Create(&Candelabra),
