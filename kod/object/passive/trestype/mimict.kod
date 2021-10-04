@@ -25,7 +25,7 @@ properties:
 
 messages:
 
-   constructed()
+   Constructed()
    {
       plTreasure = [ [ &ShamanBlood, 10 ],
                      [ &Yrxlsap, 2 ],
