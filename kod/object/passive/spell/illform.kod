@@ -290,8 +290,11 @@ messages:
       {
          Send(who,@MsgSendUser,#message_rsc=illusionaryform_off);
       }
-
-      Send(who,@ResetPlayerIllusion);
+      
+	  if IsClass(who, &Player)
+	  {
+         Send(who,@ResetPlayerIllusion);
+	  }
 
       return;
    }
