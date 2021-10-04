@@ -9,6 +9,6 @@ DEPEND = ..\shield.bof
 BOFS = \
 	metlshld.bof goldshld.bof knhtshld.bof \
 	orcshld.bof guilshld.bof soldshld.bof \
-	torch.bof beermug.bof
+	torch.bof beermug.bof nerushld.bof
 
 !include $(KODDIR)\kod.mak
