@@ -56,6 +56,8 @@ properties:
    piAgility_change = AGILITY_CHANGE
 
    piDisp_hits = 0
+   
+   piSchool = 5
 
 messages:
 
@@ -115,6 +117,16 @@ messages:
       // Special item, add minimap dot.
       return MM_RARE_ITEM;
    }
+
+   GetBaseSpellModifier(oSpell=$)
+   {
+      if Send(oSpell,@GetSchool) = piSchool
+      {
+         return 5;
+      }
+
+      return 0;
+    }
 
 end
 ////////////////////////////////////////////////////////////////////////////////
