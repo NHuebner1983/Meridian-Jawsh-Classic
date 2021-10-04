@@ -63,11 +63,11 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [-ATCK_SPELL_FIRE,15],
-               [-ATCK_SPELL_SHOCK,15],
-               [-ATCK_SPELL_COLD,15],
-               [-ATCK_SPELL_ACID,15],
-               [-ATCK_SPELL_QUAKE,-15]
+      return [ [-ATCK_SPELL_FIRE,20],
+               [-ATCK_SPELL_SHOCK,20],
+               [-ATCK_SPELL_COLD,20],
+               [-ATCK_SPELL_ACID,20],
+               [-ATCK_SPELL_QUAKE,-20]
              ];
    }
 
