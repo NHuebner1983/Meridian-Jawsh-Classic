@@ -43,12 +43,12 @@ classvars:
 
    viSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_SLASH
-   viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_FLEE_FRIGHTENERS
 
-   viDifficulty = 4
-   viKarma = -45
-   viCashmin = 175
-   viCashmax = 375
+   viDifficulty = 9
+   viKarma = -50
+   viCashmin = 1000
+   viCashmax = 4000
    vrSound_hit = minotaur_sound_hit
    vrSound_miss = minotaur_sound_miss
    vrSound_aware = minotaur_sound_aware
@@ -56,8 +56,9 @@ classvars:
 
 properties:
 
-   viTreasure_type = TID_ZOMBIE
-   viLevel = 55
+   viTreasure_type = TID_NARTHYL_WORM
+   
+   viLevel = 150
 
    piAnimation = ANIM_NONE
 
@@ -69,24 +70,23 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_UNHOLY, 50 ],
-                        [-ATCK_SPELL_HOLY, -25 ] ];
+      plResistances = [ [ATCK_WEAP_PIERCE, 70 ],
+                        [ATCK_WEAP_THRUST, 40 ],
+                        [ATCK_WEAP_BLUDGEON, -20 ],
+                        [-ATCK_SPELL_UNHOLY, 70 ],
+                        [-ATCK_SPELL_SHOCK, 70 ],
+                        [-ATCK_SPELL_COLD, 70 ],
+                        [-ATCK_SPELL_FIRE, -10 ],
+                        [-ATCK_SPELL_HOLY, -20 ]
+                      ];
+
       propagate;
    }
 
-   MonsterAttack(what = $)
-   {
-      piAnimation = ANIM_ATTACK;
-      Send(poOwner,@SomethingChanged,#what=self);
-      piAnimation = ANIM_NONE;
-      
-      return;
-   }
 
    SendLookAnimation()
    {
-      AddPacket(1,ANIMATE_CYCLE);
-      AddPacket(4,200,2,1,2,2);
+      AddPacket(1,ANIMATE_ONCE,4,20,2,1,2,16,2,1);
 
       return;
    }
