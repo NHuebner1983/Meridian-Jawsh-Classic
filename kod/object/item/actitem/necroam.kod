@@ -932,9 +932,11 @@ messages:
    "teach the user a lesson in the process."
    {
       // if Send(poOwner,@PlayerIsImmortal) {return True;}
-      Post(self,@TortureOwner);
+      //Post(self,@TortureOwner);
 
-      return FALSE;
+      //return FALSE;
+	  
+	  return TRUE;
    }
 
    TortureOwner()
