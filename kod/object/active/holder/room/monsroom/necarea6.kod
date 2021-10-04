@@ -394,7 +394,7 @@ messages:
             break;
          case AREA_3:
             if (Send(self,@CountSkeletonsInSectorID,#iNum=AREA_3) = 1
-               AND Send(self,@FindHoldingActive,#class=&NecromancerTroop) = $)
+               AND Send(self,@FindHoldingActive,#class=&Mimic) = $)
             {
                if (Random(1,100) <= piNecroSpawnRate)
                {
@@ -408,7 +408,7 @@ messages:
             break;
          }
       }
-      else if (cClass = &NecromancerTroop)
+      else if (cClass = &Mimic)
       {
          Send(self,@RaiseGate,#iNum=GATE_3);
       }
@@ -464,9 +464,8 @@ messages:
       {
          each_obj = First(i);
          cClass = GetClass(each_obj);
-         if ((cClass = &DaemonSkeleton
-               OR cClass = &GiantDaemonSkeleton
-               OR cClass = &NecromancerTroop)
+         if ((cClass = &GiantDaemonSkeleton
+               OR cClass = &Mimic)
             AND NOT Send(each_obj,@IsIllusion) // No animated mobs etc.
             AND Send(each_obj,@GetSectorIDAtObject) = iNum)
          {
@@ -500,24 +499,24 @@ messages:
       case AREA_1:
          foreach i in plSpawnOne
          {
-            Send(self,@NewHold,#what=Create(&DaemonSkeleton),
+            Send(self,@NewHold,#what=Create(&GiantDaemonSkeleton),
                #new_row=First(i),#new_col=Nth(i,2));
          }
          return;
       case AREA_2:
          foreach i in plSpawnTwo
          {
-            Send(self,@NewHold,#what=Create(&DaemonSkeleton),
+            Send(self,@NewHold,#what=Create(&GiantDaemonSkeleton),
                #new_row=First(i),#new_col=Nth(i,2));
          }
          return;
       case AREA_3:
          foreach i in plSpawnThree
          {
-            Send(self,@NewHold,#what=Create(&DaemonSkeleton),
+            Send(self,@NewHold,#what=Create(&GiantDaemonSkeleton),
                #new_row=First(i),#new_col=Nth(i,2));
          }
-         Send(self,@NewHold,#what=Create(&GiantDaemonSkeleton),
+         Send(self,@NewHold,#what=Create(&Mimic),
                #new_row=GIANT_ROW,#new_col=GIANT_COL,
                #fine_row=GIANT_FINEROW,#fine_col=GIANT_FINECOL);
          return;
@@ -540,7 +539,7 @@ messages:
       {
          each_obj = First(i);
          cClass = GetClass(each_obj);
-         if (cClass = &DaemonSkeleton)
+         if (cClass = &GiantDaemonSkeleton)
          {
             switch (Send(each_obj,@GetSectorIDAtObject))
             {
@@ -549,7 +548,7 @@ messages:
                case AREA_3: bAreaThree = TRUE; break;
             }
          }
-         else if (cClass = &GiantDaemonSkeleton)
+         else if (cClass = &Mimic)
          {
             bGiantSkel = TRUE;
          }
@@ -559,7 +558,7 @@ messages:
       {
          foreach i in plSpawnOne
          {
-            Send(self,@NewHold,#what=Create(&DaemonSkeleton),
+            Send(self,@NewHold,#what=Create(&GiantDaemonSkeleton),
                #new_row=First(i),#new_col=Nth(i,2));
          }
       }
@@ -567,7 +566,7 @@ messages:
       {
          foreach i in plSpawnTwo
          {
-            Send(self,@NewHold,#what=Create(&DaemonSkeleton),
+            Send(self,@NewHold,#what=Create(&GiantDaemonSkeleton),
                #new_row=First(i),#new_col=Nth(i,2));
          }
       }
@@ -575,13 +574,13 @@ messages:
       {
          foreach i in plSpawnThree
          {
-            Send(self,@NewHold,#what=Create(&DaemonSkeleton),
+            Send(self,@NewHold,#what=Create(&GiantDaemonSkeleton),
                #new_row=First(i),#new_col=Nth(i,2));
          }
       }
       if (NOT bGiantSkel)
       {
-         Send(self,@NewHold,#what=Create(&GiantDaemonSkeleton),
+         Send(self,@NewHold,#what=Create(&Mimic),
                #new_row=GIANT_ROW,#new_col=GIANT_COL,
                #fine_row=GIANT_FINEROW,#fine_col=GIANT_FINECOL);
       }
@@ -591,7 +590,7 @@ messages:
 
    SpawnNecromancer()
    {
-      Send(self,@NewHold,#what=Create(&NecromancerTroop),
+      Send(self,@NewHold,#what=Create(&Mimic),
             #new_row=GIANT_ROW,#new_col=GIANT_COL,
             #fine_row=GIANT_FINEROW,#fine_col=GIANT_FINECOL);
       Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#string=Necropolis6_necro_spawn,
