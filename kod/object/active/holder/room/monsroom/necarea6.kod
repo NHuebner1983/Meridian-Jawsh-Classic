@@ -374,8 +374,7 @@ messages:
 
       cClass = GetClass(victim);
 
-      if ((cClass = &DaemonSkeleton
-         OR cClass = &GiantDaemonSkeleton)
+      if ((cClass = &GiantDaemonSkeleton)
          AND NOT Send(victim,@IsIllusion))
       {
          switch(Send(victim,@GetSectorIDAtObject))
@@ -393,17 +392,16 @@ messages:
             }
             break;
          case AREA_3:
-            if (Send(self,@CountSkeletonsInSectorID,#iNum=AREA_3) = 1
-               AND Send(self,@FindHoldingActive,#class=&Mimic) = $)
+            if (Send(self,@CountSkeletonsInSectorID,#iNum=AREA_3) = 1)
             {
-               if (Random(1,100) <= piNecroSpawnRate)
-               {
+               //if (Random(1,100) <= piNecroSpawnRate)
+               //{
                   Send(self,@SpawnNecromancer);
-               }
-               else
-               {
-                  Send(self,@RaiseGate,#iNum=GATE_3);
-               }
+               //}
+               //else
+               //{
+                  //Send(self,@RaiseGate,#iNum=GATE_3);
+               //}
             }
             break;
          }
@@ -435,8 +433,7 @@ messages:
       foreach i in plActive
       {
          each_obj = First(i);
-         if ((IsClass(each_obj,&DaemonSkeleton)
-               OR IsClass(each_obj,&GiantDaemonSkeleton))
+         if ((IsClass(each_obj,&GiantDaemonSkeleton))
             AND NOT Send(each_obj,@IsIllusion) // No animated mobs etc.
             AND Send(each_obj,@GetSectorIDAtObject) = iNum)
          {
