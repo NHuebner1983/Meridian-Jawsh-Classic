@@ -7,11 +7,11 @@ constants:
 
 resources:
 
-   Weed_name_one_rsc = "Shal'ille C-Strain"
-   Weed_name_many_rsc = "A few ounces of Shal'ille C-Strain"
+   Weed4_name_one_rsc = "Shal'ille C-Strain"
+   Weed4_name_many_rsc = "A few ounces of Shal'ille C-Strain"
    
-   Weed_icon_rsc = weed4.bgf
-   Weed_desc_rsc = \
+   Weed4_icon_rsc = weed4.bgf
+   Weed4_desc_rsc = \
       "This is a special strain of cannabis home grown by Cyrus  "
       "in a grow room in the temple of Shal'ille.  They are watered  "
       "only with the holy water from the temple.  Some say this strain  "
@@ -19,6 +19,13 @@ resources:
       "trade you items for good weed.  "
 
 classvars:
+
+   vrName = Weed4_name_one_rsc
+   vrIcon = Weed4_icon_rsc
+   vrDesc = Weed4_desc_rsc
+
+   vrName_plural = Weed4_name_many_rsc
+   
 
 properties:
 

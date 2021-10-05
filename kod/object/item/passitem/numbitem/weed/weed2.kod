@@ -7,11 +7,11 @@ constants:
 
 resources:
 
-   Weed_name_one_rsc = "Faren C-Strain"
-   Weed_name_many_rsc = "A few ounces of Faren C-Strain"
+   Weed2_name_one_rsc = "Faren C-Strain"
+   Weed2_name_many_rsc = "A few ounces of Faren C-Strain"
    
-   Weed_icon_rsc = weed2.bgf
-   Weed_desc_rsc = \
+   Weed2_icon_rsc = weed2.bgf
+   Weed2_desc_rsc = \
       "This is a special strain of cannabis home grown by Cyrus  "
       "in a open field blessed by Faren.  With the elements free  "
       "effect the plants as nature intended this strain has a   "
@@ -19,6 +19,12 @@ resources:
       "trade you items for good weed.  "
 
 classvars:
+
+   vrName = Weed2_name_one_rsc
+   vrIcon = Weed2_icon_rsc
+   vrDesc = Weed2_desc_rsc
+
+   vrName_plural = Weed2_name_many_rsc
 
 properties:
 
