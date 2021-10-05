@@ -43,6 +43,7 @@ classvars:
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT
    viAttackRange = 312
 
+   viSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_BLUDGEON
    viAttack_spell = 0
    viAttributes = 0
@@ -52,7 +53,7 @@ classvars:
    viKarma = 0
    viCashmin = 10000
    viCashmax = 75000
-
+ 
    vrSound_hit = earth_dragon_sound_hit
    vrSound_miss = earth_dragon_sound_miss
    vrSound_aware = earth_dragon_sound_aware
@@ -82,7 +83,6 @@ properties:
    piSpellPower = 99
    
    piAttackSpeed = 4
-   piMoveSpeed = 36
 
    piHoldAttackChance = 13 // Chance he'll attack with a hold
    piHoldCounterChance = 6 // Chance he'll counter a spell or arrow with a hold
