@@ -40,9 +40,9 @@ constants:
    DOOR_HEIGHT_CEILING = 504
 
    // Gates one and two stay open for 30 seconds.
-   DOOR_CLOSE_TIMER = 30000
+   DOOR_CLOSE_TIMER = 360000
    // Gate three stays open for 60 seconds.
-   DOOR_CLOSE_TIMER_LAST = 60000
+   DOOR_CLOSE_TIMER_LAST = 360000
 
    // Special blink coords for area 2 and 3.
    BLINK2_ROW = 17
