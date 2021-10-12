@@ -1800,6 +1800,8 @@
    TID_MIMIC = 77
    TID_EARTH_DRAGON = 78
    
+   TID_MINOTAUR = 79
+   
    // English articles
 
    ARTICLE_NONE = 0

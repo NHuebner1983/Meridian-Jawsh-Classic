@@ -3970,6 +3970,7 @@ messages:
       Create(&EarthDragonTreasure);
 
       Create(&MimicTreasure);
+      Create(&MinotaurTreasure);
 
       return;
    }
