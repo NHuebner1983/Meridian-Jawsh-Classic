@@ -2760,6 +2760,7 @@
    //  for monsters
    ANIM_NONE = 0
    ANIM_ATTACK = 1
+   ANIM_IDLE = 2
 
    // Player animations
    PANM_NONE            = 0
