@@ -34,6 +34,10 @@ resources:
 
 classvars:
 
+   viTreasure_type = TID_MINOTAUR
+   
+   viLevel = 200
+
    vrKocName = minotaur_koc_name_rsc
    vrName = minotaur_name_rsc
    vrIcon = minotaur_icon_rsc
@@ -43,11 +47,9 @@ classvars:
 
    viSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_SLASH
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_FLEE_FRIGHTENERS | AI_FIGHT_WIZARD_KILLER
+   viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_FLEE_FRIGHTENERS
 
-   viTreasure_type = TID_MINOTAUR
    viDifficulty = 10
-   viLevel = 200
 
    viKarma = -100
 
@@ -58,10 +60,10 @@ classvars:
    vrSound_miss = minotaur_sound_miss
    vrSound_aware = minotaur_sound_aware
    vrSound_death = minotaur_sound_death
-
+   
    viBonusXP = 1000
    viBonusTP = 20
-   
+
 properties:
 
    piAnimation = ANIM_NONE
