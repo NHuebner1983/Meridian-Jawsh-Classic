@@ -62,6 +62,9 @@ classvars:
 
    viFaction = FACTION_NECROMANCER
 
+   viBonusXP = 500
+   viBonusTP = 2
+
 properties:
 
    piBaseLevel = 150

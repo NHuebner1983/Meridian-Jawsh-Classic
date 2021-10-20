@@ -51,6 +51,9 @@ classvars:
    viCashmin = 700
    viCashmax = 1500
 
+   viBonusXP = 500
+   viBonusTP = 2
+
 properties:
 
    piAnimation = ANIM_NONE

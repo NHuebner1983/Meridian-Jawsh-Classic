@@ -66,6 +66,9 @@ classvars:
 
    vrHeadIcon = DaemonSkeleton_head
 
+   viBonusXP = 500
+   viBonusTP = 2
+
 properties:
 
    piAnimation = ANIM_NONE

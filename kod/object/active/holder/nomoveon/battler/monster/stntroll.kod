@@ -68,6 +68,9 @@ classvars:
 
    viDead_drawfx = DRAWFX_SECONDTRANS
 
+   viBonusXP = 500
+   viBonusTP = 1
+
 properties:
 
    vrName = StoneTroll_realname_rsc

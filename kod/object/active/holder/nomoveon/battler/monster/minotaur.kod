@@ -62,7 +62,7 @@ classvars:
    vrSound_death = minotaur_sound_death
    
    viBonusXP = 1000
-   viBonusTP = 20
+   viBonusTP = 5
 
 properties:
 

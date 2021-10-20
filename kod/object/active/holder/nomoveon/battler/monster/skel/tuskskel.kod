@@ -65,6 +65,9 @@ classvars:
 
    vrHeadIcon = TuskedSkeleton_head
 
+   viBonusXP = 250
+   viBonusTP = 1
+
 properties:
 
    piAnimation = ANIM_NONE

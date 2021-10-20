@@ -59,6 +59,9 @@ classvars:
    vrSound_aware = troll_sound_aware
    vrSound_death = troll_sound_death
 
+   viBonusXP = 500
+   viBonusTP = 1
+
 properties:
 
    piAnimation = ANIM_NONE

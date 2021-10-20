@@ -79,7 +79,8 @@ classvars:
    viSpellChance = 3
    
    viBonusXP = 500
-   
+   viBonusTP = 5
+
 properties:
 
    piAnimation = ANIM_NONE
