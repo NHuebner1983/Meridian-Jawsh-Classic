@@ -34,34 +34,9 @@ classvars:
 
 properties:
 
+   piSpecial = PFLAG_ANONYMOUS
 
 messages:
-
-   NewUsed(what = $)
-   {
-      local oRoom;
-      oRoom = Send(poOwner, @GetOwner);
-      pbIn_use = TRUE;
-      Send(poOwner,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
-
-      propagate;
-   }
-
-   NewUnused(what = $)
-   {
-      pbIn_use = FALSE;
-
-      Send(poOwner,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=FALSE);
-
-      propagate;
-   }
-
-   SetItemPlayerFlag()
-   {
-      Send(poOwner,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
-
-      propagate;
-   }
 
 end
 ////////////////////////////////////////////////////////////////////////////////
