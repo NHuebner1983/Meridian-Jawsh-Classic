@@ -37,33 +37,31 @@ properties:
 
 messages:
 
-NewUsed(what = $)
-{
-  local oAnon;
+   NewUsed(what = $)
+   {
+      local oRoom;
+      oRoom = Send(poOwner, @GetOwner);
+      pbIn_use = TRUE;
+      Send(poOwner,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
 
-  oAnon = Send(SYS,@FindSpellByNum,#Num=SID_ANONYMITY);
-  
-  if NOT Send(what,@IsEnchanted,#what=oAnon)
-  {
-	   Send(oAnon,@CastSpell,#who=what,#lTargets=[what],#iSpellPower=99,#bItemCast=TRUE);
-  }
+      propagate;
+   }
 
-  propagate;
-}
+   NewUnused(what = $)
+   {
+      pbIn_use = FALSE;
 
-NewUnsed(what = $)
-{
-  local oAnon;
+      Send(poOwner,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=FALSE);
 
-  oAnon = Send(SYS,@FindSpellByNum,#Num=SID_ANONYMITY);
-  
-  if Send(what,@IsEnchanted,#what=oAnon)
-  {
-   Send(what,@RemoveEnchantment,#what=oAnon);
-  }
+      propagate;
+   }
 
-  propagate;
-}
+   SetItemPlayerFlag()
+   {
+      Send(poOwner,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
+
+      propagate;
+   }
 
 end
 ////////////////////////////////////////////////////////////////////////////////
