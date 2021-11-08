@@ -139,7 +139,6 @@ properties:
 
    // Item is colored
    pbColored = FALSE
-   piSpecial = $
 
 messages:
 
@@ -177,15 +176,8 @@ messages:
       propagate;
    }
 
-   SetItemPlayerFlag(who=$,iSpecial=$)
+   SetItemPlayerFlag(who=$)
    {
-      iSpecial = piSpecial;
-
-      if(piSpecial <> $)
-      {
-         Send(poOwner,@SetPlayerFlag,#flag=iSpecial,#value=TRUE);
-      }
-
       return;
    }
 
@@ -1042,24 +1034,14 @@ messages:
       return TRUE;
    }
 
-   NewUsed(iSpecial = $)
+   NewUsed()
    {
-      local oRoom;
-
-      iSpecial = piSpecial;
-
       pbIn_use = TRUE;
 
       Send(self,@DoPlayerArt);
       If IsClass(poOwner,&Player)
       {
          Post(poOwner,@RefreshPlayerVisualGear);
-      }
-      
-      if(iSpecial <> $)
-      {
-         oRoom = Send(poOwner, @GetOwner);
-         Send(poOwner,@SetPlayerFlag,#flag=iSpecial,#value=TRUE);
       }
 
       return;
@@ -1115,18 +1097,11 @@ messages:
       return TRUE;
    }
 
-   NewUnused(iSpecial = $)
+   NewUnused()
    {
-      iSpecial = piSpecial;
-
       pbIn_use = FALSE;
 	  
       Send(self,@UndoPlayerArt);
-
-      if(piSpecial <> $)
-      {
-         Send(poOwner,@SetPlayerFlag,#flag=piSpecial,#value=FALSE);
-      }
 
       return;
    }
