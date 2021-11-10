@@ -590,6 +590,10 @@ messages:
    Killed(what=$, resetScenario=TRUE, guildDisbandDeath=FALSE)
    {
       local oSpell, oRoom, NumAttackers, i, lichActivated, oNecBal, oNecGuild;
+      
+	  
+      return;
+
 
       oNecBal = Send(SYS,@GetNecromancerBalance);
       oNecGuild = Send(oNecBal,@GetNecroGuild);
