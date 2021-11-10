@@ -5489,6 +5489,7 @@ messages:
       plItemTemplates = cons(create(&FeyMask),plItemTemplates);
       plItemTemplates = cons(create(&ShrunkenHeadMask),plItemTemplates);
       plItemTemplates = cons(create(&CowMask),plItemTemplates);
+      plItemTemplates = cons(create(&SuperStoneTrollMask),plItemTemplates);
 	  
 	  // Squid Game Masks by Diggie
       plItemTemplates = cons(create(&CircleMask),plItemTemplates);
