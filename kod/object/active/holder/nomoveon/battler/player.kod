@@ -4071,6 +4071,11 @@ messages:
          {
             bToken = TRUE;
          }
+		 
+		 if IsClass(i, &NecromancerAmulet)
+		 {
+		    iSpace += 1;
+		 }
       }
 
       if iSpace < Send(what,@GetItemUseAmount)
