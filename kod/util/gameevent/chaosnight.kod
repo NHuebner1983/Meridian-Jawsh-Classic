@@ -186,7 +186,7 @@ messages:
                //      #weeks=parm2,
                //      #message=sMessage);
                Debug("GAMEEVENT_SCALE_WEEKS not implemented, event ending in 2 hours");
-               ptChaosNightEnd = CreateTimer(self,@EndChaosNightTimer,3600000);
+               ptChaosNightEnd = CreateTimer(self,@EndChaosNightTimer,18000000);
                break;
             
             case GAMEEVENT_SCALE_MONTHS:
@@ -204,7 +204,7 @@ messages:
                break;
             
             default:
-               ptChaosNightEnd = CreateTimer(self,@EndChaosNightTimer,3600000);
+               ptChaosNightEnd = CreateTimer(self,@EndChaosNightTimer,18000000);
                break;
          }
       }
