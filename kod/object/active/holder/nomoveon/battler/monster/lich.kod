@@ -590,10 +590,6 @@ messages:
    Killed(what=$, resetScenario=TRUE, guildDisbandDeath=FALSE)
    {
       local oSpell, oRoom, NumAttackers, i, lichActivated, oNecBal, oNecGuild;
-      
-	  
-      return;
-
 
       oNecBal = Send(SYS,@GetNecromancerBalance);
       oNecGuild = Send(oNecBal,@GetNecroGuild);
@@ -629,27 +625,27 @@ messages:
       }
 
       // Disband the guild.
-      if NOT guildDisbandDeath
-      {
-         Send(oNecBal,@ClearNecromancerGuild);
-      }
+//      if NOT guildDisbandDeath
+//      {
+//         Send(oNecBal,@ClearNecromancerGuild);
+//      }
 
-      Send(Send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@RandomizeLeverEffects);
-      Send(Send(SYS,@FindRoomByNum,#num=RID_G9),@RandomizeLeverEffects);
+//      Send(Send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@RandomizeLeverEffects);
+//      Send(Send(SYS,@FindRoomByNum,#num=RID_G9),@RandomizeLeverEffects);
 
-      if what <> $
-         AND NOT guildDisbandDeath
-      {
-         Post(self,@BroadcastLichDeathMessage,#what=what,#Attackers=plAttackers,
-               #lichActivated=lichActivated,#resetScenario=resetScenario);
-      }
+//      if what <> $
+//         AND NOT guildDisbandDeath
+//      {
+//         Post(self,@BroadcastLichDeathMessage,#what=what,#Attackers=plAttackers,
+//               #lichActivated=lichActivated,#resetScenario=resetScenario);
+//      }
 
-      if resetScenario
-         AND ptDeathSequence = $
-         AND NOT guildDisbandDeath
-      {
-         ptDeathSequence = CreateTimer(self,@DeathSequence2,piDeathSequenceTimestep);
-      }
+//      if resetScenario
+//         AND ptDeathSequence = $
+//         AND NOT guildDisbandDeath
+//      {
+//         ptDeathSequence = CreateTimer(self,@DeathSequence2,piDeathSequenceTimestep);
+//      }
 
       propagate;
    }
