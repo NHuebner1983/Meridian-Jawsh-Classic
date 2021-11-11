@@ -5766,6 +5766,7 @@ messages:
       plItemTemplates = cons(create(&Weed5),plItemTemplates);
       plItemTemplates = cons(create(&Weed6),plItemTemplates);
       plItemTemplates = cons(create(&Weed7),plItemTemplates);
+      plItemTemplates = cons(create(&WeaponWand),plItemTemplates);
 
       return;
    }
