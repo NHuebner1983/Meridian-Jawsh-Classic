@@ -2234,6 +2234,7 @@ messages:
       bFound = FALSE;
       lTemplate = Send(SYS,@GetMonsterTemplates);
 	  StringSubstitute(string, "monster ", "");
+	  StringSubstitute(string, "monsters ", "");
 	  
       foreach i in lTemplate
       {
