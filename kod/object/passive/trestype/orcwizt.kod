@@ -34,7 +34,7 @@ messages:
                      [ &Solagh, 6 ],
                      [ &PurpleMushroom, 1 ],
                      [ &Torch, 5 ],
-                     [ &DiscipleRobe, 28 ],
+                     [ &DiscipleRobe, 25 ],
                      [ &LightDiscipleRobe, 1 ],
                      [ &Gauntlet, 2 ],
                      [ &Flask, 1 ],
@@ -42,7 +42,8 @@ messages:
                      [ &PolishedSeraphym, 2 ],
                      [ &StaffOfJolting, 2 ],
                      [ &DispellIllusionScroll, 2 ],
-					 [ &Key, 2 ]
+					 [ &Key, 4 ],
+					 [ &WeaponWand, 1]
                    ];
 
       propagate;
