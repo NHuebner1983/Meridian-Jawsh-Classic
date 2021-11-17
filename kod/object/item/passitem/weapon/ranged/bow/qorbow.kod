@@ -50,18 +50,42 @@ classvars:
    viBulk = 70
    viWeight = 70
 
-   viBaseXLAT = XLAT_TO_RED
+   viXLAT_BLUETOBLACK =  XLAT_BLUETOBLACK
 
-   viWeaponDamage = 1
-   viRange = 50 * FINENESS
+   viWeaponDamage = 2
+   viRange = 75 * FINENESS
    viHit_roll_modifier = 100
 
+   viSpell_modifier = 0
+   
+   viHits_init_min = 470
+   viHits_init_max = 750   
+   
 properties:
-
+   
+   piSchool = SS_QOR
+   
    piAttack_Type = ATCK_WEAP_MAGIC + ATCK_WEAP_PIERCE
    piAttack_spell = ATCK_SPELL_UNHOLY
 
 messages:
+
+   Constructor()
+   {
+      Send(self,@UpdateColor);
+
+      propagate;
+   }
+
+   GetBaseSpellModifier(oSpell=$)
+   {
+      if Send(oSpell,@GetSchool) = piSchool
+      {
+         return 10;
+      }
+
+      return 0;
+   }
 
    ReqUse()
    {
@@ -116,6 +140,23 @@ messages:
       Send(self,@ExplodesToAcid);
 
       propagate;
+   }
+
+   UpdateColor()
+   {
+      Send(self,@SetXLATTranslation,#translation=viXLAT_BLUETOBLACK);
+
+      return;
+   }
+
+   SetXLATTranslation(translation=$)
+   {
+      local skin_color, XLAT;
+
+      XLAT = Send(SYS,@EncodeTwoColorXLAT,#color1=translation,#color2=skin_color);
+      Send(self,@SetPaletteTranslation,#translation=XLAT);
+
+      return;
    }
 
 end

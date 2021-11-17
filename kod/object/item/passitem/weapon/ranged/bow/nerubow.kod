@@ -44,7 +44,7 @@ classvars:
    viWeight = 100
 
    // This is about 50// normal durability.
-   viHits_init_min = 370
+   viHits_init_min = 470
    viHits_init_max = 750
 
    viSpell_modifier = -10

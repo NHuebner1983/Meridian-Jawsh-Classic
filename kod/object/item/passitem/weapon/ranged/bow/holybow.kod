@@ -39,18 +39,35 @@ classvars:
    viBulk = 70
    viWeight = 70
 
-   viBaseXLAT = PT_ALLWHITE
+   viBaseXLAT = PT_BLUE_TO_ASHEN
 
-   viWeaponDamage = 1
-   viRange = 50 * FINENESS
+   viWeaponDamage = 2
+   viRange = 75 * FINENESS
    viHit_roll_modifier = 100
+   
+   viSpell_modifier = 0
+   
+   viHits_init_min = 470
+   viHits_init_max = 750   
 
 properties:
 
+   piSchool = SS_SHALILLE
+   
    piAttack_Type = ATCK_WEAP_MAGIC + ATCK_WEAP_PIERCE
    piAttack_spell = ATCK_SPELL_HOLY
 
 messages:
+
+   GetBaseSpellModifier(oSpell=$)
+   {
+      if Send(oSpell,@GetSchool) = piSchool
+      {
+         return 10;
+      }
+
+      return 0;
+   }
 
    ReqUse()
    {
