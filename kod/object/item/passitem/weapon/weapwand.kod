@@ -151,7 +151,7 @@ messages:
 
    GetBaseDamage()
    {
-      return;
+      return 0;
    }
 
    GetMinDamage()
@@ -166,12 +166,12 @@ messages:
 
    GetMinDamageWithOwnerStats()
    {
-      return;
+      return 0;
    }
 
    GetMaxDamageWithOwnerStats()
    {
-      return;
+      return 0;
    }
 
    GetDamage()
