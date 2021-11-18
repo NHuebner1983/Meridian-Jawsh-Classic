@@ -20,22 +20,26 @@ classvars:
 
 properties:
 
-   /// low chance of getting an outstanding item
-   piItem_att_chance = 2
+   /// low chance of getting an outstanding item = 2
+
+   piItem_att_chance = 4
    piDIff_seed = 9
 
 messages:
 
    Constructed()
    {
-      plTreasure = [ [ &InkyCap, 19],
-                     [ &PurpleMushroom, 13 ],
-                     [ &GrayMushroom, 29 ],
-                     [ &BlueDragonScale, 12],
-                     [ &DarkAngelFeather, 10],
-                     [ &MysticSword, 6 ],
-                     [ &PlateArmor, 6 ],
-                     [ &Key, 5 ]
+      plTreasure = [ [ &InkyCap, 10 ],
+                     [ &PurpleMushroom, 15 ],
+                     [ &YellowMushroom, 10 ],
+                     [ &GreenMushroom, 15 ],
+                     [ &CyanMushroom, 15 ],
+                     [ &BlueDragonScale, 5 ],
+                     [ &DarkAngelFeather, 5 ],
+                     [ &MysticSword, 5 ],
+                     [ &PlateArmor, 5 ],
+                     [ &Key, 5 ],
+                     [ &WeaponWand, 10 ]
                    ];
 
       propagate;
