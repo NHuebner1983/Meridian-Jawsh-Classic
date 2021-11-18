@@ -3971,6 +3971,7 @@ messages:
 
       Create(&MimicTreasure);
       Create(&MinotaurTreasure);
+      Create(&KnightTreasure);
 
       return;
    }
@@ -5372,6 +5373,9 @@ messages:
 
       plMonsterTemplates = cons(create(&Mimic),plMonsterTemplates);
       plMonsterTemplates = cons(create(&BlackDragon),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&KnightA),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&CaptainKnight),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&HalfKnight),plMonsterTemplates);
 
       return;
    }
