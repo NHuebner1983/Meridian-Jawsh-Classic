@@ -1801,6 +1801,7 @@
    TID_EARTH_DRAGON = 78
    
    TID_MINOTAUR = 79
+   TID_KNIGHT = 80
    
    // English articles
 
