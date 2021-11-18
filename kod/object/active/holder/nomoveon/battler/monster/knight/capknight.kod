@@ -33,7 +33,7 @@ classvars:
    vrDead_name = capknight_dead_name_rsc
 
    viTreasure_type = TID_KNIGHT
-   viSpeed = 4
+   viSpeed = 8
    viAttributes = 0
    viLevel = 125
    viDifficulty = 9

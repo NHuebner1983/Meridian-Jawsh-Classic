@@ -38,14 +38,14 @@ classvars:
 
    viTreasure_type = TID_KNIGHT
    viAttack_type = ATCK_WEAP_THRUST
-   viSpeed = 4
+   viSpeed = 8
    viAttributes = 0
    viLevel = 125
    viDifficulty = 9
    viVisionDistance = 18
    // Attack range of 192, or 3 row/col.
    viAttackRange = 192
-   viKarma = 100
+   viKarma = 0
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
    viCashmin = 500
    viCashmax = 1200
