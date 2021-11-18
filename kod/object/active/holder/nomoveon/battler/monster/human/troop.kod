@@ -192,15 +192,27 @@ messages:
    // We drop some of our carried items when we die.
    CreateTreasure(who = $, corpse = $)
    {
-      local oUsedItem, oItemAtt;
-
+      local oUsedItem, oItemAtt, iPercentDrop;
+	  
+	  iPercentDrop = EQUIPMENT_DROP_PERCENT;
+	  
       oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_CORPSEPOINTER);
 
       foreach oUsedItem in plUsing
       {
+         // Weapon Wands should only have a 1% chance to drop.
+		 if IsClass(oUsedItem, &WeaponWand)
+		 {
+		    iPercentDrop = 1;
+		 }
+		 else
+		 {
+		    iPercentDrop = EQUIPMENT_DROP_PERCENT;
+		 }
+		 
          // Only a percentage chance to drop each item.  Too much stuff otherwise.
          // Don't drop the shield!  It's a quest/special item!
-         if (Random(1,100) <= EQUIPMENT_DROP_PERCENT)
+		 if (Random(1,100) <= iPercentDrop)
             AND (NOT IsClass(oUsedItem,vcShieldClass))
             AND NOT pbIllusion
          {

@@ -293,11 +293,20 @@ messages:
       return -90;
    }
 
-   UpdateColor(iFactionColor=0)
+   UpdateColor(iFactionColor=0, iBaseXLAT=$)
    {
-      local iTranslation;
+      local iTranslation, iBaseXLATColor;
       
-      iTranslation = Send(SYS,@EncodeTwoColorXlat,#color1=iFactionColor,#color2=viBaseXLAT);
+	  if iBaseXLAT = $
+	  {
+	     iBaseXLATColor = viBaseXLAT;
+	  }
+	  else
+	  {
+	     iBaseXLATColor = iBaseXLAT;
+	  }
+	  
+      iTranslation = Send(SYS,@EncodeTwoColorXlat,#color1=iFactionColor,#color2=iBaseXLATColor);
       Send(self,@SetPaletteTranslation,#translation=iTranslation);
 
       return;

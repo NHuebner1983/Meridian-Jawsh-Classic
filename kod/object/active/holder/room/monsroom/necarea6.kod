@@ -157,6 +157,10 @@ messages:
 
    CreateStandardObjects()
    {
+      // BRAX NODE
+      Send(self,@NewHold,#what=Create(&ManaNode,#node_num=NODE_BRAX),
+           #new_row=3,#new_col=35,#fine_row=23,#fine_col=7,
+           #new_angle=ANGLE_WEST);
 
       Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_NECSLIME),
          #new_row=5,#new_col=19,#fine_row=48,#fine_col=16,#angle=ANGLE_EAST);

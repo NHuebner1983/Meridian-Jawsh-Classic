@@ -761,9 +761,9 @@ void DownloadNewClient(char *hostname, char *filename)
       shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
       shExecInfo.fMask = 0;
       shExecInfo.hwnd = NULL;
-      shExecInfo.lpVerb = "runas";
+      shExecInfo.lpVerb = NULL;
       shExecInfo.lpFile = update_program_path;
-      shExecInfo.lpParameters = command_line;
+      shExecInfo.lpParameters = NULL; //command_line;
       // Run in parent of resource directory; club will take care of copying
       // exes to Program Files if necessary.
       shExecInfo.lpDirectory = NULL;

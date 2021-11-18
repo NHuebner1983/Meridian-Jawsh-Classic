@@ -5745,6 +5745,8 @@ messages:
       // Weapons
       plItemTemplates = cons(create(&MagicBow),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeBow),plItemTemplates);
+      plItemTemplates = cons(create(&HolyBow),plItemTemplates);
+      plItemTemplates = cons(create(&QorBow),plItemTemplates);
       plItemTemplates = cons(create(&Longbow),plItemTemplates);
       plItemTemplates = cons(create(&BattleBow),plItemTemplates);
       plItemTemplates = cons(create(&PracticeBow),plItemTemplates);   
@@ -5771,6 +5773,7 @@ messages:
       plItemTemplates = cons(create(&Weed5),plItemTemplates);
       plItemTemplates = cons(create(&Weed6),plItemTemplates);
       plItemTemplates = cons(create(&Weed7),plItemTemplates);
+      plItemTemplates = cons(create(&WeaponWand),plItemTemplates);
 
       return;
    }
