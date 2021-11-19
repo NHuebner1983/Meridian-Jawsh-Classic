@@ -3972,6 +3972,7 @@ messages:
       Create(&MimicTreasure);
       Create(&MinotaurTreasure);
       Create(&KnightTreasure);
+      Create(&OgreTreasure);
 
       return;
    }

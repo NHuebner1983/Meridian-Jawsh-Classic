@@ -40,25 +40,25 @@ classvars:
    vrDead_icon = ogre_dead_icon_rsc
    vrDead_name = ogre_dead_name_rsc
 
-   viTreasure_type = TID_HIGH_HUMAN
-   viSpeed = SPEED_AVERAGE
+   viTreasure_type = TID_OGRE
+   viSpeed = SPEED_FAST
    viAttributes = 0
-   viLevel = 150
+   viLevel = 300
    viDifficulty = 9
    viVisionDistance = 18
    // Attack range of 192, or 3 row/col.
    viAttackRange = 192
    viKarma = -100
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE
-   viCashmin = 1000
-   viCashmax = 2000
+   viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
+   viCashmin = 5000
+   viCashmax = 10000
    vrSound_hit = ogre_sound_hit
    vrSound_miss = ogre_sound_miss
    vrSound_aware = ogre_sound_aware
    vrSound_death = ogre_sound_death
 
-   viBonusXP = 700
-   viBonusTP = 2
+   viBonusXP = 900
+   viBonusTP = 3
 
 properties:
 
@@ -69,7 +69,7 @@ messages:
    Constructed()
    {
       plResistances = [ [-ATCK_SPELL_ACID, 80 ],
-                        [ATCK_WEAP_NERUDITE, -20 ],
+                        [ATCK_WEAP_NERUDITE, -10 ],
                         [ATCK_WEAP_NONMAGIC, 80 ] ];
 
       propagate;
