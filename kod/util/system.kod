@@ -5774,6 +5774,8 @@ messages:
       plItemTemplates = cons(create(&Weed6),plItemTemplates);
       plItemTemplates = cons(create(&Weed7),plItemTemplates);
       plItemTemplates = cons(create(&WeaponWand),plItemTemplates);
+
+      //Thanksgiving
       plItemTemplates = cons(create(&Corn),plItemTemplates);
       plItemTemplates = cons(create(&PecanPie),plItemTemplates);
       plItemTemplates = cons(create(&PumpkinPie),plItemTemplates);
@@ -5781,6 +5783,8 @@ messages:
       plItemTemplates = cons(create(&Stuffing),plItemTemplates);
       plItemTemplates = cons(create(&Ham),plItemTemplates);
       plItemTemplates = cons(create(&Rouladen),plItemTemplates);
+      plItemTemplates = cons(create(&PilgrimHat),plItemTemplates);
+      plItemTemplates = cons(create(&IndianHat),plItemTemplates);
 
       return;
    }
