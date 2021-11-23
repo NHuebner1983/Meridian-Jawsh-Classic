@@ -1802,6 +1802,7 @@
    
    TID_MINOTAUR = 79
    TID_KNIGHT = 80
+   TID_OGRE = 81
    
    // English articles
 
