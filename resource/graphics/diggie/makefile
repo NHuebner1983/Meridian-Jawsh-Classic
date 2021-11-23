@@ -14,7 +14,10 @@ BGFS = neeleme.bgf neelemeX.bgf iunholyt.bgf xeoneru.bgf xeoneruX.bgf \
        weed3.bgf weed4.bgf weed5.bgf weed6.bgf weed7.bgf weedplant.bgf \
        blckdrag.bgf blckdragX.bgf povwand.bgf wand.bgf wandov.bgf \
        squidS.bgf squidT.bgf wolfmask.bgf frontman.bgf ricehat.bgf squidC.bgf \
-       Knight.bgf KnightX.bgf Cknight.bgf CknightX.bgf Hknight.bgf HknightX.bgf
+       Knight.bgf KnightX.bgf Cknight.bgf CknightX.bgf Hknight.bgf HknightX.bgf \
+       corn.bgf cornbasket.bgf mashtaters.bgf stuffing.bgf turkey.bgf ham.bgf \
+       hamslices.bgf rouladen.bgf pumpslice.bgf pumppie.bgf pecanslice.bgf \
+       pecanpie.bgf
 
 !include $(RESOURCEDIR)\copy.mak
 
