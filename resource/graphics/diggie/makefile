@@ -15,7 +15,7 @@ BGFS = neeleme.bgf neelemeX.bgf iunholyt.bgf xeoneru.bgf xeoneruX.bgf \
        blckdrag.bgf blckdragX.bgf povwand.bgf wand.bgf wandov.bgf \
        squidS.bgf squidT.bgf wolfmask.bgf frontman.bgf ricehat.bgf squidC.bgf \
        Knight.bgf KnightX.bgf Cknight.bgf CknightX.bgf Hknight.bgf HknightX.bgf \
-       corn.bgf cornbasket.bgf mashtaters.bgf stuffing.bgf turkey.bgf ham.bgf \
+       corncob.bgf cornbasket.bgf mashtaters.bgf stuffing.bgf turkey.bgf ham.bgf \
        hamslices.bgf rouladen.bgf pumpslice.bgf pumppie.bgf pecanslice.bgf \
        pecanpie.bgf
 

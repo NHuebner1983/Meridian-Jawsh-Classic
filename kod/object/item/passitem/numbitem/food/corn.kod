@@ -17,7 +17,7 @@ constants:
 resources:
 
    corn_name_rsc = "corn cob"
-   corn_icon_rsc = corn.bgf
+   corn_icon_rsc = corncob.bgf
    corn_desc_rsc = \
    "A cob of buttery corn. "
 

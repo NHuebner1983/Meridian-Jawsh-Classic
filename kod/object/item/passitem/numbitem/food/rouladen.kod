@@ -17,7 +17,7 @@ constants:
 resources:
 
    rouladen_name_rsc = "slice of rouladen"
-   rouladen_icon_rsc = hamslice.bgf
+   rouladen_icon_rsc = hamslices.bgf
    rouladen_desc_rsc = \
    "This ham is rolled and cook slowly to seal the flavor. "
 
