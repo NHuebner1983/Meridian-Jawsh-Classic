@@ -72,7 +72,7 @@ messages:
    {
 
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_WEST, RID_D7, 43, 62, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_D7, 6, 50, ROTATE_NONE], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_NORTH, RID_D6E6, 43, 62, ROTATE_NONE], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_SOUTH, RID_JASWEST, 5, 61, ROTATE_NONE], plEdge_exits);
 

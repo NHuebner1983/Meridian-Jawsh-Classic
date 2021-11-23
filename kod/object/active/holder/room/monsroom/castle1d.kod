@@ -46,7 +46,8 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Skeleton, 100] ];
+      plMonsters = [ [&KnightA, 40], [&HalfKnight, 40], [&CaptainKnight, 20] ];
+
 
       plGenerators = [ [11, 7], [3, 8], [5, 5], [10, 5] ];
 

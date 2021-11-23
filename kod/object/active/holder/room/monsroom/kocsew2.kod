@@ -61,7 +61,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&DuskRat, 100] ];
+      plMonsters = [ [&DuskRat, 50], [&Ogre, 50] ];
       plGenerators = [ [4, 16], [15, 37], [32, 32], [32, 36], [36,34], [52, 33] ];
 
       propagate;
