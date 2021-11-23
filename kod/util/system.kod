@@ -3972,6 +3972,7 @@ messages:
       Create(&MimicTreasure);
       Create(&MinotaurTreasure);
       Create(&KnightTreasure);
+      Create(&OgreTreasure);
 
       return;
    }
@@ -5376,6 +5377,7 @@ messages:
       plMonsterTemplates = cons(create(&KnightA),plMonsterTemplates);
       plMonsterTemplates = cons(create(&CaptainKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&HalfKnight),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Ogre),plMonsterTemplates);
 
       return;
    }
@@ -5774,6 +5776,7 @@ messages:
       plItemTemplates = cons(create(&Weed6),plItemTemplates);
       plItemTemplates = cons(create(&Weed7),plItemTemplates);
       plItemTemplates = cons(create(&WeaponWand),plItemTemplates);
+      plItemTemplates = cons(create(&Wizardhat),plItemTemplates);
 
       //Thanksgiving
       plItemTemplates = cons(create(&Corn),plItemTemplates);
