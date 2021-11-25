@@ -15206,7 +15206,7 @@ messages:
          return Send(SETTINGS_OBJECT,@GetOutlawMurdererLogPenGhostTime);
       }
 
-      return Send(SETTINGS_OBJECT,@GetLogPenGhostTime);
+      return Send(SETTINGS_OBJECT,@GetLogPenGhostTime) + 160000;
    }
 
    RefreshPhaseTimeToBase()
