@@ -20,7 +20,7 @@ BCFLAGS = -d -I $(KODINCLUDEDIR) -K $(KODDIR)\kodbase.txt
 	@for %i in ($<) do @$(KODDIR)\bin\instbofrsc $(TOPDIR) $(BLAKSERVRUNDIR) %i
 
 all : $(BOFS)
-# Make sure all listed bofs exist - catch typos.
+	nmake ..\resource
 	@for %i in ($(BOFS:.bof=.kod)) do @if NOT EXIST %i (echo error: Missing kod file %i with makefile entry!)
 
 	@for %i in ($(BOFS:.bof=)) do @if EXIST %i (echo Building %i & cd %i & $(MAKE) /$(MAKEFLAGS) TOPDIR=..\$(TOPDIR) & cd ..)
@@ -32,6 +32,11 @@ all : $(BOFS)
 	@-$(RM) $(CLIENTRUNDIR)\resource\*.rsb >nul 2>&1
 	-@$(RSCMERGE) $(BLAKSERVRUNDIR)\rsc\rsc0000.rsb $(BLAKSERVRUNDIR)\rsc\*.rsc
 	-@$(CP) $(BLAKSERVRUNDIR)\rsc\rsc0000.rsb $(CLIENTRUNDIR)\resource\ 2>&1
+
+	echo off
+	IF exist ..\..\Ogre\Meridian59.Ogre.Client\bin\x86\resources\bgfobjects ( robocopy ..\run\localclient\resource\ ..\..\Ogre\Meridian59.Ogre.Client\bin\x86\resources\bgfobjects\ *.bgf /njh /njs /ndl /nc /ns /xf grd* ) ^& IF %ERRORLEVEL% LSS 8 SET ERRORLEVEL = 0
+	IF exist ..\..\Ogre\Meridian59.Ogre.Client\bin\x86\resources\bgftextures ( robocopy ..\run\localclient\resource\ ..\..\Ogre\Meridian59.Ogre.Client\bin\x86\resources\bgftextures\ grd*.bgf /njh /njs /ndl /nc /ns ) ^& IF %ERRORLEVEL% LSS 8 SET ERRORLEVEL = 0
+	IF exist ..\..\Ogre\Meridian59.Ogre.Client\bin\x86\resources\strings ( robocopy ..\run\server\rsc\ ..\..\Ogre\Meridian59.Ogre.Client\bin\x86\resources\strings\ *.rsb /njh /njs /ndl /nc /ns ) ^& IF %ERRORLEVEL% LSS 8 SET ERRORLEVEL = 0
 
 $(BOFS): $(DEPEND)
 
