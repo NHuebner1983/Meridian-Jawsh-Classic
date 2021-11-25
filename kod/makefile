@@ -20,7 +20,7 @@ BCFLAGS = -d -I $(KODINCLUDEDIR) -K $(KODDIR)\kodbase.txt
 	@for %i in ($<) do @$(KODDIR)\bin\instbofrsc $(TOPDIR) $(BLAKSERVRUNDIR) %i
 
 all : $(BOFS)
-	nmake ..\resource
+	cd ..\resource & nmake
 	@for %i in ($(BOFS:.bof=.kod)) do @if NOT EXIST %i (echo error: Missing kod file %i with makefile entry!)
 
 	@for %i in ($(BOFS:.bof=)) do @if EXIST %i (echo Building %i & cd %i & $(MAKE) /$(MAKEFLAGS) TOPDIR=..\$(TOPDIR) & cd ..)

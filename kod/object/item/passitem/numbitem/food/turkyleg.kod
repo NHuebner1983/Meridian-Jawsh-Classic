@@ -43,6 +43,10 @@ classvars:
    vrIcon = TurkeyLeg_icon_rsc
    vrDesc = TurkeyLeg_desc_rsc
 
+   vrDisp_name = TurkeyLeg_disp_name
+   vrDisp_icon = TurkeyLeg_disp_icon
+   vrDisp_desc = TurkeyLeg_disp_desc
+
    vrName_plural = TurkeyLeg_name_plural_rsc
 
    viBulk = 10
