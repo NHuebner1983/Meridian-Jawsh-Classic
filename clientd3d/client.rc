@@ -846,7 +846,6 @@ BEGIN
         MENUITEM "&Connect",                    ID_GAME_CONNECT
         MENUITEM "&Disconnect",                 ID_GAME_DISCONNECT
         MENUITEM "&Preferences",                ID_GAME_SETTINGS
-        MENUITEM "&Graphics",                   ID_GRAPHICS_MENU
         MENUITEM "Configuration",               ID_CONFIGMENU
         MENUITEM "Change pass&word",            ID_GAME_PASSWORD, GRAYED
         MENUITEM "&Logout timer",               ID_OPTIONS_TIMEOUT
