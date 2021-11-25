@@ -179,21 +179,21 @@ messages:
            #new_row=10,#new_col=18,#fine_row=48,#fine_col=40);
       Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&FortuneCookie),
            #new_row=20,#new_col=18,#fine_row=48,#fine_col=40);
-      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Grapes),
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Rouladen),
            #new_row=11,#new_col=11,#fine_row=48,#fine_col=48);
-      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Pork),
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&MashedPatatoes),
            #new_row=12,#new_col=11,#fine_row=48,#fine_col=48);
-      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Drumstick),
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Suffing),
            #new_row=13,#new_col=11,#fine_row=48,#fine_col=48);
-      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Spideye),
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&PecanPie),
            #new_row=14,#new_col=11,#fine_row=48,#fine_col=48);
-      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Spideye),
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&PumpkinPie),
            #new_row=16,#new_col=11,#fine_row=48,#fine_col=48);
-      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Drumstick),
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&TurkeyLeg),
            #new_row=17,#new_col=11,#fine_row=48,#fine_col=48);
-      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Pork),
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Corn),
            #new_row=18,#new_col=11,#fine_row=48,#fine_col=48);
-      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Grapes),
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Ham),
            #new_row=19,#new_col=11,#fine_row=48,#fine_col=48);
 
       Send(self,@NewHold,#what=Create(&FountainJet),#new_row=15,#new_col=16,
