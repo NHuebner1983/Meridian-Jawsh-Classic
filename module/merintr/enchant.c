@@ -16,6 +16,7 @@
  */
 
 #include "client.h"
+#include "move.h"
 #include "merintr.h"
 
 typedef struct {
@@ -445,12 +446,23 @@ long CALLBACK EnchantmentProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
       
 
       e = EnchantmentFindByWindow(hwnd);
+
       if (e != NULL)
       {
-	 tt->hinst = NULL;
-	 tt->lpszText = LookupNameRsc(e->obj->name_res);
+	    tt->hinst = NULL;
+	    tt->lpszText = LookupNameRsc(e->obj->name_res);
       }
+
       break;
+   }
+   
+   e = EnchantmentFindByWindow(hwnd);
+
+   if (e != NULL)
+   {
+       if (stricmp(LookupNameRsc(e->obj->name_res), "wolfpack") == 0) {
+           ChangeRunSpeed(165, 400, 30, 60, 60);
+       }
    }
 
    return CallWindowProc(lpfnDefEnchantmentProc, hwnd, message, wParam, lParam);

@@ -16,6 +16,9 @@
 #define CLIMB_VELOCITY_0   (FINENESS * 9 / 2)	// climb velocity set to be 3x faster than fall, to keep people from seeing through the floor
 #define FALL_VELOCITY_0    (-FINENESS * 2 / 3)
 
+M59EXPORT void ChangeWalkSpeed(int new_speed, int num_steps_sec, int steps_move, int moving_delay, int turning_delay);
+M59EXPORT void ChangeRunSpeed(int new_speed, int num_steps_sec, int steps_move, int moving_delay, int turning_delay);
+
 void ResetPlayerPosition(void);
 
 void UserMovePlayer(int action);

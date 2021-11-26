@@ -308,7 +308,7 @@ Bool InterfaceAction(int action, void *action_data)
       return False;
 
    case A_CASTSPELL:  // action_data is pointer to spell
-      if (CheckForAlwaysActiveSpells((spelltemp *) action_data))
+	  if (CheckForAlwaysActiveSpells((spelltemp *) action_data))
       {
          SpellCast((spell *) action_data);
          return False;

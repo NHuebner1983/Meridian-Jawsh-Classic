@@ -46,11 +46,16 @@
 
 #define MAX_CLOSE_WALLS 32
 
-#define MOVE_DELAY    100   // Minimum # of milliseconds between moving MOVEUNITS
-#define TURN_DELAY    100   // Minimum number of milliseconds between a full turn action
+#define MOVE_DELAY    75   // Minimum # of milliseconds between moving MOVEUNITS
+#define TURN_DELAY    75   // Minimum number of milliseconds between a full turn action
 
-#define NUM_STEPS_PER_SECOND 200  // # of small "steps" within movement per second
-#define STEPS_PER_MOVE 20         // Maximum number of small "steps" within a single move
+int move_delay = MOVE_DELAY;
+int turn_delay = TURN_DELAY;
+
+#define NUM_STEPS_PER_SECOND 225  // # of small "steps" within movement per second
+#define STEPS_PER_MOVE 25         // Maximum number of small "steps" within a single move
+int num_steps_per_second = NUM_STEPS_PER_SECOND;
+int steps_per_move = STEPS_PER_MOVE;
 
 #define MAX_STEP_HEIGHT (HeightKodToClient(24)) // Max vertical step size (FINENESS units)
 
@@ -65,7 +70,9 @@
 #define MIN_SIDE_MOVE (MOVEUNITS / 4)
 
 #define USER_WALKING_SPEED 25 // Speed we send to the server for walking.
-#define USER_RUNNING_SPEED 50 // Speed we send to the server for running.
+#define USER_RUNNING_SPEED 75 // Speed we send to the server for running.
+int user_walk_speed = USER_WALKING_SPEED;
+int user_run_speed = USER_RUNNING_SPEED;
 
 // Number of milliseconds between retrying to change rooms
 #define MOVE_OFF_ROOM_INTERVAL 1000
@@ -213,14 +220,14 @@ void UserMovePlayer(int action)
    if (dt <= 0)
       dt = 1;
    
-   if (dt < MOVE_DELAY && config.animate)
+   if (dt < move_delay && config.animate)
    {
       gravityAdjust = 1.0;
-      move_distance = move_distance * dt / MOVE_DELAY;
+      move_distance = move_distance * dt / move_delay;
    }
    else
    {
-      gravityAdjust = (double)MOVE_DELAY / (double)dt;
+      gravityAdjust = (double)move_delay / (double)dt;
    }
    last_move_time = now;
 
@@ -266,7 +273,7 @@ void UserMovePlayer(int action)
    last_move_action = action;
    FindOffsets(move_distance, angle, &dx, &dy);
 
-   num_steps = max(1, min(STEPS_PER_MOVE, NUM_STEPS_PER_SECOND * dt / 1000));
+   num_steps = max(1, min(steps_per_move, num_steps_per_second * dt / 1000));
 
 //   xinc = dx;// / num_steps;
 //   yinc = dy;// / num_steps;
@@ -836,6 +843,23 @@ void MoveUpdateServer(void)
       server_time = now;
    }
 }
+
+void ChangeWalkSpeed(int new_speed, int num_steps_sec, int steps_move, int moving_delay, int turning_delay) {
+    user_walk_speed = new_speed;
+    num_steps_per_second = num_steps_sec;
+    steps_per_move = steps_move;
+    move_delay = moving_delay;
+    turn_delay = turning_delay;
+}
+
+void ChangeRunSpeed(int new_speed, int num_steps_sec, int steps_move, int moving_delay, int turning_delay) {
+    user_run_speed = new_speed;
+    num_steps_per_second = num_steps_sec;
+    steps_per_move = steps_move;
+    move_delay = moving_delay;
+    turn_delay = turning_delay;
+}
+
 /************************************************************************/
 /*
  * MoveUpdatePosition:  Update the server's knowledge of our position.
@@ -862,11 +886,11 @@ void MoveUpdatePosition(void)
       // as well as those defined in user.kod
 
       // walk-speed (USER_WALKING_SPEED from user.kod)
-      speed = USER_WALKING_SPEED;
+      speed = user_walk_speed;
    
       // run-speed (USER_RUNNING_SPEED from user.kod)
       if (IsMoveFastAction(last_move_action))
-         speed = USER_RUNNING_SPEED;
+         speed = user_run_speed;
 
       // send update
       RequestMove(y, x, speed, player.room_id);
@@ -941,13 +965,13 @@ void UserTurnPlayer(int action)
    dt = now - last_turn_time;
    if (last_turn_time == 0 || dt <= 0)
       dt = 1;
-   if (dt < TURN_DELAY && config.animate)
+   if (dt < turn_delay && config.animate)
    {
-      delta = delta * dt / TURN_DELAY;
+      delta = delta * dt / turn_delay;
    }
-   else if (dt > (4*TURN_DELAY) && config.animate)
+   else if (dt > (4*turn_delay) && config.animate)
    {
-      delta = (delta * (int)(GetFrameTime()) / TURN_DELAY) / 2;
+      delta = (delta * (int)(GetFrameTime()) / turn_delay) / 2;
    }
    last_turn_time = now;
 
@@ -1065,8 +1089,8 @@ void BounceUser(int dt)
 
    if (config.bounce)
    {
-     dt = min(dt, MOVE_DELAY);
-     bounce_time += ((float) dt) / MOVE_DELAY;  /* In radians */
+     dt = min(dt, move_delay);
+     bounce_time += ((float) dt) / move_delay;  /* In radians */
      bounce_height = (long) (BOUNCE_HEIGHT * sin(bounce_time));
    }
    else

@@ -51,7 +51,7 @@ constants:
 
    // What's the "speed" of movement for the client?
    USER_WALKING_SPEED = 25
-   USER_RUNNING_SPEED = 100
+   USER_RUNNING_SPEED = 50
 
    // How many packets incoming per second do we allow?
    INCOMING_PACKET_THROTTLE = 25
@@ -554,7 +554,7 @@ properties:
 	// These are only used for players who are in "Monster" mode (such as AI-Players).
 	piBehavior = $
 	piState = $
-	viSpeed = 50
+	viSpeed = 100
 	piTargetLocationRow = $
 	piTargetLocationCol = $
 	piTargetLocationFineRow = $
@@ -4072,25 +4072,25 @@ messages:
       // 5.1 This move would consume more tokens
       // than we have left -> deny
       //
-      if (piMovementBucket - iMoveLength < 0)
-      {
-         // Reset position
-         Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
-               #new_row=iRow,
-               #new_col=iCol,
-               #fine_row=iFineRow,
-               #fine_col=iFineCol,
-               #new_angle=iAngle);
-
-         // Make a log entry
-         if piCheaterLogs < MAX_LOGGED_THRESHOLD
-         {
-            ++piCheaterLogs;
-            Debug("ALERT!",Send(self,@GetTrueName),self,"was moving too fast");
-         }
-
-         return;
-      }
+//      if (piMovementBucket - iMoveLength < 0)
+//      {
+//         // Reset position
+//         Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
+//               #new_row=iRow,
+//               #new_col=iCol,
+//               #fine_row=iFineRow,
+//              #fine_col=iFineCol,
+//              #new_angle=iAngle);
+//
+//         // Make a log entry
+//         if piCheaterLogs < MAX_LOGGED_THRESHOLD
+//         {
+//            ++piCheaterLogs;
+//            Debug("ALERT!",Send(self,@GetTrueName),self,"was moving too fast");
+//         }
+//
+//         return;
+//      }
 
       //
       // 5.2 Double check the user's speed. USER_WALKING_SPEED should
@@ -4188,7 +4188,7 @@ messages:
       {
          // Reduce speed value to old value, 5/6ths current value, then
          // square it.
-         iExertion = (speed * 3)/5;
+         iExertion = speed / 5;
          iExertion *= iExertion;
          iExertion *= EXERTION_PER_MOVE;
 
@@ -11042,7 +11042,7 @@ messages:
 	  
 	  //Debug(Send(self,@GetName),"moving towards coords",iRow,iCol,iFineRow,iFineCol);
 	  
-	  Send(self,@UserMove,#new_row=iRow,#new_col=iCol,#fine_row=iFineRow,#fine_col=iFineCol,#speed=50);
+	  Send(self,@UserMove,#new_row=iRow,#new_col=iCol,#fine_row=iFineRow,#fine_col=iFineCol,#speed=199);
 	  
 		/*Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
 			#new_row=iRow,

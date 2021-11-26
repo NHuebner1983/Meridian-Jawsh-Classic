@@ -220,3 +220,7 @@ EXPORTS
 
 ; ajw
 	GetUserTargetID
+
+; Player speeds
+	ChangeWalkSpeed
+	ChangeRunSpeed
