@@ -329,7 +329,7 @@ messages:
    StartPeriodicEnchantment(who=$,state=$,iSpellPower=0)
    "Drain mana, heal targets in range etc."
    {
-      local iDuration, iAbility, oSpell, oCaster, i, each_obj;
+      local iDuration, iAbility, oSpell, oCaster, i, each_obj, lHolderActive, oGetOwner;
 
       // Pre-calculated
       iDuration = Send(self,@GetStateDuration,#state=state);
@@ -370,7 +370,15 @@ messages:
             #iSpellPower=iSpellPower);
 
       // Have to do periodic effect on everyone enchanted by spell.
-      foreach i in Send(Send(who,@GetOwner),@GetHolderActive)
+	  oGetOwner = Send(who,@GetOwner);
+	  
+	  if (oGetOwner = $) {
+		return;
+	  }
+	  
+	  lHolderActive = Send(Send(who,@GetOwner),@GetHolderActive);
+	  
+      foreach i in lHolderActive
       {
          each_obj = First(i);
 
