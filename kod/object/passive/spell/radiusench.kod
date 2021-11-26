@@ -811,6 +811,11 @@ messages:
       //   }
       //}
 
+      if (IsClass(self, &Wolfpack)) 
+	  {
+		return false;
+	  }
+
       bRecheck = (event = EVENT_REST);
 
       Send(who,@RemoveRadiusEnchantment,#what=self,#state=state,

@@ -6,6 +6,6 @@
 
 DEPEND = ..\jala.bof
 BOFS = jig.bof hinder.bof restorat.bof invigor.bof rejuven.bof warptime.bof \
-       manaconv.bof melcholy.bof mirth.bof
+       manaconv.bof melcholy.bof mirth.bof wolfpack.bof
 
 !include $(KODDIR)\kod.mak

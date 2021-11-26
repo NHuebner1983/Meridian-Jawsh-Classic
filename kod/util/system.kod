@@ -3396,6 +3396,7 @@ messages:
 
       Send(self,@CreateOneSpellIfNew,#num=SID_MIRTH,#class=&Mirth);
       Send(self,@CreateOneSpellIfNew,#num=SID_MELANCHOLY,#class=&Melancholy);
+	  Send(self,@CreateOneSpellIfNew,#num=SID_WOLFPACK,#class=&Wolfpack);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_CRYSTALIZE_MANA,#class=&CrystalizeMana);
       
