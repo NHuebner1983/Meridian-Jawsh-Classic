@@ -444,6 +444,11 @@ void MissingResource(void)
 #ifdef NODPRINTFS
 	return;
 #else*/
+
+	// DO NOT SHOW THIS DIALOG.
+	// If a resource is missing we'll see it and fix it ourselves.
+	return;
+
 	/* Maximum of one of these dialogs at a time */
 	static Bool dialog_up = False;
 	
