@@ -1,0 +1,54 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+DeathRealm is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+   viWeatherZone = WEATHER_ZONE_RAZA
+   viWeatherMask = WEATHER_MASK_DEFAULT_NS
+
+properties:
+
+   prBackground = background_chaos_night
+
+messages:
+
+   Constructed()
+   {
+
+      Send(self,@ChangeTexture,#id=10,#new_texture=03203,#flags=CTF_FLOOR);
+      Send(self,@ChangeTexture,#id=0,#new_texture=09738,#flags=CTF_FLOOR);
+      Send(self,@ChangeTexture,#id=5,#new_texture=09738,#flags=CTF_FLOOR);
+      Send(self,@ChangeTexture,#id=15,#new_texture=09738,#flags=CTF_BELOWWALL);
+
+      propagate;
+   }
+
+   RecalcBackgroundSkyGraphic(iSkyBox=0)
+   {
+      return;
+   }
+
+   GetRoomLight()
+   {
+      local iLight;
+
+      return iLight=0;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

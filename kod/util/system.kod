@@ -2600,6 +2600,13 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_DESERTRIVER2,#class=&DesertRiver2);
       Send(self,@CreateOneRoomIfNew,#num=RID_DESERTBRIDGE,#class=&DesertBridge);
 
+      //Death Realm
+      Send(self,@CreateOneRoomIfNew,#num=RID_DH4,#class=&DeathRealmH4);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DH3,#class=&DeathRealmH3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DI3,#class=&DeathRealmI3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DBAR_SOUTH,#class=&DeathRealmBarloqueSouth);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DBAR_NORTH,#class=&DeathRealmBarloqueNorth);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DBAR_PORT,#class=&DeathRealmBarloquePort);
 
       if poRentableRoomMaintenance <> $  // After a clean build, for example.
       {

@@ -905,6 +905,14 @@
    RID_MAR_CRYPT2 = 2601
    RID_MAR_CRYPT3A = 2602
 
+   //Death Realm
+   RID_DH4        = 3000
+   RID_DH3        = 3001
+   RID_DI3        = 3002
+   RID_DBAR_SOUTH = 3003
+   RID_DBAR_NORTH = 3004
+   RID_DBAR_PORT  = 3005
+
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia
    //  reasons.
