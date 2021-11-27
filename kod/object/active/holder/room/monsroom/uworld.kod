@@ -41,6 +41,8 @@ resources:
       "Gazing into the portal, you see an expensive inn in a bustling city."
    portal_raza = \
       "Through the portal, you see the rustic charm of the Raza Inn."
+   portal_DR = \
+      "Through the portal, you see...darkness..and a red sky.."
    zap_to_corpse = \
       "Entering the portal you wander about the netherworld, but find "
       "yourself drawn out..."
@@ -87,6 +89,7 @@ properties:
    poPortal3 = $
    poPortal4 = $
    poPortal5 = $
+   poPortalDR = $
 
    plCorpses = $
 
@@ -416,14 +419,10 @@ messages:
          }
       }
 
-      oNode = Send(SYS,@FindNodeByNum,#num=NODE_CORPSENODE);
-      if oNode = $
-      {
-         Debug("Uworld node gone from system!");
-         oNode = Create(&CorpseNode,#node_num=NODE_CORPSENODE);
-      }
-
-      Send(oNode,@NodeAppear,#where=self,#row=16,#col=16,#fine_row=32,#fine_col=32);
+      poPortalDR = Create(&Portal,#desc=portal_DR,#dest_room_num=RID_DH4,
+                        #dest_col=29,#dest_row=24,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=poPortalDR,#new_row=16,#new_col=16,
+            #fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
 
       if ptMaintenance <> $
       {

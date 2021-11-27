@@ -59,8 +59,8 @@ messages:
       plExits = Cons([ 6, 12, RID_DBAR_SOUTH, 46,31, ROTATE_NONE ],plExits);
 
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_EAST, RID_J3, 7, 2, ROTATE_NONE], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_BADLAND2, 1, 22, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_DJ3, 7, 2, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_DBADLAND2, 1, 22, ROTATE_NONE], plEdge_exits);
 
       plEdge_Exits = Cons([LEAVE_WEST, RID_DH3, 25, 47, ROTATE_NONE,ROW_IS_LESS_THAN,22], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_WEST, RID_DH3, 32, 47, ROTATE_NONE,ROW_IS_GREATER_THAN,21], plEdge_exits);

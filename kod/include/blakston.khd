@@ -912,6 +912,11 @@
    RID_DBAR_SOUTH = 3003
    RID_DBAR_NORTH = 3004
    RID_DBAR_PORT  = 3005
+   RID_DJ3        = 3006
+   RID_DCASTLE2B  = 3007
+   RID_DBADLAND2  = 3008
+   RID_DBADLAND1  = 3009
+   RID_DK5        = 3010
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia

@@ -2607,6 +2607,11 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_DBAR_SOUTH,#class=&DeathRealmBarloqueSouth);
       Send(self,@CreateOneRoomIfNew,#num=RID_DBAR_NORTH,#class=&DeathRealmBarloqueNorth);
       Send(self,@CreateOneRoomIfNew,#num=RID_DBAR_PORT,#class=&DeathRealmBarloquePort);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DJ3,#class=&DeathRealmJ3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DCASTLE2B,#class=&DeathRealmCastle2b);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DBADLAND2,#class=&DeathRealmBadland2);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DBADLAND1,#class=&DeathRealmBadland1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DK5,#class=&DeathRealmK5);
 
       if poRentableRoomMaintenance <> $  // After a clean build, for example.
       {
