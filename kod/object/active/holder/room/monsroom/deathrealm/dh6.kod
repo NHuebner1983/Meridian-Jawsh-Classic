@@ -1,0 +1,83 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+DeathRealmH6 is DeathRealm
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_DeathRealm_H6 = h6.roo
+   room_name_DeathRealm_H6 ="Death Realm"
+   DeathRealm_H6_music = walk1.ogg
+
+classvars:
+
+   vrName = room_name_DeathRealm_H6
+
+   viTeleport_row = 25
+   viTeleport_col = 22
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_ROAD | TERRAIN_FIELDS
+
+   viWeatherZone = WEATHER_ZONE_TOS
+
+properties:
+
+   prRoom = room_DeathRealm_H6
+   prMusic = DeathRealm_H6_music
+   piRoom_num = RID_DH6
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+//   piGen_time = 45000
+   piGen_time = 20000 // temporarily increased from 25000
+   piGen_percent = 80
+
+/// modified for press day
+//   piInit_count_min = 0
+//   piInit_count_max = 3
+
+   piInit_count_min = 5  // minimum # of monsters loaded by first_user_enters
+   piInit_count_max = 7  // maximum # of monsters loaded by initial load
+
+   piMonster_count_max = 12 // temporarily reduced from 13
+
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&GiantRat, 70], [&Centipede, 30] ];
+      plGenerators = [ [8, 8], [9, 14], [5, 25], [10, 30], [18, 18], 
+		      [25, 19], [20, 3], [25, 9], [42, 5], [45, 12],
+		      [41, 22], [35, 30], [47, 34] ];
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+  /// TO TOWN
+      plExits = Cons([ 27, 41, RID_DTOS, 58, 4, ROTATE_NONE ],plExits);
+
+      plEdge_Exits = $;
+  //    plEdge_Exits = Cons([LEAVE_EAST, RID_DI6, 8, 2, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_DH5, 45, 11, ROTATE_NONE], plEdge_exits);
+   //   plEdge_Exits = Cons([LEAVE_WEST, RID_DH7, 8, 66, ROTATE_NONE], plEdge_exits);
+ 
+      propagate;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

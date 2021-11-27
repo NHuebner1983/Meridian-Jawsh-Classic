@@ -83,8 +83,8 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_H5, 4, 3, ROTATE_NONE], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_WEST, RID_G4, 42, 49, ROTATE_NONE, ROW_IS_GREATER_THAN,28], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_DH5, 4, 3, ROTATE_NONE], plEdge_exits);
+   //   plEdge_Exits = Cons([LEAVE_WEST, RID_DG4, 42, 49, ROTATE_NONE, ROW_IS_GREATER_THAN,28], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_NORTH, RID_DH3, 46, 14, ROTATE_NONE, COL_IS_LESS_THAN,33], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_NORTH, RID_DH3, 46, 33, ROTATE_NONE, COL_IS_GREATER_THAN,32], plEdge_exits);
 

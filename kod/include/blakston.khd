@@ -906,17 +906,24 @@
    RID_MAR_CRYPT3A = 2602
 
    //Death Realm
-   RID_DH4        = 3000
-   RID_DH3        = 3001
-   RID_DI3        = 3002
-   RID_DBAR_SOUTH = 3003
-   RID_DBAR_NORTH = 3004
-   RID_DBAR_PORT  = 3005
-   RID_DJ3        = 3006
-   RID_DCASTLE2B  = 3007
-   RID_DBADLAND2  = 3008
-   RID_DBADLAND1  = 3009
-   RID_DK5        = 3010
+   RID_DH4             = 3000
+   RID_DH3             = 3001
+   RID_DI3             = 3002
+   RID_DBAR_SOUTH      = 3003
+   RID_DBAR_NORTH      = 3004
+   RID_DBAR_PORT       = 3005
+   RID_DJ3             = 3006
+   RID_DCASTLE2B       = 3007
+   RID_DBADLAND2       = 3008
+   RID_DBADLAND1       = 3009
+   RID_DK5             = 3010
+   RID_DH5             = 3011
+   RID_DH6             = 3012
+   RID_DTOS            = 3013
+   RID_DTOS_EAST       = 3014
+   RID_DTOS_GRAVEYARD  = 3015
+   RID_DTOS_CRYPT      = 3016
+   RID_DDUKE1          = 3017
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia
