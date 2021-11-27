@@ -370,6 +370,11 @@ Enchantment *EnchantmentDestroy(Enchantment *e)
 {
    DestroyWindow(e->hwnd);
    ObjectDestroyAndFree(e->obj);
+
+   if (stricmp(LookupNameRsc(e->obj->name_res), "wolfpack") == 0) {
+       hasWolfpack = false;
+   }
+
    return NULL;
 }
 /************************************************************************/
@@ -462,8 +467,6 @@ long CALLBACK EnchantmentProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 
    if (e != NULL)
    {
-       hasWolfpack = false;
-
        if (stricmp(LookupNameRsc(e->obj->name_res), "wolfpack") == 0) {
            hasWolfpack = true;
        }

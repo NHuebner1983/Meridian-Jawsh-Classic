@@ -75,7 +75,6 @@ double GetMicroCountDouble();
 extern long CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 extern void ClearMessageQueue(void);
 
-
 extern Bool is_foreground;   // True when program is in the foreground
 
 /* This list of include files is good for precompiled headers */
