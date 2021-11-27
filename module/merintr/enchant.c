@@ -472,11 +472,11 @@ long CALLBACK EnchantmentProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
        }
 
        if (hasWolfpack) {
-           ChangeRunSpeed(75, 250, 23, 70, 70);
+           ChangeRunSpeed(95, 270, 25, 65, 65);
        }
        else
        {
-           ChangeRunSpeed(50, 200, 20, 100, 100);
+           ChangeRunSpeed(55, 210, 20, 85, 85);
        }
    }
 

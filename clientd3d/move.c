@@ -46,13 +46,13 @@
 
 #define MAX_CLOSE_WALLS 32
 
-#define MOVE_DELAY    100   // Minimum # of milliseconds between moving MOVEUNITS
-#define TURN_DELAY    100   // Minimum number of milliseconds between a full turn action
+#define MOVE_DELAY    85   // Minimum # of milliseconds between moving MOVEUNITS
+#define TURN_DELAY    85   // Minimum number of milliseconds between a full turn action
 
 int move_delay = MOVE_DELAY;
 int turn_delay = TURN_DELAY;
 
-#define NUM_STEPS_PER_SECOND 200  // # of small "steps" within movement per second
+#define NUM_STEPS_PER_SECOND 210  // # of small "steps" within movement per second
 #define STEPS_PER_MOVE 20         // Maximum number of small "steps" within a single move
 int num_steps_per_second = NUM_STEPS_PER_SECOND;
 int steps_per_move = STEPS_PER_MOVE;
@@ -70,7 +70,7 @@ int steps_per_move = STEPS_PER_MOVE;
 #define MIN_SIDE_MOVE (MOVEUNITS / 4)
 
 #define USER_WALKING_SPEED 25 // Speed we send to the server for walking.
-#define USER_RUNNING_SPEED 50 // Speed we send to the server for running.
+#define USER_RUNNING_SPEED 55 // Speed we send to the server for running.
 int user_walk_speed = USER_WALKING_SPEED;
 int user_run_speed = USER_RUNNING_SPEED;
 
