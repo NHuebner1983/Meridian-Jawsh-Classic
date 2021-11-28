@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-CASTLE1 is ObjectRoom
+DeathRealm_Castle1 is DeathRealm
 
 constants:
 
@@ -16,76 +16,34 @@ constants:
 
 resources:
 
-   include castle1.lkod
+   room_DeathRealm_Castle1 = castle1.roo
 
-   room_castle1 = castle1.roo
-   room_name_castle1 = "Castle Victoria"
-
-   castle1_music = castle2.ogg
+   DeathRealm_Castle1_music = castle2.ogg
 
 classvars:
 
-   vrName = room_name_castle1
+   vrName = room_name_DeathRealm_Castle1
 
    viTeleport_row = 13
    viTeleport_col = 18
 
    viTerrain_type = TERRAIN_CASTLE
 
-   viPermanent_Flags = ROOM_GUILD_PK_ONLY
-
    viWeatherZone = WEATHER_ZONE_CV
    viWeatherMask = WEATHER_MASK_MOUNTAINS
 
 properties:
 
-   prMusic = castle1_music
+   prMusic = DeathRealm_Castle1_music
 
-   piBaseLight = LIGHT_DARK
    piOutside_factor = OUTDOORS_3 
 
-   prRoom = room_castle1
-   piRoom_num = RID_CASTLE1
+   prRoom = room_DeathRealm_Castle1
+   piRoom_num = RID_DCASTLE1
 
    pbMobUseDoors = TRUE
 
 messages:
-
-   Constructed()
-   {
-      plMonsters = [ [&Skeleton, 100] ];
-
-      plGenerators = [ [5,18], [13, 3], [14, 7], [12, 12],
-                       [13, 8], [14, 24], [12, 27] ,
-                       [13, 30], [12, 37], [19, 40] ,
-                       [15, 44], [19,36], [11, 44], [11, 14], [11, 7] ] ;
-                       
-      plPatrolPaths = [ [ [5,23], [ 10,22 ], [11,21], [5,23], [5,18] ],
-                        [ [10,4], [15,6], [13,3] ],
-                        [ [9,17], [14,23], [12,46], [14,7] ],
-                        [ [16,18], [7,14], [12,12] ],
-                        [ [15,2], [13,8] ],
-                        [ [9,14], [14,24] ],
-                        [ [10,42], [12,27] ],
-                        [ [10,26], [12,19], [13,30] ],
-                        [ $ ],
-                        [ [13,45], [19,40] ],
-                        [ [20,36], [15,44] ],
-                        [ $ ]];
-
-      propagate;
-   }
-
-   CreateObjectGeneration()
-   {
-      plObject_gen = $;
-
-      plObject_gen = Cons([&PurpleMushroom, GEN_INF, 4,  4, 30  ], plObject_gen);
-      plObject_gen = Cons([&PurpleMushroom, GEN_INF, 4, 7, 33 ], plObject_gen);
-
-      propagate;
-   }
-
 
    CreateStandardExits()
    {
@@ -110,19 +68,19 @@ messages:
       plExits = Cons([ 13, 1, RID_CASTLE1D, 7, 15, ROTATE_NONE ],plExits);
       plExits = Cons([ 13, 2, RID_CASTLE1D, 7, 15, ROTATE_NONE ],plExits);
 
-      plExits = Cons([ 9, 4, RID_CASTLE1,  7, 4, ROTATE_NONE ],plExits);
-      plExits = Cons([ 8, 4, RID_CASTLE1, 10, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 9, 4, RID_DCASTLE1,  7, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 4, RID_DCASTLE1, 10, 4, ROTATE_NONE ],plExits);
 
-      plExits = Cons([ 9, 10, RID_CASTLE1, 7, 10, ROTATE_NONE ],plExits);
-      plExits = Cons([ 8, 10, RID_CASTLE1, 10, 10, ROTATE_NONE ],plExits);
+      plExits = Cons([ 9, 10, RID_DCASTLE1, 7, 10, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 10, RID_DCASTLE1, 10, 10, ROTATE_NONE ],plExits);
 
-      plExits = Cons([ 9, 26, RID_CASTLE1, 7, 26, ROTATE_NONE ],plExits);
-      plExits = Cons([ 8, 26, RID_CASTLE1, 10, 26, ROTATE_NONE ],plExits);
+      plExits = Cons([ 9, 26, RID_DCASTLE1, 7, 26, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 26, RID_DCASTLE1, 10, 26, ROTATE_NONE ],plExits);
 
-      plExits = Cons([ 9, 32, RID_CASTLE1, 7, 32, ROTATE_NONE ],plExits);
-      plExits = Cons([ 8, 32, RID_CASTLE1, 10, 32, ROTATE_NONE ],plExits);
+      plExits = Cons([ 9, 32, RID_DCASTLE1, 7, 32, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 32, RID_DCASTLE1, 10, 32, ROTATE_NONE ],plExits);
 
-      plExits = Cons([ 4, 33, RID_DUNGEON, 24, 2, ROTATE_NONE ],plExits);
+      plExits = Cons([ 4, 33, RID_DDUNGEON, 24, 2, ROTATE_NONE ],plExits);
 
       propagate;
    }
