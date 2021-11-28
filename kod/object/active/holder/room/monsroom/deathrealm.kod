@@ -98,6 +98,7 @@ messages:
          OR IsClass(oSpell,&QorBane)
          OR IsClass(oSpell,&PortalofLife)
          OR IsClass(oSpell,&FinalRites)
+         OR IsClass(oSpell,&BrambleWall)
       {
          // We have to provide the fail message here.
          Send(who,@MsgSendUser,#message_rsc=death_realm_no_cast_rsc,
