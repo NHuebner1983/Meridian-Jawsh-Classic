@@ -938,6 +938,20 @@
    RID_DE2             = 3029
    RID_DF2             = 3030
    RID_DBAR_SEWER      = 3031
+   RID_DC6             = 3032
+   RID_DD6E6           = 3033
+   RID_DD6E6ULAKE      = 3034
+   RID_DE5             = 3035
+   RID_DC7             = 3036
+   RID_DD7             = 3037
+   RID_DE7             = 3038
+   RID_DJASWEST        = 3039
+   RID_DJASPER         = 3040
+   RID_DF8             = 3041
+   RID_DG8             = 3042
+   RID_DG6             = 3043
+   RID_DH7             = 3044
+   RID_DG5             = 3045
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia

@@ -68,10 +68,10 @@ messages:
       plExits = Cons([ 1, 57, RID_DG4, 54,25, ROTATE_NONE ],plExits);
       plExits = Cons([ 2, 57, RID_DG4, 54,25, ROTATE_NONE ],plExits);
 
-     // plExits = Cons([ 30, 85, RID_DG5, 6, 19, ROTATE_NONE ],plExits);
-     // plExits = Cons([ 30, 86, RID_DG5, 6, 19, ROTATE_NONE ],plExits);
-     // plExits = Cons([ 31, 85, RID_DG5, 7, 19, ROTATE_NONE ],plExits);
-     // plExits = Cons([ 31, 86, RID_DG5, 7, 19, ROTATE_NONE ],plExits);
+      plExits = Cons([ 30, 85, RID_DG5, 6, 19, ROTATE_NONE ],plExits);
+      plExits = Cons([ 30, 86, RID_DG5, 6, 19, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 85, RID_DG5, 7, 19, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 86, RID_DG5, 7, 19, ROTATE_NONE ],plExits);
 
       plExits = Cons([ 41, 29, ROOM_LOCKED_DOOR ],plExits);
 
