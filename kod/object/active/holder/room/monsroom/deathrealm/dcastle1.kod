@@ -22,8 +22,6 @@ resources:
 
 classvars:
 
-   vrName = room_name_DeathRealm_Castle1
-
    viTeleport_row = 13
    viTeleport_col = 18
 
@@ -39,7 +37,7 @@ properties:
    piOutside_factor = OUTDOORS_3 
 
    prRoom = room_DeathRealm_Castle1
-   piRoom_num = RID_DCASTLE1
+   piRoom_num = RID_CASTLE1
 
    pbMobUseDoors = TRUE
 
@@ -58,29 +56,29 @@ messages:
       plExits = Cons([ 1, 19, RID_CASTLE1B, 8, 28, ROTATE_NONE ],plExits);
       plExits = Cons([ 2, 19, RID_CASTLE1B, 8, 28, ROTATE_NONE ],plExits);
 
-    //  plExits = Cons([ 16, 16, RID_CASTLE1C, 4, 43, ROTATE_90 ],plExits);
-    //  plExits = Cons([ 16, 17, RID_CASTLE1C, 4, 43, ROTATE_90 ],plExits);
-    //  plExits = Cons([ 16, 18, RID_CASTLE1C, 4, 43, ROTATE_90 ],plExits);
-    //  plExits = Cons([ 16, 19, RID_CASTLE1C, 4, 43, ROTATE_90 ],plExits);
+      plExits = Cons([ 16, 16, RID_CASTLE1C, 4, 43, ROTATE_90 ],plExits);
+      plExits = Cons([ 16, 17, RID_CASTLE1C, 4, 43, ROTATE_90 ],plExits);
+      plExits = Cons([ 16, 18, RID_CASTLE1C, 4, 43, ROTATE_90 ],plExits);
+      plExits = Cons([ 16, 19, RID_CASTLE1C, 4, 43, ROTATE_90 ],plExits);
 
-    //  plExits = Cons([ 12, 1, RID_CASTLE1D, 7, 15, ROTATE_NONE ],plExits);
-    //  plExits = Cons([ 12, 2, RID_CASTLE1D, 7, 15, ROTATE_NONE ],plExits);
-    //  plExits = Cons([ 13, 1, RID_CASTLE1D, 7, 15, ROTATE_NONE ],plExits);
-    //  plExits = Cons([ 13, 2, RID_CASTLE1D, 7, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 12, 1, RID_CASTLE1D, 7, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 12, 2, RID_CASTLE1D, 7, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 13, 1, RID_CASTLE1D, 7, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 13, 2, RID_CASTLE1D, 7, 15, ROTATE_NONE ],plExits);
 
-    //  plExits = Cons([ 9, 4, RID_DCASTLE1,  7, 4, ROTATE_NONE ],plExits);
-     // plExits = Cons([ 8, 4, RID_DCASTLE1, 10, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 9, 4, RID_DCASTLE1,  7, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 4, RID_DCASTLE1, 10, 4, ROTATE_NONE ],plExits);
 
-    //  plExits = Cons([ 9, 10, RID_DCASTLE1, 7, 10, ROTATE_NONE ],plExits);
-    //  plExits = Cons([ 8, 10, RID_DCASTLE1, 10, 10, ROTATE_NONE ],plExits);
+      plExits = Cons([ 9, 10, RID_DCASTLE1, 7, 10, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 10, RID_DCASTLE1, 10, 10, ROTATE_NONE ],plExits);
 
-    //  plExits = Cons([ 9, 26, RID_DCASTLE1, 7, 26, ROTATE_NONE ],plExits);
-    //  plExits = Cons([ 8, 26, RID_DCASTLE1, 10, 26, ROTATE_NONE ],plExits);
+      plExits = Cons([ 9, 26, RID_DCASTLE1, 7, 26, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 26, RID_DCASTLE1, 10, 26, ROTATE_NONE ],plExits);
 
-    //  plExits = Cons([ 9, 32, RID_DCASTLE1, 7, 32, ROTATE_NONE ],plExits);
-    //  plExits = Cons([ 8, 32, RID_DCASTLE1, 10, 32, ROTATE_NONE ],plExits);
+      plExits = Cons([ 9, 32, RID_DCASTLE1, 7, 32, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 32, RID_DCASTLE1, 10, 32, ROTATE_NONE ],plExits);
 
-    //  plExits = Cons([ 4, 33, RID_DDUNGEON, 24, 2, ROTATE_NONE ],plExits);
+      plExits = Cons([ 4, 33, RID_DDUNGEON, 24, 2, ROTATE_NONE ],plExits);
 
       propagate;
    }
