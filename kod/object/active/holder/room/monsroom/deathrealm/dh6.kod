@@ -17,12 +17,9 @@ constants:
 resources:
 
    room_DeathRealm_H6 = h6.roo
-   room_name_DeathRealm_H6 ="Death Realm"
    DeathRealm_H6_music = walk1.ogg
 
 classvars:
-
-   vrName = room_name_DeathRealm_H6
 
    viTeleport_row = 25
    viTeleport_col = 22
@@ -43,26 +40,10 @@ properties:
    piGen_time = 20000 // temporarily increased from 25000
    piGen_percent = 80
 
-/// modified for press day
-//   piInit_count_min = 0
-//   piInit_count_max = 3
-
    piInit_count_min = 5  // minimum # of monsters loaded by first_user_enters
    piInit_count_max = 7  // maximum # of monsters loaded by initial load
 
-   piMonster_count_max = 12 // temporarily reduced from 13
-
-
 messages:
-
-   Constructed()
-   {
-      plMonsters = [ [&GiantRat, 70], [&Centipede, 30] ];
-      plGenerators = [ [8, 8], [9, 14], [5, 25], [10, 30], [18, 18], 
-		      [25, 19], [20, 3], [25, 9], [42, 5], [45, 12],
-		      [41, 22], [35, 30], [47, 34] ];
-      propagate;
-   }
 
    CreateStandardExits()
    {

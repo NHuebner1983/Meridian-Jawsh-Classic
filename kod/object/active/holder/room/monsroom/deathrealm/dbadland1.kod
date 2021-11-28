@@ -16,13 +16,10 @@ constants:
 
 resources:
 
-   DeathRealm_badland11_name = "Death Realm"
    room_DeathRealm_badland11 = badland1.roo
    DeathRealm_badland11_music = walk5.ogg
 
 classvars:
-
-   vrName = DeathRealm_badland11_name
 
    viTeleport_row = 25
    viTeleport_col = 17
@@ -42,16 +39,6 @@ properties:
    prMapChanges = FALSE
 
 messages:
-
-   Constructed()
-   {
-      plMonsters = [ [&Groundworm, 100] ];
-
-      plGenerators = [ [22, 24], [61, 20], [47, 68], [15, 37], [12,61],
-                       [31, 52], [64, 46], [33, 34], [35, 18] ];
-
-      propagate;
-   }
 
    CreateStandardExits()
    {

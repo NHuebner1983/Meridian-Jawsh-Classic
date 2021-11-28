@@ -17,15 +17,12 @@ constants:
 resources:
 
    room_DeathRealm_TosGraveyard = tosgrave.roo
-   room_name_DeathRealm_TosGraveyard = "Death Realm"
 
    DeathRealm_tosgraveyard_music = marion.ogg
    DeathRealm_wind_sound_tosgrave = ambcntry.ogg
    DeathRealm_wind1_sound_tosgrave = rs_wind.ogg
 
 classvars:
-
-   vrName = room_name_DeathRealm_TosGraveyard
 
    viTeleport_row = 14
    viTeleport_col = 18
@@ -42,21 +39,7 @@ properties:
    plTombstones = $
    viTerrain_type = TERRAIN_CITY | TERRAIN_MYSTICAL
 
-   piMonster_count_max = 20
-
 messages:
-
-   Constructed()
-   {
-//      include tosgrave.kmn ;
-      plMonsters = [ [&Zombie, 85], [&Skeleton, 15] ];
-
-      plGenerators = [ [9, 31], [7, 24], [6, 7], [12, 6], [20, 27],
-                       [23, 16], [23, 7], [16, 14] ];
-   //  each sound is [wave_file, row, col, cutoff radius, maximum volume]
-      plLooping_sounds = [[ wind_sound_tosgrave, 1, 1, 200, 100 ]];
-      propagate;
-   }
 
    AvailableTombstone(what = $)
    "When tombstones are created in here, they tell us they want to know about "
@@ -114,18 +97,12 @@ messages:
       // Crypt
       plExits = Cons([ 6, 29, RID_DTOS_CRYPT, 23, 8, ROTATE_NONE ],plExits);
 
-//      plExits = Cons([ 27, 33, RID_TOS, 50, 4, ROTATE_NONE ],plExits);
-//      plExits = Cons([ 28, 33, RID_TOS, 50, 4, ROTATE_NONE ],plExits);
-//      plExits = Cons([ 29, 33, RID_TOS, 50, 4, ROTATE_NONE ],plExits);
-
       propagate;
    }
 
    CreateStandardObjects()
    {
 
-//      include tosgrave.ktm ;
-      
       // some haphazard tombstones
 
       Send(self,@NewHold,#what=Create(&Tombstone,

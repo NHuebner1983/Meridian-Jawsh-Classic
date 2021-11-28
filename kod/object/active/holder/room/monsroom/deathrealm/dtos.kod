@@ -16,7 +16,6 @@ constants:
 
 resources:
 
-   room_name_DeathRealm_tos = "Death Realm"
    room_DeathRealm_tos = tos.roo
    DeathRealm_tos_music = tos.ogg
 
@@ -26,8 +25,6 @@ resources:
    DeathRealm_tos_locked_tavern_door = "The door to this tavern is locked."
 
 classvars:
-
-   vrName = room_name_DeathRealm_tos
 
    viTeleport_Row = 60
    viTeleport_Col = 18

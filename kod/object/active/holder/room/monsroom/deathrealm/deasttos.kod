@@ -14,7 +14,6 @@ constants:
 
 resources:
    room_DeathRealm_EastTos = toseast.roo
-   name_DeathRealm_EastTos = "Death Realm"
 
    DeathRealm_EastTos_music = tos.ogg
    DeathRealm_wind_sound_easttos = ambcntry.ogg
@@ -22,7 +21,6 @@ resources:
 
 classvars:
 
-   vrName = name_DeathRealm_EastTos
    viTerrain_Type = TERRAIN_CITY | TERRAIN_ROAD
 
    viTeleport_row = 27

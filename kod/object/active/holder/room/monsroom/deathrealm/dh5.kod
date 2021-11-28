@@ -17,12 +17,9 @@ constants:
 resources:
 
    room_DeathRealm_H5 = h5.roo
-   room_name_DeathRealm_H5 ="Death Realm"
    DeathRealm_H5_music = forest.ogg
 
 classvars:
-
-   vrName = room_name_DeathRealm_H5
 
    viTeleport_row = 26
    viTeleport_col = 12
@@ -46,15 +43,6 @@ properties:
    piInit_count_max = 5
 
 messages:
-
-   Constructed()
-   {
-      plMonsters = [ [&Troll, 30], [&Groundworm, 70] ];
-
-      plGenerators = [ [19, 7], [22, 14], [27, 25], [25, 36],
-                      [38, 34], [46, 26], [36, 17], [35,  8] ];
-      propagate;
-   }
 
    CreateStandardExits()
    {

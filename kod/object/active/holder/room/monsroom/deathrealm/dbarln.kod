@@ -23,15 +23,12 @@ constants:
 
 resources:
 
-   room_name_DeathRealm_barloquenorth = "Death Realm"
    room_DeathRealm_barloquenorth = barln.roo
    DeathRealm_barloquenorth_music = corloth.ogg
 
    DeathRealm_barloquenorth_sound_rsc = down2.ogg
 
 classvars:
-
-   vrName = room_name_DeathRealm_barloquenorth
 
    viTeleport_row = 25
    viTeleport_col = 42

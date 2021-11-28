@@ -924,6 +924,10 @@
    RID_DTOS_GRAVEYARD  = 3015
    RID_DTOS_CRYPT      = 3016
    RID_DDUKE1          = 3017
+   RID_DG4             = 3018
+   RID_DCORNOTH        = 3019
+   RID_DF4             = 3020
+   RID_DF3             = 3021
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia

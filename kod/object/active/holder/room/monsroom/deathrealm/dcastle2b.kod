@@ -17,13 +17,11 @@ constants:
 
 resources:
 
-   room_name_DeathRealm_castle2b = "Death Realm"
    room_DeathRealm_castle2b = castle2b.roo
    DeathRealm_castle2b_music = castle.ogg
 
 classvars:
 
-   vrName = room_name_DeathRealm_castle2b
    viTerrain_Type = TERRAIN_CASTLE | TERRAIN_FOUNTAIN
 
    viTeleport_row = 8

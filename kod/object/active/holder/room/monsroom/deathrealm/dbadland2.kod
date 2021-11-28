@@ -17,12 +17,9 @@ constants:
 resources:
 
    room_DeathRealm_badland2 = badland2.roo
-   name_DeathRealm_badland2 = "Death Realm"
    DeathRealm_badland2_music = walk5.ogg
 
 classvars:
-
-   vrName = name_DeathRealm_badland2
 
    viTeleport_row = 8
    viTeleport_col = 20

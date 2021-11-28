@@ -17,12 +17,9 @@ constants:
 resources:
 
    room_DeathRealm_K5 = k5.roo
-   room_name_DeathRealm_K5 ="Death Realm"
    DeathRealm_K5_music = walk5.ogg
 
 classvars:
-
-   vrName = room_name_DeathRealm_K5
 
    viTeleport_row = 33
    viTeleport_col = 32
@@ -47,22 +44,9 @@ properties:
    piInit_count_min = 5
    piInit_count_max = 7
 
-   piMonster_count_max = 34   // Includes brambles.
-
    prMapChanges = FALSE
 
 messages:
-
-   Constructed()
-   {
-      plMonsters = [ [&GroundwormQueen, 100] ];
-
-      plGenerators = [ [10, 15], [19, 12], [23, 23], [4, 24], [8, 50],
-                     [11, 30], [25, 37], [37, 28], [36, 43], [41, 48], 
-                     [49, 34], [45, 22], [14, 41], [19, 30], [28, 49], [39, 37] ];
-
-      propagate;
-   }
 
    StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
    {

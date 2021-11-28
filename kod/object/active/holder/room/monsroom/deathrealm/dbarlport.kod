@@ -16,7 +16,6 @@ constants:
 
 resources:
 
-   room_name_DeathRealm_barloqueport = "Death Realm"
    room_DeathRealm_barloqueport = barlport.roo
    DeathRealm_barloqueport_music = corloth.ogg
    
@@ -26,8 +25,6 @@ classvars:
    viTeleport_col = 29
 
    viTerrain_Type = TERRAIN_CITY | TERRAIN_ROAD | TERRAIN_BEACH
-
-   vrName = room_name_DeathRealm_barloqueport
 
    viWeatherMask = WEATHER_MASK_DEFAULT
 
