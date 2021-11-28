@@ -1,0 +1,61 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+DeathRealmCastle is DeathRealm
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_DeathRealm_Castle = dcastle.roo
+   
+   DeathRealm_Castle_music = castle.ogg
+
+classvars:
+
+   viTeleport_row = 7
+   viTeleport_col = 24
+   viTerrain_Type = TERRAIN_MOUNTAIN | TERRAIN_FOREST
+
+   viWeatherZone = WEATHER_ZONE_CV
+   viWeatherMask = WEATHER_MASK_MOUNTAINS
+
+properties:
+
+   prMusic = DeathRealm_Castle_music
+
+   piOutside_factor = OUTDOORS_10 
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   prRoom = room_DeathRealm_Castle
+   piRoom_num = RID_DCASTLE
+
+messages:
+   
+   CreateStandardExits()
+   {
+      plExits = $;
+
+   //   plExits = Cons([ 3, 44, RID_DCASTLE1, 15, 17, ROTATE_270 ],plExits);
+   //   plExits = Cons([ 4, 44, RID_DCASTLE1, 15, 17, ROTATE_270 ],plExits);
+   //   plExits = Cons([ 5, 44, RID_DCASTLE1, 15, 17, ROTATE_270 ],plExits);                                                                                
+
+      plEdge_exits = $;
+      plEdge_Exits = Cons([ LEAVE_WEST, RID_DI9, 2, 27, ANGLE_SOUTH_WEST ], plEdge_exits); 
+
+    propagate;
+
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

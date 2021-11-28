@@ -2653,6 +2653,10 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_DI7,#class=&DeathRealmI7);
       Send(self,@CreateOneRoomIfNew,#num=RID_DI8,#class=&DeathRealmI8);
       Send(self,@CreateOneRoomIfNew,#num=RID_DI9,#class=&DeathRealmI9);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DH9,#class=&DeathRealmH9);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DG9,#class=&DeathRealmG9);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DTEMPLE_KRAANAN,#class=&DeathRealmKraanan);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DCASTLE,#class=&DeathRealmCastle);
 
       if poRentableRoomMaintenance <> $  // After a clean build, for example.
       {

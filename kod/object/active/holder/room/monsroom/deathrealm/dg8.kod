@@ -36,6 +36,7 @@ properties:
    piRoom_num = RID_DG8
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+   prMapChanges = FALSE
 
 messages:
    
@@ -47,10 +48,8 @@ messages:
       plEdge_Exits = Cons([LEAVE_WEST, RID_DF8, 43, 46, ROTATE_NONE], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_NORTH, RID_DG6, 128, 71, ROTATE_NONE], plEdge_exits);
    
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_G9, 2, 18, ROTATE_NONE,COL_IS_LESS_THAN,20], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_G9, 2, 61, ROTATE_NONE,COL_IS_GREATER_THAN,19], plEdge_exits);      	 
-
-      plEdge_Exits = Cons([LEAVE_EAST, RID_NECROAREA1, 7, 2, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_DG9, 2, 18, ROTATE_NONE,COL_IS_LESS_THAN,20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_DG9, 2, 61, ROTATE_NONE,COL_IS_GREATER_THAN,19], plEdge_exits);
 
       return;
    }

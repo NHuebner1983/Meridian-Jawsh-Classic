@@ -16,14 +16,10 @@ constants:
 
 resources:
 
-   room_i9 = i9.roo
-   i9_music = walk4.ogg
-
-   i9_sound_rsc = down2.ogg
+   DeathRealm_room_i9 = i9.roo
+   DeathRealm_i9_music = walk4.ogg
 
 classvars:
-
-   vrName = room_name_i9
 
    viTeleport_row = 42
    viTeleport_col = 14
@@ -41,6 +37,7 @@ properties:
    prMusic = i9_music
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+   prMapChanges = FALSE
 
 messages:
 
@@ -48,7 +45,7 @@ messages:
    {
       plEdge_exits = $;
 
-      plEdge_Exits = Cons([LEAVE_NORTH, RID_DCASTLE1C, 21, 3, ANGLE_EAST],
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_DCASTLE, 21, 3, ANGLE_EAST],
                            plEdge_exits);
       plEdge_Exits = Cons([LEAVE_SOUTH, RID_DH9, 21, 43, ROTATE_NONE],
                            plEdge_exits);
