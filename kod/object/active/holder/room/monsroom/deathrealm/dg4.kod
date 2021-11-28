@@ -36,19 +36,7 @@ properties:
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
-   piGen_percent = 90
-
-   piInit_count_min = 2
-   piInit_count_max = 5
-
 messages:
-
-   Constructed()
-   {
-      Send(self,@ChangeTexture,#id=11,#new_texture=03203,#flags=CTF_BELOWWALL);
-
-      propagate;
-   }
 
    CreateStandardExits()
    {

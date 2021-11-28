@@ -39,12 +39,6 @@ properties:
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
-   piGen_time = 20000
-   piGen_percent = 70
-
-   piInit_count_min = 2
-   piInit_count_max = 5
-
 messages:
 
    StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)

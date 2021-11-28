@@ -39,13 +39,6 @@ properties:
 
 messages:
 
-   Constructed()
-   {
-      Send(self,@ChangeTexture,#id=11,#new_texture=03203,#flags=CTF_BELOWWALL);
-
-      propagate;
-   }
-
    CreateStandardExits()
    {
       plExits = $;

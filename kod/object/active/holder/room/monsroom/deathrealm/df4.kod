@@ -36,19 +36,14 @@ properties:
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
-   piGen_percent = 60
-
-   piInit_count_min = 1
-   piInit_count_max = 3
-
 messages:
 
  CreateStandardExits()
    {
       plEdge_Exits = $;
       plEdge_Exits = Cons([LEAVE_NORTH, RID_DF3, 32, 66, ROTATE_NONE], plEdge_exits);
-     // plEdge_Exits = Cons([LEAVE_WEST, RID_DE4, 27, 49, ROTATE_NONE, ROW_IS_LESS_THAN,16], plEdge_exits);
-    //  plEdge_Exits = Cons([LEAVE_WEST, RID_DE4, 34, 49, ROTATE_NONE, ROW_IS_GREATER_THAN,15], plEdge_exits);        
+      plEdge_Exits = Cons([LEAVE_WEST, RID_DE4, 27, 49, ROTATE_NONE, ROW_IS_LESS_THAN,16], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_DE4, 34, 49, ROTATE_NONE, ROW_IS_GREATER_THAN,15], plEdge_exits);        
       plEdge_Exits = Cons([LEAVE_EAST, RID_DG4, 42, 2, ROTATE_NONE, ROW_IS_GREATER_THAN,24], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_EAST, RID_DG4, 32, 2, ROTATE_NONE, ROW_IS_LESS_THAN,25], plEdge_exits);        
 

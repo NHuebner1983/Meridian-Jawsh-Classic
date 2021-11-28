@@ -32,6 +32,8 @@ properties:
    prMonsters = TRUE
    plGenerators = $
    piMonster_count_max = 40
+   piInit_count_min = 5
+   piInit_count_max = 10
 
 messages:
 
@@ -43,6 +45,7 @@ messages:
          Send(self,@ChangeTexture,#id=0,#new_texture=09738,#flags=CTF_FLOOR);
          Send(self,@ChangeTexture,#id=5,#new_texture=09738,#flags=CTF_FLOOR);
          Send(self,@ChangeTexture,#id=15,#new_texture=09738,#flags=CTF_BELOWWALL);
+         Send(self,@ChangeTexture,#id=11,#new_texture=03203,#flags=CTF_BELOWWALL);
       }
 
       if prMonsters = TRUE

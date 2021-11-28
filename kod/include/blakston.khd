@@ -928,6 +928,16 @@
    RID_DCORNOTH        = 3019
    RID_DF4             = 3020
    RID_DF3             = 3021
+   RID_DE4             = 3022
+   RID_DD5             = 3023
+   RID_DD4             = 3024
+   RID_DC5             = 3025
+   RID_DMARION         = 3026
+   RID_DC4             = 3027
+   RID_DTEMPLE         = 3028
+   RID_DE2             = 3029
+   RID_DF2             = 3030
+   RID_DBAR_SEWER      = 3031
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia

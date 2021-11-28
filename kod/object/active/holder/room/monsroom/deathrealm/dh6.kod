@@ -36,13 +36,6 @@ properties:
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
-//   piGen_time = 45000
-   piGen_time = 20000 // temporarily increased from 25000
-   piGen_percent = 80
-
-   piInit_count_min = 5  // minimum # of monsters loaded by first_user_enters
-   piInit_count_max = 7  // maximum # of monsters loaded by initial load
-
 messages:
 
    CreateStandardExits()

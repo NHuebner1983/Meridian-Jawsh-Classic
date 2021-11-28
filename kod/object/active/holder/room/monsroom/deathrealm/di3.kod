@@ -37,12 +37,6 @@ properties:
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
-   piGen_time = 20000
-   piGen_percent = 80
-
-   piInit_count_min = 1
-   piInit_count_max = 4
-
 messages:
 
    CreateStandardExits()
