@@ -17,7 +17,7 @@ constants:
 resources:
 
    room_name_DeathRealm ="Death Realm"
-   death_realm_no_cast_rsc = "The forces of Qor prevent you from using that magic here. test "
+   death_realm_no_cast_rsc = "The forces of Qor prevent you from using that magic here. "
 
 classvars:
 
