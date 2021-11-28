@@ -41,18 +41,6 @@ properties:
 
 messages:
 
-   StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
-   {
-      if (dir = LEAVE_WEST) AND (Send(what,@GetRow) < 29)
-      {
-         Send(what,@MsgSendUser,#message_rsc = Dwaterfall_msg1);
-
-         return;
-      }
-
-      propagate;
-   }
-
    CreateStandardExits()
    {
       plEdge_Exits = $;

@@ -952,6 +952,8 @@
    RID_DG6             = 3043
    RID_DH7             = 3044
    RID_DG5             = 3045
+   RID_DF7             = 3046
+   RID_DF6             = 3047
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia
