@@ -38,6 +38,20 @@ properties:
 
 messages:
 
+   SomethingMoved(what = $,new_row = $, new_col = $)
+   {
+      if (new_row = 56) AND (new_col = 44)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+               #where=Send(SYS,@FindRoomByNum,#num=RID_DI6),
+               #new_row=8,#new_col=2,#new_angle=ANGLE_NORTH_EAST);
+
+         return;
+      }
+
+      propagate;
+   }
+   
    CreateStandardExits()
    {
       plExits = $;
@@ -46,7 +60,6 @@ messages:
       plExits = Cons([ 27, 41, RID_DTOS, 58, 4, ROTATE_NONE ],plExits);
 
       plEdge_Exits = $;
-  //    plEdge_Exits = Cons([LEAVE_EAST, RID_DI6, 8, 2, ROTATE_NONE], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_NORTH, RID_DH5, 45, 11, ROTATE_NONE], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_WEST, RID_DH7, 8, 66, ROTATE_NONE], plEdge_exits);
  
