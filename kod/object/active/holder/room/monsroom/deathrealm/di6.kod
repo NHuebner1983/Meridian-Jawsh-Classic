@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-DeathRealmH7 is DeathRealm
+DeathRealmI6 is DeathRealm
 
 constants:
 
@@ -16,23 +16,23 @@ constants:
 
 resources:
 
-   room_DeathRealm_H7 = h7.roo
-   DeathRealm_H7_music = walk7.ogg
+   room_DeathRealm_I6 = i6.roo
+   DeathRealm_I6_music = walk1.ogg
 
 classvars:
 
-   viTeleport_row = 22
-   viTeleport_col = 35
+   viTeleport_row = 23
+   viTeleport_col = 16
 
-   viTerrain_type = TERRAIN_FOREST
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_MOUNTAIN
 
    viWeatherZone = WEATHER_ZONE_TOS
 
 properties:
 
-   prRoom = room_DeathRealm_H7
-   prMusic = DeathRealm_H7_music
-   piRoom_num = RID_DH7
+   prRoom = room_DeathRealm_I6
+   prMusic = DeathRealm_I6_music
+   piRoom_num = RID_DI6
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
@@ -41,10 +41,13 @@ messages:
    CreateStandardExits()
    {
       plEdge_exits = $;
-      plEdge_Exits = Cons([LEAVE_EAST, RID_DI7, 7, 2, ROTATE_NONE, ROW_IS_GREATER_THAN,20], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_EAST, RID_DH6, 45, 6, ROTATE_NONE, ROW_IS_LESS_THAN,19], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_WEST, RID_DG6, 115, 88, ROTATE_NONE], plEdge_exits);
-      propagate;
+      plEdge_Exits = Cons([LEAVE_WEST, RID_DH6, 54, 43, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_DTOS_EAST, 57, 36, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_DI7, 1, 39, ROTATE_NONE], plEdge_exits);
+
+      plExits = $;
+
+      return;
    }
 
 end

@@ -69,7 +69,46 @@ messages:
       plExits = Cons([ 28, 51, ROOM_LOCKED_DOOR ],plExits);
       plExits = Cons([ 29, 51, ROOM_LOCKED_DOOR ],plExits);
 
-    //  plEdge_Exits = Cons([ LEAVE_SOUTH, RID_DI6, 2, 47, ANGLE_SOUTH ], plEdge_exits);
+      propagate;
+   }
+
+   SomethingMoved(what = $,new_row = $, new_col = $)
+   {
+      if (new_row = 57) AND (new_col = 34)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+               #where=Send(SYS,@FindRoomByNum,#num=RID_DI6),
+               #new_row=2,#new_col=47,#new_angle=ANGLE_EAST);
+
+         return;
+      }
+
+      if (new_row = 57) AND (new_col = 35)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+               #where=Send(SYS,@FindRoomByNum,#num=RID_DI6),
+               #new_row=2,#new_col=47,#new_angle=ANGLE_EAST);
+
+         return;
+      }
+
+      if (new_row = 57) AND (new_col = 36)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+               #where=Send(SYS,@FindRoomByNum,#num=RID_DI6),
+               #new_row=2,#new_col=47,#new_angle=ANGLE_EAST);
+
+         return;
+      }
+      
+      if (new_row = 57) AND (new_col = 37)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+               #where=Send(SYS,@FindRoomByNum,#num=RID_DI6),
+               #new_row=2,#new_col=47,#new_angle=ANGLE_EAST);
+
+         return;
+      }
 
       propagate;
    }

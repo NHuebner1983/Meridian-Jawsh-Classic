@@ -71,7 +71,7 @@ messages:
 
       propagate;
    }
-
+   
    RecalcBackgroundSkyGraphic(iSkyBox=0)
    {
       return;
