@@ -80,7 +80,6 @@ messages:
 
       return iLight=0;
    }
-         OR IsClass(oSpell,&FinalRites)
 
    ReqSpellCast(who = $, oSpell = $, lItems = $)
    {
