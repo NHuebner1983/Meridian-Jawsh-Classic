@@ -60,6 +60,13 @@ properties:
 
 messages:
 
+   Constructor()
+   {
+      plSpellBook = [ [SID_BLIND,5,100] ];
+
+      propagate;
+   }
+
    SetEquipment()
    {
       local oEquipmentItem;
