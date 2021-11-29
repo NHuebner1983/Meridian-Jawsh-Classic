@@ -19,6 +19,12 @@ resources:
    room_name_DeathRealm ="Death Realm"
    death_realm_no_cast_rsc = "The forces of Qor prevent you from using that magic here. "
 
+   Lava_damage_no_hurt = "You walk through the lava as if you were a god."
+   Lava_damage_hurt = "As you wade through the lava it burns you violently."      
+
+   Lava_scratch_snd = frying.ogg
+
+
 classvars:
 
    vrName = room_name_DeathRealm
@@ -34,7 +40,8 @@ properties:
    piMonster_count_max = 40
    piInit_count_min = 5
    piInit_count_max = 10
-
+   piLava_damage = 5
+   
 messages:
 
    Constructed()
@@ -110,5 +117,113 @@ messages:
       propagate;
    }
 
+   SomethingMoved(what = $, new_row = $, new_col = $, fine_row = FINENESS/2,
+                  fine_col = FINENESS/2, cause = CAUSE_UNKNOWN, speed = 0,
+                  non_monsters_only = FALSE)
+   {
+      local i, temp, each_obj, packet_built, lNode, iQflags, 
+            iRflags, iHeightF, iHeightFWD, iHeightC, iServerID, session;
+
+      if (IsClass(what, &User)) {
+	     session = Send(what,@GetSession);
+         lUser_pos = [Send(self,@GetTeleportAngle),new_row,new_col,fine_row,fine_col,session];
+		 Debug("Player moved: ", new_row, new_col, fine_row, fine_col);
+	  }
+
+      propagate;
+   }
+
+   NewHold(what = $, new_angle = ANGLE_EAST, new_row = 1, new_col = 1,
+           fine_row = FINENESS/2, fine_col = FINENESS/2, session = $,
+           merge = TRUE)
+   {
+      local bUser;
+
+      if what = $
+         OR what = self
+      {
+         return;
+      }
+
+      bUser = IsClass(what,&User);
+	  
+	  if (bUser) {
+         pbUser = what;
+	  }
+
+      if bUser
+      {
+		 if (bUser AND ptLava_damage = $) {
+		    ptLava_damage = CreateTimer(self, @CheckForLavaDamage, 1000);
+		 }
+      }
+
+      propagate;
+   }
+
+   LastUserLeft()
+   {
+      if (ptLava_damage <> $)
+      {
+		 DeleteTimer(ptLava_damage);
+         ptLava_damage = $;
+      }
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if (ptLava_damage <> $)
+      {
+		 DeleteTimer(ptLava_damage);
+         ptLava_damage = $;
+      }
+
+      propagate;
+   }
+   
+   CheckForLavaDamage()
+   {
+      local iSectorID;
+      
+	  ptLava_damage = $;
+      ptLava_damage = CreateTimer(self, @CheckForLavaDamage, 1000);
+	  
+      if (pbUser = $ OR lUser_pos = $) {
+	     return;
+	  }
+
+	  iSectorID = Send(self,@GetSectorIDAtLocation,#row=Nth(lUser_pos,2),
+		  		  #col=Nth(lUser_pos,3),#fine_row=Nth(lUser_pos,4),
+				  #fine_col=Nth(lUser_pos,5));
+				  
+      if (iSectorID = 10)
+	  {
+	     // Burn the player with lava...
+		 Send(self, @BurnPerson, #what=pbUser);
+	  }
+	  
+	  return;
+   }
+   
+   BurnPerson(what = $)
+   {
+      if (what <> $ AND IsClass(what, &Player) AND NOT IsClass(what, &DM))
+      {
+		 Send(what,@LoseHealth,#amount=piLava_damage,#precision=FALSE);
+         Send(what,@WaveSendUser,#wave_rsc=Lava_scratch_snd);
+		 Send(what,@MsgSendUser,#message_rsc=Lava_damage_hurt);
+      }
+
+      if (what <> $ AND IsClass(what, &DM))
+      {
+         Send(what,@WaveSendUser,#wave_rsc=Lava_scratch_snd);
+		 Send(what,@MsgSendUser,#message_rsc=Lava_damage_no_hurt);
+      }
+	  
+      return;
+   }
+   
 end
 ////////////////////////////////////////////////////////////////////////////////

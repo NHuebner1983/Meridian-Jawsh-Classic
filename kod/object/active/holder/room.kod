@@ -282,7 +282,10 @@ properties:
    plEnchantments = $
 
    pbUser_in_room = FALSE
-
+   pbUser = $
+   ptLava_damage = $
+   lUser_pos = $
+   
    // For wave files that go off sometimes.  plPeriodic_sounds is a list of wav
    //  resources
    plPeriodic_sounds = $
@@ -2021,6 +2024,10 @@ messages:
       }
 
       bUser = IsClass(what,&User);
+	  
+	  if (bUser) {
+         pbUser = what;
+	  }
 
       if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
          OR new_angle = $
@@ -2061,7 +2068,7 @@ messages:
 
       Send(self,@NewHoldObject,#what=what,
            #new_pos=[new_angle,new_row,new_col,fine_row,fine_col,session]);
-
+      
       return;
    }
 
@@ -2849,7 +2856,7 @@ messages:
 
       propagate;
    }
-
+   
    LastUserLeft()
    {
       pbUser_in_room = FALSE;
