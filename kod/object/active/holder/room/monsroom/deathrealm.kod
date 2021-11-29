@@ -64,6 +64,7 @@ properties:
    prMapChanges = TRUE
    prMonsters = TRUE
    prHeat = TRUE
+   prQuake = TRUE
    
 messages:
 
@@ -313,7 +314,7 @@ messages:
 	     return;
 	  }
 	  
-      if prHeat = TRUE
+      if prQuake = TRUE
 	   {
 	      // Do Quake damage on player...
           Send(self, @DoQuakeDamage, #what=pbUser);
