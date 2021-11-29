@@ -5443,6 +5443,13 @@ messages:
       plMonsterTemplates = cons(create(&HalfKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Ogre),plMonsterTemplates);
 
+      //Death Realm
+      plMonsterTemplates = cons(create(&HeadlessSkeleton),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Spirit),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Farnohl),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Revenantb),plMonsterTemplates);
+
+
       return;
    }
 
