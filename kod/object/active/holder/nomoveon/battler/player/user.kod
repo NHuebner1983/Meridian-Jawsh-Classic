@@ -51,7 +51,7 @@ constants:
 
    // What's the "speed" of movement for the client?
    USER_WALKING_SPEED = 25
-   USER_RUNNING_SPEED = 50
+   USER_RUNNING_SPEED = 199
 
    // How many packets incoming per second do we allow?
    INCOMING_PACKET_THROTTLE = 25
@@ -4099,19 +4099,19 @@ messages:
       // changed it.
       //
 
-      if speed < USER_WALKING_SPEED
-         OR speed > USER_RUNNING_SPEED
-      {
-         // Make a log entry
-         if piCheaterLogs < MAX_LOGGED_THRESHOLD
-         {
-            ++piCheaterLogs;
-            Debug("ALERT! ",Send(self,@GetTrueName),self,
-                  " had transmitted speed changed from ",speed, "to ",
-                  USER_RUNNING_SPEED);
-         }
-         speed = USER_RUNNING_SPEED;
-      }
+//      if speed < USER_WALKING_SPEED
+//         OR speed > USER_RUNNING_SPEED
+//      {
+//         // Make a log entry
+//         if piCheaterLogs < MAX_LOGGED_THRESHOLD
+//         {
+//            ++piCheaterLogs;
+//            Debug("ALERT! ",Send(self,@GetTrueName),self,
+//                  " had transmitted speed changed from ",speed, "to ",
+//                  USER_RUNNING_SPEED);
+//         }
+//         speed = USER_RUNNING_SPEED;
+//      }
 
       //
       // 5.3 This move is bigger than walking allows.
