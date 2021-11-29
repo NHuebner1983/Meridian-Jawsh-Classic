@@ -9682,8 +9682,8 @@ messages:
       i = GetListElemByClass(plUsing,&Token);
       if i <> $
       {
-         bNo_drop_death = TRUE;
-         piDeathCost = FALSE;
+         bNo_drop_death = FALSE;
+         piDeathCost = TRUE;
          Send(self,@MsgSendUser,#message_rsc=player_token_death);
          Send(i,@NewUnused,#what=self,#where=oRoom);
       }
