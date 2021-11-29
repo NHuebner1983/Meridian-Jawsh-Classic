@@ -282,9 +282,13 @@ properties:
    plEnchantments = $
 
    pbUser_in_room = FALSE
+   
+   // Death Realm Updates
    pbUser = $
    ptLava_damage = $
+   ptHeat_damage = $
    lUser_pos = $
+   
    
    // For wave files that go off sometimes.  plPeriodic_sounds is a list of wav
    //  resources

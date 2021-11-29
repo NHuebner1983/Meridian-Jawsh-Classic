@@ -19,11 +19,13 @@ resources:
    room_name_DeathRealm ="Death Realm"
    death_realm_no_cast_rsc = "The forces of Qor prevent you from using that magic here. "
 
+   // Lava Damage
    Lava_damage_no_hurt = "You walk through the lava as if you were a god."
    Lava_damage_hurt = "As you wade through the lava it burns you violently."      
-
    Lava_scratch_snd = frying.ogg
 
+   // Heat Damage
+   Heat_damage_hurt = "You feel your skin burn by the overwhelming heat."
 
 classvars:
 
@@ -40,7 +42,14 @@ properties:
    piMonster_count_max = 40
    piInit_count_min = 5
    piInit_count_max = 10
+   
+   // Lava damage
    piLava_damage = 5
+   
+   // Heat damage
+   piHeat_damage_min = 1
+   piHeat_damage_max = 4
+   piHeat_notice = 30000
    
 messages:
 
@@ -127,7 +136,6 @@ messages:
       if (IsClass(what, &User)) {
 	     session = Send(what,@GetSession);
          lUser_pos = [Send(self,@GetTeleportAngle),new_row,new_col,fine_row,fine_col,session];
-		 Debug("Player moved: ", new_row, new_col, fine_row, fine_col);
 	  }
 
       propagate;
@@ -156,6 +164,9 @@ messages:
 		 if (bUser AND ptLava_damage = $) {
 		    ptLava_damage = CreateTimer(self, @CheckForLavaDamage, 1000);
 		 }
+		 if (bUser AND ptHeat_damage = $) {
+		    ptHeat_damage = CreateTimer(self, @HeatDamageTimer, 3000);
+		 }
       }
 
       propagate;
@@ -169,6 +180,12 @@ messages:
          ptLava_damage = $;
       }
 
+      if (ptHeat_damage <> $)
+      {
+		 DeleteTimer(ptHeat_damage);
+         ptHeat_damage = $;
+      }
+
       propagate;
    }
 
@@ -178,6 +195,12 @@ messages:
       {
 		 DeleteTimer(ptLava_damage);
          ptLava_damage = $;
+      }
+
+      if (ptHeat_damage <> $)
+      {
+		 DeleteTimer(ptHeat_damage);
+         ptHeat_damage = $;
       }
 
       propagate;
@@ -222,6 +245,39 @@ messages:
 		 Send(what,@MsgSendUser,#message_rsc=Lava_damage_no_hurt);
       }
 	  
+      return;
+   }
+   
+   HeatDamageTimer()
+   {
+	  ptHeat_damage = $;
+      ptHeat_damage = CreateTimer(self, @HeatDamageTimer, 3000);
+   	  
+      if (pbUser = $) {
+	     return;
+	  }
+	  
+	  // Do heat damage on player...
+      Send(self, @DoHeatDamage, #what=pbUser);
+	  
+	  return;
+   }
+   
+   DoHeatDamage(what = $)
+   {
+      if (what <> $ AND IsClass(what, &Player) AND NOT IsClass(what, &DM))
+      {
+		 Send(what,@LoseHealth,#amount=Random(piHeat_damage_min, piHeat_damage_max),#precision=FALSE);
+         
+		 piHeat_notice += 1000;
+		 
+		 if (piHeat_notice > 30000)
+		 {
+		    Send(what,@MsgSendUser,#message_rsc=Heat_damage_hurt);
+			piHeat_notice = 0;
+		 }
+      }
+
       return;
    }
    
