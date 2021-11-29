@@ -5442,6 +5442,7 @@ messages:
       plMonsterTemplates = cons(create(&CaptainKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&HalfKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Ogre),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&HeadlessSkeleton),plMonsterTemplates);
 
       return;
    }

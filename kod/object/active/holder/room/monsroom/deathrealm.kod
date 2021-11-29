@@ -57,14 +57,16 @@ messages:
 
       if prMonsters = TRUE
       {
-         plMonsters = [ [&Skeleton, 10], 
-                        [&BatteredSkeleton, 9],
-                        [&TuskedSkeleton, 9],
-                        [&Mummy, 9], 
-                        [&BlackMummy, 9],
-                        [&SpectralMummy, 9],
+         plMonsters = [ [&Skeleton, 8], 
+                        [&BatteredSkeleton, 8],
+                        [&TuskedSkeleton, 8],
+                        [&HeadlessSkeleton, 8],
+                        [&GhostSkeleton, 5],
+                        [&Mummy, 7], 
+                        [&BlackMummy, 8],
+                        [&SpectralMummy, 8],
                         [&Zombie, 10], 
-                        [&HalfKnight, 10],
+                        [&HalfKnight, 5],
                         [&DaemonSkeleton, 5],
                         [&NecromancerTroop, 5],
                         [&CaptainKnight, 5], 
