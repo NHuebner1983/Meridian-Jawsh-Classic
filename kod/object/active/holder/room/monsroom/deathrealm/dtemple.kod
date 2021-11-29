@@ -44,6 +44,7 @@ properties:
 
    prMapChanges = FALSE
    prMonsters = FALSE
+   prHeat = FALSE
 
 messages:
 

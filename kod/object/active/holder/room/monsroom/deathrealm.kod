@@ -36,8 +36,7 @@ classvars:
 properties:
 
    prBackground = background_chaos_night
-   prMapChanges = TRUE
-   prMonsters = TRUE
+
    plGenerators = $
    piMonster_count_max = 40
    piInit_count_min = 5
@@ -48,8 +47,13 @@ properties:
    
    // Heat damage
    piHeat_damage_min = 1
-   piHeat_damage_max = 4
-   piHeat_notice = 30000
+   piHeat_damage_max = 2
+   piHeat_notice = 30000   
+   
+   //Toggels
+   prMapChanges = TRUE
+   prMonsters = TRUE
+   prHeat = TRUE
    
 messages:
 
@@ -255,15 +259,20 @@ messages:
    
    HeatDamageTimer()
    {
-	  ptHeat_damage = $;
+	   ptHeat_damage = $;
       ptHeat_damage = CreateTimer(self, @HeatDamageTimer, 3000);
    	  
-      if (pbUser = $) {
+      if (pbUser = $) 
+      {
 	     return;
-	  }
-	  
-	  // Do heat damage on player...
-      Send(self, @DoHeatDamage, #what=pbUser);
+	   }
+      if prHeat = TRUE
+	   {
+	      // Do heat damage on player...
+         Send(self, @DoHeatDamage, #what=pbUser);
+
+         return;
+      }
 	  
 	  return;
    }

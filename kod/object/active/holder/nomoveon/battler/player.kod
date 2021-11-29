@@ -9792,6 +9792,9 @@ messages:
             oItemAtt = Send(SYS,@FindItemAttByNum,#Num=IA_MADE);
             Send(oItemAtt,@AddtoItem,#oitem=oItem,#timer_duration=18000000);
             Send(self,@NewHold,#what=oItem);
+
+            oItem = Create(&Torch);
+            Send(self,@NewHold,#what=oItem);
          }
       }
 
