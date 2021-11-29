@@ -27,6 +27,9 @@ resources:
    // Heat Damage
    Heat_damage_hurt = "You feel your skin burn by the overwhelming heat."
 
+   // Quake Damage
+   Quake_damage_hurt = "You feel the earth beneath you move violently."
+
 classvars:
 
    vrName = room_name_DeathRealm
@@ -44,11 +47,18 @@ properties:
    
    // Lava damage
    piLava_damage = 5
+   piLava_interval = 1000
    
    // Heat damage
    piHeat_damage_min = 1
    piHeat_damage_max = 2
-   piHeat_notice = 30000   
+   piHeat_interval = 3000
+   piHeat_notice = 30000
+   
+   // Earthquake damage
+   piQuake_damage_min = 3
+   piQuake_damage_max = 10
+   piQuake_interval = 30000
    
    //Toggels
    prMapChanges = TRUE
@@ -171,10 +181,13 @@ messages:
       if bUser
       {
 		 if (bUser AND ptLava_damage = $) {
-		    ptLava_damage = CreateTimer(self, @CheckForLavaDamage, 1000);
+		    ptLava_damage = CreateTimer(self, @CheckForLavaDamage, piLava_interval);
 		 }
 		 if (bUser AND ptHeat_damage = $) {
-		    ptHeat_damage = CreateTimer(self, @HeatDamageTimer, 3000);
+		    ptHeat_damage = CreateTimer(self, @HeatDamageTimer, piHeat_interval);
+		 }
+		 if (bUser AND ptQuake_damage = $) {
+		    ptQuake_damage = CreateTimer(self, @QuakeDamageTimer, piQuake_interval);
 		 }
       }
 
@@ -195,6 +208,12 @@ messages:
          ptHeat_damage = $;
       }
 
+      if (ptQuake_damage <> $)
+      {
+		 DeleteTimer(ptQuake_damage);
+         ptQuake_damage = $;
+      }
+
       propagate;
    }
 
@@ -212,6 +231,12 @@ messages:
          ptHeat_damage = $;
       }
 
+      if (ptQuake_damage <> $)
+      {
+		 DeleteTimer(ptQuake_damage);
+         ptQuake_damage = $;
+      }
+
       propagate;
    }
    
@@ -220,7 +245,7 @@ messages:
       local iSectorID;
       
 	  ptLava_damage = $;
-      ptLava_damage = CreateTimer(self, @CheckForLavaDamage, 1000);
+      ptLava_damage = CreateTimer(self, @CheckForLavaDamage, piLava_interval);
 	  
       if (pbUser = $ OR lUser_pos = $) {
 	     return;
@@ -259,15 +284,16 @@ messages:
    
    HeatDamageTimer()
    {
-	   ptHeat_damage = $;
-      ptHeat_damage = CreateTimer(self, @HeatDamageTimer, 3000);
+	  ptHeat_damage = $;
+      ptHeat_damage = CreateTimer(self, @HeatDamageTimer, piHeat_interval);
    	  
       if (pbUser = $) 
       {
 	     return;
-	   }
+	  }
+	   
       if prHeat = TRUE
-	   {
+	  {
 	      // Do heat damage on player...
          Send(self, @DoHeatDamage, #what=pbUser);
 
@@ -277,6 +303,27 @@ messages:
 	  return;
    }
    
+   QuakeDamageTimer()
+   {
+	  ptQuake_damage = $;
+      ptQuake_damage = CreateTimer(self, @QuakeDamageTimer, piQuake_interval);
+   	  
+      if (pbUser = $) 
+      {
+	     return;
+	  }
+	  
+      if prHeat = TRUE
+	   {
+	      // Do Quake damage on player...
+          Send(self, @DoQuakeDamage, #what=pbUser);
+
+          return;
+      }
+	  
+	  return;
+   }
+
    DoHeatDamage(what = $)
    {
       if (what <> $ AND IsClass(what, &Player) AND NOT IsClass(what, &DM))
@@ -295,5 +342,17 @@ messages:
       return;
    }
    
+   DoQuakeDamage(what = $)
+   {
+      if (what <> $ AND IsClass(what, &Player) AND NOT IsClass(what, &DM))
+      {
+		 Send(what,@LoseHealth,#amount=Random(piQuake_damage_min, piQuake_damage_max),#precision=FALSE);
+         Send(what,@MsgSendUser,#message_rsc=Quake_damage_hurt);
+		 Post(self,@Rumble,#duration=3000,#disruption=100);
+      }
+
+      return;
+   }
+
 end
 ////////////////////////////////////////////////////////////////////////////////

@@ -287,6 +287,7 @@ properties:
    pbUser = $
    ptLava_damage = $
    ptHeat_damage = $
+   ptQuake_damage = $
    lUser_pos = $
    
    
