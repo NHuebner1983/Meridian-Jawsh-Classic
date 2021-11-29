@@ -39,6 +39,7 @@ properties:
 
    prRoom = room_DeathRealm_Castle
    piRoom_num = RID_DCASTLE
+   prMapChanges = FALSE
 
 messages:
    
@@ -46,9 +47,9 @@ messages:
    {
       plExits = $;
 
-   //   plExits = Cons([ 3, 44, RID_DCASTLE1, 15, 17, ROTATE_270 ],plExits);
-   //   plExits = Cons([ 4, 44, RID_DCASTLE1, 15, 17, ROTATE_270 ],plExits);
-   //   plExits = Cons([ 5, 44, RID_DCASTLE1, 15, 17, ROTATE_270 ],plExits);                                                                                
+      plExits = Cons([ 3, 44, RID_DCASTLE1, 15, 17, ROTATE_270 ],plExits);
+      plExits = Cons([ 4, 44, RID_DCASTLE1, 15, 17, ROTATE_270 ],plExits);
+      plExits = Cons([ 5, 44, RID_DCASTLE1, 15, 17, ROTATE_270 ],plExits);                                                                                
 
       plEdge_exits = $;
       plEdge_Exits = Cons([ LEAVE_WEST, RID_DI9, 2, 27, ANGLE_SOUTH_WEST ], plEdge_exits); 

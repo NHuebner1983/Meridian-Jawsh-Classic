@@ -2657,6 +2657,12 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_DG9,#class=&DeathRealmG9);
       Send(self,@CreateOneRoomIfNew,#num=RID_DTEMPLE_KRAANAN,#class=&DeathRealmKraanan);
       Send(self,@CreateOneRoomIfNew,#num=RID_DCASTLE,#class=&DeathRealmCastle);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DCASTLE1,#class=&DeathRealmCastle1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DCASTLE2,#class=&DeathRealmCastle2);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DCASTLE3,#class=&DeathRealmCastle3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DCASTLE4,#class=&DeathRealmCastle4);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DTHRONE1,#class=&DeathRealmThrone1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DTHRONE2,#class=&DeathRealmThrone2);
 
       if poRentableRoomMaintenance <> $  // After a clean build, for example.
       {

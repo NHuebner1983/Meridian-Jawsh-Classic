@@ -1,0 +1,77 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+DeathRealmThrone1 is DeathRealm
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   DeathRealm_room_throne1 = throne1.roo
+
+   DeathRealm_throne1_music = castle2.ogg
+
+classvars:
+
+   viTeleport_row = 10
+   viTeleport_col = 5
+
+   viTerrain_type = TERRAIN_LAIR | TERRAIN_CASTLE
+
+properties:
+
+   prRoom = DeathRealm_room_throne1
+   piRoom_num = RID_DTHRONE1
+
+   prMusic = DeathRealm_throne1_music
+
+   piOutside_factor = OUTDOORS_NONE
+   prMapChanges = FALSE
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 23, 4, RID_DCASTLE1, 7, 18, ROTATE_NONE ],plExits);
+      plExits = Cons([ 23, 5, RID_DCASTLE1, 7, 19, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 4, RID_DTHRONE2, 22, 5, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 5, RID_DTHRONE2, 22, 5, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 6, RID_DTHRONE2, 22, 5, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      // left row of pillars 
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=16,#new_col=3,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=13,#new_col=3,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=10,#new_col=3,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=7,#new_col=3,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=4,#new_col=3,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=1,#new_col=3,#fine_col=56);
+
+      // right row of pillars
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=16,#new_col=7,#fine_col=8);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=13,#new_col=7,#fine_col=8);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=10,#new_col=7,#fine_col=8);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=7,#new_col=7,#fine_col=8);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=4,#new_col=7,#fine_col=8);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=1,#new_col=7,#fine_col=8);
+
+      return;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

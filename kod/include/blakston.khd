@@ -962,6 +962,12 @@
    RID_DG9             = 3053
    RID_DTEMPLE_KRAANAN = 3054
    RID_DCASTLE         = 3055
+   RID_DCASTLE1        = 3056
+   RID_DCASTLE2        = 3057
+   RID_DCASTLE3        = 3058
+   RID_DCASTLE4        = 3059
+   RID_DTHRONE1        = 3060
+   RID_DTHRONE2        = 3061
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia
