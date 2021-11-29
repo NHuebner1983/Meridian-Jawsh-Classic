@@ -106,7 +106,6 @@ messages:
    Constructor()
    {
       ptMaintenance = CreateTimer(self,@MaintenanceTimer,MAINTENANCE_DELAY);
-      Create(&CorpseNode,#node_num=NODE_CORPSENODE);
 
       propagate;
    }
@@ -125,15 +124,6 @@ messages:
 
    Delete()
    {
-      local oNode;
-
-      oNode = Send(SYS,@FindNodeByNum,#num=NODE_CORPSENODE);
-      if oNode <> $
-      {
-         // Even if the node is not in the room, we must delete it to be sure
-         //  it's not in the system list.
-         Send(oNode,@Delete);
-      }
 
       if ptMaintenance <> $
       {
@@ -419,8 +409,8 @@ messages:
          }
       }
 
-      poPortalDR = Create(&Portal,#desc=portal_DR,#dest_room_num=RID_DH4,
-                        #dest_col=29,#dest_row=24,#fine_row=32,#fine_col=32);
+      poPortalDR = Create(&DeathRealmPortal,#desc=portal_DR,#dest_room_num=RID_DTEMPLE,
+                        #dest_col=8,#dest_row=17,#fine_row=15,#fine_col=32);
       Send(self,@NewHold,#what=poPortalDR,#new_row=16,#new_col=16,
             #fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
 
@@ -444,9 +434,9 @@ messages:
 
       foreach i in plActive
       {
-         if IsClass(First(i),&CorpseNode)
+         if IsClass(First(i),&DeathRealmPortal)
          {
-            Send(First(i),@NodeDisappear);
+            Send(First(i),@PortalDisappear);
          }
       }
 
