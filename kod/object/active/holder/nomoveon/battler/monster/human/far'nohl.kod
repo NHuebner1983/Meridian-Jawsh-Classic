@@ -43,6 +43,7 @@ classvars:
 
    viDead_drawfx = DRAWFX_TRANSLUCENT_50
 
+   viColorTranslate1 = XLAT_TO_RED
 properties:
 
    piBaseLevel = 200
@@ -60,6 +61,13 @@ properties:
 
 messages:
 
+   SetClothes()
+   {
+      Send(self,@SetDefaultClothes,#shirt_color=viColorTranslate1);
+
+      return;
+   }
+
    Constructor()
    {
       plSpellBook = [ [SID_BLIND,5,100] ];
@@ -73,7 +81,7 @@ messages:
 
       oEquipmentItem = Create(&Scimitar);
       Send(self,@AddEquipmentObject,#what=oEquipmentItem);
-      oEquipmentItem = Create(&DiscipleRobe,#school=2);
+      oEquipmentItem = Create(&LightDiscipleRobe,#school=2);
       Send(self,@AddEquipmentObject,#what=oEquipmentItem);
       oEquipmentItem = Create(&Gauntlet);
       Send(self,@AddEquipmentObject,#what=oEquipmentItem);
