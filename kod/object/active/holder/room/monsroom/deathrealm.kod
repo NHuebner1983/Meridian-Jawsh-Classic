@@ -127,6 +127,8 @@ messages:
    ReqSpellCast(who = $, oSpell = $, lItems = $)
    {
       if IsClass(oSpell,&Elusion)
+         OR IsClass(oSpell,&Phase)
+         OR IsClass(oSpell,&Glow)
          OR IsClass(oSpell,&Rescue)
          OR IsClass(oSpell,&DeathRift)
          OR IsClass(oSpell,&Truce)
