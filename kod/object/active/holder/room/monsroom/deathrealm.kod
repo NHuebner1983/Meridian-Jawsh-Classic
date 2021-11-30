@@ -58,7 +58,7 @@ properties:
    // Earthquake damage
    piQuake_damage_min = 3
    piQuake_damage_max = 10
-   piQuake_interval = 30000
+   piQuake_interval = 60000
    
    // Fire Ring
    piFireRing_interval = 10000
