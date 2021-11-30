@@ -161,6 +161,15 @@ messages:
       return;
    }
 
+   GetSpellManaReduction()
+   {
+      local iReduction;
+
+      iReduction = ((piFactionRank / 3) - 1);
+
+      return iReduction;
+   }
+
    GetBaseSpellModifier(oSpell=$)
    {
       local iModifier;
