@@ -319,6 +319,8 @@ classvars:
 
    viCashmin = 1
    viCashmax = 10
+   viSoulmin = 1
+   viSoulmax = 5
 
    // 1 in x chance to cast a spell. Default 10// chance.
    viSpellChance = 10
@@ -6065,7 +6067,7 @@ messages:
       local i, j, oReagent, iNumberItems, oTreasure, oTreasure_type,
             lTreasureItems, iNumberOfItemsDropped, iNumberOfItemsLooted,
             iRandomCashAmount, oMoney, iGetResult, bCapacityFailure,
-            bRangeFailure, iSurvivalLoot;
+            bRangeFailure, iSurvivalLoot, oSouls, iRandomSoulAmount, oRoom;
 
       // Apparitions, etc, provide no treasure
       if pbIllusion
@@ -6101,28 +6103,52 @@ messages:
          lTreasureItems = Cons(i,lTreasureItems);
       }
 
-      // Add money to the treasure
-      iRandomCashAmount = Random(viCashMin,viCashMax);
-      if iRandomCashAmount > 0
+      oRoom = poOwner;
+
+      if IsClass(oRoom,&DeathRealm)
       {
-         // Don't send a corpse unless the player killed the mob. Minion kills
-         // already handed to the player in KilledSomething and double-checked
-         // in Killed. Corpse is used for the loot timer, which GenerateTreasure
-         // handles for monster kills but Constructor in Item does not.
-         if NOT IsClass(who,&Player)
+         iRandomSoulAmount = Random(viSoulMin,viSoulMax);
+         if iRandomSoulAmount > 0
          {
-            corpse = $;
+           if NOT IsClass(who,&Player)
+            {
+               corpse = $;
+           }
+
+		    iRandomSoulAmount = iRandomSoulAmount * (Send(SETTINGS_OBJECT, @GetMoneyFactor) / 100);
+
+          oSouls = Create(&Souls,#corpse=corpse,#number=iRandomSoulAmount);
+
+          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oSouls,@GetNumber));
+          lTreasureItems = Cons(oSouls,lTreasureItems);
          }
+      }
+      else
+      {
+           // Add money to the treasure
+           iRandomCashAmount = Random(viCashMin,viCashMax);
+        if iRandomCashAmount > 0
+        {
+             // Don't send a corpse unless the player killed the mob. Minion kills
+             // already handed to the player in KilledSomething and double-checked
+             // in Killed. Corpse is used for the loot timer, which GenerateTreasure
+             // handles for monster kills but Constructor in Item does not.
+             if NOT IsClass(who,&Player)
+            {
+               corpse = $;
+            }
 
-		 iRandomCashAmount = iRandomCashAmount * (Send(SETTINGS_OBJECT, @GetMoneyFactor) / 100);
+		      iRandomCashAmount = iRandomCashAmount * (Send(SETTINGS_OBJECT, @GetMoneyFactor) / 100);
 
-         oMoney = Create(&Money,#corpse=corpse,#number=iRandomCashAmount + (piBoostedLevel
+              oMoney = Create(&Money,#corpse=corpse,#number=iRandomCashAmount + (piBoostedLevel
                      * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalCash)));
 
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
-         lTreasureItems = Cons(oMoney,lTreasureItems);
+            Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
+            lTreasureItems = Cons(oMoney,lTreasureItems);
+        }
       }
-
+      // Add money to the treasure
+      
       // Add one set of spell reagents to the treasure for each type of spell 
       // that was cast on the monster.
       /* foreach i in plSpellList
@@ -6222,43 +6248,88 @@ messages:
             return;
          }
 
-         if iNumberOfItemsLooted > 0
+         if IsClass(oRoom,&DeathRealm)
          {
-            if iNumberOfItemsLooted = iNumberOfItemsDropped
+            if iNumberOfItemsLooted > 0
             {
-               if iRandomCashAmount > 0
+               if iNumberOfItemsLooted = iNumberOfItemsDropped
                {
-                  Send(who,@MsgSendUser,#message_rsc=autolooted_all,
-                        #parm1=Send(oMoney,@GetNumber));
+                  if iRandomSoulAmount > 0
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=autolooted_all,
+                           #parm1=Send(oSouls,@GetNumber));
+                  }
+                  else
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=autolooted_all_no_money);
+                  }
                }
-               else
+               else if iNumberOfItemsLooted < iNumberOfItemsDropped
                {
-                  Send(who,@MsgSendUser,#message_rsc=autolooted_all_no_money);
+                  if iRandomSoulAmount > 0
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=autolooted_some,
+                           #parm1=Send(oSouls,@GetNumber));
+                  }
+                  else
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=autolooted_some_no_money);
+                  }
                }
             }
-            else if iNumberOfItemsLooted < iNumberOfItemsDropped
+            else if iNumberOfItemsLooted = 0
             {
                if iRandomCashAmount > 0
                {
-                  Send(who,@MsgSendUser,#message_rsc=autolooted_some,
-                        #parm1=Send(oMoney,@GetNumber));
+                  Send(who,@MsgSendUser,#message_rsc=autolooted_only_money,
+                        #parm1=Send(oSouls,@GetNumber));
                }
-               else
+               else if iRandomCashAmount <= 0
                {
-                  Send(who,@MsgSendUser,#message_rsc=autolooted_some_no_money);
+                  Send(who,@MsgSendUser,#message_rsc=autolooted_none);
                }
             }
          }
-         else if iNumberOfItemsLooted = 0
+         else
          {
-            if iRandomCashAmount > 0
+            if iNumberOfItemsLooted > 0
             {
-               Send(who,@MsgSendUser,#message_rsc=autolooted_only_money,
-                     #parm1=Send(oMoney,@GetNumber));
+               if iNumberOfItemsLooted = iNumberOfItemsDropped
+               {
+                  if iRandomCashAmount > 0
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=autolooted_all,
+                           #parm1=Send(oMoney,@GetNumber));
+                  }
+                  else
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=autolooted_all_no_money);
+                  }
+               }
+               else if iNumberOfItemsLooted < iNumberOfItemsDropped
+               {
+                  if iRandomCashAmount > 0
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=autolooted_some,
+                           #parm1=Send(oMoney,@GetNumber));
+                  }
+                  else
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=autolooted_some_no_money);
+                  }
+               }
             }
-            else if iRandomCashAmount <= 0
+            else if iNumberOfItemsLooted = 0
             {
-               Send(who,@MsgSendUser,#message_rsc=autolooted_none);
+               if iRandomCashAmount > 0
+               {
+                  Send(who,@MsgSendUser,#message_rsc=autolooted_only_money,
+                        #parm1=Send(oMoney,@GetNumber));
+               }
+               else if iRandomCashAmount <= 0
+               {
+                  Send(who,@MsgSendUser,#message_rsc=autolooted_none);
+               }
             }
          }
       }
