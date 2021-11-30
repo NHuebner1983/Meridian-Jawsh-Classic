@@ -60,11 +60,15 @@ properties:
    piQuake_damage_max = 10
    piQuake_interval = 30000
    
+   // Fire Ring
+   piFireRing_interval = 10000
+   
    //Toggels
    prMapChanges = TRUE
    prMonsters = TRUE
    prHeat = TRUE
    prQuake = TRUE
+   prFireRing = TRUE
    
 messages:
 
@@ -190,6 +194,9 @@ messages:
 		 if (bUser AND ptQuake_damage = $) {
 		    ptQuake_damage = CreateTimer(self, @QuakeDamageTimer, piQuake_interval);
 		 }
+		 if (bUser AND ptFireRing_damage = $) {
+		    ptFireRing_damage = CreateTimer(self, @FireRingTimer, piFireRing_interval);
+		 }
       }
 
       propagate;
@@ -215,6 +222,12 @@ messages:
          ptQuake_damage = $;
       }
 
+      if (ptFireRing_damage <> $)
+      {
+		 DeleteTimer(ptFireRing_damage);
+         ptFireRing_damage = $;
+      }
+
       propagate;
    }
 
@@ -236,6 +249,12 @@ messages:
       {
 		 DeleteTimer(ptQuake_damage);
          ptQuake_damage = $;
+      }
+
+      if (ptFireRing_damage <> $)
+      {
+		 DeleteTimer(ptFireRing_damage);
+         ptFireRing_damage = $;
       }
 
       propagate;
@@ -351,6 +370,108 @@ messages:
          Send(what,@MsgSendUser,#message_rsc=Quake_damage_hurt);
 		 Post(self,@Rumble,#duration=3000,#disruption=100);
       }
+
+      return;
+   }
+
+   FireRingTimer()
+   {
+	  ptFireRing_damage = $;
+      ptFireRing_damage = CreateTimer(self, @FireRingTimer, piFireRing_interval);
+   	  
+      if (pbUser = $) 
+      {
+	     return;
+	  }
+	  
+      if prFireRing = TRUE
+	   {
+	      // Do Quake damage on player...
+          Send(self, @PlaceRingOfFlames, #who=pbUser, #iSpellPower=99);
+
+          return;
+      }
+	  
+	  return;
+   }
+
+   PlaceRingOfFlames(who=$,iSpellPower=1)
+   {
+      local iRow, iCol, iFine_Row, iFine_Col, iXStep, iYStep,
+            iAngle, iMaxDamage, iDuration, iHalfrow, iHalfCol, iHalfFine_Row,
+            iHalfFine_Col, oElement;
+
+      iAngle = ANGLE_EAST;
+      iMaxDamage = iSpellPower / 5;
+      iMaxDamage = Bound(iMaxDamage,1,20);
+      iDuration = (iSpellPower * 2) + 30;
+      iDuration = Bound(iDuration,30,180);
+
+      iRow = Random(1, piRows);
+      iCol = Random(1, piCols);
+
+      // Create fire in eight cardinal directions
+      oElement = Create(&WallofFire,#Caster=$,#MaxDamage=iMaxDamage,
+                        #Duration=iDuration);
+      Send(self,@NewHold,#what=oElement,#new_row=(iRow+1),#new_col=(iCol+1),
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=$,
+                        #Duration=iDuration);
+      Send(self,@NewHold,#what=oElement,#new_row=(iRow+1),#new_col=iCol,
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=$,
+                        #Duration=iDuration);
+      Send(self,@NewHold,#what=oElement,#new_row=(iRow+1),#new_col=(iCol-1),
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=$,
+                        #Duration=iDuration);
+      Send(self,@NewHold,#what=oElement,#new_row=iRow,#new_col=(iCol+1),
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=$,
+                        #Duration=iDuration);
+      Send(self,@NewHold,#what=oElement,#new_row=iRow,#new_col=(iCol-1),
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=$,
+                        #Duration=iDuration);
+      Send(self,@NewHold,#what=oElement,#new_row=(iRow-1),#new_col=(iCol+1),
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=$,
+                        #Duration=iDuration);
+      Send(self,@NewHold,#what=oElement,#new_row=(iRow-1),#new_col=iCol,
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=$,
+                        #Duration=iDuration);
+      Send(self,@NewHold,#what=oElement,#new_row=(iRow-1),#new_col=(iCol-1),
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+
+      // Create four "filler" elements in corners.
+      oElement = Create(&PassiveWallofFire,#Caster=$,#MaxDamage=iMaxDamage,
+                        #Duration=iDuration,#Illusionary=FALSE);
+      Send(self,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol,
+           #fine_row=0,#fine_col=0);
+
+      oElement = Create(&PassiveWallofFire,#Caster=$,#MaxDamage=iMaxDamage,
+                        #Duration=iDuration,#Illusionary=FALSE);
+      Send(self,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol,
+           #fine_row=0,#fine_col=FINENESS);
+
+      oElement = Create(&PassiveWallofFire,#Caster=$,#MaxDamage=iMaxDamage,
+                        #Duration=iDuration,#Illusionary=FALSE);
+      Send(self,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol,
+           #fine_row=FINENESS,#fine_col=0);
+
+      oElement = Create(&PassiveWallofFire,#Caster=$,#MaxDamage=iMaxDamage,
+                        #Duration=iDuration,#Illusionary=FALSE);
+      Send(self,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol,
+           #fine_row=FINENESS,#fine_col=FINENESS);
 
       return;
    }

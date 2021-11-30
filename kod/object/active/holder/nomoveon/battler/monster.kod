@@ -2372,13 +2372,16 @@ messages:
       }
 
       // Let the attacker know if they hit some weakness/strength of the mob
-      if IsClass(what,&player) AND NOT absolute
+      if what <> $ AND IsClass(what,&player) AND NOT absolute
       {
          Post(what,@MsgPlayerHitResisted,#what=what,#resistance=iResist,
               #target=self,#color_rsc=monster_color_blue_rsc);
       }
       
-      Send(self,@AddHurtMeRecently,#who=what,#amount=iDamage);
+	  if what <> $
+	  {
+         Send(self,@AddHurtMeRecently,#who=what,#amount=iDamage);
+	  }
 
       return iDamage;
    }
@@ -2564,7 +2567,7 @@ messages:
       
       iRange = Send(self,@GetAttackRange);
 
-      if poOwner <> Send(what,@GetOwner)
+      if what <> $ AND poOwner <> Send(what,@GetOwner)
       {
          return FALSE;
       }

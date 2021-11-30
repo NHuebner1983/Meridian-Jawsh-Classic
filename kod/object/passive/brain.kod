@@ -253,9 +253,9 @@ messages:
       oTarget = Send(mob,@GetTarget);
 
       //// Sanity check
-      if what=$
+      if what = $
       {
-         Debug("BAD: null <what> in SomethingAttacked.");
+         //Debug("BAD: null <what> in SomethingAttacked.");
       }
 
       if what = victim   // Earthquake style attack spell.
@@ -1257,7 +1257,7 @@ messages:
 
       if what = $
       {
-         Debug("Invalid info passed to AttemptTargetSwitch");
+         //Debug("Invalid info passed to AttemptTargetSwitch");
 
          return FALSE;
       }

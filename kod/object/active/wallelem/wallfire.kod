@@ -116,12 +116,12 @@ messages:
                #use_weapon=self,#stroke_obj=self);
       }
 
-      if iDamage = $
+      if iDamage = $ AND what <> $ AND poCaster <> $
       {
          Send(poCaster,@KilledSomething,#what=what,#use_weapon=self);
       }
 
-      if IsClass(poCaster,&Player)
+      if poCaster <> $ AND IsClass(poCaster,&Player)
       {
          if iDamage = $
          {
@@ -138,7 +138,7 @@ messages:
          }
       }
 
-      if IsClass(what,&Player)
+      if poCaster <> $ AND IsClass(what,&Player)
       {
          if iDamage = 0
          {

@@ -288,6 +288,7 @@ properties:
    ptLava_damage = $
    ptHeat_damage = $
    ptQuake_damage = $
+   ptFireRing_damage = $
    lUser_pos = $
    
    
@@ -2524,7 +2525,12 @@ messages:
    {
       local start_row, start_col, start_finerow, start_finecol,
             end_row, end_col, end_finerow, end_finecol, los;
-
+      
+	  if obj1 = $ OR obj2 = $
+	  {
+	     return FALSE;
+	  }
+	  
       // get coordinates of source (obj1) and target (obj2)
       start_row = Send(obj1, @GetRow);
       start_col = Send(obj1, @GetCol);

@@ -5662,7 +5662,7 @@ messages:
          color_rsc = player_hit_color_blue;
       }
 
-      if NOT absolute
+      if what <> $ AND NOT absolute
       {
          // Armor of Gort has a special effect that must go first
          oGort = Send(SYS,@FindSpellByNum,#Num=SID_ARMOR_OF_GORT);
@@ -5771,14 +5771,14 @@ messages:
          }
       }
 
-      if IsClass(what,&Monster)
+      if what <> $ AND IsClass(what,&Monster)
       {
          RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),
             Send(what,@GetTrueName),aspell,atype,damage/100,origdamage,
             player_monster_attack_string);
       }
 
-      if IsClass(what,&Player)
+      if what <> $ AND IsClass(what,&Player)
       {
          oWeapon = Send(what,@GetWeapon);
          if oWeapon <> $
@@ -5797,7 +5797,7 @@ messages:
 
       Send(self,@LoseHealth,#amount=damage,#precision=TRUE);
 
-      if piHealth <= 0
+      if what <> $ AND piHealth <= 0
       {
          if stroke_obj = $
             OR NOT Send(stroke_obj,@PlayerWasKilledMsg,#who=self,
@@ -5815,18 +5815,18 @@ messages:
       }
 
       // flip flag for possible HP gain.
-      if poKill_target = $
+      if what <> $ AND poKill_target = $
       {
          poKill_target = what;
       }
 
-      if what = poKill_target AND damage > 0
+      if what <> $ AND what = poKill_target AND damage > 0
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_TOOK_DAMAGE,#value=TRUE);
       }
 
       // Should we print resistance message?
-      if report_resistance
+      if what <> $ AND report_resistance
       {
          if IsClass(what,&User)
          {
@@ -5840,12 +5840,15 @@ messages:
 
       // Report to shrunken head
       shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-      if damage > 0 AND shrunken <> $
+      if what <> $ AND damage > 0 AND shrunken <> $
       {
          Send(shrunken,@DamageTaken,#what=what,#amount=damage/100);
       }
       
-      Send(self,@AddHurtMeRecently,#who=what,#amount=damage);
+	  if what <> $
+	  {
+         Send(self,@AddHurtMeRecently,#who=what,#amount=damage);
+	  }
 
       return damage;
    }
@@ -6761,7 +6764,12 @@ messages:
    "Find the first instance of 'class' that player has equipped. "
    "Returns $ if nothing is found."
    {
-      return GetListElemByClass(plUsing,class);
+      if class <> $
+	  {
+         return GetListElemByClass(plUsing,class);
+	  }
+	  
+	  return $;
    }
 
    ChooseArmorPosition()
