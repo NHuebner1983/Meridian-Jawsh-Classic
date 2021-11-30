@@ -14,6 +14,9 @@ constants:
 
    include blakston.khd
 
+   ROW_ADJUST = 2
+   COL_ADJUST = 0
+
 resources:
 
    DeathRealmportal_name_rsc = "rip in space"
@@ -25,6 +28,8 @@ resources:
       "able to redirect your spirit here. This temple is the only safe place from the monsters "
       "that roam this realm. There's no doubt the king Far'Nohl is responsible for this. You'll "
       "need to find him and convince him to send you back to the mortal realm. I wish you luck.''"
+   DeathRealm_cant_enter = \
+      "This portal leads to a unforgiving realm. Those to weak to fight mortals have no business there. "
 
 classvars:
 
@@ -46,15 +51,32 @@ messages:
    {
       local oRoom;
 
-      if (poOwner = $
-         OR NOT IsClass(poOwner,&Underworld)
-         OR NOT IsClass(what,&User))
+      if (NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
       {
+         Send(what,@MsgSendUser,#message_rsc=DeathRealm_cant_enter);
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=poOwner,
+               #new_row=Send(self,@GetRow) - ROW_ADJUST,
+               #new_col=Send(self,@GetCol) - COL_ADJUST,
+               #new_angle=ANGLE_SOUTH);
+               
+         return;
+      }
+      else
+      {
+         
+
+         if (poOwner = $
+            OR NOT IsClass(poOwner,&Underworld)
+            OR NOT IsClass(what,&User))
+         {
+            propagate;
+         }
+
+         Send(what,@MsgSendUser,#message_rsc=DeathRealm_portal_enter);
          propagate;
       }
 
-      Send(what,@MsgSendUser,#message_rsc=DeathRealm_portal_enter);
-      propagate;
+      return;
    }
 
    PortalDisappear()
