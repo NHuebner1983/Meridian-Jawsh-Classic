@@ -45,6 +45,8 @@ properties:
    prMapChanges = FALSE
    prMonsters = FALSE
    prHeat = FALSE
+   prQuake = FALSE
+   prFireRing = FALSE
 
 messages:
 
@@ -54,6 +56,15 @@ messages:
       plEdge_Exits = Cons([ LEAVE_EAST, RID_DC4, 20, 15, ANGLE_EAST ], plEdge_exits);
       
       return;
+   }
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&DeathBanker),
+           #new_row=15,#new_col=6,#new_angle=ANGLE_SOUTH);
+
+      propagate;
    }
 
 end

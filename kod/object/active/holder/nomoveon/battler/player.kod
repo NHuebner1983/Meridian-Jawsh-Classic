@@ -6667,6 +6667,11 @@ messages:
       return GetListElemByClass(plPassive,&Money);
    }
 
+   GetSoulsObject()
+   {
+      return GetListElemByClass(plPassive,&Souls);
+   }
+
    // Returns wielded Melee/Ranged weapon.
    LookupPlayerWeapon()
    {

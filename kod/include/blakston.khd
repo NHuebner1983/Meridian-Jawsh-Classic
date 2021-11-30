@@ -1513,6 +1513,7 @@
    // Banks
    BID_TOS        = 1
    BID_KOCATAN    = 2
+   BID_DR         = 3
 
    // Vaults
    VID_BARLOQUE   = 1

@@ -1,0 +1,180 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+DeathBanker is DeathTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Deathbanker_name_rsc = "keeper of souls"
+   Deathbanker_icon_rsc = qw06i.bgf
+   Deathbanker_desc_rsc =  \
+      "You are not sure who...or what it is your looking at. It claims it "
+      "will store your souls for you. But I'm not sure if ''it'' can be trusted. "
+
+   Deathbanker_entry_welcome = \
+      "souls....I know you have them...i can smell the death on you..let me keep the lost "
+      "safe for you."
+
+classvars:
+
+   vrName = Deathbanker_name_rsc
+   vrIcon = Deathbanker_icon_rsc
+   vrDesc = Deathbanker_desc_rsc
+   viMerchant_markup = MERCHANT_EXPENSIVE
+
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN \
+      | MOB_NOMOVE | MOB_RECEIVE | MOB_BANKER
+   viOccupation = MOB_ROLE_BANKER
+
+   viBank = BID_DR
+
+properties:
+
+messages:
+
+   Constructor()
+   {
+      plWantedItems = [&Money];
+
+      propagate;
+   }
+
+   UserEntered(who=$)
+   {
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      {
+         Send(self,@SetMood,#new_mood=piMood-1);
+
+         // Don't welcome these guys.
+         propagate;
+      }
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+      {
+         Send(self,@SetMood,#new_mood=piMood-1);
+
+         // Don't welcome these guys.
+         propagate;
+      }
+
+      Post(who,@SomeoneSaid,#what=self,#string=Deathbanker_entry_welcome,
+             #type = SAY_RESOURCE);
+
+      propagate;
+   }
+
+   GetBankNum()
+   {
+      return viBank;
+   }
+   
+   BankWithdraw(who = $, amount = 0)
+   {
+      local iPlayerAmt, iBankAmt, oSouls, oBank;
+
+      if NOT Send(self,@MobIsBanker)
+      {
+         return;
+      }
+
+      if amount < 0
+      {
+         return;
+      }
+
+      if Send(self,@GetBankNum) = $
+      {
+         Debug("BAD: Banker has no bankID",vrname,self);
+
+         return;
+      }
+
+      oBank = Send(SYS,@FindBankByNum,#num=Send(self,@GetBankNum));
+      iBankAmt = Send(oBank,@WithdrawAccount,#what=who);
+
+      if iBankAmt = 0
+      {
+         Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_no_account,
+              #type=SAY_RESOURCE);
+
+         return;
+      }
+
+      if amount > iBankAmt
+      {
+         Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt);
+         Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+              #string=Lm_bnkr_not_enough_withdraw,#parm1=iBankAmt);
+
+         return;
+      }
+
+      oSouls = Send(who,@GetSoulsObject);
+      if oSouls = $
+      {
+         oSouls = Create(&Souls,#number=amount);
+         Send(who,@NewHold,#what=oSouls);
+      }
+      else if (Send(oSouls,@GetNumber) + amount) <= 0
+      {
+         iPlayerAmt = Send(oSouls,@GetNumber);
+         if iPlayerAmt = MAX_KOD_INT
+         {
+            Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt);
+            Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_player_all_full,
+                  #type=SAY_RESOURCE);
+
+            return;
+         }
+         else if (iPlayerAmt + amount) <= 0
+         {
+            amount = MAX_KOD_INT - iPlayerAmt;
+            Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_player_full,
+                  #type=SAY_RESOURCE,#parm1=amount);
+
+            if amount > iBankAmt
+            {
+               Debug("Error giving player ",Send(who,@GetTrueName),amount,
+                  " shillings from total ",iBankAmt,"!. Player has ",iPlayerAmt);
+               Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt);
+
+               return;
+            }
+         }
+      }
+      else
+      {
+         Send(oSouls,@AddNumber,#number=amount);
+      }
+
+      Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt-amount);
+
+      // Send this message even if we gave the almost full one - players are
+      // used to seeing this message on a successful transaction.
+      Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+            #string=Lm_bnkr_did_withdraw,#parm1=amount);
+
+      Send(self,@AffectMood,#why=MOODMOD_BANK_WITHDRAWAL);
+
+      if Send(SYS,@IsSuspect,#who=who)
+      {
+         Send(self,@ReportBankBalance,#who=who);
+      }
+
+      return;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

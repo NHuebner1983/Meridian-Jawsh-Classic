@@ -2955,6 +2955,7 @@ messages:
    {
       Send(self,@CreateOneBankIfNew,#num=BID_TOS,#class=&Bank);
       Send(self,@CreateOneBankIfNew,#num=BID_KOCATAN,#class=&Bank);
+      Send(self,@CreateOneBankIfNew,#num=BID_DR,#class=&Bank);
 
       return;
    }
@@ -5859,6 +5860,7 @@ messages:
       plItemTemplates = cons(create(&Rouladen),plItemTemplates);
       plItemTemplates = cons(create(&PilgrimHat),plItemTemplates);
       plItemTemplates = cons(create(&IndianHat),plItemTemplates);
+      plItemTemplates = cons(create(&Souls),plItemTemplates);
 
       return;
    }
