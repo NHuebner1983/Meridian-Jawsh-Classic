@@ -41,7 +41,7 @@ properties:
    prBackground = background_chaos_night
 
    plGenerators = $
-   piMonster_count_max = 40
+   piMonster_count_max = 30
    piInit_count_min = 5
    piInit_count_max = 10
    
@@ -132,7 +132,6 @@ messages:
 	  }
 	  
       if IsClass(oSpell,&Elusion)
-         OR IsClass(oSpell,&Phase)
          OR IsClass(oSpell,&GlowWeapon)
          OR IsClass(oSpell,&Rescue)
          OR IsClass(oSpell,&DeathRift)
@@ -393,7 +392,6 @@ messages:
 	  
       if prFireRing = TRUE
 	   {
-	      // Do Quake damage on player...
           Send(self, @PlaceRingOfFlames, #who=pbUser, #iSpellPower=99);
 
           return;
@@ -412,7 +410,7 @@ messages:
       iMaxDamage = iSpellPower / 5;
       iMaxDamage = Bound(iMaxDamage,1,20);
       iDuration = (iSpellPower * 2) + 30;
-      iDuration = Bound(iDuration,30,180);
+      iDuration = Bound(iDuration,30,90);
 
       iRow = Random(1, piRows);
       iCol = Random(1, piCols);
