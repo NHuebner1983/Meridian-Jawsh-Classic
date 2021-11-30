@@ -1764,6 +1764,11 @@ messages:
          iCost = iCost - Send(oDukeShield,@GetSpellManaReduction);
       }
 	  
+	  if iCost < 1
+	  {
+	     iCost = 1;
+	  }
+	  
       return bound(iCost,1,$);
    }
 
