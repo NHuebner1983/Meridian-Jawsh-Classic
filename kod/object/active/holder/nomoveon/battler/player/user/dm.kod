@@ -119,7 +119,7 @@ resources:
    dm_currently_in = "The ROO for `b%s`n is `k`B%s`n.  The room number is %i."
    dm_currently_at = \
       "Your Location is: `bRow: `k`B%i`n `bCol: `k`B%i`n `bfRow: `k`B%i`n "
-      "`bfCol: `k`B%i`n `bHeight: `k`B%i`n."
+      "`bfCol: `k`B%i`n `bHeight: `k`B%i`n `bSectorID: `k`B%i`n."
 
    // dm_disguise_command uses StringSubstitute, do not add separate language
    // string for this resource as it won't be substituted correctly.
@@ -945,7 +945,8 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=dm_currently_at,
                #parm1=piRow,#parm2=piCol,
                #parm3=piFine_Row,#parm4=piFine_Col,
-               #parm5=Send(self,@GetHeightFloorAtObjectBSP));
+               #parm5=Send(self,@GetHeightFloorAtObjectBSP),
+			   #parm6=Send(self,@GetSectorID));
 
          return;
       }
