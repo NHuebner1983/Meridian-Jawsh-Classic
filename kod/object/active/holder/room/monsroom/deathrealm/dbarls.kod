@@ -93,5 +93,24 @@ messages:
       propagate;
    }
 
+   NewHold(what=$)
+   {
+      local i, each_obj;
+
+      If IsClass(what,&Player)
+      {
+         foreach i in Send(what,@GetHolderPassive)
+         {
+            each_obj = Send(what,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&BarloqueKey)
+            {
+               return TRUE;
+            }
+         }
+      }
+
+      propagate;
+   }
+
 end
 ////////////////////////////////////////////////////////////////////////////////
