@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-SanctuaryKey is PassiveItem
+SanctuaryKey is Key
 
 constants:
 
@@ -38,25 +38,6 @@ properties:
 
 
 messages:
-
-   SendAnimation()
-   {
-      AddPacket(1,ANIMATE_NONE,2,2);
-      return;
-   }
-
-   SendLookAnimation()
-   {
-      AddPacket(1,ANIMATE_NONE,2,1);
-      return;
-   }
-
-   SendInventoryAnimation()
-   {
-      AddPacket(1,ANIMATE_NONE,2,1);
-      return;
-   }
-
 
 end
 ////////////////////////////////////////////////////////////////////////////////

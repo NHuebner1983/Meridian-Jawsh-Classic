@@ -5506,6 +5506,13 @@ messages:
       plItemTemplates = cons(create(&RoomKey),plItemTemplates);
       plItemTemplates = cons(create(&SanctuaryKey),plItemTemplates);
       plItemTemplates = cons(create(&Key),plItemTemplates);
+      plItemTemplates = cons(create(&BarloqueKey),plItemTemplates);
+      plItemTemplates = cons(create(&BasementKey),plItemTemplates);
+      plItemTemplates = cons(create(&CastleKey),plItemTemplates);
+      plItemTemplates = cons(create(&CorNothKey),plItemTemplates);
+      plItemTemplates = cons(create(&Throne1Key),plItemTemplates);
+      plItemTemplates = cons(create(&Throne2Key),plItemTemplates);
+      plItemTemplates = cons(create(&TosKey),plItemTemplates);
 
       plItemTemplates = cons(create(&SpiderEggShell),plItemTemplates);
       plItemTemplates = cons(create(&SpiderEgg),plItemTemplates);

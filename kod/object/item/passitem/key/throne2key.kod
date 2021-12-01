@@ -1,0 +1,41 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Throne2Key is Key
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Throne2Key_name_rsc = "old key to the Far'Nohl's throne room."
+   Throne2Key_icon_rsc = key6.bgf
+   Throne2Key_desc_rsc = "This is a old golden key."
+
+classvars:
+
+   vrName = Throne2Key_name_rsc
+   vrIcon = Throne2Key_icon_rsc
+   vrDesc = Throne2Key_desc_rsc
+
+   viIndefinite = ARTICLE_AN
+
+   viBulk = 10
+   viWeight = 12
+   viValue_average = 0
+
+properties:
+
+
+messages:
+
+end
+////////////////////////////////////////////////////////////////////////////////
