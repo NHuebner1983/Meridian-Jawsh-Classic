@@ -18,9 +18,13 @@ resources:
 
    include key.lkod
 
-   key_name_rsc = "key"
-   key_icon_rsc = fekey.bgf
-   key_desc_rsc = "This intricately formed key bears the inscription of a wizard."
+   key_name_rsc          = "key"
+   key_icon_rsc          = fekey.bgf
+   key_desc_rsc          = "This intricately formed key bears the inscription of a wizard."
+
+   KeyCopy_teleport      = "passed prtown"
+   KeyCopy2_teleport      = "passed room info"
+   KeyCopy_no_use        = "failed prtown"
 
 classvars:
 
@@ -34,6 +38,9 @@ classvars:
 
 properties:
 
+   prTown = FALSE
+   poTo   = $
+   poFrom = $
 
 messages:
 
@@ -55,6 +62,34 @@ messages:
       return;
    }
 
+   ReqNewApply()
+   {
+      return TRUE;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   {
+      local oRoom, oTown;
+      if prTown = TRUE
+      {  
+         Send(what,@MsgSendUser,#message_rsc=KeyCopy_teleport);
+         oRoom = poFrom
+         oTown = poTo
+         if Send(what,@GetOwner) = oRoom
+            AND Send(oRoom,@EnterLockedTown,#who=what)
+         {
+            Send(what,@MsgSendUser,#message_rsc=KeyCopy2_teleport);
+            Send(Send(SYS,@FindRoomByNum,#num=oTown),@Enter,#who=what);
+         }
+            
+      }
+      else
+      {
+          Send(what,@MsgSendUser,#message_rsc=KeyCopy_no_use);
+      }
+
+      return;
+   }
 
 end
 ////////////////////////////////////////////////////////////////////////////////

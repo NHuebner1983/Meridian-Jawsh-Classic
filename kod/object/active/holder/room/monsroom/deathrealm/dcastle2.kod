@@ -32,7 +32,6 @@ properties:
    prRoom = room_DeathRealm_Castle2
    prMusic = DeathRealm_Castle2_music
 
-   piOutside_factor = 0
    prMapChanges = FALSE
 
 messages:

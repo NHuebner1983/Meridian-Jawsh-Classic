@@ -43,8 +43,8 @@ messages:
    {
       plExits = $;
 
-      plExits = Cons([ 6, 11, RID_DBAR_SOUTH, 46,30, ROTATE_NONE ],plExits);
-      plExits = Cons([ 6, 12, RID_DBAR_SOUTH, 46,31, ROTATE_NONE ],plExits);
+    //  plExits = Cons([ 6, 11, RID_DBAR_SOUTH, 46,30, ROTATE_NONE ],plExits);
+    //  plExits = Cons([ 6, 12, RID_DBAR_SOUTH, 46,31, ROTATE_NONE ],plExits);
       
       plEdge_Exits = $;
 
@@ -67,6 +67,23 @@ messages:
       } 
                    
       propagate;
+   }
+
+   EnterLockedTown(who=$)
+   {
+      local iRow, iCol;
+
+      iRow = send(who,@GetRow);
+      iCol = send(who,@GetCol);
+      
+      if ( iRow = 6
+           AND (iCol = 11
+                 OR iCol = 12))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
 end

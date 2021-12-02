@@ -32,8 +32,6 @@ properties:
  
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
-   piOutside_factor = OUTDOORS_2
-
 messages:
 
    CreateStandardExits()

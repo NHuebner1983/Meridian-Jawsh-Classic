@@ -40,8 +40,6 @@ properties:
 
    prMusic = DeathRealm_temple_music
 
-   piOutside_factor = 3
-
    prMapChanges = FALSE
    prMonsters = FALSE
    prHeat = FALSE

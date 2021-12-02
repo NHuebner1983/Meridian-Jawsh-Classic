@@ -33,8 +33,6 @@ properties:
 
    prMusic = DeathRealm_Castle_music
 
-   piOutside_factor = OUTDOORS_10 
-
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
    prRoom = room_DeathRealm_Castle

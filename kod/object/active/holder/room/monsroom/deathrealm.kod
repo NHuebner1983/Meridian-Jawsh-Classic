@@ -40,6 +40,9 @@ properties:
 
    prBackground = background_chaos_night
 
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
    plGenerators = $
    piMonster_count_max = 30
    piInit_count_min = 5

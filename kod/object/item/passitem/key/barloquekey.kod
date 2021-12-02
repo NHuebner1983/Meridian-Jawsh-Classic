@@ -32,8 +32,13 @@ classvars:
    viWeight = 12
    viValue_average = 0
 
+   viUse_type = ITEM_SINGLE_USE
+
 properties:
 
+   prTown = TRUE
+   poTo   = RID_DBAR_SOUTH
+   poFrom = RID_DI3
 
 messages:
 
