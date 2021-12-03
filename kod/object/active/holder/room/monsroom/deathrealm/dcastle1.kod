@@ -33,8 +33,6 @@ properties:
 
    prMusic = DeathRealm_Castle1_music
 
-   piOutside_factor = OUTDOORS_3 
-
    prRoom = room_DeathRealm_Castle1
    piRoom_num = RID_DCASTLE1
    prMapChanges = FALSE
@@ -78,7 +76,7 @@ messages:
       plExits = Cons([ 9, 32, RID_DCASTLE1, 7, 32, ROTATE_NONE ],plExits);
       plExits = Cons([ 8, 32, RID_DCASTLE1, 10, 32, ROTATE_NONE ],plExits);
 
-      plExits = Cons([ 4, 33, RID_DCASTLE2, 24, 2, ROTATE_NONE ],plExits);
+      plExits = Cons([ 4, 33, ROOM_LOCKED_DOOR ],plExits);
 
       propagate;
    }
@@ -224,6 +222,22 @@ messages:
          {
             propagate;
          }
+      }
+
+      return FALSE;
+   }
+
+   EnterLockedTown(who=$)
+   {
+      local iRow, iCol;
+
+      iRow = send(who,@GetRow);
+      iCol = send(who,@GetCol);
+      
+      if ( iRow = 4
+           AND (iCol = 33))
+      {
+         return TRUE;
       }
 
       return FALSE;

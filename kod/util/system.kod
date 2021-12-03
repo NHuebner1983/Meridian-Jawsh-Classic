@@ -5510,7 +5510,7 @@ messages:
       plItemTemplates = cons(create(&BasementKey),plItemTemplates);
       plItemTemplates = cons(create(&CastleKey),plItemTemplates);
       plItemTemplates = cons(create(&CorNothKey),plItemTemplates);
-      plItemTemplates = cons(create(&Throne1Key),plItemTemplates);
+      plItemTemplates = cons(create(&SewerKey),plItemTemplates);
       plItemTemplates = cons(create(&Throne2Key),plItemTemplates);
       plItemTemplates = cons(create(&TosKey),plItemTemplates);
 

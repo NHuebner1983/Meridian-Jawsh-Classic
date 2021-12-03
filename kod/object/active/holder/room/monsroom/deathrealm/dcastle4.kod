@@ -34,9 +34,6 @@ properties:
 
    prMusic = DeathRealm_castle4_music
 
-   piOutside_factor = OUTDOORS_3 
-
-
    prRoom = DeathRealm_room_castle4
    piRoom_num = RID_DCASTLE4
    prMapChanges = FALSE

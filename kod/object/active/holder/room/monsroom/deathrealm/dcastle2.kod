@@ -32,7 +32,6 @@ properties:
    prRoom = room_DeathRealm_Castle2
    prMusic = DeathRealm_Castle2_music
 
-   piOutside_factor = 0
    prMapChanges = FALSE
 
 messages:
@@ -42,6 +41,14 @@ messages:
       plExits = $;
 
       plExits = Cons([ 25, 2, RID_DCASTLE1, 5, 32, ROTATE_NONE ],plExits);
+
+      return;
+   }
+
+   Enter(who=$)
+   {
+      Send(self,@NewHold,#what=who,#new_row=24,#new_col=2,
+            #new_angle=ANGLE_NORTH);
 
       return;
    }

@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-Throne1Key is Key
+SewerKey is Key
 
 constants:
 
@@ -16,15 +16,15 @@ constants:
 
 resources:
 
-   Throne1Key_name_rsc = "old key to the throne room"
-   Throne1Key_icon_rsc = key5.bgf
-   Throne1Key_desc_rsc = "This is a old golden key."
+   SewerKey_name_rsc = "old key to the throne room"
+   SewerKey_icon_rsc = key5.bgf
+   SewerKey_desc_rsc = "This is a old golden key."
 
 classvars:
 
-   vrName = Throne1Key_name_rsc
-   vrIcon = Throne1Key_icon_rsc
-   vrDesc = Throne1Key_desc_rsc
+   vrName = SewerKey_name_rsc
+   vrIcon = SewerKey_icon_rsc
+   vrDesc = SewerKey_desc_rsc
 
    viIndefinite = ARTICLE_AN
 

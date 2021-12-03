@@ -34,8 +34,6 @@ properties:
    prMusic = DeathRealm_E5_music
    piRoom_num = RID_DE5
 
-   piOutside_factor = 8
-
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
 messages:

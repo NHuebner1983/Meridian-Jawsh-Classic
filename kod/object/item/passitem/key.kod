@@ -18,9 +18,9 @@ resources:
 
    include key.lkod
 
-   key_name_rsc = "key"
-   key_icon_rsc = fekey.bgf
-   key_desc_rsc = "This intricately formed key bears the inscription of a wizard."
+   key_name_rsc          = "key"
+   key_icon_rsc          = fekey.bgf
+   key_desc_rsc          = "This intricately formed key bears the inscription of a wizard."
 
 classvars:
 
@@ -34,6 +34,9 @@ classvars:
 
 properties:
 
+   prTown = FALSE
+   poTo   = $
+   poFrom = $
 
 messages:
 
@@ -54,7 +57,6 @@ messages:
       AddPacket(1,ANIMATE_NONE,2,1);
       return;
    }
-
 
 end
 ////////////////////////////////////////////////////////////////////////////////

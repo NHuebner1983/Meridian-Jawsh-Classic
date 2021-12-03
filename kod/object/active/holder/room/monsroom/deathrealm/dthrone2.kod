@@ -34,9 +34,7 @@ properties:
 
    prMusic = DeathRealm_throne2_music
 
-   piOutside_factor = OUTDOORS_NONE
    prMapChanges = FALSE
-
 
 messages:
 

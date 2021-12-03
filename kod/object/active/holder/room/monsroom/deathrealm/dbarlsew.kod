@@ -34,8 +34,6 @@ properties:
    prRoom = room_DeathRealm_barlsew
    piRoom_num = RID_DBAR_SEWER
 
-   piOutside_factor = 0
-
 messages:
 
    CreateStandardExits()

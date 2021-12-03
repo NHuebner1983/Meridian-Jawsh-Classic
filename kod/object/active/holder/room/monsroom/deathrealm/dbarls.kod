@@ -93,23 +93,12 @@ messages:
       propagate;
    }
 
-   NewHold(what=$)
+   Enter(who=$)
    {
-      local i, each_obj;
+      Send(self,@NewHold,#what=who,#new_row=46,#new_col=30,
+            #new_angle=ANGLE_NORTH);
 
-      If IsClass(what,&Player)
-      {
-         foreach i in Send(what,@GetHolderPassive)
-         {
-            each_obj = Send(what,@HolderExtractObject,#data=i);
-            if IsClass(each_obj,&BarloqueKey)
-            {
-               return TRUE;
-            }
-         }
-      }
-
-      propagate;
+      return;
    }
 
 end
