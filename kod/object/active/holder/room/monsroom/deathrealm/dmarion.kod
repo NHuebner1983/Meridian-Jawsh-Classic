@@ -84,5 +84,14 @@ messages:
       propagate;
    }
 
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&Amerantha),
+           #new_row=69,#new_col=23,#new_angle=ANGLE_WEST);
+
+      propagate;
+   }
+
 end
 ////////////////////////////////////////////////////////////////////////////////

@@ -5,6 +5,6 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\deathtwn.bof
-BOFS  = kailor.bof ceresqor.bof amerantha.bof joline.bof
+BOFS  = kailor.bof ceresqor.bof amerantha.bof joline.bof beelzebub.bof
 
 !include $(KODDIR)\kod.mak

@@ -114,6 +114,15 @@ messages:
       propagate;
    }
 
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&Joline),
+           #new_row=27,#new_col=65,#new_angle=ANGLE_WEST);
+
+      propagate;
+   }
+
    Enter(who=$)
    {
       Send(self,@NewHold,#what=who,#new_row=3,#new_col=57,

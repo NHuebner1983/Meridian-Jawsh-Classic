@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-Amerantha is DeathTown
+Beelzebub is DeathTown
 
 constants:
 
@@ -16,30 +16,31 @@ constants:
 
 resources:
 
-   Amerantha_name_rsc = "Amerantha"
-   Amerantha_icon_rsc = qw01i.bgf
-   Amerantha_desc_rsc = \
-      "A old prophet of the land, she learned under the teachings of Madame Yaga."
+   Beelzebub_name_rsc = "Beelzebub"
+   Beelzebub_icon_rsc = qwo5i.bgf
+   Beelzebub_desc_rsc = \
+            "This creautre has still has scraps of skin on it, as if it was wearing it as a suit. "
+            "Altho a terrifying site, he doesnt seem concerned with your presence. "
 
-   Amerantha_entry_welcome = "Greetings.  May you live to see my years."
+   Beelzebub_entry_welcome = "Greetings.  May you live to see my years."
 
-   Amerantha_unwanted_keep = \
+   Beelzebub_unwanted_keep = \
       "~k%s%s tells you, \"Perhaps I may find some use for that.~n~k\""
-   Amerantha_unwanted_pay = \
+   Beelzebub_unwanted_pay = \
       "~k%s%s tells you, \"How convenient.~n~k\""
-   Amerantha_unwanted_give = \
+   Beelzebub_unwanted_give = \
       "~k%s%s tells you, \"Most material goods are of little consequence "
       "to an old man like me.~n~k\""
 
-   Amerantha_stat_window_trigger = "change stats"
+   Beelzebub_stat_window_trigger = "change stats"
 
 classvars:
 
    viDefinite = ARTICLE_NONE
    viIndefinite = ARTICLE_NONE
-   vrName = Amerantha_name_rsc
-   vrIcon = Amerantha_icon_rsc
-   vrDesc = Amerantha_desc_rsc
+   vrName = Beelzebub_name_rsc
+   vrIcon = Beelzebub_icon_rsc
+   vrDesc = Beelzebub_desc_rsc
    viAttributes = \
       MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOFIGHT \
       | MOB_NOMOVE | MOB_TEACHER
@@ -47,16 +48,16 @@ classvars:
 
    viQuestID = QST_ID_DEMENTIA_SPELL
 
-   vrUnwanted_keep = Amerantha_unwanted_keep
-   vrUnwanted_pay = Amerantha_unwanted_pay
-   vrUnwanted_give = Amerantha_unwanted_give
+   vrUnwanted_keep = Beelzebub_unwanted_keep
+   vrUnwanted_pay = Beelzebub_unwanted_pay
+   vrUnwanted_give = Beelzebub_unwanted_give
 
 messages:
 
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
                parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
-      if StringEqual(string,Amerantha_stat_window_trigger)
+      if StringEqual(string,Beelzebub_stat_window_trigger)
       {
          Send(what,@SendStatChange);
       }
@@ -114,7 +115,7 @@ messages:
          Send(self,@SetMood,#new_mood=piMood+2);
       }
 
-      Post(who,@someoneSaid,#what=self,#string=Amerantha_entry_welcome,
+      Post(who,@someoneSaid,#what=self,#string=Beelzebub_entry_welcome,
             #type=SAY_RESOURCE);
 
       propagate;

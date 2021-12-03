@@ -17,7 +17,7 @@ constants:
 resources:
 
    Joline_name_rsc = "Joline"
-   Joline_icon_rsc = qwo4i.bgf
+   Joline_icon_rsc = qw04i.bgf
    Joline_desc_rsc = \
             "This once beautiful woman has been altered. Her body is that of a giant snake. Her words are venom "
             "and her eyes seem as cold as death yet burn with intellignce. Her words issue with a disturbing whispery "
