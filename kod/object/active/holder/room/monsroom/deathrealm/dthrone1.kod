@@ -44,9 +44,9 @@ messages:
 
       plExits = Cons([ 23, 4, RID_DCASTLE1, 7, 18, ROTATE_NONE ],plExits);
       plExits = Cons([ 23, 5, RID_DCASTLE1, 7, 19, ROTATE_NONE ],plExits);
-      plExits = Cons([ 1, 4, RID_DTHRONE2, 22, 5, ROTATE_NONE ],plExits);
-      plExits = Cons([ 1, 5, RID_DTHRONE2, 22, 5, ROTATE_NONE ],plExits);
-      plExits = Cons([ 1, 6, RID_DTHRONE2, 22, 5, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 4, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 1, 5, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 1, 6, ROOM_LOCKED_DOOR ],plExits);
 
       propagate;
    }
@@ -70,6 +70,24 @@ messages:
       Send(self,@NewHold,#what=Create(&Pillar),#new_row=1,#new_col=7,#fine_col=8);
 
       return;
+   }
+
+   EnterLockedTown(who=$)
+   {
+      local iRow, iCol;
+
+      iRow = send(who,@GetRow);
+      iCol = send(who,@GetCol);
+      
+      if ( iRow = 1
+           AND (iCol = 4
+                 OR iCol = 5
+                 OR iCol = 6))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
 end

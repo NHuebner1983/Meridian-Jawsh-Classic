@@ -35,6 +35,8 @@ classvars:
    viWeight = 12
    viValue_average = 0
 
+   viUse_type = ITEM_SINGLE_USE
+   
 properties:
 
 
@@ -48,17 +50,14 @@ messages:
    NewApplied(what = $,apply_on = $)
    {
       local oRoom, oTown;
-      if prTown = TRUE
-      {  
-         oRoom = Send(SYS,@FindRoomByNum,#num=RID_DCASTLE1);
-         oTown = Send(SYS,@FindRoomByNum,#num=RID_DCASTLE2);
-         if Send(what,@GetOwner) = oRoom
-            AND Send(oRoom,@EnterLockedTown,#who=what)
-         {
-            Send(what,@MsgSendUser,#message_rsc=BasementKey_teleport);
-            Send(Send(SYS,@FindRoomByNum,#num=RID_DCASTLE2),@Enter,#who=what);
-         }
-            
+
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_DCASTLE1);
+      oTown = Send(SYS,@FindRoomByNum,#num=RID_DCASTLE2);
+      if Send(what,@GetOwner) = oRoom
+         AND Send(oRoom,@EnterLockedTown,#who=what)
+      {
+         Send(what,@MsgSendUser,#message_rsc=BasementKey_teleport);
+         Send(Send(SYS,@FindRoomByNum,#num=RID_DCASTLE2),@Enter,#who=what);
       }
       else
       {

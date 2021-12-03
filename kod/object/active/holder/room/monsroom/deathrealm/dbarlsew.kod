@@ -40,13 +40,29 @@ messages:
    {
       plExits = $;
 
-      plExits = Cons([ 56, 8, RID_DBAR_NORTH, 47, 40, ROTATE_NONE ],plExits);
+      plExits = Cons([ 56, 8, ROOM_LOCKED_DOOR ],plExits);
    
       plEdge_Exits = $;
 
       plEdge_Exits = Cons([LEAVE_WEST, RID_DF2, 7, 106, ROTATE_NONE, ROW_IS_GREATER_THAN,46], plEdge_exits);        
 
       propagate;
+   }
+
+   EnterLockedTown(who=$)
+   {
+      local iRow, iCol;
+
+      iRow = send(who,@GetRow);
+      iCol = send(who,@GetCol);
+      
+      if ( iRow = 56
+           AND (iCol = 8))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
 end

@@ -150,5 +150,13 @@ messages:
       return;
    }
 
+   Enter(who=$)
+   {
+      Send(self,@NewHold,#what=who,#new_row=47,#new_col=40,
+            #new_angle=ROTATE_NONE);
+
+      return;
+   }
+
 end
 ////////////////////////////////////////////////////////////////////////////////

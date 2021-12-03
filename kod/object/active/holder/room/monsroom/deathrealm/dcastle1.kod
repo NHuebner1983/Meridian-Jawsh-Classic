@@ -243,5 +243,13 @@ messages:
       return FALSE;
    }
 
+   Enter(who=$)
+   {
+      Send(self,@NewHold,#what=who,#new_row=15,#new_col=17,
+            #new_angle=ROTATE_NONE);
+
+      return;
+   }
+
 end
 ////////////////////////////////////////////////////////////////////////////////

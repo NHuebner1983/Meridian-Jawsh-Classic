@@ -49,17 +49,14 @@ messages:
    NewApplied(what = $,apply_on = $)
    {
       local oRoom, oTown;
-      if prTown = TRUE
+
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_DI3);
+      oTown = Send(SYS,@FindRoomByNum,#num=RID_DBAR_SOUTH);
+      if Send(what,@GetOwner) = oRoom
+         AND Send(oRoom,@EnterLockedTown,#who=what)
       {
-         oRoom = Send(SYS,@FindRoomByNum,#num=RID_DI3);
-         oTown = Send(SYS,@FindRoomByNum,#num=RID_DBAR_SOUTH);
-         if Send(what,@GetOwner) = oRoom
-            AND Send(oRoom,@EnterLockedTown,#who=what)
-         {
-            Send(what,@MsgSendUser,#message_rsc=BarloqueKey_teleport);
-            Send(Send(SYS,@FindRoomByNum,#num=RID_DBAR_SOUTH),@Enter,#who=what);
-         }
-            
+         Send(what,@MsgSendUser,#message_rsc=BarloqueKey_teleport);
+         Send(Send(SYS,@FindRoomByNum,#num=RID_DBAR_SOUTH),@Enter,#who=what);
       }
       else
       {
