@@ -1,0 +1,142 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Kailor is DeathTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Kailor_name_rsc = "Kailor"
+   Kailor_icon_rsc = Duke.bgf
+   Kailor_desc_rsc = \
+      "Dead guy"
+
+   Kailor_entry_welcome = "Greetings.  May you live to see my years."
+
+   Kailor_unwanted_keep = \
+      "~k%s%s tells you, \"Perhaps I may find some use for that.~n~k\""
+   Kailor_unwanted_pay = \
+      "~k%s%s tells you, \"How convenient.~n~k\""
+   Kailor_unwanted_give = \
+      "~k%s%s tells you, \"Most material goods are of little consequence "
+      "to an old man like me.~n~k\""
+
+   Kailor_stat_window_trigger = "change stats"
+
+classvars:
+
+   viDefinite = ARTICLE_NONE
+   viIndefinite = ARTICLE_NONE
+   vrName = Kailor_name_rsc
+   vrIcon = Kailor_icon_rsc
+   vrDesc = Kailor_desc_rsc
+   viAttributes = \
+      MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOFIGHT \
+      | MOB_NOMOVE | MOB_TEACHER
+   viOccupation = MOB_ROLE_ELDER
+
+   viQuestID = QST_ID_DEMENTIA_SPELL
+
+   vrUnwanted_keep = Kailor_unwanted_keep
+   vrUnwanted_pay = Kailor_unwanted_pay
+   vrUnwanted_give = Kailor_unwanted_give
+
+messages:
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
+   {
+      if StringEqual(string,Kailor_stat_window_trigger)
+      {
+         Send(what,@SendStatChange);
+      }
+
+      propagate;
+   }
+
+   Constructor()
+   "We start a permanent quest for learning a spell" 
+   {
+      plWantedItems = [&StatsResetToken];
+
+      propagate;
+   }
+
+   CanAddSpell(who=$,num=0)
+   "We require that a quest be done before one of the spells can be learned."
+   {
+      if num=SID_DEMENT
+         AND NOT Send(self,@HasDoneLearnQuest,#who=who)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   SetForSale()
+   {
+      plFor_sale = [
+         $,$,
+         [
+            SID_LIGHTNING_BOLT,
+            SID_DEMENT
+         ],
+      $];
+
+      return;
+   }
+
+   UserEntered(who=$)
+   {
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+      {
+         Send(self,@SetMood,#new_mood=piMood+2);
+      }
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      {
+         Send(self,@SetMood,#new_mood=piMood+1);
+      }
+
+      if Send(who,@GetHomeRoom) = RID_JAS_INN
+      {
+         Send(self,@SetMood,#new_mood=piMood+2);
+      }
+
+      Post(who,@someoneSaid,#what=self,#string=Kailor_entry_welcome,
+            #type=SAY_RESOURCE);
+
+      propagate;
+   }
+
+   CanAcceptOffer()
+   {
+      return TRUE;
+   }
+
+   CheckWhyWanted(obj=$,who=$)
+   {
+      if IsClass(obj,&StatsResetToken)
+      {
+         Send(who,@SendStatChange);
+
+         // We don't destroy the item, so return FALSE.
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////
