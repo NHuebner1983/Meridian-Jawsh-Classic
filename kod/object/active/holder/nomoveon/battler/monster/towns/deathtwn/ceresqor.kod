@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-Kailor is DeathTown
+CeresofQor is DeathTown
 
 constants:
 
@@ -16,30 +16,32 @@ constants:
 
 resources:
 
-   Kailor_name_rsc = "Kailor"
-   Kailor_icon_rsc = Duke.bgf
-   Kailor_desc_rsc = \
-      "Commanding and straightforward, he influences many. Currently deceased. He was brutally assasinated. "
+   CeresofQor_name_rsc = "Ceres of Qor"
+   CeresofQor_icon_rsc = qroq.bgf
+   CeresofQor_desc_rsc = \
+      "This dark and foreboding figure carries the stench of a thousand years on him, and his evil can be felt from yards away. "
+      "Black inky tendrils seem to dart in and out of the cloak, giving the illusion that Ceres never stops moving. You try to "
+      "get a look at his face only to be repulsed at the sight of pure nothingness."
 
-   Kailor_entry_welcome = "Greetings.  May you live to see my years."
+   CeresofQor_entry_welcome = "Greetings.  May you live to see my years."
 
-   Kailor_unwanted_keep = \
+   CeresofQor_unwanted_keep = \
       "~k%s%s tells you, \"Perhaps I may find some use for that.~n~k\""
-   Kailor_unwanted_pay = \
+   CeresofQor_unwanted_pay = \
       "~k%s%s tells you, \"How convenient.~n~k\""
-   Kailor_unwanted_give = \
+   CeresofQor_unwanted_give = \
       "~k%s%s tells you, \"Most material goods are of little consequence "
       "to an old man like me.~n~k\""
 
-   Kailor_stat_window_trigger = "change stats"
+   CeresofQor_stat_window_trigger = "change stats"
 
 classvars:
 
    viDefinite = ARTICLE_NONE
    viIndefinite = ARTICLE_NONE
-   vrName = Kailor_name_rsc
-   vrIcon = Kailor_icon_rsc
-   vrDesc = Kailor_desc_rsc
+   vrName = CeresofQor_name_rsc
+   vrIcon = CeresofQor_icon_rsc
+   vrDesc = CeresofQor_desc_rsc
    viAttributes = \
       MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOFIGHT \
       | MOB_NOMOVE | MOB_TEACHER
@@ -47,16 +49,16 @@ classvars:
 
    viQuestID = QST_ID_DEMENTIA_SPELL
 
-   vrUnwanted_keep = Kailor_unwanted_keep
-   vrUnwanted_pay = Kailor_unwanted_pay
-   vrUnwanted_give = Kailor_unwanted_give
+   vrUnwanted_keep = CeresofQor_unwanted_keep
+   vrUnwanted_pay = CeresofQor_unwanted_pay
+   vrUnwanted_give = CeresofQor_unwanted_give
 
 messages:
 
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
                parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
-      if StringEqual(string,Kailor_stat_window_trigger)
+      if StringEqual(string,CeresofQor_stat_window_trigger)
       {
          Send(what,@SendStatChange);
       }
@@ -114,7 +116,7 @@ messages:
          Send(self,@SetMood,#new_mood=piMood+2);
       }
 
-      Post(who,@someoneSaid,#what=self,#string=Kailor_entry_welcome,
+      Post(who,@someoneSaid,#what=self,#string=CeresofQor_entry_welcome,
             #type=SAY_RESOURCE);
 
       propagate;

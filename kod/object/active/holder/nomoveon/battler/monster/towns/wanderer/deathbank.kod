@@ -18,7 +18,7 @@ constants:
 
 resources:
 
-   Deathbanker_name_rsc = "keeper of souls"
+   Deathbanker_name_rsc = "Keeper of Souls"
    Deathbanker_icon_rsc = qw06i.bgf
    Deathbanker_desc_rsc =  \
       "You are not sure who...or what it is your looking at. It claims it "

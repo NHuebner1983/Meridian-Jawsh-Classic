@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-Kailor is DeathTown
+Joline is DeathTown
 
 constants:
 
@@ -16,30 +16,33 @@ constants:
 
 resources:
 
-   Kailor_name_rsc = "Kailor"
-   Kailor_icon_rsc = Duke.bgf
-   Kailor_desc_rsc = \
-      "Commanding and straightforward, he influences many. Currently deceased. He was brutally assasinated. "
+   Joline_name_rsc = "Joline"
+   Joline_icon_rsc = qwo4i.bgf
+   Joline_desc_rsc = \
+            "This once beautiful woman has been altered. Her body is that of a giant snake. Her words are venom "
+            "and her eyes seem as cold as death yet burn with intellignce. Her words issue with a disturbing whispery "
+            "hiss. She seeks the Urn and the power it will grant the Lich Queen. Those that aid her will be rewarded. "
+            "Those that oppose her will be disposed of. "
 
-   Kailor_entry_welcome = "Greetings.  May you live to see my years."
+   Joline_entry_welcome = "Greetings.  May you live to see my years."
 
-   Kailor_unwanted_keep = \
+   Joline_unwanted_keep = \
       "~k%s%s tells you, \"Perhaps I may find some use for that.~n~k\""
-   Kailor_unwanted_pay = \
+   Joline_unwanted_pay = \
       "~k%s%s tells you, \"How convenient.~n~k\""
-   Kailor_unwanted_give = \
+   Joline_unwanted_give = \
       "~k%s%s tells you, \"Most material goods are of little consequence "
       "to an old man like me.~n~k\""
 
-   Kailor_stat_window_trigger = "change stats"
+   Joline_stat_window_trigger = "change stats"
 
 classvars:
 
    viDefinite = ARTICLE_NONE
    viIndefinite = ARTICLE_NONE
-   vrName = Kailor_name_rsc
-   vrIcon = Kailor_icon_rsc
-   vrDesc = Kailor_desc_rsc
+   vrName = Joline_name_rsc
+   vrIcon = Joline_icon_rsc
+   vrDesc = Joline_desc_rsc
    viAttributes = \
       MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOFIGHT \
       | MOB_NOMOVE | MOB_TEACHER
@@ -47,16 +50,16 @@ classvars:
 
    viQuestID = QST_ID_DEMENTIA_SPELL
 
-   vrUnwanted_keep = Kailor_unwanted_keep
-   vrUnwanted_pay = Kailor_unwanted_pay
-   vrUnwanted_give = Kailor_unwanted_give
+   vrUnwanted_keep = Joline_unwanted_keep
+   vrUnwanted_pay = Joline_unwanted_pay
+   vrUnwanted_give = Joline_unwanted_give
 
 messages:
 
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
                parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
-      if StringEqual(string,Kailor_stat_window_trigger)
+      if StringEqual(string,Joline_stat_window_trigger)
       {
          Send(what,@SendStatChange);
       }
@@ -114,7 +117,7 @@ messages:
          Send(self,@SetMood,#new_mood=piMood+2);
       }
 
-      Post(who,@someoneSaid,#what=self,#string=Kailor_entry_welcome,
+      Post(who,@someoneSaid,#what=self,#string=Joline_entry_welcome,
             #type=SAY_RESOURCE);
 
       propagate;

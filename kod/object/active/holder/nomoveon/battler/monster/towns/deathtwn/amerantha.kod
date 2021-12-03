@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-Kailor is DeathTown
+Amerantha is DeathTown
 
 constants:
 
@@ -16,30 +16,30 @@ constants:
 
 resources:
 
-   Kailor_name_rsc = "Kailor"
-   Kailor_icon_rsc = Duke.bgf
-   Kailor_desc_rsc = \
-      "Commanding and straightforward, he influences many. Currently deceased. He was brutally assasinated. "
+   Amerantha_name_rsc = "Amerantha"
+   Amerantha_icon_rsc = qwo1i.bgf
+   Amerantha_desc_rsc = \
+      "A old prophet of the land, she learned under the teachings of Madame Yaga."
 
-   Kailor_entry_welcome = "Greetings.  May you live to see my years."
+   Amerantha_entry_welcome = "Greetings.  May you live to see my years."
 
-   Kailor_unwanted_keep = \
+   Amerantha_unwanted_keep = \
       "~k%s%s tells you, \"Perhaps I may find some use for that.~n~k\""
-   Kailor_unwanted_pay = \
+   Amerantha_unwanted_pay = \
       "~k%s%s tells you, \"How convenient.~n~k\""
-   Kailor_unwanted_give = \
+   Amerantha_unwanted_give = \
       "~k%s%s tells you, \"Most material goods are of little consequence "
       "to an old man like me.~n~k\""
 
-   Kailor_stat_window_trigger = "change stats"
+   Amerantha_stat_window_trigger = "change stats"
 
 classvars:
 
    viDefinite = ARTICLE_NONE
    viIndefinite = ARTICLE_NONE
-   vrName = Kailor_name_rsc
-   vrIcon = Kailor_icon_rsc
-   vrDesc = Kailor_desc_rsc
+   vrName = Amerantha_name_rsc
+   vrIcon = Amerantha_icon_rsc
+   vrDesc = Amerantha_desc_rsc
    viAttributes = \
       MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOFIGHT \
       | MOB_NOMOVE | MOB_TEACHER
@@ -47,16 +47,16 @@ classvars:
 
    viQuestID = QST_ID_DEMENTIA_SPELL
 
-   vrUnwanted_keep = Kailor_unwanted_keep
-   vrUnwanted_pay = Kailor_unwanted_pay
-   vrUnwanted_give = Kailor_unwanted_give
+   vrUnwanted_keep = Amerantha_unwanted_keep
+   vrUnwanted_pay = Amerantha_unwanted_pay
+   vrUnwanted_give = Amerantha_unwanted_give
 
 messages:
 
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
                parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
-      if StringEqual(string,Kailor_stat_window_trigger)
+      if StringEqual(string,Amerantha_stat_window_trigger)
       {
          Send(what,@SendStatChange);
       }
@@ -114,7 +114,7 @@ messages:
          Send(self,@SetMood,#new_mood=piMood+2);
       }
 
-      Post(who,@someoneSaid,#what=self,#string=Kailor_entry_welcome,
+      Post(who,@someoneSaid,#what=self,#string=Amerantha_entry_welcome,
             #type=SAY_RESOURCE);
 
       propagate;
