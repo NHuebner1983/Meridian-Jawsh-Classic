@@ -17,7 +17,7 @@ constants:
 resources:
 
    Beelzebub_name_rsc = "Beelzebub"
-   Beelzebub_icon_rsc = qwo5i.bgf
+   Beelzebub_icon_rsc = qw05i.bgf
    Beelzebub_desc_rsc = \
             "This creautre has still has scraps of skin on it, as if it was wearing it as a suit. "
             "Altho a terrifying site, he doesnt seem concerned with your presence. "
