@@ -33,7 +33,7 @@ classvars:
 
    viBulk = 10
    viWeight = 12
-   viValue_average = 0
+   viValue_average = 10000
 
    viUse_type = ITEM_SINGLE_USE
 

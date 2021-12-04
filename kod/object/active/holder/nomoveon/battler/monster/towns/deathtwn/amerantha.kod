@@ -31,8 +31,6 @@ resources:
       "~k%s%s tells you, \"Most material goods are of little consequence "
       "to an old man like me.~n~k\""
 
-   Amerantha_stat_window_trigger = "change stats"
-
 classvars:
 
    viDefinite = ARTICLE_NONE
@@ -42,10 +40,7 @@ classvars:
    vrDesc = Amerantha_desc_rsc
    viAttributes = \
       MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOFIGHT \
-      | MOB_NOMOVE | MOB_TEACHER
-   viOccupation = MOB_ROLE_ELDER
-
-   viQuestID = QST_ID_DEMENTIA_SPELL
+      | MOB_NOMOVE
 
    vrUnwanted_keep = Amerantha_unwanted_keep
    vrUnwanted_pay = Amerantha_unwanted_pay
@@ -53,89 +48,21 @@ classvars:
 
 messages:
 
-   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
-               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
-   {
-      if StringEqual(string,Amerantha_stat_window_trigger)
-      {
-         Send(what,@SendStatChange);
-      }
-
-      propagate;
-   }
-
-   Constructor()
-   "We start a permanent quest for learning a spell" 
-   {
-      plWantedItems = [&StatsResetToken];
-
-      propagate;
-   }
-
-   CanAddSpell(who=$,num=0)
-   "We require that a quest be done before one of the spells can be learned."
-   {
-      if num=SID_DEMENT
-         AND NOT Send(self,@HasDoneLearnQuest,#who=who)
-      {
-         return FALSE;
-      }
-
-      propagate;
-   }
-
    SetForSale()
    {
       plFor_sale = [
          $,$,
          [
-            SID_LIGHTNING_BOLT,
-            SID_DEMENT
+            Create(&CorNothKey)
          ],
       $];
 
       return;
    }
 
-   UserEntered(who=$)
-   {
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-      {
-         Send(self,@SetMood,#new_mood=piMood+2);
-      }
-
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-      {
-         Send(self,@SetMood,#new_mood=piMood+1);
-      }
-
-      if Send(who,@GetHomeRoom) = RID_JAS_INN
-      {
-         Send(self,@SetMood,#new_mood=piMood+2);
-      }
-
-      Post(who,@someoneSaid,#what=self,#string=Amerantha_entry_welcome,
-            #type=SAY_RESOURCE);
-
-      propagate;
-   }
-
    CanAcceptOffer()
    {
       return TRUE;
-   }
-
-   CheckWhyWanted(obj=$,who=$)
-   {
-      if IsClass(obj,&StatsResetToken)
-      {
-         Send(who,@SendStatChange);
-
-         // We don't destroy the item, so return FALSE.
-         return FALSE;
-      }
-
-      propagate;
    }
 
 end
