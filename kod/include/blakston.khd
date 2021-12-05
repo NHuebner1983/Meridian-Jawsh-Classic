@@ -2438,8 +2438,8 @@
    PKILL_ENABLE_HP = 50
    MIN_HP = 20
    MAX_HP = 200
-   MAX_CALCULATED_HP = 523
-   MAX_XP = 26666666
+   MAX_CALCULATED_HP = 600
+   MAX_XP = 30000000
    MAX_XP_DEATH_LOSS = 10000
 
    // First set of flags (in piFlags)
