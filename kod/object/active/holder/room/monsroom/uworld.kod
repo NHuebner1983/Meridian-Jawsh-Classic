@@ -434,7 +434,7 @@ messages:
 
       foreach i in plActive
       {
-         if IsClass(First(i),&DeathRealmPortal)
+         if IsClass(First(i),&DeathRealmEntrance)
          {
             Send(First(i),@PortalDisappear);
          }

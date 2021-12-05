@@ -60,11 +60,15 @@ messages:
 
    CreateStandardObjects()
    {
-      poPortalDR = Create(&DeathRealmExit,#desc=portal_dre,#dest_room_num=RID_TOS_INN,
-                        #dest_col=7,#dest_row=8);
+      poPortalDR = Create(&DeathRealmExit,#desc=portal_dre);
       Send(self,@NewHold,#what=poPortalDR,#new_row=1,#new_col=12,
             #fine_row=48,#fine_col=32,#new_angle=ANGLE_SOUTH);
 
+      propagate;
+   }
+
+   LeaveHold()
+   {
       propagate;
    }
 

@@ -39,7 +39,6 @@ properties:
 
    vrIcon = DeathRealmexit_icon_rsc
    vrDesc = DeathRealmexit_desc_rsc
-   piDest_room = RID_DTEMPLE
    piDrawFx = DRAWFX_TRANSLUCENT_75
 
 messages:
@@ -72,7 +71,7 @@ messages:
          }
 
          Send(what,@MsgSendUser,#message_rsc=DeathRealm_exit_enter);
-         Post(who,@AdminGoToSafety);
+         Post(what,@AdminGoToSafety);
          
          propagate;
       }
