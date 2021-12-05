@@ -349,8 +349,8 @@ classvars:
 
    viCashmin = 1
    viCashmax = 10
-   viSoulmin = 1
-   viSoulmax = 5
+   viSoulmin = 0
+   viSoulmax = 100
 
    // 1 in x chance to cast a spell. Default 10// chance.
    viSpellChance = 10

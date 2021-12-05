@@ -29,7 +29,7 @@ classvars:
    vrDesc = Farnohl_desc_rsc
    vrDead_name = Farnohl_dead_name_rsc
 
-   viTreasure_type = TID_EMPTY
+   viTreasure_type = TID_NONE
 
    viSpeed = SPEED_FASTER
    viAttack_type = ATCK_WEAP_SLASH
@@ -98,7 +98,7 @@ messages:
    // We drop some of our carried items when we die.
    CreateTreasure(who = $, corpse = $)
    {
-      local oUsedItem, oItemAtt, iPercentDrop;
+      local oUsedItem, oItemAtt, iPercentDrop, oKey;
 	  
 	  iPercentDrop = EQUIPMENT_DROP_PERCENT;
 	  
@@ -136,6 +136,12 @@ messages:
             Send(oUsedItem,@Delete);
          }
       }
+
+
+      oKey = Create(&BasementKey,#corpse=corpse);
+      Send(poOwner,@NewHold,#what=oKey,
+            #new_row=piRow,#new_col=piCol,
+            #fine_row=piFine_row,#fine_col=piFine_col);
 
       plUsing = $;
 
