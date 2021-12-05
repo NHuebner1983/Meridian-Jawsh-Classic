@@ -80,10 +80,10 @@ messages:
       if prMapChanges = TRUE
       {
          Send(self,@ChangeTexture,#id=10,#new_texture=03203,#flags=CTF_FLOOR);
+         Send(self,@ChangeTexture,#id=11,#new_texture=03203,#flags=CTF_BELOWWALL);
          Send(self,@ChangeTexture,#id=0,#new_texture=09738,#flags=CTF_FLOOR);
          Send(self,@ChangeTexture,#id=5,#new_texture=09738,#flags=CTF_FLOOR);
          Send(self,@ChangeTexture,#id=15,#new_texture=09738,#flags=CTF_BELOWWALL);
-         Send(self,@ChangeTexture,#id=11,#new_texture=03203,#flags=CTF_BELOWWALL);
       }
 
       if prMonsters = TRUE
