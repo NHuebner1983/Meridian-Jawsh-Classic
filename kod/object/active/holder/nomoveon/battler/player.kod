@@ -3271,7 +3271,7 @@ messages:
 
       // Bound twice - once for max HP this player can get, once for
       // max HP allowable by the game.
-      return Bound(Bound(piBase_max_health,MIN_HP,100 + iStamina),MIN_HP,MAX_HP);
+      return Bound(Bound(piBase_max_health,MIN_HP,100 + (iStamina*2)),MIN_HP,MAX_HP);
    }
 
    GetUncappedBaseMaxHealth()

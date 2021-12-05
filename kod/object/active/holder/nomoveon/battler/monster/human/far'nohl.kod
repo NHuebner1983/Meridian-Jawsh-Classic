@@ -53,7 +53,7 @@ properties:
    vrIcon = human_male_icon_rsc
    vrDead_Icon = human_dead_male_icona_rsc
    vrDead_Legs = human_dead_male_iconb_rsc
-   viLevel = 200         // piBaseLevel
+   viLevel = 150         // piBaseLevel
    viDifficulty = 8    // piBaseDifficulty
    piGender = GENDER_MALE
    viKarma = 0
