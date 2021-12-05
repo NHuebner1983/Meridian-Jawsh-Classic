@@ -743,7 +743,7 @@ messages:
 
    EndEnchantment(who=$,report=TRUE,state=$,recheck=FALSE)
    {
-      local oSource, i, each_obj;
+      local oSource, i, each_obj, oSourceOwner, lHolderActive;
 
       if who = $
       {
@@ -773,16 +773,24 @@ messages:
          }
 
          // Original spell is ending, unenchant all in range.
-         foreach i in Send(Send(oSource,@GetOwner),@GetHolderActive)
-         {
-            each_obj = First(i);
-            if (each_obj <> who
-               AND IsClass(each_obj,&NoMoveOn))
-            {
-               Send(each_obj,@RemoveRadiusEnchantment,#what=self,#state=state,
-                     #report=report,#recheck=recheck);
-            }
-         }
+		 oSourceOwner = Send(oSource,@GetOwner);
+		 if oSourceOwner <> $ AND IsClass(oSourceOwner, &User)
+		 {
+		    lHolderActive = Send(Send(oSource,@GetOwner),@GetHolderActive);
+            if lHolderActive <> $
+            {			
+               foreach i in lHolderActive
+               {
+                  each_obj = First(i);
+                  if (each_obj <> who
+                     AND IsClass(each_obj,&NoMoveOn))
+                  {
+                     Send(each_obj,@RemoveRadiusEnchantment,#what=self,#state=state,
+                           #report=report,#recheck=recheck);
+                  }
+               }
+			}
+		 }
       }
 
       return;
