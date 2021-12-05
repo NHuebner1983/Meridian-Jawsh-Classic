@@ -14,6 +14,8 @@ constants:
 
    include blakston.khd
 
+   Farnohl_CYCLE = 120
+
 resources:
 
    DeathRealm_room_throne2 = throne2.roo
@@ -35,6 +37,11 @@ properties:
    prMusic = DeathRealm_throne2_music
 
    prMapChanges = FALSE
+   prMonsters = FALSE
+   prQuake = FALSE
+   prFireRing = FALSE
+
+   ptFarnohl = $
 
 messages:
 
@@ -81,5 +88,71 @@ messages:
       return;
    }
 
+   FirstUserEntered()
+   {
+      Send(self,@SpawnFarnohl);
+
+      propagate;
+   }
+
+   LastUserLeft()
+   {
+      local i;
+
+      if ptFarnohl <> $
+      {
+         DeleteTimer(ptFarnohl);
+         ptFarnohl = $;
+      }
+
+      propagate;
+   }
+
+   FarnohlTimer()
+   {
+      ptFarnohl = $;
+      Send(self,@SpawnFarnohl);
+
+      return;
+   }
+
+   SpawnFarnohl()
+   {
+      local iTime, i, oFarnohl;
+
+      if ptFarnohl = $
+      {
+         // Randomize the time by 10//
+         iTime = (Farnohl_CYCLE * random(90,110)) / 100;
+         // Convert to ms (numbers get too big if you do it above)
+         iTime = iTime * 1000;
+         ptFarnohl = CreateTimer(self,@FarnohlTimer,iTime);
+      }
+
+      foreach i in plActive
+      {
+         if IsClass(Send(self,@HolderExtractObject,#data=i),&Farnohl)
+         {
+            return FALSE;
+         }
+      }
+
+      oFarnohl = Create(&Farnohl);
+      Send(self,@NewHold,#what=oFarnohl,#new_row=2,#new_col=5,#new_angle=ANGLE_SOUTH);
+
+      return TRUE;
+   }
+
+   Delete()
+   {
+      if ptFarnohl <> $
+      {
+         DeleteTimer(ptFarnohl);
+         ptFarnohl = $;
+      }
+
+      propagate;
+   }
+   
 end
 ////////////////////////////////////////////////////////////////////////////////
