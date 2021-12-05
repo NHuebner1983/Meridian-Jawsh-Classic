@@ -176,6 +176,7 @@ resources:
       "I swear, if I gave you a shilling more than %i you'd topple right over!"
    Lm_bnkr_player_all_full = "You can't hold even a single shilling more!"
 
+
    vaultman_nogold = "You may not use my services to store %s%s."
    vaultman_nocursed = "I cannot take %s%s from you."
    vaultman_fullvault = \
@@ -258,6 +259,35 @@ resources:
    monster_faction_frogmen = "Frogmen"
    monster_faction_heretic = "Cult of the Three"
    monster_faction_undead = "Minions of Death"
+
+   //Death Realm
+   Lm_bnkr_dr_balance = "You have %i souls in your account."
+   Lm_bnkr_dr_did_deposit = \
+      "Thank you for your deposit.  You now have %i souls in your account."
+   Lm_bnkr_dr_no_account = "You have no souls to withdraw!"
+   Lm_bnkr_dr_acct_full = \
+      "You have so many souls stored here, that I'm afraid I have no "
+      "space to store any more!"
+   Lm_bnkr_dr_acct_almost_full = \
+      "You have so many souls stored here, that I'm afraid I can only "
+      "store %i more."
+   Lm_bnkr_dr_not_enough_withdraw = \
+      "But you only have %i souls in your account!"
+   Lm_bnkr_dr_not_enough_deposit = \
+      "But you only have %i souls in your possession!"
+   Lm_bnkr_dr_did_withdraw = \
+      "Here are your %i souls. Thank you for your business."
+   Lm_bnkr_dr_player_full = \
+      "I swear, if I gave you a soul more than %i you'd topple right over!"
+   Lm_bnkr_dr_player_all_full = "You can't hold even a single other soul!"
+   
+   autolooted_dr_all = "You loot the corpse clean, and find %d souls."
+   autolooted_dr_some = "You loot some of the items from your fallen kill, and "
+      "find %d souls."
+   autolooted_dr_only_money = "You find nothing easily lootable on your slain "
+      "enemy other than %d souls."
+   autoloot_got_only_souls_because_full = "You can't carry any more, so you "
+      "loot nothing from your fallen enemy, but you do find %d souls."
 
 classvars:
 
@@ -4282,7 +4312,7 @@ messages:
 
    BankBalance(who=$)
    {
-      local oBank;
+      local oBank, oRoom;
 
       if NOT Send(self,@MobIsBanker)
       {
@@ -4296,9 +4326,20 @@ messages:
          return;
       }
 
-      oBank = Send(SYS,@FindBankByNum,#num=Send(self,@GetBankNum));
-      Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-           #string=Lm_bnkr_balance,#parm1=Send(oBank,@GetAccount,#what=who));
+      oRoom = poOwner;
+
+      if IsClass(oRoom,&DeathRealm)
+      {
+         oBank = Send(SYS,@FindBankByNum,#num=Send(self,@GetBankNum));
+         Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+              #string=Lm_bnkr_dr_balance,#parm1=Send(oBank,@GetAccount,#what=who));
+      }
+      else
+      {
+         oBank = Send(SYS,@FindBankByNum,#num=Send(self,@GetBankNum));
+         Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+              #string=Lm_bnkr_balance,#parm1=Send(oBank,@GetAccount,#what=who));
+      }
 
       return;
    }
@@ -4356,7 +4397,7 @@ messages:
 
    BankDeposit(who=$, amount = 0)
    {
-      local oMoney, oBank, iBankAmt;
+      local oMoney, oSouls, oBank, iBankAmt, oRoom;
 
       if NOT Send(self,@MobIsBanker)
       {
@@ -4375,22 +4416,43 @@ messages:
          return;
       }
 
-      oMoney = Send(who,@GetMoneyObject);
-      if oMoney = $
-      {
-         Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-              #string=Lm_bnkr_not_enough_deposit,#parm1=0);
+      oRoom = poOwner;
 
-         return;
+      if IsClass(oRoom,&DeathRealm)
+      {
+         oSouls = Send(who,@GetSoulsObject);
+         if oSouls = $
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=Lm_bnkr_dr_not_enough_deposit,#parm1=0);
+            return;
+         }
+         if Send(oSouls,@GetValue) < amount
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=Lm_bnkr_dr_not_enough_deposit,
+                 #parm1=Send(oSouls,@GetValue));
+            return;
+         }
       }
-
-      if Send(oMoney,@GetValue) < amount
+      else
       {
-         Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-              #string=Lm_bnkr_not_enough_deposit,
-              #parm1=Send(oMoney,@GetValue));
+         oMoney = Send(who,@GetMoneyObject);
+         if oMoney = $
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=Lm_bnkr_not_enough_deposit,#parm1=0);
 
-         return;
+            return;
+         }
+         if Send(oMoney,@GetValue) < amount
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=Lm_bnkr_not_enough_deposit,
+                 #parm1=Send(oMoney,@GetValue));
+
+            return;
+         }
       }
 
       oBank = Send(SYS,@FindBankByNum,#num=Send(self,@GetBankNum));
@@ -4399,10 +4461,22 @@ messages:
       // Check for integer overflow.
       if (iBankAmt = MAX_KOD_INT)
       {
-         Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-              #string=Lm_bnkr_acct_full);
+         oRoom = poOwner;
 
-         return;
+         if IsClass(oRoom,&DeathRealm)
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=Lm_bnkr_dr_acct_full);
+   
+            return;
+         }
+         else
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=Lm_bnkr_acct_full);
+
+            return;
+         }
       }
       else if (iBankAmt + amount < 0)
       {
@@ -4416,16 +4490,37 @@ messages:
             return;
          }
 
-         Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-               #string=Lm_bnkr_acct_almost_full,#parm1=amount);
+         oRoom = poOwner;
+
+         if IsClass(oRoom,&DeathRealm)
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                  #string=Lm_bnkr_dr_acct_almost_full,#parm1=amount);
+         }
+         else
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                  #string=Lm_bnkr_acct_almost_full,#parm1=amount);
+         }
       }
 
       Send(oMoney,@SubtractNumber,#number=amount);
       Send(oBank,@DepositAccount,#what=who,#amount=amount);
 
-      Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-           #string=Lm_bnkr_did_deposit,
-           #parm1=Send(oBank,@GetAccount,#what=who));
+      oRoom = poOwner;
+
+      if IsClass(oRoom,&DeathRealm)
+      {
+         Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+              #string=Lm_bnkr_dr_did_deposit,
+              #parm1=Send(oBank,@GetAccount,#what=who));
+      }
+      else
+      {
+         Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+              #string=Lm_bnkr_did_deposit,
+              #parm1=Send(oBank,@GetAccount,#what=who));
+      }
 
       Send(self,@AffectMood,#why=MOODMOD_BANK_DEPOSIT);
 
@@ -4439,7 +4534,7 @@ messages:
 
    BankWithdraw(who = $, amount = 0)
    {
-      local iPlayerAmt, iBankAmt, oMoney, oBank;
+      local iPlayerAmt, iBankAmt, oMoney, oBank, oRoom;
 
       if NOT Send(self,@MobIsBanker)
       {
@@ -4463,19 +4558,44 @@ messages:
 
       if iBankAmt = 0
       {
-         Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_no_account,
-              #type=SAY_RESOURCE);
+         oRoom = poOwner;
 
-         return;
+         if IsClass(oRoom,&DeathRealm)
+         {
+            Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_dr_no_account,
+                 #type=SAY_RESOURCE);
+   
+            return;
+         }
+         else
+         {
+            Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_no_account,
+                 #type=SAY_RESOURCE);
+
+            return;
+         }
       }
 
       if amount > iBankAmt
       {
-         Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt);
-         Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-              #string=Lm_bnkr_not_enough_withdraw,#parm1=iBankAmt);
+         oRoom = poOwner;
 
-         return;
+         if IsClass(oRoom,&DeathRealm)
+         {
+            Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt);
+            Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=Lm_bnkr_dr_not_enough_withdraw,#parm1=iBankAmt);
+
+            return;
+         }
+         else
+         {
+            Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt);
+            Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=Lm_bnkr_not_enough_withdraw,#parm1=iBankAmt);
+
+            return;
+         }
       }
 
       oMoney = Send(who,@GetMoneyObject);
@@ -4489,17 +4609,40 @@ messages:
          iPlayerAmt = Send(oMoney,@GetNumber);
          if iPlayerAmt = MAX_KOD_INT
          {
-            Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt);
-            Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_player_all_full,
-                  #type=SAY_RESOURCE);
+            oRoom = poOwner;
+            
+            if IsClass(oRoom,&DeathRealm)
+            {
+               Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt);
+               Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_dr_player_all_full,
+                     #type=SAY_RESOURCE);
 
-            return;
+               return;
+            }
+            else
+            {
+               Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt);
+               Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_player_all_full,
+                     #type=SAY_RESOURCE);
+
+               return;
+            }
          }
          else if (iPlayerAmt + amount) <= 0
          {
             amount = MAX_KOD_INT - iPlayerAmt;
-            Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_player_full,
-                  #type=SAY_RESOURCE,#parm1=amount);
+            oRoom = poOwner;
+            
+            if IsClass(oRoom,&DeathRealm)
+            {
+               Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_dr_player_full,
+                     #type=SAY_RESOURCE,#parm1=amount);
+            }
+            else
+            {
+               Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_player_full,
+                     #type=SAY_RESOURCE,#parm1=amount);
+            }
 
             if amount > iBankAmt
             {
@@ -4520,8 +4663,18 @@ messages:
 
       // Send this message even if we gave the almost full one - players are
       // used to seeing this message on a successful transaction.
-      Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-            #string=Lm_bnkr_did_withdraw,#parm1=amount);
+      oRoom = poOwner;
+      
+      if IsClass(oRoom,&DeathRealm)
+      {
+         Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+               #string=Lm_bnkr_dr_did_withdraw,#parm1=amount);
+      }
+      else
+      {
+         Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+               #string=Lm_bnkr_did_withdraw,#parm1=amount);
+      }
 
       Send(self,@AffectMood,#why=MOODMOD_BANK_WITHDRAWAL);
 
@@ -6233,14 +6386,29 @@ messages:
             }
             else if iNumberOfItemsLooted = 0
             {
-               if iRandomCashAmount > 0
+               if IsClass(oRoom,&DeathRealm)
                {
-                  Send(who,@MsgSendUser,#message_rsc=autoloot_got_only_shillings_because_full,
-                        #parm1=Send(oMoney,@GetNumber));
+                  if iRandomSoulAmount > 0
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=autoloot_got_only_souls_because_full,
+                           #parm1=Send(oSouls,@GetNumber));
+                  }
+                  else
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=autoloot_got_nothing_because_full);
+                  }
                }
                else
                {
-                  Send(who,@MsgSendUser,#message_rsc=autoloot_got_nothing_because_full);
+                  if iRandomCashAmount > 0
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=autoloot_got_only_shillings_because_full,
+                           #parm1=Send(oMoney,@GetNumber));
+                  }
+                  else
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=autoloot_got_nothing_because_full);
+                  }
                }
             }
 
@@ -6255,7 +6423,7 @@ messages:
                {
                   if iRandomSoulAmount > 0
                   {
-                     Send(who,@MsgSendUser,#message_rsc=autolooted_all,
+                     Send(who,@MsgSendUser,#message_rsc=autolooted_dr_all,
                            #parm1=Send(oSouls,@GetNumber));
                   }
                   else
@@ -6267,7 +6435,7 @@ messages:
                {
                   if iRandomSoulAmount > 0
                   {
-                     Send(who,@MsgSendUser,#message_rsc=autolooted_some,
+                     Send(who,@MsgSendUser,#message_rsc=autolooted_dr_some,
                            #parm1=Send(oSouls,@GetNumber));
                   }
                   else
@@ -6280,7 +6448,7 @@ messages:
             {
                if iRandomSoulAmount > 0
                {
-                  Send(who,@MsgSendUser,#message_rsc=autolooted_only_money,
+                  Send(who,@MsgSendUser,#message_rsc=autolooted_dr_only_money,
                         #parm1=Send(oSouls,@GetNumber));
                }
                else if iRandomSoulAmount <= 0

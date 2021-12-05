@@ -19,7 +19,7 @@ BGFS = neeleme.bgf neelemeX.bgf iunholyt.bgf xeoneru.bgf xeoneruX.bgf \
        hamslices.bgf rouladen.bgf pumpslice.bgf pumppie.bgf pecanslice.bgf \
        pecanpie.bgf indianhat.bgf indianhatF.bgf pilgrimhat.bgf pilgrimhatF.bgf \
        ogre.bgf ogreX.bgf wizardhat.bgf wizardhatF.bgf headless.bgf key1.bof \
-       key2.bof key3.bof key4.bof key5.bof key6.bof key7.bof
+       key2.bof key3.bof key4.bof key5.bof key6.bof key7.bof souls.bgf
 
 !include $(RESOURCEDIR)\copy.mak
 

@@ -19,7 +19,7 @@ constants:
 
 resources:
 
-   DeathRealmportal_name_rsc = "rip in space"
+   DeathRealmportal_name_rsc = "Gate to the Death Realm"
    DeathRealmportal_icon_rsc = teleport.bgf
    DeathRealmportal_desc_rsc = "Gazing through the darkness, you can only see a red sky. "
    DeathRealm_portal_enter = \
