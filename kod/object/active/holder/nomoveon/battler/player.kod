@@ -2750,7 +2750,7 @@ messages:
       Send(self,@ResetCharacter);
 
       // Setup default stuff
-
+	  
       Send(self,@AddDefaultSpells);
       Send(self,@AddDefaultSkills);
 
@@ -2877,6 +2877,23 @@ messages:
       piTimeAttackedPlayer = 0;
       piTimeAttackedByPlayer = 0;
       piTimeLastMurder = 0;
+
+	  if IsClass(self, &DM)
+	  {
+	     // Prepare DM
+         piVigor = 200;
+		 piStamina = 50;
+         Send(self,@GainBaseMaxHealth,#amount=150-piBase_max_health);
+         Send(self,@ResetXPToLevel);
+         Send(self,@NewMaxMana,#amount=200-piMax_mana);
+         Send(self,@GainHealth,#amount=piMax_health*100-piHealth,#precision=TRUE);
+         Send(self,@GainMana,#amount=piMax_mana-piMana);
+         Send(self,@EvaluatePKStatus);
+         Send(self,@PlayerIsIntriguing);
+         Send(self,@NewVigor);
+		 
+		 Debug("New admin has logged into the game: ", Send(self,@GetName));
+	  }
 
       return;
    }
@@ -3271,7 +3288,7 @@ messages:
 
       // Bound twice - once for max HP this player can get, once for
       // max HP allowable by the game.
-      return Bound(Bound(piBase_max_health,MIN_HP,100 + (iStamina*2)),MIN_HP,MAX_HP);
+      return Bound(Bound(piBase_max_health,MIN_HP,101 + (iStamina*2)),MIN_HP,MAX_HP);
    }
 
    GetUncappedBaseMaxHealth()
@@ -6855,7 +6872,7 @@ messages:
       // Faster regen with higher vigor
       iTime = ((200-piVigor)*(200-piVigor))/6 + 500;
 
-      iTime = ((125-Send(self,@GetStamina)) * iTime)/100;
+      iTime = ((125-(Send(self,@GetStamina)*2)) * iTime)/100;
       iMaxHealth = bound(piMax_health,40,100);
       iTime = (iTime *100)/iMaxHealth;
 
@@ -9107,7 +9124,7 @@ messages:
 
             // Add stamina modifier here.
             // 1// bonus for 1 stamina, 70// bonus for 70 stamina.
-            iXP += iXP * Send(self,@GetStamina) / 100;
+            iXP += iXP * (Send(self,@GetStamina)*2) / 100;
          }
          else if (monster_level + 5) > iMaxHealth
                AND IsClass(what,&Monster) AND killing_blow
@@ -9220,7 +9237,11 @@ messages:
                + (Send(what,@GetBoostedLevel)
                / Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalTP));
 
-            if monster_level > 150
+            if monster_level > 151
+            {
+               piTraining_points = piTraining_points + 12;
+            }
+            else if monster_level > 150
             {
                piTraining_points = piTraining_points + 9;
             }
@@ -9348,9 +9369,9 @@ messages:
          // Awards the TP when the player hits max HP also (reward!).
          iStamina = Send(self,@GetStamina);
 
-         iMaxHealth = Send(self,@GetBaseMaxHealth);
+         iMaxHealth = Send(self,@GetBaseMaxHealth) * 2;
 
-         if (iMaxHealth >= 100 + (iStamina*2)
+         if (iMaxHealth >= 100 + iStamina
             OR iMaxHealth >= MAX_HP)
          {
             Send(self,@AddTrainingPoints,#points=iMaxHealth * 3,#bCap=FALSE);
@@ -9478,7 +9499,7 @@ messages:
 
    CheckValidHP()
    {
-      if (piMax_health > 100 + Send(self,@GetStamina))
+      if (piMax_health > 100 + (Send(self,@GetStamina)*2))
       {
          Debug(Send(self,@GetTrueName)," has ",piMax_health," HP with ",
                Send(self,@GetStamina)," stamina.");
@@ -10049,7 +10070,7 @@ messages:
       foreach i in plSkills
       {
          if Send(self,@DecodeSkillAbility,#compound=i) > 5
-            AND Random(1,100) > Send(self,@GetStamina)
+            AND Random(1,100) > (Send(self,@GetStamina)*2)
             AND Random(1,100) < piDeathCost
          {
             Send(self,@ChangeSkillAbility,#skill_num=Send(self,@DecodeSpellNum,
@@ -11829,7 +11850,7 @@ messages:
    {
       local iTime;
 
-      iTime = 1000 + (30* (51-Send(self,@GetStamina)));
+      iTime = 1000 + (30* (51-(Send(self,@GetStamina)*2)));
 
       return iTime;
    }
