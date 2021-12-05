@@ -3271,7 +3271,7 @@ messages:
 
       // Bound twice - once for max HP this player can get, once for
       // max HP allowable by the game.
-      return Bound(Bound(piBase_max_health,MIN_HP,100 + iStamina),MIN_HP,MAX_HP);
+      return Bound(Bound(piBase_max_health,MIN_HP,100 + (iStamina*2)),MIN_HP,MAX_HP);
    }
 
    GetUncappedBaseMaxHealth()
@@ -9298,7 +9298,7 @@ messages:
 
    TryGainBaseMaxHealth()
    "Handles the roll for tougher based on the player's gain chance plus "
-   "the iLevel parameter.  Returns TRUE if the player gaints a hit point, "
+   "the iLevel parameter.  Returns TRUE if the player gains a hit point, "
    "FALSE otherwise.  The iLevel parameter has the player's base max HP "
    "taken from it, then divided by 5 before being bound between 1 and 10."
    {
@@ -9306,7 +9306,7 @@ messages:
 
       bGainHP = FALSE;
 
-      while (Send(self,@GetBaseMaxHealth) < (101 + Send(self,@GetStamina))
+      while (Send(self,@GetBaseMaxHealth) < (101 + (Send(self,@GetStamina)*2))
          AND Send(self,@GetXPRemainingForNextLevel) <= 0)
       {
          Send(self,@GainBaseMaxHealth,#amount=1);
@@ -9350,7 +9350,7 @@ messages:
 
          iMaxHealth = Send(self,@GetBaseMaxHealth);
 
-         if (iMaxHealth >= 100 + iStamina
+         if (iMaxHealth >= 100 + (iStamina*2)
             OR iMaxHealth >= MAX_HP)
          {
             Send(self,@AddTrainingPoints,#points=iMaxHealth * 3,#bCap=FALSE);

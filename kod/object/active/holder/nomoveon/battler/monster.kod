@@ -5252,7 +5252,7 @@ messages:
          else
          {
             AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,monster_desc_level,
-                      4,Bound(viLevel,20,150));
+                      4,Bound(viLevel,20,MAX_HP));
          }
 
          return;

@@ -36,7 +36,7 @@ classvars:
 
    viTreasure_type = TID_MINOTAUR
    
-   viLevel = 200
+   viLevel = 150
 
    vrKocName = minotaur_koc_name_rsc
    vrName = minotaur_name_rsc
