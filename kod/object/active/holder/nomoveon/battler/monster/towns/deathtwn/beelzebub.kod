@@ -43,7 +43,9 @@ classvars:
    vrDesc = Beelzebub_desc_rsc
    viAttributes = \
       MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOFIGHT \
-      | MOB_NOMOVE
+      | MOB_NOMOVE | MOB_SELLER
+      
+   viMerchant_markup = MERCHANT_FLAT
 
    vrUnwanted_keep = Beelzebub_unwanted_keep
    vrUnwanted_pay = Beelzebub_unwanted_pay
@@ -54,11 +56,10 @@ messages:
    SetForSale()
    {
       plFor_sale = [
-         $,$,
          [
             Create(&TosKey)
          ],
-      $];
+      $,$,$];
 
       return;
    }

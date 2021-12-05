@@ -42,7 +42,9 @@ classvars:
    vrDesc = Kailor_desc_rsc
    viAttributes = \
       MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOFIGHT \
-      | MOB_NOMOVE 
+      | MOB_NOMOVE | MOB_SELLER
+      
+   viMerchant_markup = MERCHANT_FLAT
 
    vrUnwanted_keep = Kailor_unwanted_keep
    vrUnwanted_pay = Kailor_unwanted_pay
@@ -53,11 +55,10 @@ messages:
    SetForSale()
    {
       plFor_sale = [
-         $,$,
          [
             Create(&Throne2Key)
          ],
-      $];
+      $,$,$];
 
       return;
    }
