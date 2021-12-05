@@ -56,6 +56,7 @@ resources:
 
    // Commands
    dm_portal = "portal"
+   dm_smite_monsters = "smite"
    dm_makemonster = "monster"
    dm_makemonsters = "monsters"
    dm_event_sign_command = "event sign"
@@ -1183,6 +1184,12 @@ messages:
       {
 	     Send(self,@DMSayPortal,#string=string);
 	  }
+	  
+	  // Smite all monsters (allows you to gain HP without having to kill the monsters with spells or weapons)
+	  if StringContain(string, dm_smite_monsters)
+	  {
+	     Send(self,@DMSaySmiteMonsters);
+	  }
 
       // Monster making command.
       // DMs with DMFLAG_ALLOW_CREATE_MOB can create anything, DMs with
@@ -1309,13 +1316,13 @@ messages:
 
          piMightMod = 20;
          piIntellectMod = 20;
-         piStaminaMod = 20;
+         //piStaminaMod = 20; // Commented out to be natural HP with other players.
          piAgilityMod = 20;
          piMysticismMod = 20;
          piAimMod = 20;
 
          piVigor = 200;
-         Send(self,@GainBaseMaxHealth,#amount=150-piBase_max_health);
+         Send(self,@GainBaseMaxHealth,#amount=MAX_HP-piBase_max_health);
          Send(self,@ResetXPToLevel);
          Send(self,@NewMaxMana,#amount=200-piMax_mana);
 
@@ -2221,6 +2228,22 @@ messages:
       }
 
       return;
+   }
+   
+   DMSaySmiteMonsters()
+   {
+      local i;
+
+      foreach i in Send(poOwner,@GetHolderActive)
+      {
+	     if IsClass(First(i), &Monster)
+		 {
+            Send(First(i),@Killed,#what=self);
+		    Send(self,@AddXP,#iAmount=5000);
+		 }
+      }
+
+      return;   
    }
 
    DMSayMakeMonster(string=$)
