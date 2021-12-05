@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-DeathRealmPortal is Portal
+DeathRealmExit is Portal
 
 constants:
 
@@ -19,28 +19,26 @@ constants:
 
 resources:
 
-   DeathRealmportal_name_rsc = "Gate to the Death Realm"
-   DeathRealmportal_icon_rsc = teleport.bgf
-   DeathRealmportal_desc_rsc = "Gazing through the darkness, you can only see a red sky. "
-   DeathRealm_portal_enter = \
-      "~B~rA voice from the goddess Shal'ille speaks to you ''What are you doing here mortal!?!"
-      "This place shouldn't be reachable from your realm, it's not safe here. Luckily I was "
-      "able to redirect your spirit here. This temple is the only safe place from the monsters "
-      "that roam this realm. There's no doubt the king Far'Nohl is responsible for this. You'll "
-      "need to find him and convince him to send you back to the mortal realm. I wish you luck.''"
-   DeathRealm_cant_enter = \
-      "This portal leads to a unforgiving realm. Those to weak to fight mortals have no business there. "
+   DeathRealmexit_name_rsc = "Gate to the Mortal Plane"
+   DeathRealmexit_icon_rsc = teleport.bgf
+   DeathRealmexit_desc_rsc = "Gazing through the rift you see home."
+   DeathRealm_exit_enter = \
+      "~B~rA voice from the goddess Shal'ille speaks to you ''You've done it!! "
+      "You've slain Far'nohl and defeated his master Qor!! You must be one of the "
+      "strongest adventurers in the land. If only Kraanan was around to see this..."
+   DeathRealmexit_cant_enter = "A magical force prevents anyhting from passing through. "
+   Remove_souls = "Your contained souls have been released from there prison. "
 
 classvars:
 
-   vrName = DeathRealmportal_name_rsc
+   vrName = DeathRealmexit_name_rsc
    viMoveOn_type = MOVEON_TELEPORTER
    viAnimationSpeed = 400
 
 properties:
 
-   vrIcon = DeathRealmportal_icon_rsc
-   vrDesc = DeathRealmportal_desc_rsc
+   vrIcon = DeathRealmexit_icon_rsc
+   vrDesc = DeathRealmexit_desc_rsc
    piDest_room = RID_DTEMPLE
    piDrawFx = DRAWFX_TRANSLUCENT_75
 
@@ -49,7 +47,7 @@ messages:
    TeleportSomething(what=$)
    "Called when something walks on top of us."
    {
-      local oRoom;
+      local i, each_obj, oRoom;
 
       if (NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
       {
@@ -63,16 +61,19 @@ messages:
       }
       else
       {
-         
-
-         if (poOwner = $
-            OR NOT IsClass(poOwner,&Underworld)
-            OR NOT IsClass(what,&User))
+         foreach i in Send(what,@GetHolderPassive)
          {
-            propagate;
+            each_obj = Send(what,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&Souls)
+            {
+               Send(each_obj,@Delete);
+               Send(what,@MsgSendUser,#message_rsc=Remove_souls);
+            }
          }
 
-         Send(what,@MsgSendUser,#message_rsc=DeathRealm_portal_enter);
+         Send(what,@MsgSendUser,#message_rsc=DeathRealm_exit_enter);
+         Post(who,@AdminGoToSafety);
+         
          propagate;
       }
 
@@ -93,5 +94,6 @@ messages:
 
       return;
    }
+
 end
 ////////////////////////////////////////////////////////////////////////////////

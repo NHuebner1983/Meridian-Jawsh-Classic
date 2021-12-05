@@ -409,7 +409,7 @@ messages:
          }
       }
 
-      poPortalDR = Create(&DeathRealmPortal,#desc=portal_DR,#dest_room_num=RID_DTEMPLE,
+      poPortalDR = Create(&DeathRealmEntrance,#desc=portal_DR,#dest_room_num=RID_DTEMPLE,
                         #dest_col=8,#dest_row=17,#fine_row=15,#fine_col=32);
       Send(self,@NewHold,#what=poPortalDR,#new_row=16,#new_col=16,
             #fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);

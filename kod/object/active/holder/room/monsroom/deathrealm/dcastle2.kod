@@ -19,6 +19,9 @@ resources:
    room_DeathRealm_Castle2 = greeny.roo
    DeathRealm_Castle2_music = cave.ogg
 
+   portal_dre = \
+      "Through the portal, you see...home. "
+
 classvars:
 
    viTeleport_row = 13
@@ -33,6 +36,8 @@ properties:
    prMusic = DeathRealm_Castle2_music
 
    prMapChanges = FALSE
+
+   poPortalDR = $
 
 messages:
 
@@ -51,6 +56,16 @@ messages:
             #new_angle=ROTATE_NONE);
 
       return;
+   }
+
+   CreateStandardObjects()
+   {
+      poPortalDR = Create(&DeathRealmExit,#desc=portal_dre,#dest_room_num=RID_TOS_INN,
+                        #dest_col=7,#dest_row=8);
+      Send(self,@NewHold,#what=poPortalDR,#new_row=1,#new_col=12,
+            #fine_row=48,#fine_col=32,#new_angle=ANGLE_SOUTH);
+
+      propagate;
    }
 
 end

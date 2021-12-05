@@ -6,7 +6,7 @@
 
 DEPEND = ..\portal.bof
 BOFS = newbport.bof hellport.bof corpport.bof necport.bof corpnode.bof \
-	   deathrealmportal.bof
+	   drentrance.bof drexit.bof
 
 
 !include $(KODDIR)\kod.mak
