@@ -14,7 +14,7 @@ BOFS =  dh4.bof dh3.bof di3.bof dbarls.bof dbarln.bof dbarlport.bof \
 		dd6e6.bof de5.bof dc7.bof dd7.bof de7.bof djaswest.bof djasper.bof df8.bof dg8.bof \
 		dg6.bof dh7.bof dg5.bof df7.bof df6.bof di6.bof di7.bof di8.bof di9.bof dh9.bof \
 		dg9.bof dtempkra.bof dcastle.bof dcastle1.bof dcastle2.bof dcastle3.bof dcastle4.bof \
-		dthrone1.bof dthrone2.bof
+		dthrone1.bof dthrone2.bof dmaze.bof
 
 !include $(KODDIR)\kod.mak
 

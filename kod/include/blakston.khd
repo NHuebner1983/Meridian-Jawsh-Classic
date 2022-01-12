@@ -968,6 +968,7 @@
    RID_DCASTLE4        = 3059
    RID_DTHRONE1        = 3060
    RID_DTHRONE2        = 3061
+   RID_DMAZE           = 3062
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia
