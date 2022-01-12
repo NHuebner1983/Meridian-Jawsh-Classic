@@ -5622,6 +5622,7 @@ messages:
       plItemTemplates = cons(create(&CloakPotion),plItemTemplates);
       plItemTemplates = cons(create(&ResistAcidPotion),plItemTemplates);
       plItemTemplates = cons(create(&FreeActionPotion),plItemTemplates);
+      plItemTemplates = cons(create(&MinorHealPotion),plItemTemplates);
 
       plItemTemplates = cons(create(&Arsenic),plItemTemplates);
       plItemTemplates = cons(create(&Flask),plItemTemplates);

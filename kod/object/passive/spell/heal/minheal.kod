@@ -67,5 +67,10 @@ messages:
                + (Send(oTarget,@GetKarma) * 5),0,1000);
    }
 
+   GetPotionClass()
+   {
+      return &MinorHealPotion;
+   }
+
 end
 ////////////////////////////////////////////////////////////////////////////////
