@@ -121,7 +121,10 @@ resources:
    dm_currently_at = \
       "Your Location is: `bRow: `k`B%i`n `bCol: `k`B%i`n `bfRow: `k`B%i`n "
       "`bfCol: `k`B%i`n `bHeight: `k`B%i`n `bSectorID: `k`B%i`n."
-
+   
+   dm_message_get_object_place = \
+      "Send(self,@NewHold,#what=Create(&NOTHING),#new_row=%i,#new_col=%i,#fine_row=%i,#fine_col=%i);"
+   
    // dm_disguise_command uses StringSubstitute, do not add separate language
    // string for this resource as it won't be substituted correctly.
    dm_disguise_command = "disguise"
@@ -952,6 +955,12 @@ messages:
          return;
       }
 
+      if StringEqual(string,"get objectplace")
+      {
+         Send(self,@DMSayObjectPlace);
+         return;
+      }
+
       // Appeal commands; all DMs can use.
       if StringEqual(string,dm_appeal_off_command)
       {
@@ -1569,6 +1578,15 @@ messages:
 
 #region DM Say Command Handling
 
+   DMSayObjectPlace()
+   {
+	  Send(self,@MsgSendUser,#message_rsc=dm_message_get_object_place,
+		   #parm1=piRow,#parm2=piCol,
+		   #parm3=piFine_Row,#parm4=piFine_Col);
+		   
+	  return;
+   }
+   
    DMSayDetectInvis(string=$)
    {
       local i, iCount, oSpell, lEnchanted, oUser;
