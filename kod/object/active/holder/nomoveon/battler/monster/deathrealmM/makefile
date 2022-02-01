@@ -5,7 +5,7 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\deathrealmM.bof
-BOFS  = vajra.bof revenantb.bof chimera.bof
+BOFS  = vajra.bof revenantb.bof chimera.bof cyclops.bof
 
 
 
