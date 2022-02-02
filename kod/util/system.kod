@@ -5453,6 +5453,7 @@ messages:
       plMonsterTemplates = cons(create(&Vajra),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Chimera),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Cyclops),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&FollowerOfQor),plMonsterTemplates);
 
 
 
