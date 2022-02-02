@@ -21,7 +21,7 @@ BGFS = neeleme.bgf neelemeX.bgf iunholyt.bgf xeoneru.bgf xeoneruX.bgf \
        ogre.bgf ogreX.bgf wizardhat.bgf wizardhatF.bgf headless.bgf key1.bgf \
        key2.bgf key3.bgf key4.bgf key5.bgf key6.bgf key7.bgf souls.bgf vajra.bgf \
        vajraX.bgf chimera.bgf chimeraX.bgf cyclops.bgf cyclopsX.bgf followerofqor.bgf \
-       followerofqorX.bgf
+       followerofqorX.bgf minotaurb.bgf minotaurbX.bgf
 
 !include $(RESOURCEDIR)\copy.mak
 
