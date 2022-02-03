@@ -5458,6 +5458,8 @@ messages:
       plMonsterTemplates = cons(create(&Tyrant),plMonsterTemplates);
       plMonsterTemplates = cons(create(&FallenMonk),plMonsterTemplates);
       plMonsterTemplates = cons(create(&HellWasp),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Croco),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Vozun),plMonsterTemplates);
 
 
 

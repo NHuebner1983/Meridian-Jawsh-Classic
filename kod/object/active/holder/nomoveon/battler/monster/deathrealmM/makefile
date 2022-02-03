@@ -6,7 +6,8 @@
 
 DEPEND = ..\deathrealmM.bof
 BOFS  = vajra.bof revenantb.bof chimera.bof cyclops.bof followerofqor.bof \
-		minotaurbeserker.bof Tyrant.bof fallenmonk.bof hellwasp.bof
+		minotaurbeserker.bof Tyrant.bof fallenmonk.bof hellwasp.bof vozun.bof \
+		croco.bof
 
 
 
