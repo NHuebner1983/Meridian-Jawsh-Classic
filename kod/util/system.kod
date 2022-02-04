@@ -5462,6 +5462,9 @@ messages:
       plMonsterTemplates = cons(create(&Vozun),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Dulahan),plMonsterTemplates);
       plMonsterTemplates = cons(create(&GrandpaTrent),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&SpitterSprout),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&CrusherSprout),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&FrenzySprout),plMonsterTemplates);
 
 
 
