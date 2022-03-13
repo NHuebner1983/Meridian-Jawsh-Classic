@@ -5472,6 +5472,10 @@ messages:
       plMonsterTemplates = cons(create(&GreySeeker),plMonsterTemplates);
       plMonsterTemplates = cons(create(&GreenSeeker),plMonsterTemplates);
       plMonsterTemplates = cons(create(&BrownSeeker),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DeathMiteSoldier),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DeathMiteScout),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DeathMiteTank),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DeathMiteMage),plMonsterTemplates);
 
 
       return;
