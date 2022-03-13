@@ -26,7 +26,8 @@ BGFS = neeleme.bgf neelemeX.bgf iunholyt.bgf xeoneru.bgf xeoneruX.bgf \
        crocoX.bgf dulahan.bgf dulahanX.bgf grandpatrent.bgf grandpatrentX.bgf \
        spitter.bgf spitterX.bgf crusher.bgf crusherX.bgf frenzy.bgf frenzyX.bgf \
        hydrab.bgf hydrabX.bgf hydrag.bgf hydragX.bgf hydrar.bgf hydrarX.bgf hydray.bgf \
-       hydrayX.bgf
+       hydrayX.bgf greyseeker.bgf greenseeker.bgf brownseeker.bgf
+
 
 !include $(RESOURCEDIR)\copy.mak
 

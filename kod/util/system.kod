@@ -5469,7 +5469,9 @@ messages:
       plMonsterTemplates = cons(create(&RedHydra),plMonsterTemplates);
       plMonsterTemplates = cons(create(&GoldHydra),plMonsterTemplates);
       plMonsterTemplates = cons(create(&GreenHydra),plMonsterTemplates);
-
+      plMonsterTemplates = cons(create(&GreySeeker),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&GreenSeeker),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&BrownSeeker),plMonsterTemplates);
 
 
       return;
