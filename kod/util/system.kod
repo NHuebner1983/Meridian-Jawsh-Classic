@@ -5476,7 +5476,9 @@ messages:
       plMonsterTemplates = cons(create(&DeathMiteScout),plMonsterTemplates);
       plMonsterTemplates = cons(create(&DeathMiteTank),plMonsterTemplates);
       plMonsterTemplates = cons(create(&DeathMiteMage),plMonsterTemplates);
-
+      plMonsterTemplates = cons(create(&StoneReaver),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&IceReaver),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&ObsidianReaver),plMonsterTemplates);
 
       return;
    }
