@@ -17,7 +17,6 @@ constants:
 resources:
 
    room_DeathRealm_C5 = c5.roo
-   DeathRealm_C5_music = walk1.ogg
 
 classvars:
 
@@ -31,7 +30,6 @@ classvars:
 properties:
 
    prRoom = room_DeathRealm_C5
-   prMusic = DeathRealm_C5_music
    piRoom_num = RID_DC5
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS

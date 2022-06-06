@@ -18,9 +18,6 @@ resources:
 
    room_DeathRealmJ3 = j3.roo
 
-   DeathRealmJ3_music = forest.ogg
-
-
 classvars:
 
    viTeleport_row = 14

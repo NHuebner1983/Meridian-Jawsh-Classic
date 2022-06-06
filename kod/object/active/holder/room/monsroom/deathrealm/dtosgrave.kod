@@ -18,7 +18,6 @@ resources:
 
    room_DeathRealm_TosGraveyard = tosgrave.roo
 
-   DeathRealm_tosgraveyard_music = marion.ogg
    DeathRealm_wind_sound_tosgrave = ambcntry.ogg
    DeathRealm_wind1_sound_tosgrave = rs_wind.ogg
 
@@ -33,8 +32,6 @@ properties:
 
    prRoom = room_DeathRealm_TosGraveyard
    piRoom_num = RID_DTOS_GRAVEYARD
-
-   prMusic = DeathRealm_tosgraveyard_music
 
    plTombstones = $
    viTerrain_type = TERRAIN_CITY | TERRAIN_MYSTICAL

@@ -30,6 +30,8 @@ resources:
    // Quake Damage
    Quake_damage_hurt = "You feel the earth beneath you move violently."
 
+   DeathRealm_music = drmusic.mp3
+
 classvars:
 
    vrName = room_name_DeathRealm
@@ -39,6 +41,7 @@ classvars:
 properties:
 
    prBackground = background_chaos_night
+   prMusic = DeathRealm_music
 
    piBaseLight = LIGHT_MIN
    piOutside_factor = 0

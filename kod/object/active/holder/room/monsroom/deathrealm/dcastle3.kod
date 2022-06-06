@@ -17,7 +17,6 @@ constants:
 resources:
 
    DeathRealm_room_castle = castle1d.roo
-   DeathRealm_castle3_music = castle.ogg
 
 classvars:
 
@@ -30,8 +29,6 @@ classvars:
    viWeatherMask = WEATHER_MASK_MOUNTAINS
 
 properties:
-
-   prMusic = DeathRealm_castle3_music
 
    prRoom = room_castle1d
    piRoom_num = RID_DCASTLE3

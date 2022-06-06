@@ -17,7 +17,6 @@ constants:
 resources:
 
    room_DeathRealm_Castle2 = greeny.roo
-   DeathRealm_Castle2_music = cave.ogg
 
    portal_dre = \
       "Through the portal, you see...home. "
@@ -33,7 +32,6 @@ properties:
 
    piRoom_num = RID_DCASTLE2
    prRoom = room_DeathRealm_Castle2
-   prMusic = DeathRealm_Castle2_music
 
    prMapChanges = FALSE
 

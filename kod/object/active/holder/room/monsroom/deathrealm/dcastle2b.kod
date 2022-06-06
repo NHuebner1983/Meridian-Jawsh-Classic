@@ -18,7 +18,6 @@ constants:
 resources:
 
    room_DeathRealm_castle2b = castle2b.roo
-   DeathRealm_castle2b_music = castle.ogg
 
 classvars:
 

@@ -17,8 +17,7 @@ constants:
 resources:
 
    room_DeathRealmI3 = i3.roo
-   DeathRealmI3_music = walk1.ogg
-   DeathRealmi3_msg1 = "Today does not seem like a particularly good day to drown."
+   DeathRealmi3_msg1 = "Today does not seem like a particularly good day to drown in lava."
 
 classvars:
 
@@ -32,7 +31,6 @@ classvars:
 properties:
 
    prRoom = room_DeathRealmI3
-   prMusic = DeathRealmI3_music
    piRoom_num = RID_DI3
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS

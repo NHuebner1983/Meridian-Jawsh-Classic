@@ -17,7 +17,6 @@ constants:
 resources:
 
    room_DeathRealm_barloqueport = barlport.roo
-   DeathRealm_barloqueport_music = corloth.ogg
    
 classvars:
 

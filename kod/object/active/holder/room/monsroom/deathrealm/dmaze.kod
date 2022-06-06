@@ -17,7 +17,6 @@ constants:
 resources:
 
    room_DeathRealm_Maze = Labyrinth.roo
-   DeathRealm_Maze_music = walk7.ogg
 
 classvars:
 
@@ -29,7 +28,6 @@ classvars:
 properties:
 
    prRoom = room_DeathRealm_Maze
-   prMusic = DeathRealm_Maze_music
    piRoom_num = RID_DMAZE
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS

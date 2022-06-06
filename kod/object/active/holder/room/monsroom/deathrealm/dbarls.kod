@@ -17,7 +17,6 @@ constants:
 resources:
 
    room_dbarls = barls.roo
-   DeathRealm_BarloqueSouth_music = corloth.ogg
 
 classvars:
 
@@ -36,8 +35,6 @@ properties:
 
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
-
-   prMusic = DeathRealm_BarloqueSouth_music
 
 messages:
 

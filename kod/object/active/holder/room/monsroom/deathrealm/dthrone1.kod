@@ -18,8 +18,6 @@ resources:
 
    DeathRealm_room_throne1 = throne1.roo
 
-   DeathRealm_throne1_music = castle2.ogg
-
 classvars:
 
    viTeleport_row = 10
@@ -31,8 +29,6 @@ properties:
 
    prRoom = DeathRealm_room_throne1
    piRoom_num = RID_DTHRONE1
-
-   prMusic = DeathRealm_throne1_music
 
    prMapChanges = FALSE
 

@@ -18,8 +18,6 @@ resources:
 
    room_DeathRealm_F2 = f2.roo
 
-   DeathRealm_F2_music = walk7.ogg
-
 classvars:
 
    viTeleport_row = 14
@@ -32,7 +30,6 @@ classvars:
 properties:
 
    prRoom = room_DeathRealm_F2
-   prMusic = DeathRealm_F2_music
    piRoom_num = RID_DF2
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS

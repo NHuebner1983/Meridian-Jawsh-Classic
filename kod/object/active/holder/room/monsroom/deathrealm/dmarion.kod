@@ -18,8 +18,6 @@ resources:
 
    room_DeathRealm_marion = marion.roo
 
-   DeathRealm_mar_music = city02.ogg
-
    wind_sound_DeathRealm_marion = rs_wind.ogg
 
 classvars:
@@ -38,8 +36,6 @@ properties:
 
    prRoom = room_DeathRealm_marion
    piRoom_num = RID_DMARION
-
-   prMusic = DeathRealm_mar_music
 
 messages:
 

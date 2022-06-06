@@ -20,7 +20,6 @@ constants:
 resources:
 
    DeathRealm_room_temple = temple.roo
-   DeathRealm_temple_music = temple.ogg
 
 classvars:
 
@@ -37,8 +36,6 @@ properties:
 
    prRoom = DeathRealm_room_temple
    piRoom_num = RID_DTEMPLE
-
-   prMusic = DeathRealm_temple_music
 
    prMapChanges = FALSE
    prMonsters = FALSE

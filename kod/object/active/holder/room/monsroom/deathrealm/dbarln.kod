@@ -24,7 +24,6 @@ constants:
 resources:
 
    room_DeathRealm_barloquenorth = barln.roo
-   DeathRealm_barloquenorth_music = corloth.ogg
 
    DeathRealm_barloquenorth_sound_rsc = down2.ogg
 

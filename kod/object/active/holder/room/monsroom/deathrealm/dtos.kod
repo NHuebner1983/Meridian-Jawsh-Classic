@@ -17,7 +17,6 @@ constants:
 resources:
 
    room_DeathRealm_tos = tos.roo
-   DeathRealm_tos_music = tos.ogg
 
    DeathRealm_tos_locked_residence_doors = "The doors to this residence are locked."
    DeathRealm_tos_locked_residence_door = "The door to this residence is locked."
@@ -39,8 +38,6 @@ properties:
    piRoom_num = RID_DTOS
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
-
-   prMusic = DeathRealm_tos_music
 
 messages:
 

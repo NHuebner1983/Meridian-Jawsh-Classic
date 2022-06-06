@@ -17,7 +17,6 @@ constants:
 resources:
 
    room_DeathRealm_K5 = k5.roo
-   DeathRealm_K5_music = walk5.ogg
 
 classvars:
 
@@ -31,7 +30,6 @@ classvars:
 properties:
 
    prRoom = room_DeathRealm_K5
-   prMusic = DeathRealm_K5_music
    piRoom_num = RID_DK5
 
    piGen_object_time = 60000

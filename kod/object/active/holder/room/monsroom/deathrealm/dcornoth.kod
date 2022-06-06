@@ -20,7 +20,6 @@ resources:
 
    room_DeathRealm_CorNoth = cornoth.roo
 
-   DeathRealm_cor_music = city04.ogg
    wind_sound_DeathRealm_cornoth = ambcntry.ogg
    wind1_sound_DeathRealm_cornoth = rs_wind.ogg
 

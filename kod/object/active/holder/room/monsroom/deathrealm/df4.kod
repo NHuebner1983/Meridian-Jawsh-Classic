@@ -17,7 +17,6 @@ constants:
 resources:
 
    room_DeathRealm_F4 = f4.roo
-   DeathRealm_F4_music = forest.ogg
 
 classvars:
 
@@ -31,7 +30,6 @@ classvars:
 properties:
 
    prRoom = room_DeathRealm_F4
-   prMusic = DeathRealm_F4_music
    piRoom_num = RID_DF4
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS

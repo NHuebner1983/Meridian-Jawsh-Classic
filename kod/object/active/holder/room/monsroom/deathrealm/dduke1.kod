@@ -20,7 +20,6 @@ constants:
 resources:
 
    room_DeathRealm_Duke1 = duke1.roo
-   DeathRealm_Duke1_music = area01.ogg
 
 classvars:
 
@@ -34,7 +33,6 @@ properties:
 
    prRoom = room_DeathRealm_Duke1
    piRoom_num = RID_DDUKE1
-
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 

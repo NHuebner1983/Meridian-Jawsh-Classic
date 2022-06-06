@@ -17,7 +17,6 @@ constants:
 resources:
 
    room_DeathRealm_badland2 = badland2.roo
-   DeathRealm_badland2_music = walk5.ogg
 
 classvars:
 

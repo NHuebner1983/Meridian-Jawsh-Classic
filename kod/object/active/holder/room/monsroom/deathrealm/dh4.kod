@@ -17,7 +17,6 @@ constants:
 resources:
 
    room_DeathRealmH4 = h4.roo 
-   DeathRealmH4_music = forest.ogg
 
    Dwaterfall_msg1 = "You aren't daring enough to take ~BTHAT~n plunge!"
    Dwaterfall_soundH4 = wfall2.ogg
@@ -34,7 +33,6 @@ classvars:
 properties:
 
    prRoom = room_DeathRealmH4
-   prMusic = DeathRealmH4_music
    piRoom_num = RID_DH4
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS

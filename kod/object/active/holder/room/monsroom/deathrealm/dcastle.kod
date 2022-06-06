@@ -17,8 +17,6 @@ constants:
 resources:
 
    room_DeathRealm_Castle = dcastle.roo
-   
-   DeathRealm_Castle_music = castle.ogg
 
 classvars:
 
@@ -30,8 +28,6 @@ classvars:
    viWeatherMask = WEATHER_MASK_MOUNTAINS
 
 properties:
-
-   prMusic = DeathRealm_Castle_music
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 

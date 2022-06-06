@@ -15,7 +15,6 @@ constants:
 resources:
    room_DeathRealm_EastTos = toseast.roo
 
-   DeathRealm_EastTos_music = tos.ogg
    DeathRealm_wind_sound_easttos = ambcntry.ogg
    DeathRealm_wind1_sound_easttos = rs_wind.ogg
 
@@ -32,8 +31,6 @@ properties:
 
    prRoom = room_EastTos
    piRoom_num = RID_DTOS_EAST
-
-   prMusic = DeathRealm_EastTos_music
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 

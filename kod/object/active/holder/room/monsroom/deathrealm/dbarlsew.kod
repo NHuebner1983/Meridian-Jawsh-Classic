@@ -20,7 +20,6 @@ constants:
 resources:
 
    room_DeathRealm_barlsew = dbarlsew.roo
-   DeathRealm_barlsew_music = cave.ogg
 
 classvars:
 
