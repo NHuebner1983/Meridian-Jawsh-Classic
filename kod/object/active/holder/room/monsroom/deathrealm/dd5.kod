@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_DeathRealm_D5 = d5.room
+   room_DeathRealm_D5 = d5.roo
 
 classvars:
 
