@@ -10,6 +10,7 @@ DEBUG = 1
 
 # -----------------------------------------------------------------
 # Subdirectories of components
+AUDIODIR      = $(TOPDIR)\resource\audio\final_game_sounds_and_music
 BBGUNDIR      = $(TOPDIR)\bbgun
 CLIENTDIR     = $(TOPDIR)\clientd3d
 BLAKSERVDIR   = $(TOPDIR)\blakserv
@@ -36,6 +37,7 @@ BLAKBINDIR     = $(TOPDIR)\bin
 BLAKLIBDIR     = $(TOPDIR)\lib
 BLAKSERVRUNDIR = $(TOPDIR)\run\server
 CLIENTRUNDIR   = $(TOPDIR)\run\localclient
+CLIENTRESOURCE = $(CLIENTRUNDIR)\resource
 
 # Include directories
 BLAKINCLUDEDIR       = $(TOPDIR)\include

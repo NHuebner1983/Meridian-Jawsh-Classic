@@ -10,6 +10,8 @@ CLEANDIRS = graphics
             #textures
 
 all:
+	$(XCP) $(AUDIODIR)\* $(CLIENTRESOURCE)\
+
 	@-for %i in ($(DIRS)) do \
 		@if EXIST %i (echo Building %i & \
 		cd %i & \
