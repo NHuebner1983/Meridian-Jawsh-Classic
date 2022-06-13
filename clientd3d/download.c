@@ -12,6 +12,8 @@
 #include "client.h"
 #include "archive.h"
 #include "archive_entry.h"
+#include <urlmon.h>
+#pragma comment(lib , "urlmon.lib")
 
 static DownloadInfo *info;  // Info on download
 
@@ -709,6 +711,11 @@ void DownloadExit(void)
    }
 }
 
+void DownloadNewPatcher()
+{
+    URLDownloadToFile(NULL, _T("http://update.meridian59.us/classicpatch/update.exe"), _T("./update.exe"), 0, NULL);
+}
+
 /*****************************************************************************/
 /*
  * DownloadNewClient:  Spawn external program to get new client executable.
@@ -726,6 +733,9 @@ void DownloadNewClient(char *hostname, char *filename)
 
    if (AreYouSure(hInst, hMain, YES_BUTTON, IDS_NEEDNEWVERSION))
    {
+      // Download the latest update.exe
+      DownloadNewPatcher();
+
       // Make download dir if not already there
       DownloadCheckDirs(hMain);
 
@@ -777,6 +787,7 @@ void DownloadNewClient(char *hostname, char *filename)
    // Quit client
    PostMessage(hMain, WM_DESTROY, 0, 0);
 }
+
 /*****************************************************************************/
 /*
  * DownloadClientPatch:  Got version mismatch with the server, so we need to
@@ -797,6 +808,9 @@ void DownloadClientPatch(char *patchhost, char *patchpath, char *patchcachepath,
 
    if (AreYouSure(hInst, hMain, YES_BUTTON, IDS_NEEDNEWVERSION))
    {
+      // Download the latest update.exe
+      DownloadNewPatcher();
+
       // Make download dir if not already there
       DownloadCheckDirs(hMain);
 

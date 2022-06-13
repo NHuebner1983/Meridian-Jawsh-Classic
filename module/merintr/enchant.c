@@ -37,6 +37,8 @@ int room_enchant_x;             // X position of right side of first room enchan
 int room_enchant_y;             // Y position of top of first room enchantment
 int room_enchant_left;          // Left side of room enchantment area
 
+bool hasWolfpack = false;
+
 static void EnchantmentsMove(void);
 static void EnchantmentsMovePlayer(void);
 static void EnchantmentsMoveRoom(void);
@@ -368,6 +370,11 @@ Enchantment *EnchantmentDestroy(Enchantment *e)
 {
    DestroyWindow(e->hwnd);
    ObjectDestroyAndFree(e->obj);
+
+   if (stricmp(LookupNameRsc(e->obj->name_res), "wolfpack") == 0) {
+       hasWolfpack = false;
+   }
+
    return NULL;
 }
 /************************************************************************/
@@ -461,7 +468,15 @@ long CALLBACK EnchantmentProc(HWND hwnd, UINT message, UINT wParam, LONG lParam)
    if (e != NULL)
    {
        if (stricmp(LookupNameRsc(e->obj->name_res), "wolfpack") == 0) {
-           ChangeRunSpeed(165, 400, 30, 60, 60);
+           hasWolfpack = true;
+       }
+
+       if (hasWolfpack) {
+           ChangeRunSpeed(95, 270, 25, 65, 65);
+       }
+       else
+       {
+           ChangeRunSpeed(55, 210, 20, 85, 85);
        }
    }
 
