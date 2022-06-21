@@ -447,6 +447,9 @@ properties:
    // plChests is only used when rooms are recreated.
    plChests = $
 
+	// plStores is only used when rooms are recreated.
+	plStores = $
+
    // Normal is standard, pk if you're over 30.  NO_MURDER means people
    //  can't kill each other.
    piServer_type = SERVER_NORMAL
@@ -777,6 +780,7 @@ messages:
       Send(self,@RecreateChests);
       Send(self,@RecreateLore);
       Send(self,@UpdateHallOfHeroes);
+	  Send(self,@RecreateStores);
 
       poTotem = Create(&Totem);
       poTotemOne = Create(&TotemOne);
@@ -5379,7 +5383,8 @@ messages:
       plMonsterTemplates = cons(create(&CaptainKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&HalfKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Ogre),plMonsterTemplates);
-
+	  plMonsterTemplates = cons(create(&Store),plMonsterTemplates);
+	  
       return;
    }
 
@@ -5542,7 +5547,8 @@ messages:
       plItemTemplates = cons(create(&VaultLoadoutScroll),plItemTemplates);
       plItemTemplates = cons(create(&MirthScroll),plItemTemplates);
       plItemTemplates = cons(create(&MelancholyScroll),plItemTemplates);
-
+	  plItemTemplates = cons(create(&StoreScroll),plItemTemplates);
+	  
       // Wands
       plItemTemplates = cons(create(&BonkStick),plItemTemplates);
       plItemTemplates = cons(create(&SwapWand),plItemTemplates);
@@ -5793,6 +5799,80 @@ messages:
 
       return;
    }
+
+
+   AddStoreToList(oStore=$)
+   "Adds Store objects or box objects to list of Stores and boxes."
+   {
+      local iRoom, iRow, iCol, iFineRow, iFineCol;
+
+      if oStore <> $
+      {
+         iRoom = Send(Send(oStore,@GetOwner),@GetRoomNum);
+         iRow = Send(oStore,@GetRow);
+         iCol = Send(oStore,@GetCol);
+         iFineRow = Send(oStore,@GetFineRow);
+         iFineCol = Send(oStore,@GetFineCol);
+      }
+
+      plStores = Cons([oStore,iRoom,iRow,iCol,iFineRow,iFineCol],plStores);
+
+      return;
+   }
+
+   RecreateStores()
+   "This is always considered optional, just in case the admin doesn't want "
+   "to recreate the Stores."
+   {
+      local iRoom, oRoom, iRow, iCol, iFineRow, iFineCol, oStore, i, j, oObj;
+
+      foreach i in plStores
+      {
+         oStore = First(i);
+         iRoom = Nth(i,2);
+         iRow = Nth(i,3);
+         iCol = Nth(i,4);
+         iFineRow = Nth(i,5);
+         iFineCOl = Nth(i,6);
+
+         oRoom = Send(self,@FindRoomByNum,#num=iRoom);
+         if oRoom = $
+         {
+            Debug("Store",oStore,"in non-existent room num",iRoom);
+         }
+         else
+         {
+             Send(oRoom,@NewHold,#what=oStore,#new_row=iRow,#new_col=iCol,
+             #fine_row=iFineRow,#fine_col=iFineCol);
+         }
+      }
+
+     plStores = $;
+
+     return;
+   }
+
+   RemoveStoreFromList(oStore=$)
+   {
+      local i;
+
+      if oStore = $
+      {
+         return FALSE;
+      }
+
+      foreach i in plStores
+      {
+         if first(i) = oStore
+         {
+            plStores = DelListElem(plStores,i);
+         }
+     }
+
+      return;
+   }
+
+
 
    GetItemTemplates()
    {

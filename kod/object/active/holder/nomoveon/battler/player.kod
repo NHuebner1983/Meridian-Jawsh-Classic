@@ -833,6 +833,11 @@ resources:
       
    pvp_notify_wav = gong.ogg
 
+   player_already_store_owner = \
+      "You already have a store under your command.  You will have to "
+      "let them know that you need to ~Ipart ways~I, before you can take "
+      "another under your tutelage.  "
+
 classvars:
 
    viHand_space = 2
@@ -1141,6 +1146,8 @@ properties:
    ptPhaseVisualEffectTimer = $
    piRemainingPhaseTime = 60000 * 8
    ptCanPhaseTimer = $
+
+   poStore = $
 
 messages:
 
@@ -15305,5 +15312,17 @@ messages:
       propagate;
    }
 
+   GetStore()
+   {
+      return poStore;
+   }
+
+   SetStore(oStore=$)
+   {
+      poStore = oStore;
+
+      return;
+   }
+   
 end
 ////////////////////////////////////////////////////////////////////////////////
