@@ -19,10 +19,11 @@ resources:
    Store_name_rsc = "Store Catalog"
    Store_icon_rsc = jbook.bgf
    Store_desc_rsc = \
-      "A large store catalog placed by a fellow Meridianite.  "
+     "A large store catalog placed by a fellow Meridianite.  "
 	  "Feel free to browse the list of items to purchase, the "
 	  "item will be immediatly given to you and the owner will "
-	  "receive his payment instantly!  "
+	  "receive his payment instantly!  \nLets take a look here... "
+	  "Seems this catalog belongs to \n\n%s.                        "
 
 classvars:
 
@@ -46,14 +47,11 @@ properties:
 
 messages:
 
-   UserEntered(who=$)
+   ShowDesc()
    {
-      if NOT Send(who,@GetFaction) = FACTION_NEUTRAL
-      {
-         Send(self,@SetMood,#new_mood=piMood+4);
-      }
+      AddPacket(4,vrDesc,4,send(poStoreOwner,@GetTrueName));
 
-      propagate;
+      return;
    }
 
    SetForSale()
