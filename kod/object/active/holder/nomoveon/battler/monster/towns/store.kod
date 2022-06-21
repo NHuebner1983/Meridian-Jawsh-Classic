@@ -79,7 +79,8 @@ messages:
              AND what = poStoreOwner 
            {
              Post(self,@Delete);
-	       }
+             Send(poStoreOwner,@SetStore,#ostore=$);
+	        }
 	  }
 	  
 	  return;
