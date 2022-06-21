@@ -56,25 +56,6 @@ messages:
       propagate;
    }
 
-   AffectMood(what=$,why=$)
-   {
-      if why = MOODMOD_DAWN
-      {
-         Send(self,@SetMood,#new_mood=piMood+1);
-         
-         return;
-      }
-
-      if why = MOODMOD_DUSK
-      {
-         Send(self,@SetMood,#new_mood=piMood+3);
-
-         return;
-      }
-
-      return;
-   }
-
    SetForSale()
    {
       local i, oJunk, lForSale;
@@ -87,8 +68,24 @@ messages:
       return;
    }
 
-
- CanAcceptOffer(who=$)
+   Someonesaid(what = $,type = $,string = $)
+   {
+	 
+	  if type = SAY_NORMAL
+      {
+           if StringEqual(string,"close-store")
+             AND what <> $
+             AND IsClass(what,&User)
+             AND what = poStoreOwner 
+           {
+             Post(self,@Delete);
+	       }
+	  }
+	  
+	  return;
+   }
+   
+   CanAcceptOffer(who=$)
    {
       return (who = poStoreOwner) OR IsClass(who,&DM);
    }

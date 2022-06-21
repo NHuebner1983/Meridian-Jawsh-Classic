@@ -7324,13 +7324,6 @@ messages:
          // We no longer employed. Tell the store owner and return TRUE.
          if (oStoreOwner = $)
          {
-            // SetStore called without paramter sets Store to nil.
-            if report
-            {
-               // Let the abandoned shop owner know.
-               Send(self,@StoreLeaveMessage,#what=poStoreOwner);
-            }
-
             Send(poStoreOwner,@SetStore);
             poStoreOwner = $;
 
