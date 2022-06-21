@@ -259,7 +259,7 @@ resources:
    monster_faction_heretic = "Cult of the Three"
    monster_faction_undead = "Minions of Death"
 
-   sold_offer = "~B~gLooks like you sold somthing for %d shillings!  "
+   shop_sold_offer = "~B~gLooks like you sold somthing for %i shillings!  "
    
 classvars:
 
@@ -4794,7 +4794,7 @@ messages:
 		oStoreOwner = poStoreOwner;
 		Send(self,@GetStoreOwner);
 		Send(oStoreOwner,@NewHold,#what=Create(&Money,#number=iPrice));
-		Send(oStoreOwner,@MsgSendUser,#message_rsc=sold_offer,#parm1=iPrice);
+		Send(oStoreOwner,@MsgSendUser,#message_rsc=shop_sold_offer,#parm1=iPrice);
 		
 	 	return;
  	  }

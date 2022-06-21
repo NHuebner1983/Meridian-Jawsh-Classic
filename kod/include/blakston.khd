@@ -1575,6 +1575,7 @@
    MOB_KARMA_AG         = 0x04000   // Wont attack players of like karma
    MOB_FULL_TALK        = 0x08000   // Isnt affected by the say ranges
    MOB_COND_SELLER      = 0x10000   // Has things that must be asked for
+   MOB_SHOP             = 0x20000
 
    MOB_LAWFUL           = 0x40000   // Won't publicly do business with murderers
    MOB_VAULTMAN         = 0x80000   // Can be a vaultkeeper (set Vault ID!!!)
