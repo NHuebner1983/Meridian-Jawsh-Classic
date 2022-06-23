@@ -1689,7 +1689,8 @@
    SPEED_FAST          = 16
    SPEED_FASTER        = 18
    SPEED_VERY_FAST     = 20
-
+   SPEED_HACKER        = 50
+   
    // Flags indicating enchantments
    ENCH_PALSY       = 0x01
    ENCH_DEMENTIA    = 0x20
@@ -2052,6 +2053,15 @@
    SKID_PROFICIENCY_SHORTSWORD = 457
 
    // Unique spell constants
+
+   // Spells end at 200, start new ones at 201
+   // Don't go past 400.
+   SID_RIIJA_SERVANT = 201
+   SID_KRAN_SERVANT = 202
+   SID_SHAL_SERVANT = 203
+   SID_FAREN_SERVANT = 204
+   SID_QOR_SERVANT = 205
+   SID_JALA_SERVANT = 206
 
    SID_LIGHTNING_BOLT = 1
    SID_MINOR_HEAL = 2

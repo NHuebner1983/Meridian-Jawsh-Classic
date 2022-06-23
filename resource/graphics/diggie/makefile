@@ -18,7 +18,9 @@ BGFS = neeleme.bgf neelemeX.bgf iunholyt.bgf xeoneru.bgf xeoneruX.bgf \
        corncob.bgf cornbasket.bgf mashtaters.bgf stuffing.bgf turkey.bgf ham.bgf \
        hamslices.bgf rouladen.bgf pumpslice.bgf pumppie.bgf pecanslice.bgf \
        pecanpie.bgf indianhat.bgf indianhatF.bgf pilgrimhat.bgf pilgrimhatF.bgf \
-       ogre.bgf ogreX.bgf wizardhat.bgf wizardhatF.bgf 
+       ogre.bgf ogreX.bgf wizardhat.bgf wizardhatF.bgf \
+       farenservantspell.bgf jalaservantspell.bgf kranservantspell.bgf qorservantspell.bgf \
+       riijaservantspell.bgf shalservantspell.bgf \
 
 !include $(RESOURCEDIR)\copy.mak
 

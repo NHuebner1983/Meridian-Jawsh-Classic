@@ -731,7 +731,29 @@ messages:
       if iChanceToHit >= random(1,1000)
       {
          // We hit!
-         iDamage = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj);
+		 if isClass(what, &Servant)
+		 {
+		    // Servant is being hit
+		 }
+		 if isClass(self, &Servant)
+		 {
+		    // Servant has hit something
+			if isClass(what, &Player)
+			{
+			   iDamage = Send(self,@GetPlayerDamage);
+			   Debug("Servant hit player",iDamage);
+			}
+			else
+			{
+			   iDamage = Send(self,@GetMonsterDamage);
+			   Debug("Servant hit monster",iDamage);
+			}
+		 }
+		 else
+		 {
+		    iDamage = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj);
+		 }
+		 
          iScalefactor = 1000;
          
          // Scale damage with chance to hit beyond 100 percent.

@@ -1,0 +1,363 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Servant is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   servant_koc_name_rsc = "servant"
+   servant_name_rsc = "servant"
+   servant_icon_rsc = faerie-g.bgf
+   servant_desc_rsc = \
+      "One of the noble woodland fairies, the servant of light, "
+      "will follow you with a guiding light and deal moderate "
+      "damage to your enemies."
+
+   servant_dead_icon_rsc = faerieXG.bgf
+   servant_dead_name_rsc = "dead servant"
+
+   servant_fireball = feyball.bgf
+
+   servant_sound_hit = none.ogg
+   servant_sound_miss = none.ogg
+   servant_sound_death = none.ogg
+   servant_sound_aware = none.ogg
+
+classvars:
+   
+   vrDesc = servant_desc_rsc
+   vrKocName = servant_koc_name_rsc
+   vrName = servant_name_rsc
+   vrIcon = servant_icon_rsc
+
+   vrDead_icon = servant_dead_icon_rsc
+   vrDead_name = servant_dead_name_rsc
+
+   viTreasure_type = TID_NONE
+
+   viSpeed = SPEED_HACKER
+   viAttack_type = ATCK_WEAP_SLASH
+   viAttack_spell = 0
+   viDefault_behavior = AI_FIGHT_MONSTERS | AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_REGROUP | AI_MOVE_WALKTHROUGH_WALLS
+   viWimpy = 2
+
+   viLevel = 150
+   viDifficulty = 10
+   
+   // Attack range of 192, or 3 row/col.
+   viAttackRange = 192
+   viVisionDistance = 5
+   viCashmin = 1
+   viCashmax = 2
+   viAttributes = MOB_LISTEN | MOB_RECEIVE
+   
+   vrSound_hit = servant_sound_hit
+   vrSound_miss = servant_sound_miss
+   vrSound_aware = servant_sound_aware
+   vrSound_death = servant_sound_death
+
+properties:
+
+   piDrawEffectFlag = OF_BOUNCING
+   viKarma = 0
+   piAnimation = ANIM_NONE
+   
+   piAim = 50
+   piAgility = 50
+   
+   piSpellPower = 0
+   piPlayerDamage = 1
+   piMonsterDamage = 1
+   
+   // They are neautral
+   piReputationGroup = REP_NEUTRAL
+   
+   // Servant's bright aura
+   poAura = LIGHT_ORANGE
+   
+   // Timers
+   ptBuff = $
+   ptCast = $
+   ptTalk = $
+   
+messages:
+
+   Constructor()
+   {
+      propagate;
+   }
+
+   CanSee(what = $)
+   {
+      // Let's just say the servant can always see something because they walk through walls.
+	  // They may not be able to reach it though.
+      return TRUE;
+   }
+   
+   GetPlayerDamage()
+   {
+      return piPlayerDamage;
+   }
+   
+   GetMonsterDamage()
+   {
+      return piMonsterDamage;
+   }
+
+   // ----
+   // Our main setup for the servant.
+   // ----
+   FabricateServant(who = $, iSpellNum = $, iSpellPower = $)
+   {
+      local iStats, iResistance, iNegativeResistance;
+      
+	  // The spell power from their summon cast.
+	  piSpellPower = iSpellPower;
+	  
+	  // Set damage this servant can do to players & monsters based on spell power.
+	  // They are the same, but I made two versions in case we want to balance PVP and PVE.
+ 	  piPlayerDamage = Bound(piSpellPower / 4, 1, 25) * 100;
+	  piMonsterDamage = Bound(piSpellPower / 4, 1, 25) * 100;
+	  
+	  // Resistances based on spell power.
+      iResistance = Bound(iSpellPower, 1, 90);
+	  iNegativeResistance = Bound(-iSpellPower, -90, -1);
+	  
+	  // Stats based on spell power.
+	  iStats = Bound(iSpellPower / 2, 1, 50);
+	  
+	  // Aim & Agility are the main stats for the servant.
+	  piAim = iStats;
+	  piAgility = iStats;
+	  
+      switch(iSpellNum) {
+		case SID_RIIJA_SERVANT:
+		   Send(self, @ShockResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_PURPLE;
+		break;
+		case SID_FAREN_SERVANT:
+		   Send(self, @NatureResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_YELLOW;
+		break;
+		case SID_KRAN_SERVANT:
+		   Send(self, @HolyResistance, #amount=iResistance);
+		   Send(self, @UnholyResistance, #amount=iResistance);
+		   Send(self, @NatureResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iResistance);
+		   poAura = LIGHT_BLUE;
+		break;
+		case SID_SHAL_SERVANT:
+		   Send(self, @UnholyResistance, #amount=iNegativeResistance);
+		   Send(self, @HolyResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_WHITE;
+		break;
+		case SID_QOR_SERVANT:
+		   Send(self, @HolyResistance, #amount=iNegativeResistance);
+		   Send(self, @UnholyResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_BLOOD;
+		break;
+		case SID_JALA_SERVANT:
+		   Send(self, @HolyResistance, #amount=iResistance);
+		   Send(self, @UnholyResistance, #amount=iResistance);
+		   Send(self, @NatureResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_GREEN;
+		break;
+	  }
+
+	 // Set Monster Behavior
+	 Send(self,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
+	 Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_HYPERAGGRESSIVE,#value=TRUE);
+	 Send(self,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS,#value=TRUE);
+	 Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE,#value=TRUE);
+	 Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS,#value=TRUE);
+	 
+	 // Set Monster Attributes
+	 Send(self,@SetAttributeFlag,#flag=MOB_LISTEN,#value=TRUE);
+	 Send(self,@SetAttributeFlag,#flag=MOB_RECEIVE,#value=TRUE);
+	 
+	 // Set Monster Speed
+	 Send(self,@SetSpeed,#speed=SPEED_HACKER);
+
+	  return;
+   }
+   
+   // Can't attack players.
+   // YET.
+   // TODO: Allow attacking players if a player attacks the servant owner.
+   AllowBattlerAttack(victim=$)
+   {
+      // Must be in a room to attack, must have target.
+      if (poOwner = $
+         OR victim = $)
+      {
+         return FALSE;
+      }
+
+      if IsClass(victim,&Player)
+      {
+	     // TODO: Detect if the player has started PVP against the servant owner.
+         return FALSE;
+      }
+
+      propagate;
+   }
+   
+   MonsterAttack(what = $)
+   {
+      // add in any attack animation calls
+      Send(self,@DoSlash);
+      Send(poOwner,@SomethingShot,#who=self,#target=what,#projectile=self,
+            #flags=PROJ_FLAG_LIGHT_SOURCE);
+
+      return;
+   }
+
+   DoSlash()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,3,2,4);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,3,2,4);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,100,2,5,2,8,2,1);
+
+         return;
+      }
+
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,1,2,2);
+
+      return;
+   }
+
+   GetProjectileIcon()
+   {
+      return servant_fireball;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 7;
+   }
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,50,2,1,2,4);
+
+      return;
+   }
+
+   GetProjectileLightFlags()
+   {
+      // General lighting information.
+      return LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
+   }
+
+   GetProjectileLightIntensity()
+   {
+      // Fairly small light radius for projectile.  Out of 255 levels.
+      return 255;
+   }
+
+   GetProjectileLightColor()
+   {
+      // Color is based on mushroom color fed
+      return LIGHT_ORANGE;
+   }
+
+   SendLightingInformation()
+   {
+      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+      // Intensity (out of 255)
+      AddPacket(1,255);
+      // Color
+      AddPacket(2,poAura);
+
+      return;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }
+
+
+   SomethingMoved()
+   "Delete walls around us."
+   {
+      if poOwner <> $ AND poMaster <> $
+      {
+         Send(poOwner,@DeleteWallsAroundBattler,#who=self);
+      }
+
+      propagate;
+   }
+
+   Killed(what=$)
+   {
+      if IsClass(what, &Servant) AND Send(poMaster,@GetServant) = what
+	  {
+	     Send(self,@Delete);
+	  }
+	  
+	  propagate;
+   }
+
+   Delete()
+   {
+      if poMaster <> $ 
+	  {
+	     Send(poMaster,@RemoveControlledMinion,#what=self);
+		 Send(poMaster,@SetServant,#oServant=$);
+	  }
+	  
+      propagate;
+   }
+
+   CanAcceptOffer()
+   {
+      return TRUE;
+   }
+
+   CreateTreasure()
+   {
+      return;
+   }
+   
+end
+////////////////////////////////////////////////////////////////////////////////

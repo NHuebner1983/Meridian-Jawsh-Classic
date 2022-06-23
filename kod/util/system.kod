@@ -3176,7 +3176,17 @@ messages:
             iSchool = Send(oSpell,@GetSchool);
             if (iSchool >= SS_SHALILLE AND iSchool <= SS_JALA)
             {
-               plNewCharSpells = Cons(oSpell,plNewCharSpells);
+			    // Do not allow the new character to purchase these.
+				// They are automatically given upon creation.
+				if num <> SID_RIIJA_SERVANT
+				   AND num <> SID_KRAN_SERVANT
+				   AND num <> SID_SHAL_SERVANT
+				   AND num <> SID_FAREN_SERVANT
+				   AND num <> SID_QOR_SERVANT
+				   AND num <> SID_JALA_SERVANT
+			   {
+			      plNewCharSpells = Cons(oSpell,plNewCharSpells);
+			   }
             }
          }
       }
@@ -3410,6 +3420,14 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_PHASE,#class=&Phase);
 	  
       Send(self,@CreateOneSpellIfNew,#num=SID_VAULT_LOADOUT,#class=&VaultLoadout);
+
+      // Servant Spells
+      Send(self,@CreateOneSpellIfNew,#num=SID_RIIJA_SERVANT,#class=&RiijaServant);
+      Send(self,@CreateOneSpellIfNew,#num=SID_KRAN_SERVANT,#class=&KranServant);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SHAL_SERVANT,#class=&ShalServant);
+      Send(self,@CreateOneSpellIfNew,#num=SID_FAREN_SERVANT,#class=&FarenServant);
+      Send(self,@CreateOneSpellIfNew,#num=SID_QOR_SERVANT,#class=&QorServant);
+      Send(self,@CreateOneSpellIfNew,#num=SID_JALA_SERVANT,#class=&JalaServant);
 
       // Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
@@ -5379,6 +5397,9 @@ messages:
       plMonsterTemplates = cons(create(&CaptainKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&HalfKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Ogre),plMonsterTemplates);
+      
+	  // Servant monster
+	  plMonsterTemplates = cons(create(&Servant),plMonsterTemplates);
 
       return;
    }

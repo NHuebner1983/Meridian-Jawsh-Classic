@@ -1,0 +1,47 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+FarenServant is SummonServant
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   servant_faren_name_rsc = "summon faren"
+   servant_faren_icon_rsc = farenservantspell.bgf
+   servant_faren_desc_rsc = \
+      "A magical creature awaits your command."
+
+   servant_faren_sound = rperappr.ogg
+
+classvars:
+
+   vrName = servant_faren_name_rsc
+   vrIcon = servant_faren_icon_rsc
+   vrDesc = servant_faren_desc_rsc
+
+   viSpell_num = SID_FAREN_SERVANT
+   viSchool = SS_FAREN
+   viSpell_level = 1
+   
+   vrSucceed_wav = servant_faren_sound
+
+properties:
+
+   // Nothing yet
+
+messages:
+
+	// Nothing yet
+
+end
+////////////////////////////////////////////////////////////////////////////////
