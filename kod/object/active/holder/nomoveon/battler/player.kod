@@ -2464,6 +2464,13 @@ messages:
    {
       local i;
 
+      // Let's delete our servant
+      if poServant <> $
+      {
+         Send(poServant,@Delete);
+		 poServant = $;
+      }
+
       SendList(plPassive,0,@UserLogoff);
       SendList(plActive,0,@UserLogoff);
 
@@ -2525,13 +2532,6 @@ messages:
       {
          Send(poOwner,@SomethingWaveRoom,#what=self,
                #wave_rsc=player_logged_off_wav_rsc);
-      }
-
-      // Let's delete our servant
-      if poServant <> $
-      {
-         Send(poServant,@Delete);
-		 poServant = $;
       }
 
       return;
