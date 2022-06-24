@@ -1311,7 +1311,8 @@ messages:
    SomethingPhasedOut(what=$)
    {
       if ((poApparitionCaster <> $ AND what = poApparitionCaster)
-            OR (poApparitionOriginal <> $ AND what = poApparitionOriginal))
+            OR (poApparitionOriginal <> $ AND what = poApparitionOriginal)
+			OR (IsClass(what,&Player) AND Send(what,@GetServant) = self))
       {
          Send(self,@Delete);
       }
@@ -5393,6 +5394,11 @@ messages:
          viCurrentState = bit;
 
       return;
+   }
+   
+   GetState()
+   {
+      return viCurrentState;
    }
 
    GetAttackTime()

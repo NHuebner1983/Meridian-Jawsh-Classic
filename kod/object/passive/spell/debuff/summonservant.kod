@@ -141,7 +141,7 @@ messages:
 			 Send(oServant,@SetMaster,#oMaster=who);
 			 
 			 // Fabricate servant based on the spell being used and its spell power.
-			 Send(oServant,@FabricateServant,#who=who,#iSpellNum=viSpell_num,#iSpellPower=iSpellPower);
+			 Send(oServant,@FabricateServant,#who=who,#oSpell=self,#iSpellNum=viSpell_num,#iSpellPower=iSpellPower);
 			 
 			 // Tell the player about their servant being summoned.
 			 Post(who,@MsgSendUser,#message_rsc=summon_servant_arrived,#parm1=Send(oServant,@GetName));
