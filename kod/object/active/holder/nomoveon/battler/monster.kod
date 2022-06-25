@@ -4983,7 +4983,7 @@ messages:
          if Send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,#lItems=lTargets)
 		    AND NOT Send(poTarget,@IsEnchanted,#what=oSpell)
          {
-		    Debug("Monster Cast",Send(self,@GetName),Send(oSpell,@GetName));
+		    //Debug("Monster Cast",Send(self,@GetName),Send(oSpell,@GetName));
             // Do any special cast animations; send spell for specific ones.
             Send(self,@MonsterCastAnimation,#iSpellNum=iSpellNum);
 
@@ -4995,7 +4995,7 @@ messages:
          return TRUE;
       }
 
-      Debug("Monster did not cast anything");
+      //Debug("Monster did not cast anything");
 	  
       return FALSE;
    }
