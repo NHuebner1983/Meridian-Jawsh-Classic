@@ -55,7 +55,7 @@ classvars:
    viMana = 15
    viChance_To_Increase = 30
    viMeditate_ratio = 300
-   viSpellExertion = 30
+   viSpellExertion = 80
 
    vrSucceed_wav = summon_servant_class_sound
 
@@ -102,6 +102,12 @@ messages:
    GetNumSpellTargets()
    {
       return 0;
+   }
+   
+   // Prevents spell from fizzling.
+   SuccessChance(who=$)
+   {
+      return TRUE;
    }
 
    CastSpell(who=$,lTargets=$,iSpellPower=0)

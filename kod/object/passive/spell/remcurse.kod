@@ -112,7 +112,9 @@ messages:
                  #parm2=Send(oTarget,@GetDef),
                  #parm3=Send(oTarget,@GetName));
          }
-      }
+      } else {
+	     return FALSE;
+	  }
       
       propagate;
    }

@@ -101,7 +101,11 @@ messages:
       }
 
       Send(who,@MsgSendUser,#message_rsc=VampiricDrain_health_gain,#parm1=iToHeal/100);
-      Send(who,@GainHealth,#amount=iToHeal,#precision=TRUE);
+      
+	  if IsClass(who, &Player)
+	  {
+	     Send(who,@GainHealth,#amount=iToHeal,#precision=TRUE);
+	  }
 
       propagate;
    }

@@ -112,7 +112,7 @@ messages:
       oPoison = Send(SYS,@FindSpellByNum,#num=SID_POISON);
       if NOT Send(oTarget,@IsEnchanted,#what=oPoison)
       {
-         return;
+         return FALSE;
       }
 
       Send(oTarget,@MsgSendUser,#message_rsc=curepoison_on);

@@ -138,7 +138,11 @@ classvars:
    viSpeed = SPEED_HACKER
    viAttack_type = ATCK_WEAP_SLASH
    viAttack_spell = 0
-   viDefault_behavior = AI_MOVE_FOLLOW_MASTER | AI_FIGHT_MONSTERS | AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_REGROUP | AI_MOVE_WALKTHROUGH_WALLS
+   
+   viDefault_behavior = AI_MOVE_FOLLOW_MASTER     | AI_FIGHT_MONSTERS \
+                      | AI_FIGHT_HYPERAGGRESSIVE  | AI_FIGHT_SWITCHALOT    | AI_MOVE_REGROUP \
+	                  | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_THROUGH_WALLS
+	   
    viWimpy = 2
 
    viLevel = 150
@@ -162,6 +166,15 @@ properties:
    viKarma = 0
    piAnimation = ANIM_NONE
    
+   // Monsters mana
+   piMana = 250
+   piMax_mana = 250
+   
+   // Spells our servant can cast
+   // [spellnum, mana, 1-100 random]
+   plSpellBook = $
+
+   // Monsters primary stats
    piAim = 50
    piAgility = 50
    
@@ -185,13 +198,16 @@ properties:
    poAura = LIGHT_ORANGE
    
    // Randomized lists
-   plBuff = $
-   plCast = $
+   plBuffs = $
+   plCasts = $
    plTalk = $
    
+   // Enchantments to remove after our servant departs
+   plRemoveEnchants = $
+   
    // Timers
-   ptBuff = $
-   ptCast = $
+   ptBuffs = $
+   ptCasts = $
    ptTalk = $
    ptImp = $
    
@@ -232,14 +248,14 @@ messages:
    
    StartBuffTimer()
    {
-      ptBuff = CreateTimer(self,@ServantBuffs,5000);
+      ptBuffs = CreateTimer(self,@ServantBuffs,5000);
 	  
 	  return;
    }
 
    StartCastTimer()
    {
-      ptCast = CreateTimer(self,@ServantCast,5000);
+      ptCasts = CreateTimer(self,@ServantCasts,5000);
 	  
 	  return;
    }
@@ -265,15 +281,15 @@ messages:
 	     return;
 	  }
 	  
-	  if ptBuff <> $ AND IsTimer(ptBuff) AND GetTimeRemaining(ptBuff) > 0
+	  if ptBuffs <> $ AND IsTimer(ptBuffs) AND GetTimeRemaining(ptBuffs) > 0
 	  {
-	     DeleteTimer(ptBuff);
-		 ptBuff = $;
+	     DeleteTimer(ptBuffs);
+		 ptBuffs = $;
 	  }
-      if ptCast <> $ AND IsTimer(ptCast) AND GetTimeRemaining(ptCast) > 0
+      if ptCasts <> $ AND IsTimer(ptCasts) AND GetTimeRemaining(ptCasts) > 0
 	  {
-	     DeleteTimer(ptCast);
-		 ptCast = $;
+	     DeleteTimer(ptCasts);
+		 ptCasts = $;
 	  }
       if ptTalk <> $ AND IsTimer(ptTalk) AND GetTimeRemaining(ptTalk) > 0
 	  {
@@ -291,26 +307,132 @@ messages:
    
    ServantBuffs()
    {
+      local iRandom, iSpellGroup, iSpellPower, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove;
+	  
 	  if NOT Send(self,@MasterCheck)
 	  {
 	     return;
 	  }
-   
-	  Debug("Servant Buffs reached");
 	  
+	  plRemoveEnchants = $;
+   
 	  Send(self,@StartBuffTimer);
+	  
+	  foreach iSpellGroup in plBuffs
+	  {
+	     iSpellPower = Nth(iSpellGroup, 1);
+		 iSpellNum = Nth(iSpellGroup, 2);
+		 iSpellRandom = Nth(iSpellGroup, 3);
+		 iSpellRemove = Nth(iSpellGroup, 4);
+		 
+		 if iSpellRemove <> $ AND iSpellRemove = ENCHANT_REMOVE_SERVANT_DELETED
+		 {
+		    if plRemoveEnchants = $
+			{
+			   plRemoveEnchants = [];
+			}
+			
+		    plRemoveEnchants = AppendListElem(iSpellNum, plRemoveEnchants);
+		 }
+		 
+		 iRandom = Random(0, 100);
+		 
+		 if iRandom <= iSpellRandom
+		 {
+		    iBuffPower = Send(poMaster, @GetSpellAbility, #spell_num=iSpellNum);
+			
+			if iBuffPower = 0
+			{
+			   iBuffPower = Random(piSpellPower / 2, piSpellPower - 1) + 1;
+			}
+			
+			oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
+			
+		    // We will do this buff/heal/whatever on master!
+            if (oSpell <> $)
+			   AND (NOT Send(poMaster,@IsEnchanted,#what=oSpell))
+			   AND (NOT Send(poOwner,@IsEnchanted,#what=oSpell))
+            {
+			   //Debug("Casting",Send(oSpell,@GetName));
+               Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+            }			   
+		 }
+	  }
 	  
       return;
    }
    
-   ServantCast()
+   RemoveImportantServantEnchants()
+   {
+      local iSpellNum, oSpell, lPlayers, lPlayer;
+	  
+	  //Debug("Removing important servant enchants");
+	  
+	  if NOT Send(self,@MasterCheck)
+	  {
+	     return;
+	  }
+	  
+	  // All radius enchantments will go
+	  Send(poMaster,@RemoveAllRadiusEnchantments,#report=TRUE);
+	  	  
+      if plRemoveEnchants = $
+	  {
+	     return;
+	  }
+	  
+	  foreach iSpellNum in plRemoveEnchants
+	  {
+	     oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
+
+         //Debug("Checking",Send(oSpell,@GetName));
+		 
+		 if oSpell <> $
+		    AND (Send(poMaster,@IsEnchanted,#what=oSpell)
+		         OR Send(poOwner,@IsEnchanted,#what=oSpell))
+		 {
+		    //Debug("Removing",Send(oSpell,@GetName));
+			
+			if Send(poMaster,@IsEnchanted,#what=oSpell)
+			{
+		       Send(poMaster,@RemoveEnchantment,#what=oSpell);
+			}
+			
+			if Send(poOwner,@IsEnchanted,#what=oSpell)
+			{
+		       Send(poOwner,@RemoveEnchantment,#what=oSpell);
+			}
+		 }			   
+	  }
+	  
+	  plRemoveEnchants = $;
+	  
+	  // Reset my icons and room enchants in case someone else has them up
+ 	  Send(poOwner,@ResetMyRoomEnchantments,#who=poMaster);
+	  
+	  return;
+   }
+      
+   // Needed for relay
+   AddExertion()
+   {
+      return;
+   }
+   
+   // Needed for relay
+   GetVigor()
+   {
+      return 200;
+   }
+   
+   ServantCasts()
    {
 	  if NOT Send(self,@MasterCheck)
 	  {
 	     return;
 	  }
    
-	  Debug("Servant Cast reached");
+	  // Do nothing for now, this is supposed to be automatically handled :(
 	  
 	  Send(self,@StartCastTimer);
 	  
@@ -349,16 +471,16 @@ messages:
       Send(self,@StartImpTimer);
 	  
       iInitialChance = Send(poSpell,@GetInitialChance,#who=poMaster);
-      iRandom = random(1,100);
+      iRandom = random(1,500);
 	  
       if iRandom > iInitialChance
       {
          return;
       }
 	  	  
-      iRandom = random(0,100);
+      iRandom = random(0,500);
 
-      if iRandom < 5
+      if iRandom < 10
       {      
          Send(poMaster,@ChangeSpellAbility,#spell_num=piSpellNum,#amount=1,#report=TRUE);
 
@@ -389,76 +511,168 @@ messages:
 	  return;
    }
    
-   SetFarenAttackSpells()
+   SetFarenSpells()
    {
-      plCast = [
-	     [0,  39, $],
-	     [40, 99, [SID_FIREBALL, SID_LIGHTNING_BOLT]]
+      plCasts = [
+	     [50, SID_BLAST_OF_FIRE, 50],
+	     [60, SID_FIREBALL, 30],
+	     [70, SID_LIGHTNING_BOLT, 20],
+	     [80, SID_EXPLOSIVE_FROST, 15]
+	  ];
+	  
+      plBuffs = [
+	     [0,  SID_LIGHT, 100, $],
+	     [50, SID_MYSTIC_TOUCH, 10, $],
+	     [60, SID_RESIST_COLD, 100, $],
+	     [70, SID_RESIST_FIRE, 100, $],
+	     [80, SID_RESIST_SHOCK, 100, $]
+	  ];
+
+      return;
+   }
+
+   SetRiijaSpells()
+   {
+      plCasts = [
+	     [0,  SID_FLASH, 50],
+	     [30, SID_ILLUSIONARY_WOUNDS, 50],
+	     [40, SID_REFLECTION, 20],
+	     [40, SID_FORGET, 5],
+	     [50, SID_VERTIGO, 20],
+	     [60, SID_APPARITION, 20],
+	     [95, SID_EVIL_TWIN, 20]
+	  ];
+
+      plBuffs = [
+	     [0,  SID_SHADOW_FORM, 100, $]
 	  ];
 	  
       return;
    }
 
-   SetRiijaAttackSpells()
+   SetKranSpells()
    {
-      plCast = [
-	     [0,  39, [SID_FLASH]],
-	     [40, 59, [SID_FLASH, SID_FORGET, SID_VERTIGO]],
-	     [60, 94, [SID_FLASH, SID_FORGET, SID_VERTIGO, SID_APPARITION]],
-	     [95, 99, [SID_FORGET, SID_VERTIGO, SID_APPARITION, SID_EVIL_TWIN]]
+      // Kraanan has some offensive spells, but they might mess with the master.
+	  // Such as, dispel illusion if the master is running around as a shadowbeast pking.
+	  // Mana bomb might also be an issue.
+      plCasts = $;
+
+      plBuffs = [
+	     [20, SID_RELAY, 5, $],
+		 [30, SID_MARTYRS_BATTLEGROUND, 100, $],
+		 [30, SID_NIGHT_VISION, 100, $],
+	     [40, SID_BLESS, 100, $],
+	     [40, SID_HASTE, 100, $],
+		 [50, SID_SUPER_STRENGTH, 100, $],
+		 [60, SID_MAGIC_SHIELD, 100, $],
+		 [90, SID_KILLING_FIELDS, 90, $],
+		 [90, SID_DETECT_INVISIBLE, 20, $],
+		 [90, SID_ARMOR_OF_GORT, 5, $],
+		 [90, SID_RESIST_MAGIC, 5, $],
+		 [90, SID_DEFLECT, 5, $],
+		 [90, SID_EAGLE_EYES, 15, $],
+		 [90, SID_FREE_ACTION, 15, $]
 	  ];
 	  
       return;
    }
 
-   SetKranAttackSpells()
+   SetShalSpells()
    {
-      plCast = [
-	     [0,  99, $]
+      plCasts = [
+	     [40, SID_DAZZLE, 10],
+	     [60, SID_MARK_OF_DISHONOR, 30],
+	     [90, SID_PURGE, 5]
+	  ];
+	  
+      plBuffs = [
+	     [0,  SID_BREATH_OF_LIFE, 4, $],
+	     [0,  SID_MINOR_HEAL, 20, $],
+	     [0,  SID_DETECT_EVIL, 100, $],
+	     [0,  SID_CURE_POISON, 100, $],
+	     [0,  SID_REMOVE_CURSE, 100, $],
+	     [0,  SID_FORCES_OF_LIGHT, 90, $],
+	     [60, SID_RESIST_ACID, 100, $],
+	     [60, SID_CURE_DISEASE, 100, $],
+	     [70, SID_HOLY_RESOLVE, 100, $],
+	     [80, SID_HOSPICE, 3, $],
+	     [80, SID_PURIFY, 10, $],
+	     [90, SID_MAJOR_HEAL, 2, $]
+	  ];
+
+      return;
+   }
+
+   SetQorSpells()
+   {
+      plCasts = [
+	     [40, SID_ENFEEBLE, 60],
+		 [50, SID_SPLASH_OF_ACID, 50],
+	     [60, SID_VAMPIRIC_DRAIN, 50],
+	     [95, SID_HOLD, 10],
+	     [95, SID_BLIND, 9]
+	  ];
+
+      plBuffs = [
+	     [0,  SID_CLOAK, 100, $],
+	     [20, SID_DARKNESS, 100, $],
+	     [30, SID_DETECT_GOOD, 100, $],
+	     [40, SID_UNHOLY_RESOLVE, 100, $],
+	     [90, SID_SHALILLEBANE, 90, $],
+	     [90, SID_DEATH_LINK, 100, $],
+	     [90, SID_INVISIBILITY, 50, $]
 	  ];
 	  
       return;
    }
 
-   SetShalAttackSpells()
+   SetJalaSpells()
    {
-      plCast = [
-	     [0,  59, $],
-	     [60, 94, [SID_MARK_OF_DISHONOR]],
-	     [95, 99, [SID_MARK_OF_DISHONOR, SID_PURGE]]
-	  ];
+      // Jala has no offensive spells we want to use...
+	  plCasts = $;
 	  
+      plBuffs = [
+	     [0,  SID_WOLFPACK, 100, ENCHANT_REMOVE_SERVANT_DELETED],
+	     [20, SID_INVIGORATE, 100, ENCHANT_REMOVE_SERVANT_DELETED],
+	     [30, SID_RESTORATE, 100, ENCHANT_REMOVE_SERVANT_DELETED],
+	     [90, SID_REJUVENATE, 100, ENCHANT_REMOVE_SERVANT_DELETED]
+	  ];
+
       return;
    }
-
-   SetQorAttackSpells()
+   
+   // We'll use the built in spell casting system the game already has for monsters.
+   // If it sucks, we'll make some improvements.
+   // This all goes back to plSpellBook.
+   SetServantSpellBook()
    {
-      plCast = [
-	     [0,  39, $],
-	     [40, 59, [SID_ENFEEBLE]],
-	     [60, 94, [SID_ENFEEBLE, SID_VAMPIRIC_DRAIN]],
-	     [95, 99, [SID_HOLD, SID_BLIND]]
-	  ];
+      local iSpellGroup, oSpell;
 	  
-      return;
-   }
-
-   SetJalaAttackSpells()
-   {
-      plCast = [
-	     [0,  99, $]
-	  ];
+      if plCasts = $
+	  {
+         return;
+	  }
 	  
-      return;
-   }
-
-   CanSee(what = $)
-   {
-      // Let's just say the servant can always see something because they walk through walls.
-	  // They may not be able to reach it though.
-	  // Honestly I don't think this even works.
+	  plSpellBook = $;
 	  
-      return TRUE;
+	  foreach iSpellGroup in plCasts
+	  {
+	     if Nth(iSpellGroup, 1) <= piSpellPower
+		 {
+	        if plSpellBook = $
+			{
+			   plSpellBook = [];
+			}
+			
+			// Nth(2) = Spell Num, 1 = Mana, Nth(3) = Random 1-100 chance
+			// See plCasts.
+			oSpell = Send(SYS,@FindSpellByNum,#num=Nth(iSpellGroup, 2));
+	        plSpellBook = AppendListElem([Nth(iSpellGroup, 2), 1, Nth(iSpellGroup, 3)], plSpellBook);
+			//Debug("Spell Added",Send(oSpell,@GetName),Nth(iSpellGroup, 3));
+		 }
+	  }
+	  
+	  return;
    }
    
    GetPlayerDamage()
@@ -508,49 +722,52 @@ messages:
 	  
       switch(iSpellNum) {
 		case SID_RIIJA_SERVANT:
-		   Send(self, @SetRiijaAttackSpells);
+		   Send(self, @SetRiijaSpells);
 		   Send(self, @ShockResistance, #amount=iResistance);
            Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_PURPLE;
+		   poAura = LIGHT_RIIJA;
 		break;
 		case SID_FAREN_SERVANT:
-		   Send(self, @SetFarenAttackSpells);
+		   Send(self, @SetFarenSpells);
 		   Send(self, @NatureResistance, #amount=iResistance);
            Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_ORANGE;
+		   poAura = LIGHT_FAREN;
 		break;
 		case SID_KRAN_SERVANT:
-		   Send(self, @SetKranAttackSpells);
+		   Send(self, @SetKranSpells);
 		   Send(self, @HolyResistance, #amount=iResistance);
 		   Send(self, @UnholyResistance, #amount=iResistance);
 		   Send(self, @NatureResistance, #amount=iResistance);
            Send(self, @WeapResistance, #amount=iResistance);
-		   poAura = LIGHT_BLUE;
+		   poAura = LIGHT_KRAANAN;
 		break;
 		case SID_SHAL_SERVANT:
-		   Send(self, @SetShalAttackSpells);
+		   Send(self, @SetShalSpells);
 		   Send(self, @UnholyResistance, #amount=iNegativeResistance);
 		   Send(self, @HolyResistance, #amount=iResistance);
            Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_WHITE;
+		   poAura = LIGHT_SHALILLE;
 		break;
 		case SID_QOR_SERVANT:
-		   Send(self, @SetQorAttackSpells);
+		   Send(self, @SetQorSpells);
 		   Send(self, @HolyResistance, #amount=iNegativeResistance);
 		   Send(self, @UnholyResistance, #amount=iResistance);
            Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_BLOOD;
+		   poAura = LIGHT_QOR;
 		break;
 		case SID_JALA_SERVANT:
-		   Send(self, @SetJalaAttackSpells);
+		   Send(self, @SetJalaSpells);
 		   Send(self, @HolyResistance, #amount=iResistance);
 		   Send(self, @UnholyResistance, #amount=iResistance);
 		   Send(self, @NatureResistance, #amount=iResistance);
            Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_GREEN;
+		   poAura = LIGHT_JALA;
 		break;
 	  }
-     	 
+     
+	 // Set the plSpellBook attack spells our monster can use
+	 Send(self,@SetServantSpellBook);
+	 
 	 // Start all of the servant's timers.
 	 Send(self,@CreateServantTimers);
 	 
@@ -693,6 +910,7 @@ messages:
 
       if poMaster <> $ 
 	  {
+         Send(self,@RemoveImportantServantEnchants);
 	     Send(poMaster,@RemoveControlledMinion,#what=self);
 		 Send(poMaster,@SetServant,#oServant=$);
 	  }
@@ -747,7 +965,7 @@ messages:
          return;
       }
 	  
-	  Debug("State",Send(self,@GetCurrentState));
+	  //Debug("State",Send(self,@GetCurrentState));
 
       oRoom = Send(poMaster,@GetOwner);
 	  

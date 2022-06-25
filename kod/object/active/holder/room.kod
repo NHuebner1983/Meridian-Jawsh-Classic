@@ -441,6 +441,28 @@ messages:
 
       return;
    }
+   
+   GetPlayers()
+   {
+      local i, lPlayers;
+	  
+	  lPlayers = $;
+	  
+      foreach i in plActive
+	  {
+	     if IsClass(i, &Player)
+		 {
+		    if lPlayers = $
+			{
+			   lPlayers = [];
+			}
+			
+			lPlayers = AppendListElem(i, lPlayers);
+		 }
+	  }
+	  
+	  return lPlayers;
+   }
 
    Recreate()
    {
@@ -2120,21 +2142,31 @@ messages:
 
          // Now send music.
          Send(what,@SendRoomMusic,#music_rsc=prMusic);
-
-         // Add room enchantment effects, if not spectated or phased.
-         if (NOT Send(what,@IsInCannotInteractMode))
-         {
-            foreach i in plEnchantments
-            {
-               // User will request to get enchantment icons, so don't
-               // need to send here.
-               Send(Nth(i,2),@StartEnchantmentNewOccupant,#who=what,
-                     #state=(Nth(i,3)));
-            }
-         }
+		 
+		 // Reset my room enchantment effects and send icons to client.
+		 Send(self,@ResetMyRoomEnchantments,#who=what);
       }
 
       return;
+   }
+   
+   ResetMyRoomEnchantments(who=$)
+   {
+      local i;
+	  
+      // Add room enchantment effects, if not spectated or phased.
+      if (NOT Send(who,@IsInCannotInteractMode))
+      {
+	     foreach i in plEnchantments
+	     {
+	        // User will request to get enchantment icons, so don't
+	        // need to send here.
+	        Send(Nth(i,2),@StartEnchantmentNewOccupant,#who=who,
+		  	      #state=(Nth(i,3)));
+	     }
+      }
+	  
+	  return;
    }
 
    SomethingHitHotPlate(what=$,hpid=$)

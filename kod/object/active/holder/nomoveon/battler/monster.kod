@@ -373,6 +373,9 @@ properties:
    piVisionDistance
    piAttackRange
    piAnimation = ANIM_NONE
+   
+   // Monster cast timer - started when a monster chases you.
+   ptMonsterCastTimer = $
 
    // List of the mobs wanted items.
    plWantedItems = $
@@ -385,6 +388,8 @@ properties:
    ptCancelOffer = $
    ptRandom = $
    ptSpasm = $
+
+   piMonsterCastInterval = 1000
 
    // IMPORTANT NOTE: For higher accuracy, a battler's current health 
    //(and only current health) is inflated by a factor of 100. Doing so 
@@ -613,6 +618,18 @@ messages:
       propagate;
    }
    
+   Constructed()
+   {
+      if NOT IsClass(self, &Servant)
+	  {
+	     piMonsterCastInterval = 5000;
+	  }
+	  
+      ptMonsterCastTimer = CreateTimer(self,@MonsterCastSpell,piMonsterCastInterval);
+	  
+	  propagate;
+   }
+   
    GetBonusXP()
    {
        return viBonusXP;
@@ -739,7 +756,7 @@ messages:
    "End of monster. Clean up any quests it might have spawned."
    {
       local i, j, k;
-
+	  
       // Minion Management - upon dying they should leave your control list
       if poMaster <> $
       {
@@ -769,6 +786,7 @@ messages:
 
       Send(self,@ClearBehavior);
       Send(self,@ClearBasicTimers);
+      Send(self,@ClearMonsterCastTimer);
 
       if (viDefault_behavior & AI_NPC) = AI_NPC
       {
@@ -1635,10 +1653,6 @@ messages:
       }
       
       bCast = FALSE;
-      if Send(self,@MonsterCanCastSpell)
-      {
-         bCast = Send(self,@MonsterCastSpell);
-      }         
 
       // If we can move, we physically try to get closer
       if not bCast
@@ -1659,6 +1673,17 @@ messages:
       }
 
       return;
+   }
+   
+   ClearMonsterCastTimer()
+   {
+      if ptMonsterCastTimer <> $
+	  {
+	     DeleteTimer(ptMonsterCastTimer);
+		 ptMonsterCastTimer = $;
+	  }
+	  
+	  return;
    }
 
    MoveTimer( timer = $ )
@@ -4883,7 +4908,9 @@ messages:
    "Handle monster spellcasting here."
    {
       local i, iDistance, oSpell, iRandom, lTargets, iSpellNum, iManaCost;
-
+	  
+	  ptMonsterCastTimer = CreateTimer(self,@MonsterCastSpell,piMonsterCastInterval);
+	  
       // If monster knows no spells, or has no target, return.
       if plSpellBook = $
          OR poTarget = $
@@ -4891,49 +4918,52 @@ messages:
          return FALSE;
       }
 
+      if NOT Send(self,@MonsterCanCastSpell)
+      {
+	     return FALSE;
+      }
+
       // Get the adjusted chance to cast, based on whether we're demented
       // or if AmA is up. Multiply this by 6 because we've decreased the
       // time between chase behavior checks by a factor of 4-7x.
-      iRandom = Send(self,@AdjustedChanceBase,#base=(piSpellChance*6));
-
-      // Do the random check now, so we don't go any further
+      //iRandom = Send(self,@AdjustedChanceBase,#base=(piSpellChance*12));
+       
+	  // Do the random check now, so we don't go any further
       // if we don't have to.
-      if Random(1,iRandom) <> 1
-      {
-         return FALSE;
-      }
+      //if Random(1,iRandom) <> 1
+      //{
+	  //   return FALSE;
+      //}
+	  
+      // Check LoS to target here so we don't waste mana casting
+      // when we can't get our target. Instead, we use that time
+      // walking to the target.
+	  
+	  // Servants get to cast all the time.
 
       // Get distance to target.
       iDistance = Send(self,@SquaredFineDistanceTo3D,#what=poTarget);
 
-      // Check LoS to target here so we don't waste mana casting
-      // when we can't get our target. Instead, we use that time
-      // walking to the target.
-
-      if iDistance > (piAttackRange * piAttackRange)
+      if IsClass(self, &Servant) OR (iDistance > (piAttackRange * piAttackRange)
          AND iDistance <= piSpellRange * piSpellRange
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
          AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,
-                  #use_weapon=self)
-      {
+                   #use_weapon=self))
+       {
          // We go through the monster's spellbook and pick the spell
          // that corresponds to the random number picked. This is used
          // to give a // chance for each spell to be picked.
          iRandom = Random(1,100);
-         foreach i in plSpellBook
-         {
-            if iRandom <= Nth(i,3)
-            {
-               iSpellNum = Nth(i,1);
-               iManaCost = Nth(i,2);
-
-               break;
-            }
-         }
+		 i = Nth(plSpellBook, Random(1, Length(plSpellBook)));
+		 
+		 if iRandom <= Nth(i,3)
+		 {
+		    iSpellNum = Nth(i,1);
+		    iManaCost = Nth(i,2);
+		 }
 
          // If no spell returned or cannot pay mana costs, spell fails.
          if iSpellNum = $
-            OR piMana < iManaCost
          {
             return FALSE;
          }
@@ -4950,11 +4980,10 @@ messages:
          lTargets = Send(oSpell,@GetTargets,#who=self,#lTargets=lTargets);
 
          // See if we can cast the spell here.
-         if Send(oSpell,@CanPayMonsterCosts,#who=self,#lTargets=lTargets,
-                  #iSpellPower=piSpellPower)
-            AND Send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,
-                     #lItems=lTargets)
+         if Send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,#lItems=lTargets)
+		    AND NOT Send(poTarget,@IsEnchanted,#what=oSpell)
          {
+		    Debug("Monster Cast",Send(self,@GetName),Send(oSpell,@GetName));
             // Do any special cast animations; send spell for specific ones.
             Send(self,@MonsterCastAnimation,#iSpellNum=iSpellNum);
 
@@ -4966,6 +4995,8 @@ messages:
          return TRUE;
       }
 
+      Debug("Monster did not cast anything");
+	  
       return FALSE;
    }
 

@@ -210,6 +210,11 @@ messages:
 
    MonsterAttack(what = $)
    {
+      if poOwner = $
+	  {
+	    return;
+	  }
+	  
       if pbFire
       {
          piAnimation = ANIM_FIRE;
@@ -280,6 +285,11 @@ messages:
    MonsterCastSpell()
    {
       local iBase;
+	  
+	  if poOwner = $ OR poTarget = $
+	  {
+	     return;
+	  }
 
       iBase = Send(self,@RangedAttackChance,#base=(piSpellChance*6));
 
@@ -300,6 +310,11 @@ messages:
 
    DoMissileAttack()
    {
+      if poOwner = $
+	  {
+	     return;
+	  }
+	  
       pbFire = TRUE;
       Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
       Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
@@ -381,6 +396,11 @@ messages:
    CreateTreasure(who=$,corpse=$)
    {
       local oTreasure, iNumber;
+	  
+	  if poOwner = $
+	  {
+	     return;
+	  }
 
       // Apparitions, etc, provide no treasure
       if pbIllusion
