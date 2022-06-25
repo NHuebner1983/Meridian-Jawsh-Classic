@@ -119,6 +119,9 @@
    MM_RARE_ITEM            = 0x00001000
    MM_NO_PVP               = 0x00002000
 
+   // Constants for spell removal for Servants & Masters
+   ENCHANT_REMOVE_SERVANT_DELETED = 1
+
    // Player name color sent as hex RGB value. Define constants
    // for ease of use as needed. Requires OF_PLAYER boolean flag
    // to be set to draw a name.
@@ -203,6 +206,16 @@
    LIGHT_DGREEN  = 0x0140
    LIGHT_DBLUE   = 0x000A
    LIGHT_DPURPLE = 0x180A
+
+   // School colors
+   // Used for trance glow.
+   LIGHT_SHALILLE =     0x7FB5
+   LIGHT_QOR =          0x01DF
+   LIGHT_KRAANAN =      0x001F
+   LIGHT_FAREN =        0x7C00
+   LIGHT_RIIJA =        0x601F
+   LIGHT_JALA =         0x03E0
+   LIGHT_SKILL =        0x7E43
 
    // Special colors
    // Lightning is a bluish white.
@@ -1689,7 +1702,8 @@
    SPEED_FAST          = 16
    SPEED_FASTER        = 18
    SPEED_VERY_FAST     = 20
-
+   SPEED_HACKER        = 50
+   
    // Flags indicating enchantments
    ENCH_PALSY       = 0x01
    ENCH_DEMENTIA    = 0x20
@@ -1711,6 +1725,12 @@
    MEDIUM_GOOD  =  60
    HIGH_GOOD    =  80
    MAX_GOOD     = 100
+
+   // Action classification
+   COMBAT_ACTION_NEUTRAL = 0
+   COMBAT_ACTION_HARM = 1
+   COMBAT_ACTION_HEAL = 2
+   COMBAT_ACTION_BUFF = 3
 
    // Avar types
    // Same as purple to blue
@@ -2052,6 +2072,15 @@
    SKID_PROFICIENCY_SHORTSWORD = 457
 
    // Unique spell constants
+
+   // Spells end at 200, start new ones at 201
+   // Don't go past 400.
+   SID_RIIJA_SERVANT = 201
+   SID_KRAN_SERVANT = 202
+   SID_SHAL_SERVANT = 203
+   SID_FAREN_SERVANT = 204
+   SID_QOR_SERVANT = 205
+   SID_JALA_SERVANT = 206
 
    SID_LIGHTNING_BOLT = 1
    SID_MINOR_HEAL = 2

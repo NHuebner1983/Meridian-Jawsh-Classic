@@ -1142,6 +1142,9 @@ properties:
    piRemainingPhaseTime = 60000 * 8
    ptCanPhaseTimer = $
 
+   // Player's summoned servant
+   poServant = $
+
 messages:
 
    Constructor()
@@ -1256,6 +1259,11 @@ messages:
       Send(Send(SYS,@GetAssassinGame),@RemoveFromGame,#who=self);
       Send(Send(SYS,@GetLore),@PlayerSuicides,#who=self);
       plSchools = $;
+
+      if poServant <> $
+      {
+         Send(poServant,@Delete);
+      }
 
       propagate;
    }
@@ -2456,6 +2464,13 @@ messages:
    {
       local i;
 
+      // Let's delete our servant
+      if poServant <> $
+      {
+         Send(poServant,@Delete);
+		 poServant = $;
+      }
+
       SendList(plPassive,0,@UserLogoff);
       SendList(plActive,0,@UserLogoff);
 
@@ -2520,6 +2535,18 @@ messages:
       }
 
       return;
+   }
+   
+   SetServant(oServant = $)
+   {
+      poServant = oServant;
+	  
+	  return;
+   }
+   
+   GetServant()
+   {
+      return poServant;
    }
 
    SendUserAllWindowOverlays()
@@ -2959,6 +2986,12 @@ messages:
    "Add the spells a player is given when creating a character"
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_RIIJA_SERVANT,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_KRAN_SERVANT,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_SHAL_SERVANT,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_FAREN_SERVANT,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_QOR_SERVANT,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_JALA_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_TRANSFERENCE,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_PHASE,#initial=TRUE);
@@ -2980,16 +3013,16 @@ messages:
 
       // Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
-      Send(self,@NewHold,#what=Create(&Money,#number=500));
-      Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
+      Send(self,@NewHold,#what=Create(&Money,#number=50));
+      Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=50);
       Send(self,@AddReagentsForSpells,#iNumCasts=10);
 
       // If player hasn't suicided in last 5 hours, give them cash and prizes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=500));
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
-         Send(self,@AddReagentsForSpells,#iNumCasts=10);
+         Send(self,@NewHold,#what=Create(&Money,#number=35000));
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=35000);
+         Send(self,@AddReagentsForSpells,#iNumCasts=15);
       }
 
       return;
@@ -4411,6 +4444,13 @@ messages:
 
       // Default location to check is where we are.
       oRoom = poOwner;
+
+      if victim <> $ AND IsClass(victim, &Monster) AND Send(victim, @IsMinion)
+	  {
+	     // Do not attack your own minions.
+		 
+	     return FALSE;
+	  }
 
       // If the victim is in a room, then check that location instead.  This
       // allows distance attacks (like wall spells) to work properly.
@@ -12237,6 +12277,12 @@ messages:
 
          if IsClass(nObj,&UtilitySpell)
             OR IsClass(nObj,&Blink)
+            OR IsClass(nObj,&RiijaServant)
+            OR IsClass(nObj,&KranServant)
+            OR IsClass(nObj,&ShalServant)
+            OR IsClass(nObj,&FarenServant)
+            OR IsClass(nObj,&QorServant)
+            OR IsClass(nObj,&JalaServant)
          {
             continue;
          }
@@ -12470,6 +12516,12 @@ messages:
          }
 
          if NOT IsClass(nobj,&Blink)  // DON'T COUNT BLINK!
+            AND NOT IsClass(nObj,&RiijaServant)
+            AND NOT IsClass(nObj,&KranServant)
+            AND NOT IsClass(nObj,&ShalServant)
+            AND NOT IsClass(nObj,&FarenServant)
+            AND NOT IsClass(nObj,&QorServant)
+            AND NOT IsClass(nObj,&JalaServant)
             AND NOT IsClass(nobj,&UtilitySpell) // Don't count utility spells
          {
             switch (nSchool)
@@ -12706,6 +12758,12 @@ messages:
          iLevel = Send(oSpellObj,@GetLevel);
 
          if NOT IsClass(oSpellObj,&Blink)  // DON'T COUNT BLINK!
+            AND NOT IsClass(oSpellObj,&RiijaServant)
+            AND NOT IsClass(oSpellObj,&KranServant)
+            AND NOT IsClass(oSpellObj,&ShalServant)
+            AND NOT IsClass(oSpellObj,&FarenServant)
+            AND NOT IsClass(oSpellObj,&QorServant)
+            AND NOT IsClass(oSpellObj,&JalaServant)            		 
             AND NOT IsClass(oSpellObj,&UtilitySpell) // Don't count utility spells
             AND iSchool <> SS_DM_COMMAND
             AND except <> iSchool

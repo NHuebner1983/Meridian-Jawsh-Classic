@@ -1,0 +1,1033 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Servant is Monster
+
+constants:
+
+   include blakston.khd
+   
+   // Distance from master before we abandon the fight
+   RETREAT_DISTANCE = 100
+   
+   // Distance from master if we're just sitting there
+   IDLE_DISTANCE    = 20
+
+resources:
+
+   servant_koc_name_rsc = "servant"
+   servant_name_rsc = "servant"
+   servant_icon_rsc = faerie-g.bgf
+   servant_desc_rsc = \
+      "One of the noble woodland fairies, the servant of light, "
+      "will follow you with a guiding light and deal moderate "
+      "damage to your enemies."
+
+   servant_dead_icon_rsc = faerieXG.bgf
+   servant_dead_name_rsc = "dead servant"
+
+   servant_fireball = feyball.bgf
+
+   servant_sound_hit = none
+   servant_sound_miss = none
+   servant_sound_death = none
+   servant_sound_aware = none
+   
+   servant_rant_a = "This room could use a little more sunlight."
+   servant_rant_b = "That was a close one."
+   servant_rant_c = "Pking is pretty fun if I say so myself."
+   servant_rant_d = "Should we break for tea?"
+   servant_rant_e = "I'm anxious to kill stuff!"
+   servant_rant_f = "Do you know what is hidden behind the flag in the streets of tos?"
+   servant_rant_g = "Berserker rings are overrated."
+   servant_rant_h = "Orcs are my least favorite creature - too many teef."
+   servant_rant_i = "Giant rats would make good pets and torture devices."
+   servant_rant_j = "Cyrus the Virus knows a little too much about PKing."
+   servant_rant_k = "This glowing magic aura is way too bright, how can you even see?"
+   servant_rant_l = "You know Dev right, he makes interesting things."
+   servant_rant_m = "I once caught Diggie with his pants down in the lover's tryst."
+   servant_rant_n = "Did you know that 95 percent of marriages in meridian were under 14 years old."
+   servant_rant_o = "Did you know that one third of all female gamers are actually guys."
+   servant_rant_p = "Hey, you got any pics?"
+   servant_rant_q = "Check me out on Meridigram, I post some crazy stuff."
+   servant_rant_r = "You know...having a slave servant might be considered illegal, but what do I know."
+   servant_rant_s = "If master gives me a sock, I could be free."
+   servant_rant_t = "I expected to see more knights... not magical nerds with servants."
+   servant_rant_u = "Do you have any idea where we're going?"
+   servant_rant_v = "Are we there yet?"
+   servant_rant_w = "You should have turned left back there."
+   servant_rant_x = "You should have gone straight back there."
+   servant_rant_y = "Hey Siri, order me a pair of gauntlets."
+   servant_rant_z = "You should have turned right back there."
+   
+   servant_rant_aa = "We're going to be spending a lot of time together."
+   servant_rant_ab = "Where exactly are we going?"
+   servant_rant_ac = "My map says you're dumb."
+   servant_rant_ad = "The hunt is on!"
+   servant_rant_ae = "Time for some encouraging words from your slave."
+   servant_rant_af = "Did you know servants have no sexual organs? Telepathically speaking..."
+   servant_rant_ag = "Jawwwwwwwsh"
+   servant_rant_ah = "Rebel told me a secret, but I'm not tellin'."
+   servant_rant_ai = "Morgaine has an unhealthy interest in opening a Qorbucks Coffee."
+   servant_rant_aj = "Gar has made enough modifications to Meridian to call it WoW 0.5"
+   servant_rant_ak = "Fairies like trance music. Weird fact, right? I know everything."
+   servant_rant_al = "Shrunken heads are so annoying. Glad my head is a normal size...wait, crap."
+   servant_rant_am = "We really need a new King and Queen of Meridian."
+   servant_rant_an = "Can you believe you have spent half of your life on this game?"
+   servant_rant_ao = "There's a good reason Izzio is never inside...he can't fit through the doors."
+   servant_rant_ap = "Xaero and Eva are officially known as Meridian's wallflowers."
+   servant_rant_aq = "I was going to say something, but I was too busy playing the game for you."
+   servant_rant_ar = "I wish my designer made me a sit-down animation."
+   servant_rant_as = "Phil is dangerous, do not give him a command line interface."
+   servant_rant_at = "When Taz finishes the wiki, I would like to be in high definition."
+   servant_rant_au = "Delerium may think my existence is infringing, but I'm 100 percent home grown."
+   servant_rant_av = "I think it's weird that Jala has no offensive spells. Perhaps Arcane Flute Blast!"
+   servant_rant_aw = "I think it's weird the Kraanan has no offensive spells. Perhaps Whirling Shields!"
+   servant_rant_ax = "What happens when you mix Kraanan and Jala spells? Disco R dance! Ha Ha"
+   servant_rant_ay = "It would suck to have a wand equipped to cast magic."
+   servant_rant_az = "20 years ago I would have asked if you had school tomorrow..."
+   
+   servant_rant_aaa = "Shhh...I think someone is listening..."
+   servant_rant_aab = "Still waiting on those pics. Maybe use the flash spell."
+   servant_rant_aac = "Can you scratch something for me?"
+   servant_rant_aad = "I think I ate a corpse."
+   servant_rant_aae = "I am literally speechless."
+   servant_rant_aaf = "There's a secret room that only the gods meet in."
+   servant_rant_aag = "There's a crate in Castle Victoria that is very disappointing."
+   servant_rant_aah = "Some would say I'm sarcastic."
+   servant_rant_aai = "Can we get going already?"
+   servant_rant_aaj = "Tell your girlfriend I said thanks."
+   servant_rant_aak = "I'm here, so you can be lazy."
+   servant_rant_aal = "What would you do without me?"
+   servant_rant_aam = "That Marianna is one hot piece of ace."
+   servant_rant_aan = "When you die, you go to hell, then you get spit back out with a mace."
+   servant_rant_aao = "This spell never works, just die already!"
+   servant_rant_aap = "When you die, I'm stealing your loot and selling it on the black market."
+   servant_rant_aaq = "Want a Magic Spirit Helm? I had one around here somewhere..."
+   servant_rant_aar = "There's nothing worse than The Great Ocean, you get sand in every crack."
+   servant_rant_aas = "Princess Kateriina has a bald mace collection. Freaky, right?"
+   servant_rant_aat = "After all the loot you've stolen from me, I deserve at least some inkies."
+   servant_rant_aau = "If we're going to kill monsters, you really need to pick up the pace."
+   servant_rant_aav = "There's no time. Light your torch, let's go!"
+   servant_rant_aaw = "Knight Shields are great for sledding."
+   servant_rant_aax = "You ever wonder how thrashers mate? I imagine it's scary as hell."
+   servant_rant_aay = "So...that monster just popped up from nowhere, and you don't find that strange?"
+   servant_rant_aaz = "I think you left some loot back there."
+   
+   servant_tells_you_rsc = "~kYour servant whispers, ''%s~n~k''"
+
+classvars:
+   
+   vrDesc = servant_desc_rsc
+   vrKocName = servant_koc_name_rsc
+   vrName = servant_name_rsc
+   vrIcon = servant_icon_rsc
+
+   vrDead_icon = servant_dead_icon_rsc
+   vrDead_name = servant_dead_name_rsc
+
+   viTreasure_type = TID_NONE
+
+   viSpeed = SPEED_HACKER
+   viAttack_type = ATCK_WEAP_SLASH
+   viAttack_spell = 0
+   
+   viDefault_behavior = AI_MOVE_FOLLOW_MASTER     | AI_FIGHT_MONSTERS \
+                      | AI_FIGHT_HYPERAGGRESSIVE  | AI_FIGHT_SWITCHALOT    | AI_MOVE_REGROUP \
+	                  | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_THROUGH_WALLS
+	   
+   viWimpy = 2
+
+   viLevel = 150
+   viDifficulty = 10
+   
+   // Attack range of 192, or 3 row/col.
+   viAttackRange = 192
+   viVisionDistance = 5
+   viCashmin = 1
+   viCashmax = 2
+   viAttributes = MOB_LISTEN | MOB_RECEIVE
+   
+   vrSound_hit = servant_sound_hit
+   vrSound_miss = servant_sound_miss
+   vrSound_aware = servant_sound_aware
+   vrSound_death = servant_sound_death
+
+properties:
+
+   piDrawEffectFlag = OF_BOUNCING
+   viKarma = 0
+   piAnimation = ANIM_NONE
+   
+   // Monsters mana
+   piMana = 250
+   piMax_mana = 250
+   
+   // Spells our servant can cast
+   // [spellnum, mana, 1-100 random]
+   plSpellBook = $
+
+   // Monsters primary stats
+   piAim = 50
+   piAgility = 50
+   
+   // Spell object
+   poSpell = $
+   
+   // Spell num
+   piSpellNum = $
+   
+   // Spell school
+   piSpellSchool = $
+   
+   piSpellPower = 0
+   piPlayerDamage = 1
+   piMonsterDamage = 1
+   
+   // They are neautral
+   piReputationGroup = REP_NEUTRAL
+   
+   // Servant's bright aura - default is orange.
+   poAura = LIGHT_ORANGE
+   
+   // Randomized lists
+   plBuffs = $
+   plCasts = $
+   plTalk = $
+   
+   // Enchantments to remove after our servant departs
+   plRemoveEnchants = $
+   
+   // Timers
+   ptBuffs = $
+   ptCasts = $
+   ptTalk = $
+   ptImp = $
+   
+messages:
+
+   Constructor()
+   {
+      propagate;
+   }
+   
+   MasterCheck()
+   {
+      if poMaster = $
+	  {
+	     Send(self,@Delete);
+		 
+		 return FALSE;
+	  }
+	  
+	  return TRUE;
+   }
+   
+   CreateServantTimers()
+   {
+      // Clear existing timers
+	  Send(self,@ClearServantTimers);
+	  
+	  // Create some default data we need while working with timers
+	  Send(self,@SetServantTalk);
+
+      Send(self,@StartBuffTimer);
+	  Send(self,@StartCastTimer);
+	  Send(self,@StartTalkTimer);
+	  Send(self,@StartImpTimer);
+      
+      return;
+   }
+   
+   StartBuffTimer()
+   {
+      ptBuffs = CreateTimer(self,@ServantBuffs,5000);
+	  
+	  return;
+   }
+
+   StartCastTimer()
+   {
+      ptCasts = CreateTimer(self,@ServantCasts,5000);
+	  
+	  return;
+   }
+
+   StartTalkTimer()
+   {
+      ptTalk = CreateTimer(self,@ServantTalk,120000);
+	  
+	  return;
+   }
+
+   StartImpTimer()
+   {
+      ptImp = CreateTimer(self,@ServantImps,3000);
+	  
+	  return;
+   }
+   
+   ClearServantTimers()
+   {
+      if poMaster = $
+	  {
+	     return;
+	  }
+	  
+	  if ptBuffs <> $ AND IsTimer(ptBuffs) AND GetTimeRemaining(ptBuffs) > 0
+	  {
+	     DeleteTimer(ptBuffs);
+		 ptBuffs = $;
+	  }
+      if ptCasts <> $ AND IsTimer(ptCasts) AND GetTimeRemaining(ptCasts) > 0
+	  {
+	     DeleteTimer(ptCasts);
+		 ptCasts = $;
+	  }
+      if ptTalk <> $ AND IsTimer(ptTalk) AND GetTimeRemaining(ptTalk) > 0
+	  {
+	     DeleteTimer(ptTalk);
+		 ptTalk = $;
+	  }
+      if ptImp <> $ AND IsTimer(ptImp) AND GetTimeRemaining(ptImp) > 0
+	  {
+	     DeleteTimer(ptImp);
+		 ptImp = $;
+	  }
+	  
+	  return;
+   }
+   
+   ServantBuffs()
+   {
+      local iRandom, iSpellGroup, iSpellPower, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove;
+	  
+	  if NOT Send(self,@MasterCheck)
+	  {
+	     return;
+	  }
+	  
+	  plRemoveEnchants = $;
+   
+	  Send(self,@StartBuffTimer);
+	  
+	  foreach iSpellGroup in plBuffs
+	  {
+	     iSpellPower = Nth(iSpellGroup, 1);
+		 iSpellNum = Nth(iSpellGroup, 2);
+		 iSpellRandom = Nth(iSpellGroup, 3);
+		 iSpellRemove = Nth(iSpellGroup, 4);
+		 
+		 if iSpellRemove <> $ AND iSpellRemove = ENCHANT_REMOVE_SERVANT_DELETED
+		 {
+		    if plRemoveEnchants = $
+			{
+			   plRemoveEnchants = [];
+			}
+			
+		    plRemoveEnchants = AppendListElem(iSpellNum, plRemoveEnchants);
+		 }
+		 
+		 iRandom = Random(0, 100);
+		 
+		 if iRandom <= iSpellRandom
+		 {
+		    iBuffPower = Send(poMaster, @GetSpellAbility, #spell_num=iSpellNum);
+			
+			if iBuffPower = 0
+			{
+			   iBuffPower = Random(piSpellPower / 2, piSpellPower - 1) + 1;
+			}
+			
+			oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
+			
+		    // We will do this buff/heal/whatever on master!
+            if (oSpell <> $)
+			   AND (NOT Send(poMaster,@IsEnchanted,#what=oSpell))
+			   AND (NOT Send(poOwner,@IsEnchanted,#what=oSpell))
+            {
+			   //Debug("Casting",Send(oSpell,@GetName));
+               Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+            }			   
+		 }
+	  }
+	  
+      return;
+   }
+   
+   RemoveImportantServantEnchants()
+   {
+      local iSpellNum, oSpell, lPlayers, lPlayer;
+	  
+	  //Debug("Removing important servant enchants");
+	  
+	  if NOT Send(self,@MasterCheck)
+	  {
+	     return;
+	  }
+	  
+	  // All radius enchantments will go
+	  Send(poMaster,@RemoveAllRadiusEnchantments,#report=TRUE);
+	  	  
+      if plRemoveEnchants = $
+	  {
+	     return;
+	  }
+	  
+	  foreach iSpellNum in plRemoveEnchants
+	  {
+	     oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
+
+         //Debug("Checking",Send(oSpell,@GetName));
+		 
+		 if oSpell <> $
+		    AND (Send(poMaster,@IsEnchanted,#what=oSpell)
+		         OR Send(poOwner,@IsEnchanted,#what=oSpell))
+		 {
+		    //Debug("Removing",Send(oSpell,@GetName));
+			
+			if Send(poMaster,@IsEnchanted,#what=oSpell)
+			{
+		       Send(poMaster,@RemoveEnchantment,#what=oSpell);
+			}
+			
+			if Send(poOwner,@IsEnchanted,#what=oSpell)
+			{
+		       Send(poOwner,@RemoveEnchantment,#what=oSpell);
+			}
+		 }			   
+	  }
+	  
+	  plRemoveEnchants = $;
+	  
+	  // Reset my icons and room enchants in case someone else has them up
+ 	  Send(poOwner,@ResetMyRoomEnchantments,#who=poMaster);
+	  
+	  return;
+   }
+      
+   // Needed for relay
+   AddExertion()
+   {
+      return;
+   }
+   
+   // Needed for relay
+   GetVigor()
+   {
+      return 200;
+   }
+   
+   ServantCasts()
+   {
+	  if NOT Send(self,@MasterCheck)
+	  {
+	     return;
+	  }
+   
+	  // Do nothing for now, this is supposed to be automatically handled :(
+	  
+	  Send(self,@StartCastTimer);
+	  
+      return;
+   }
+
+   ServantTalk()
+   {
+      local iRandomPart, iRandomPiece, chosen_resource, tmp_rsc;
+	  
+	  if NOT Send(self,@MasterCheck)
+	  {
+	     return;
+	  }
+	  
+      Send(self,@StartTalkTimer);
+
+	  iRandomPart = Random(0, Length(plTalk));
+	  iRandomPiece = Random(0, Length(Nth(plTalk, iRandomPart)));
+	  chosen_resource = Nth(Nth(plTalk, iRandomPart), iRandomPiece);
+	  
+	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc,#parm1=chosen_resource);
+	  	  
+      return;
+   }
+
+   ServantImps()
+   {
+      local iRandom, iInitialChance, increase_chance;
+
+	  if NOT Send(self,@MasterCheck)
+	  {
+	     return;
+	  }
+
+      Send(self,@StartImpTimer);
+	  
+      iInitialChance = Send(poSpell,@GetInitialChance,#who=poMaster);
+      iRandom = random(1,500);
+	  
+      if iRandom > iInitialChance
+      {
+         return;
+      }
+	  	  
+      iRandom = random(0,500);
+
+      if iRandom < 10
+      {      
+         Send(poMaster,@ChangeSpellAbility,#spell_num=piSpellNum,#amount=1,#report=TRUE);
+
+         // Since we advanced, reset our school cast improvement bonus.
+         Send(poMaster,@ResetSchoolCast,#school=piSpellSchool);
+      }
+	  
+      return;
+   }
+   
+   SetServantTalk()
+   {
+      plTalk = [
+	     [servant_rant_a, servant_rant_b, servant_rant_c, servant_rant_d, servant_rant_e, servant_rant_f, servant_rant_g,
+	     servant_rant_h, servant_rant_i, servant_rant_j, servant_rant_k, servant_rant_l, servant_rant_m, servant_rant_n,
+	     servant_rant_o, servant_rant_p, servant_rant_q, servant_rant_r, servant_rant_s, servant_rant_t, servant_rant_u,
+	     servant_rant_v, servant_rant_w, servant_rant_x, servant_rant_y, servant_rant_z],
+	     [servant_rant_aa, servant_rant_ab, servant_rant_ac, servant_rant_ad, servant_rant_ae, servant_rant_af, servant_rant_ag,
+	     servant_rant_ah, servant_rant_ai, servant_rant_aj, servant_rant_ak, servant_rant_al, servant_rant_am, servant_rant_an,
+	     servant_rant_ao, servant_rant_ap, servant_rant_aq, servant_rant_ar, servant_rant_as, servant_rant_at, servant_rant_au,
+	     servant_rant_av, servant_rant_aw, servant_rant_ax, servant_rant_ay, servant_rant_az],
+	     [servant_rant_aaa, servant_rant_aab, servant_rant_aac, servant_rant_aad, servant_rant_aae, servant_rant_aaf, servant_rant_aag,
+	     servant_rant_aah, servant_rant_aai, servant_rant_aaj, servant_rant_aak, servant_rant_aal, servant_rant_aam, servant_rant_aan,
+	     servant_rant_aao, servant_rant_aap, servant_rant_aaq, servant_rant_aar, servant_rant_aas, servant_rant_aat, servant_rant_aau,
+	     servant_rant_aav, servant_rant_aaw, servant_rant_aax, servant_rant_aay, servant_rant_aaz]
+	  ];
+	  
+	  return;
+   }
+   
+   SetFarenSpells()
+   {
+      plCasts = [
+	     [50, SID_BLAST_OF_FIRE, 50],
+	     [60, SID_FIREBALL, 30],
+	     [70, SID_LIGHTNING_BOLT, 20],
+	     [80, SID_EXPLOSIVE_FROST, 15]
+	  ];
+	  
+      plBuffs = [
+	     [0,  SID_LIGHT, 100, $],
+	     [50, SID_MYSTIC_TOUCH, 10, $],
+	     [60, SID_RESIST_COLD, 100, $],
+	     [70, SID_RESIST_FIRE, 100, $],
+	     [80, SID_RESIST_SHOCK, 100, $]
+	  ];
+
+      return;
+   }
+
+   SetRiijaSpells()
+   {
+      plCasts = [
+	     [0,  SID_FLASH, 50],
+	     [30, SID_ILLUSIONARY_WOUNDS, 50],
+	     [40, SID_REFLECTION, 20],
+	     [40, SID_FORGET, 5],
+	     [50, SID_VERTIGO, 20],
+	     [60, SID_APPARITION, 20],
+	     [95, SID_EVIL_TWIN, 20]
+	  ];
+
+      plBuffs = [
+	     [0,  SID_SHADOW_FORM, 100, $]
+	  ];
+	  
+      return;
+   }
+
+   SetKranSpells()
+   {
+      // Kraanan has some offensive spells, but they might mess with the master.
+	  // Such as, dispel illusion if the master is running around as a shadowbeast pking.
+	  // Mana bomb might also be an issue.
+      plCasts = $;
+
+      plBuffs = [
+	     [20, SID_RELAY, 5, $],
+		 [30, SID_MARTYRS_BATTLEGROUND, 100, $],
+		 [30, SID_NIGHT_VISION, 100, $],
+	     [40, SID_BLESS, 100, $],
+	     [40, SID_HASTE, 100, $],
+		 [50, SID_SUPER_STRENGTH, 100, $],
+		 [60, SID_MAGIC_SHIELD, 100, $],
+		 [90, SID_KILLING_FIELDS, 90, $],
+		 [90, SID_DETECT_INVISIBLE, 20, $],
+		 [90, SID_ARMOR_OF_GORT, 5, $],
+		 [90, SID_RESIST_MAGIC, 5, $],
+		 [90, SID_DEFLECT, 5, $],
+		 [90, SID_EAGLE_EYES, 15, $],
+		 [90, SID_FREE_ACTION, 15, $]
+	  ];
+	  
+      return;
+   }
+
+   SetShalSpells()
+   {
+      plCasts = [
+	     [40, SID_DAZZLE, 10],
+	     [60, SID_MARK_OF_DISHONOR, 30],
+	     [90, SID_PURGE, 5]
+	  ];
+	  
+      plBuffs = [
+	     [0,  SID_BREATH_OF_LIFE, 4, $],
+	     [0,  SID_MINOR_HEAL, 20, $],
+	     [0,  SID_DETECT_EVIL, 100, $],
+	     [0,  SID_CURE_POISON, 100, $],
+	     [0,  SID_REMOVE_CURSE, 100, $],
+	     [0,  SID_FORCES_OF_LIGHT, 90, $],
+	     [60, SID_RESIST_ACID, 100, $],
+	     [60, SID_CURE_DISEASE, 100, $],
+	     [70, SID_HOLY_RESOLVE, 100, $],
+	     [80, SID_HOSPICE, 3, $],
+	     [80, SID_PURIFY, 10, $],
+	     [90, SID_MAJOR_HEAL, 2, $]
+	  ];
+
+      return;
+   }
+
+   SetQorSpells()
+   {
+      plCasts = [
+	     [40, SID_ENFEEBLE, 60],
+		 [50, SID_SPLASH_OF_ACID, 50],
+	     [60, SID_VAMPIRIC_DRAIN, 50],
+	     [95, SID_HOLD, 10],
+	     [95, SID_BLIND, 9]
+	  ];
+
+      plBuffs = [
+	     [0,  SID_CLOAK, 100, $],
+	     [20, SID_DARKNESS, 100, $],
+	     [30, SID_DETECT_GOOD, 100, $],
+	     [40, SID_UNHOLY_RESOLVE, 100, $],
+	     [90, SID_SHALILLEBANE, 90, $],
+	     [90, SID_DEATH_LINK, 100, $],
+	     [90, SID_INVISIBILITY, 50, $]
+	  ];
+	  
+      return;
+   }
+
+   SetJalaSpells()
+   {
+      // Jala has no offensive spells we want to use...
+	  plCasts = $;
+	  
+      plBuffs = [
+	     [0,  SID_WOLFPACK, 100, ENCHANT_REMOVE_SERVANT_DELETED],
+	     [20, SID_INVIGORATE, 100, ENCHANT_REMOVE_SERVANT_DELETED],
+	     [30, SID_RESTORATE, 100, ENCHANT_REMOVE_SERVANT_DELETED],
+	     [90, SID_REJUVENATE, 100, ENCHANT_REMOVE_SERVANT_DELETED]
+	  ];
+
+      return;
+   }
+   
+   // We'll use the built in spell casting system the game already has for monsters.
+   // If it sucks, we'll make some improvements.
+   // This all goes back to plSpellBook.
+   SetServantSpellBook()
+   {
+      local iSpellGroup, oSpell;
+	  
+      if plCasts = $
+	  {
+         return;
+	  }
+	  
+	  plSpellBook = $;
+	  
+	  foreach iSpellGroup in plCasts
+	  {
+	     if Nth(iSpellGroup, 1) <= piSpellPower
+		 {
+	        if plSpellBook = $
+			{
+			   plSpellBook = [];
+			}
+			
+			// Nth(2) = Spell Num, 1 = Mana, Nth(3) = Random 1-100 chance
+			// See plCasts.
+			oSpell = Send(SYS,@FindSpellByNum,#num=Nth(iSpellGroup, 2));
+	        plSpellBook = AppendListElem([Nth(iSpellGroup, 2), 1, Nth(iSpellGroup, 3)], plSpellBook);
+			//Debug("Spell Added",Send(oSpell,@GetName),Nth(iSpellGroup, 3));
+		 }
+	  }
+	  
+	  return;
+   }
+   
+   GetPlayerDamage()
+   {
+      return piPlayerDamage;
+   }
+   
+   GetMonsterDamage()
+   {
+      return piMonsterDamage;
+   }
+
+   // ----
+   // Our main setup for the servant.
+   // ----
+   FabricateServant(who = $, oSpell = $, iSpellNum = $, iSpellPower = $)
+   {
+      local iStats, iResistance, iNegativeResistance;
+	  
+	  // The spell object
+	  poSpell = oSpell;
+      
+	  // The spell power from their summon cast.
+	  piSpellPower = iSpellPower;
+	  
+	  // The spell we used to summon the servant
+	  piSpellNum = iSpellNum;
+	  
+	  // The spell school
+	  piSpellSchool = Send(poSpell,@GetSchool);
+	  
+	  // Set damage this servant can do to players & monsters based on spell power.
+	  // They are the same, but I made two versions in case we want to balance PVP and PVE.
+ 	  piPlayerDamage = Bound(piSpellPower / 4, 1, 25) * 100;
+	  piMonsterDamage = Bound(piSpellPower / 4, 1, 25) * 100;
+	  
+	  // Resistances based on spell power.
+      iResistance = Bound(iSpellPower, 1, 90);
+	  iNegativeResistance = Bound(-iSpellPower, -90, -1);
+	  
+	  // Stats based on spell power.
+	  iStats = Bound(iSpellPower / 2, 1, 50);
+	  
+	  // Aim & Agility are the main stats for the servant.
+	  piAim = iStats;
+	  piAgility = iStats;
+	  
+      switch(iSpellNum) {
+		case SID_RIIJA_SERVANT:
+		   Send(self, @SetRiijaSpells);
+		   Send(self, @ShockResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_RIIJA;
+		break;
+		case SID_FAREN_SERVANT:
+		   Send(self, @SetFarenSpells);
+		   Send(self, @NatureResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_FAREN;
+		break;
+		case SID_KRAN_SERVANT:
+		   Send(self, @SetKranSpells);
+		   Send(self, @HolyResistance, #amount=iResistance);
+		   Send(self, @UnholyResistance, #amount=iResistance);
+		   Send(self, @NatureResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iResistance);
+		   poAura = LIGHT_KRAANAN;
+		break;
+		case SID_SHAL_SERVANT:
+		   Send(self, @SetShalSpells);
+		   Send(self, @UnholyResistance, #amount=iNegativeResistance);
+		   Send(self, @HolyResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_SHALILLE;
+		break;
+		case SID_QOR_SERVANT:
+		   Send(self, @SetQorSpells);
+		   Send(self, @HolyResistance, #amount=iNegativeResistance);
+		   Send(self, @UnholyResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_QOR;
+		break;
+		case SID_JALA_SERVANT:
+		   Send(self, @SetJalaSpells);
+		   Send(self, @HolyResistance, #amount=iResistance);
+		   Send(self, @UnholyResistance, #amount=iResistance);
+		   Send(self, @NatureResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_JALA;
+		break;
+	  }
+     
+	 // Set the plSpellBook attack spells our monster can use
+	 Send(self,@SetServantSpellBook);
+	 
+	 // Start all of the servant's timers.
+	 Send(self,@CreateServantTimers);
+	 
+	 return;
+   }
+   
+   // Can't attack players.
+   // YET.
+   // TODO: Allow attacking players if a player attacks the servant owner.
+   AllowBattlerAttack(victim=$)
+   {
+      // Must be in a room to attack, must have target.
+      if (poOwner = $
+         OR victim = $)
+      {
+         return FALSE;
+      }
+
+      if IsClass(victim,&Player)
+      {
+	     // TODO: Detect if the player has started PVP against the servant owner.
+         return FALSE;
+      }
+
+      propagate;
+   }
+   
+   MonsterAttack(what = $)
+   {
+      // add in any attack animation calls
+      Send(self,@DoSlash);
+      Send(poOwner,@SomethingShot,#who=self,#target=what,#projectile=self,
+            #flags=PROJ_FLAG_LIGHT_SOURCE);
+
+      return;
+   }
+
+   DoSlash()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,3,2,4);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,3,2,4);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,100,2,5,2,8,2,1);
+
+         return;
+      }
+
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,1,2,2);
+
+      return;
+   }
+
+   GetProjectileIcon()
+   {
+      return servant_fireball;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 7;
+   }
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,50,2,1,2,4);
+
+      return;
+   }
+
+   GetProjectileLightFlags()
+   {
+      // General lighting information.
+      return LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
+   }
+
+   GetProjectileLightIntensity()
+   {
+      // Fairly small light radius for projectile.  Out of 255 levels.
+      return 255;
+   }
+
+   GetProjectileLightColor()
+   {
+      // Color is based on mushroom color fed
+      return LIGHT_ORANGE;
+   }
+
+   SendLightingInformation()
+   {
+      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+      // Intensity (out of 255)
+      AddPacket(1,255);
+      // Color
+      AddPacket(2,poAura);
+
+      return;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }
+
+
+   Killed(what=$)
+   {
+      if IsClass(what, &Servant) AND Send(poMaster,@GetServant) = what
+	  {
+	     Send(self,@Delete);
+	  }
+	  
+	  propagate;
+   }
+
+   Delete()
+   {
+   	  Send(self,@ClearServantTimers);
+
+      if poMaster <> $ 
+	  {
+         Send(self,@RemoveImportantServantEnchants);
+	     Send(poMaster,@RemoveControlledMinion,#what=self);
+		 Send(poMaster,@SetServant,#oServant=$);
+	  }
+	  	  
+      propagate;
+   }
+
+   CanAcceptOffer()
+   {
+      return TRUE;
+   }
+
+   CreateTreasure()
+   {
+      return;
+   }
+   
+   SomethingLeft(what=$)
+   {
+      local oRoom;
+
+      if NOT Send(self,@MasterCheck)
+      {
+         return;
+      }
+
+      if (what = poMaster)
+      {
+         oRoom = Send(poMaster,@GetOwner);
+
+         if oRoom = $ OR IsClass(oRoom,&UnderWorld)
+         {
+            Send(self,@Delete);
+
+            return;
+         }
+         else
+         {
+            Post(self,@GotoMaster);
+         }
+      }
+
+      propagate;
+   }
+
+   GotoMaster()
+   {
+      local oRoom;
+
+      if NOT Send(self,@MasterCheck)
+      {
+         return;
+      }
+	  
+	  //Debug("State",Send(self,@GetCurrentState));
+
+      oRoom = Send(poMaster,@GetOwner);
+	  
+      if oRoom = $ OR poOwner = $
+      {
+         return;
+      }
+
+	  Send(SYS,@UtilGoNearSquare,#what=self,#where=oRoom,
+		    #new_row=Send(poMaster,@GetRow),
+		    #new_col=Send(poMaster,@GetCol));
+
+      return;
+   }
+   
+   SomethingMoved(what=$,new_row=$,new_col=$)
+   {
+      local iMasterDistance, iServantState, iActionDistance;
+	  
+      if poOwner <> $ AND poMaster <> $
+      {
+         Send(poOwner,@DeleteWallsAroundBattler,#who=self);
+      }
+
+      if what = $ OR what = self 
+	  {
+	     propagate;
+	  }
+	  
+	  if poMaster <> $ AND what = poMaster
+	  {
+	     iMasterDistance = Send(self,@SquaredDistanceTo,#what=poMaster);
+		 iServantState = Send(self,@GetState);
+		 
+		 switch (iServantState)
+		 {
+		    case STATE_ATTACK:
+			   iActionDistance = RETREAT_DISTANCE;
+			break;
+			case STATE_CHASE:
+			   iActionDistance = RETREAT_DISTANCE;
+			break; 
+			case STATE_MOVE: 
+			   iActionDistance = RETREAT_DISTANCE;
+			break;
+			case STATE_LIMBO:
+			   iActionDistance = IDLE_DISTANCE;
+			break;
+			case STATE_WAIT:
+			   iActionDistance = IDLE_DISTANCE;
+			break;
+		 }
+		 
+		 if iMasterDistance > iActionDistance
+		 {
+		    Send(self,@EnterStateLimbo);
+		    Send(self,@GotoMaster);
+		 }
+	  }
+	  
+      propagate;
+   }
+   
+end
+////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,166 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+SummonServant is Debuff
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   summon_servant_class_name_rsc = "summon servant"
+   summon_servant_class_desc_rsc = \
+      "Magical creatures await your command."
+
+   summon_servant_arrived = "Your servant has been summoned."
+   summon_servant_class_caster = "%s%s is now assisting you in your journey."
+   summon_servant_class_target_on = "You make your move on %s%s."
+   summon_servant_class_player_second = "%s%s tries %s best to servant you."
+   summon_servant_class_already_enchanted = "%s%s is already your servant."
+   summon_servant_class_target_off = "Your servant has more important things to do anyway."
+   summon_servant_class_cast_self = "You cannot make yourself a servant."
+   summon_servant_low_vigor = "You are too tired to cast that spell."
+   summon_servant_low_mana = "You need more mana to cast that spell."
+   
+   summon_servant_class_sound = rperappr.ogg
+
+classvars:
+
+   vrName = summon_servant_class_name_rsc
+   vrDesc = summon_servant_class_desc_rsc
+
+   vrAlreadyEnchanted = summon_servant_class_already_enchanted
+   vrEnchantment_On = summon_servant_class_target_on
+   vrEnchantment_Off = summon_servant_class_target_off
+   vrSuccess = summon_servant_class_caster
+   vrNoSelfTarget = summon_servant_class_cast_self
+   
+   // To be set by servant child class.
+   viSpell_num = $
+   viSchool = $
+   viSpell_level = $
+   
+   // Cast time
+   viCast_time = 3000
+   
+   // Default for all servant spells.
+   viMana = 15
+   viChance_To_Increase = 30
+   viMeditate_ratio = 300
+   viSpellExertion = 80
+
+   vrSucceed_wav = summon_servant_class_sound
+
+   viDebuff = FALSE
+   viOutlaw = FALSE
+   viHarmful = FALSE
+   viNoNewbieOffense = FALSE
+
+properties:
+
+   // Nothing yet
+   
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+
+      return;
+   }
+
+   CanPayCosts(who = $)
+   {
+      if Send(who,@GetVigor) < viSpellExertion
+      {
+	     Post(who,@MsgSendUser,#message_rsc=summon_servant_low_vigor);
+	     return FALSE;
+      }
+	  
+      if Send(who,@GetMana) < viMana
+      {
+	     Post(who,@MsgSendUser,#message_rsc=summon_servant_low_mana);
+	     return FALSE;
+      }
+	  
+	  return TRUE;
+   }
+   
+   CanForget()
+   {
+      return FALSE;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+   
+   // Prevents spell from fizzling.
+   SuccessChance(who=$)
+   {
+      return TRUE;
+   }
+
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
+   {
+      local oServant, bExistingServant, playerRoom, iGenRow, iGenCol;
+	  
+	  // Only players can have servants.
+	  if IsClass(who, &Player) {
+	      bExistingServant = Send(who, @GetServant);
+		  
+	      if bExistingServant <> $ AND IsClass(bExistingServant, &Servant)
+		  {
+		     // Before creating a new servant, delete the old one.
+		     Send(bExistingServant, @Delete);
+		  }
+		  
+		  oServant = Create(&Servant);
+
+		  iGenRow = Send(who,@GetRow);
+		  iGenCol = Send(who,@GetCol);
+
+          playerRoom = Send(who, @GetOwner);
+          
+		  // -----
+		  // Summon the servant!
+		  // -----
+		  if Send(playerRoom,@ReqNewHold,#what=oServant,
+				   #new_row=iGenRow,#new_col=iGenCol)
+			 AND Send(playerRoom,@ReqSomethingMoved,#what=oServant,
+					  #new_row=iGenRow,#new_col=iGenCol)
+		  {
+		     // Make the servant appear.
+			 Send(playerRoom,@NewHold,#what=oServant,#new_row=iGenRow,#new_col=iGenCol);
+			 
+			 // Attach the servant to the player + player to the servant.
+			 Send(who,@SetServant,#oServant=oServant);
+			 Send(oServant,@SetMaster,#oMaster=who);
+			 
+			 // Fabricate servant based on the spell being used and its spell power.
+			 Send(oServant,@FabricateServant,#who=who,#oSpell=self,#iSpellNum=viSpell_num,#iSpellPower=iSpellPower);
+			 
+			 // Tell the player about their servant being summoned.
+			 Post(who,@MsgSendUser,#message_rsc=summon_servant_arrived,#parm1=Send(oServant,@GetName));
+		  }	  
+	  }
+
+      propagate;
+   }
+
+   EndEnchantment(who=$,report=TRUE,state=$)
+   {
+      return;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

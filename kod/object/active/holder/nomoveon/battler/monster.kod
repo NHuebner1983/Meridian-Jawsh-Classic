@@ -373,6 +373,9 @@ properties:
    piVisionDistance
    piAttackRange
    piAnimation = ANIM_NONE
+   
+   // Monster cast timer - started when a monster chases you.
+   ptMonsterCastTimer = $
 
    // List of the mobs wanted items.
    plWantedItems = $
@@ -385,6 +388,8 @@ properties:
    ptCancelOffer = $
    ptRandom = $
    ptSpasm = $
+
+   piMonsterCastInterval = 1000
 
    // IMPORTANT NOTE: For higher accuracy, a battler's current health 
    //(and only current health) is inflated by a factor of 100. Doing so 
@@ -416,11 +421,24 @@ properties:
    piState = 0
    // Either chasing, moving, or attacking
    ptBehavior = $
+   
+   // viAttributes is a bitvector of behavior and services
+   piAttributes   = 0
+
+   // Default to teleport if there's no move anim, also used for movement timer
+   //  (range is 1 to 20) - But you can even use 50 if you want (I think it doesn't break anything, not sure yet).
+   piSpeed = 0
+
    // Behavior flags = have prefix of AI_
    // All mobs will loop through a patrol path, if one is available.
    piBehavior = AI_LOOPING_PATROL
+   
    // Who is our master, if we have one.
    poMaster = $
+   
+   // Who is our master, as a servant.
+   poServantMaster = $
+   
    // Flag used for minion moves around master
    piKeepWalkingSteps = 0
    // Player who has turned us.
@@ -503,6 +521,9 @@ messages:
    "Simple enough, we create a monster. If they are questworthy, we note it."
    {
       local iStatPoints, iMin, iMax;
+
+      piSpeed = viSpeed;
+	  piAttributes = viAttributes;
 
       piMax_Hit_points = Send(Self,@Fuzzy,#num=Send(self,@GetMaxHitPoints))
                          + piSurvivalLevel*viDifficulty;
@@ -595,6 +616,18 @@ messages:
       }
 
       propagate;
+   }
+   
+   Constructed()
+   {
+      if NOT IsClass(self, &Servant)
+	  {
+	     piMonsterCastInterval = 5000;
+	  }
+	  
+      ptMonsterCastTimer = CreateTimer(self,@MonsterCastSpell,piMonsterCastInterval);
+	  
+	  propagate;
    }
    
    GetBonusXP()
@@ -705,10 +738,10 @@ messages:
    "the game's quest system.  This procedure should be overwritten "
    "for them to return FALSE."
    {
-      if (viAttributes & MOB_RANDOM) AND (viAttributes & MOB_LISTEN)
+      if (piAttributes & MOB_RANDOM) AND (piAttributes & MOB_LISTEN)
       {
          Send(Send(SYS,@GetLibrary),@AddToSignetNPCList,#who=self);
-         if (viAttributes & MOB_RECEIVE) OR (viAttributes & MOB_BUYER)
+         if (piAttributes & MOB_RECEIVE) OR (piAttributes & MOB_BUYER)
          {
             Send(Send(SYS,@GetLibrary),@AddToRandomNPCList,#who=self);
          }
@@ -723,7 +756,7 @@ messages:
    "End of monster. Clean up any quests it might have spawned."
    {
       local i, j, k;
-
+	  
       // Minion Management - upon dying they should leave your control list
       if poMaster <> $
       {
@@ -753,6 +786,7 @@ messages:
 
       Send(self,@ClearBehavior);
       Send(self,@ClearBasicTimers);
+      Send(self,@ClearMonsterCastTimer);
 
       if (viDefault_behavior & AI_NPC) = AI_NPC
       {
@@ -764,11 +798,11 @@ messages:
          Send(self,@DeleteForSaleList);
       }
 
-      if (viAttributes & MOB_RANDOM)
+      if (piAttributes & MOB_RANDOM)
       {
          Send(Send(SYS,@GetLibrary),@DeleteFromSignetNPCList,#who=self);
-         if (viAttributes & MOB_LISTEN)
-            AND (viAttributes & MOB_RECEIVE)
+         if (piAttributes & MOB_LISTEN)
+            AND (piAttributes & MOB_RECEIVE)
          {
             Send(Send(SYS,@GetLibrary),@DeleteFromRandomNPCList,#who=self);
          }
@@ -1295,7 +1329,8 @@ messages:
    SomethingPhasedOut(what=$)
    {
       if ((poApparitionCaster <> $ AND what = poApparitionCaster)
-            OR (poApparitionOriginal <> $ AND what = poApparitionOriginal))
+            OR (poApparitionOriginal <> $ AND what = poApparitionOriginal)
+			OR (IsClass(what,&Player) AND Send(what,@GetServant) = self))
       {
          Send(self,@Delete);
       }
@@ -1329,6 +1364,12 @@ messages:
 
       return;
    }
+
+   IsAbsent()
+   {
+      return (poServantMaster = $);
+   }
+
 
    MobSeduceCheck(what=$)
    "Checks if the mob is under the effect of the Seduce spell, and should "
@@ -1612,10 +1653,6 @@ messages:
       }
       
       bCast = FALSE;
-      if Send(self,@MonsterCanCastSpell)
-      {
-         bCast = Send(self,@MonsterCastSpell);
-      }         
 
       // If we can move, we physically try to get closer
       if not bCast
@@ -1636,6 +1673,17 @@ messages:
       }
 
       return;
+   }
+   
+   ClearMonsterCastTimer()
+   {
+      if ptMonsterCastTimer <> $
+	  {
+	     DeleteTimer(ptMonsterCastTimer);
+		 ptMonsterCastTimer = $;
+	  }
+	  
+	  return;
    }
 
    MoveTimer( timer = $ )
@@ -1944,7 +1992,7 @@ messages:
                Send(poOwner,@SomethingMoved,#what=self,
                      #new_row=iNew_row,#new_col=iNew_col,
                      #fine_row=iNew_finerow,#fine_col=iNew_finecol,
-                     #speed=(0x80|viSpeed),#non_monsters_only=TRUE);
+                     #speed=(0x80|piSpeed),#non_monsters_only=TRUE);
             }
          }
       }
@@ -2804,7 +2852,7 @@ messages:
                  #new_finerow=iFineRow,#new_finecol=iFineCol,
                  #face_target=face_target,#face_away=face_away);
 		
-            Send(poOwner,@SomethingMoved,#what=self,#speed=viSpeed,
+            Send(poOwner,@SomethingMoved,#what=self,#speed=piSpeed,
                  #new_row=iRow,#new_col=iCol,
                  #fine_row=iFineRow,#fine_col=iFineCol,
                  #non_monsters_only=TRUE);
@@ -2864,7 +2912,7 @@ messages:
 
    SpasmMonsterTimer()
    {
-      if poOwner = $ OR NOT (viAttributes & MOB_SPASM)
+      if poOwner = $ OR NOT (piAttributes & MOB_SPASM)
       {
          return;
       }
@@ -2888,12 +2936,12 @@ messages:
    {
       // We AND this with TRUE so that we get a boolean instead of the raw
       //  value.
-      return ((viAttributes & MOB_RECEIVE) AND TRUE);
+      return ((piAttributes & MOB_RECEIVE) AND TRUE);
    }
 
    CanAcceptOffer(who=$)
    {
-      return ((viAttributes & MOB_BUYER OR viAttributes & MOB_RECEIVE)
+      return ((piAttributes & MOB_BUYER OR piAttributes & MOB_RECEIVE)
                OR (who <> $ AND IsClass(who,&DM)));
    }
 
@@ -2953,7 +3001,7 @@ messages:
       } 
 
       bIsBuyer = Send(self, @MobIsBuyer);
-      if (viAttributes & MOB_RECEIVE)
+      if (piAttributes & MOB_RECEIVE)
       {
          // If we also buy items, don't complain about being offered something
          // that we can't use for a quest.  Maybe we'll buy it.
@@ -3095,7 +3143,7 @@ messages:
    "type, or a quest completion of some kind or an intrigue token."
    {
       // Handle the kludgy banker interface immediately.
-      if (viAttributes & MOB_BANKER) AND IsClass(obj,&Money)
+      if (piAttributes & MOB_BANKER) AND IsClass(obj,&Money)
       {
          Send(self,@BankDeposit,#who=who,#amount=Send(obj,@GetNumber));
 
@@ -3185,7 +3233,7 @@ messages:
       local i, lActionList, oLibrary, oQuestNode;
 
       // Are we supposed to hear things?
-      if (NOT (viAttributes & MOB_LISTEN))
+      if (NOT (piAttributes & MOB_LISTEN))
          OR string = $
       {
          propagate;
@@ -3194,7 +3242,7 @@ messages:
       // Was it a user talking, another NPC, or myself?
       if NOT IsClass(what,&User)
       {
-         if what = self OR NOT (viAttributes & MOB_LISTEN_MOB)
+         if what = self OR NOT (piAttributes & MOB_LISTEN_MOB)
          {
             propagate;
          }
@@ -3242,7 +3290,7 @@ messages:
       }
 
       // Last but not least, is the player asking about one of my spells/skills?
-      if (viAttributes & MOB_TEACHER) 
+      if (piAttributes & MOB_TEACHER) 
       {
          Send(self,@SomeoneSaidLevel,#what=what,#string=string);
       }
@@ -3506,7 +3554,7 @@ messages:
       // Clear spam list
       plSpamList = $;
 
-      if poOwner = $ OR NOT ((viAttributes & MOB_RANDOM) OR test)
+      if poOwner = $ OR NOT ((piAttributes & MOB_RANDOM) OR test)
       {
          return;
       }
@@ -3909,8 +3957,8 @@ messages:
       // The Faction Pricing bonus was selling items to NPCs at higher prices
       // than the new price.  This has been taken out.
 
-      if (viAttributes & MOB_BUYER
-         OR viAttributes & MOB_RECEIVE)
+      if (piAttributes & MOB_BUYER
+         OR piAttributes & MOB_RECEIVE)
       {
          iValue_offered = 0;
          foreach i in item_list
@@ -4860,7 +4908,9 @@ messages:
    "Handle monster spellcasting here."
    {
       local i, iDistance, oSpell, iRandom, lTargets, iSpellNum, iManaCost;
-
+	  
+	  ptMonsterCastTimer = CreateTimer(self,@MonsterCastSpell,piMonsterCastInterval);
+	  
       // If monster knows no spells, or has no target, return.
       if plSpellBook = $
          OR poTarget = $
@@ -4868,49 +4918,52 @@ messages:
          return FALSE;
       }
 
+      if NOT Send(self,@MonsterCanCastSpell)
+      {
+	     return FALSE;
+      }
+
       // Get the adjusted chance to cast, based on whether we're demented
       // or if AmA is up. Multiply this by 6 because we've decreased the
       // time between chase behavior checks by a factor of 4-7x.
-      iRandom = Send(self,@AdjustedChanceBase,#base=(piSpellChance*6));
-
-      // Do the random check now, so we don't go any further
+      //iRandom = Send(self,@AdjustedChanceBase,#base=(piSpellChance*12));
+       
+	  // Do the random check now, so we don't go any further
       // if we don't have to.
-      if Random(1,iRandom) <> 1
-      {
-         return FALSE;
-      }
+      //if Random(1,iRandom) <> 1
+      //{
+	  //   return FALSE;
+      //}
+	  
+      // Check LoS to target here so we don't waste mana casting
+      // when we can't get our target. Instead, we use that time
+      // walking to the target.
+	  
+	  // Servants get to cast all the time.
 
       // Get distance to target.
       iDistance = Send(self,@SquaredFineDistanceTo3D,#what=poTarget);
 
-      // Check LoS to target here so we don't waste mana casting
-      // when we can't get our target. Instead, we use that time
-      // walking to the target.
-
-      if iDistance > (piAttackRange * piAttackRange)
+      if IsClass(self, &Servant) OR (iDistance > (piAttackRange * piAttackRange)
          AND iDistance <= piSpellRange * piSpellRange
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
          AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,
-                  #use_weapon=self)
-      {
+                   #use_weapon=self))
+       {
          // We go through the monster's spellbook and pick the spell
          // that corresponds to the random number picked. This is used
          // to give a // chance for each spell to be picked.
          iRandom = Random(1,100);
-         foreach i in plSpellBook
-         {
-            if iRandom <= Nth(i,3)
-            {
-               iSpellNum = Nth(i,1);
-               iManaCost = Nth(i,2);
-
-               break;
-            }
-         }
+		 i = Nth(plSpellBook, Random(1, Length(plSpellBook)));
+		 
+		 if iRandom <= Nth(i,3)
+		 {
+		    iSpellNum = Nth(i,1);
+		    iManaCost = Nth(i,2);
+		 }
 
          // If no spell returned or cannot pay mana costs, spell fails.
          if iSpellNum = $
-            OR piMana < iManaCost
          {
             return FALSE;
          }
@@ -4927,11 +4980,10 @@ messages:
          lTargets = Send(oSpell,@GetTargets,#who=self,#lTargets=lTargets);
 
          // See if we can cast the spell here.
-         if Send(oSpell,@CanPayMonsterCosts,#who=self,#lTargets=lTargets,
-                  #iSpellPower=piSpellPower)
-            AND Send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,
-                     #lItems=lTargets)
+         if Send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,#lItems=lTargets)
+		    AND NOT Send(poTarget,@IsEnchanted,#what=oSpell)
          {
+		    Debug("Monster Cast",Send(self,@GetName),Send(oSpell,@GetName));
             // Do any special cast animations; send spell for specific ones.
             Send(self,@MonsterCastAnimation,#iSpellNum=iSpellNum);
 
@@ -4943,6 +4995,8 @@ messages:
          return TRUE;
       }
 
+      Debug("Monster did not cast anything");
+	  
       return FALSE;
    }
 
@@ -5188,7 +5242,7 @@ messages:
    IsFullTalk()
    {
       // We AND with TRUE to have it return a boolean.
-      return (viAttributes & MOB_FULL_TALK) AND TRUE;
+      return (piAttributes & MOB_FULL_TALK) AND TRUE;
    }
 
    GetLevel()
@@ -5294,13 +5348,13 @@ messages:
 
    StartBasicTimers()
    {
-      if (viAttributes & MOB_RANDOM)
+      if (piAttributes & MOB_RANDOM)
       {
          ptRandom = CreateTimer(self,@RandomTimer,
                                 viRandom_delay+Random(0,viRandom_delay/2));
       }
 
-      if (viAttributes & MOB_SPASM)
+      if (piAttributes & MOB_SPASM)
       {
          ptSpasm = CreateTimer(self,@SpasmMonsterTimer,
                                viSpasm_delay+Random(0,viSpasm_delay/3));
@@ -5372,19 +5426,33 @@ messages:
 
       return;
    }
+   
+   GetState()
+   {
+      return viCurrentState;
+   }
 
    GetAttackTime()
    {
-      return Send(self,@Fuzzy,#num=MOB_ATTACK_TIMER_WAIT)
-             + 3500-70*(3*viDifficulty+viSpeed);
+      local iTimer;
+	  
+      iTimer = Bound(Send(self,@Fuzzy,#num=MOB_ATTACK_TIMER_WAIT)
+             + 3500-70*(3*viDifficulty+piSpeed), 1, 5000);
+      
+	  if iTimer < 300
+	  {
+	     iTimer = 1250;
+	  }
+	  
+	  return iTimer;
    }
 
    GetMoveTime()
    {
       local iTime;
 
-      // Unit of viSpeed is: #gridsquares per 10 seconds (per 10000 ms)
-      // viSpeed is pre-defined by monster
+      // Unit of piSpeed is: #gridsquares per 10 seconds (per 10000 ms)
+      // piSpeed is pre-defined by monster
       // Move-increment is predefined/fixed at 16fine unit per step
       // --> The elapse-interval is fixed!
   
@@ -5395,15 +5463,15 @@ messages:
       // 4 * 1024 	= 4096 super-fine squares per 10000 ms
       // 4096 / 256  = 16 (Monster has to make 16 steps per 10000ms)
       // 10000 / 16  = 625 (steps must be made in 625ms intervals)
-      // T = 10000 / ((viSpeed * 1024) / 256)  
+      // T = 10000 / ((piSpeed * 1024) / 256)  
 
       // avoid division by zero, if objects teleport
-      // objects with viSpeed = 0 don't need seamless movements in the client
+      // objects with piSpeed = 0 don't need seamless movements in the client
       // so we just assume it is enough to teleport them once a second
-      if viSpeed > 0
+      if piSpeed > 0
       {
          // see formula above  
-         iTime = 10000 / (viSpeed * 4);
+         iTime = 10000 / (piSpeed * 4);
 
          // finally we reduce the timer a bit (right now it's exact at ms)
          // why? the client should get a new position before the last destination
@@ -5420,6 +5488,8 @@ messages:
       {
          iTime = 1000;
       }
+
+		
 
       return iTime;
    }
@@ -5730,7 +5800,7 @@ messages:
 
    HasAttribute(mask = $)
    {
-      return (viAttributes & mask);
+      return (piAttributes & mask);
    }
 
    // We AND to TRUE for the MobIs... functions to return a boolean instead
@@ -5738,37 +5808,37 @@ messages:
    MobIsBanker()
    {
       // We AND with TRUE to have it return a boolean.
-      return ((viAttributes & MOB_BANKER) AND TRUE);
+      return ((piAttributes & MOB_BANKER) AND TRUE);
    }
 
    MobIsVaultman()
    {
       // We AND with TRUE to have it return a boolean.
-      return ((viAttributes & MOB_VAULTMAN) AND TRUE);
+      return ((piAttributes & MOB_VAULTMAN) AND TRUE);
    }
 
    MobIsBuyer()
    {
       // We AND with TRUE to have it return a boolean.
-      return ((viAttributes & MOB_BUYER) AND TRUE);
+      return ((piAttributes & MOB_BUYER) AND TRUE);
    }
 
    MobIsCondSeller()
    {
       // We AND with TRUE to have it return a boolean.
-      return ((viAttributes & MOB_COND_SELLER) AND TRUE);
+      return ((piAttributes & MOB_COND_SELLER) AND TRUE);
    }
 
    MobIsSeller()
    {
-      return (viAttributes & MOB_SELLER)
-             OR (viAttributes & MOB_COND_SELLER)
-             OR (viAttributes & MOB_TEACHER);
+      return (piAttributes & MOB_SELLER)
+             OR (piAttributes & MOB_COND_SELLER)
+             OR (piAttributes & MOB_TEACHER);
    }
 
    GetAttributes()
    {
-      return viAttributes;
+      return piAttributes;
    }
 
    ObjectDesired(what=$)
@@ -6084,7 +6154,7 @@ messages:
       // Returns a list of items to drop, or $.
       lTreasureItems = Send(oTreasure_Type,@CreateMobTreasure,#mob=self,
                               #who=who,#level=viLevel,#difficulty=viDifficulty,
-                              #corpse=corpse,#attributes=viAttributes,
+                              #corpse=corpse,#attributes=piAttributes,
                               #boostedlevel=piBoostedLevel);
 
       // Add in our inventory
@@ -6287,7 +6357,7 @@ messages:
 
    SomeoneTryUserCommand(who = $,command = $,data = $)
    {
-      if NOT (viAttributes & MOB_BANKER) AND NOT (viAttributes & MOB_VAULTMAN)
+      if NOT (piAttributes & MOB_BANKER) AND NOT (piAttributes & MOB_VAULTMAN)
       {
          return;
       }
@@ -6299,7 +6369,7 @@ messages:
 
       if command = UC_DEPOSIT
       {
-         if (viAttributes & MOB_VAULTMAN)
+         if (piAttributes & MOB_VAULTMAN)
          {
             return TRUE;
          }
@@ -6311,7 +6381,7 @@ messages:
 
       if command = UC_WITHDRAW
       {
-         if (viAttributes & MOB_VAULTMAN)
+         if (piAttributes & MOB_VAULTMAN)
          {
             return TRUE;
          }
@@ -6333,7 +6403,7 @@ messages:
 
    DestroyDisposable()
    {
-      if (viAttributes & MOB_LISTEN)
+      if (piAttributes & MOB_LISTEN)
          OR (piBehavior & AI_NPC)
          OR poMaster <> $
          OR pbDontDispose
@@ -6369,8 +6439,8 @@ messages:
          iFlags = iFlags | OF_BUYABLE;
       }
 
-      if ((viAttributes & MOB_BUYER
-         OR viAttributes & MOB_RECEIVE)
+      if ((piAttributes & MOB_BUYER
+         OR piAttributes & MOB_RECEIVE)
          OR what <> $ AND IsClass(what,&DM))
       {
          iFlags = iFlags | OF_OFFERABLE;
@@ -6809,16 +6879,37 @@ messages:
    {
       if value
       {
-         piBehavior=piBehavior | flag ;
+         piBehavior = piBehavior | flag;
       }
       else
       {
-         piBehavior=piBehavior & ~flag ;
+         piBehavior = piBehavior & ~flag;
       }
 
       return;
    }
    
+   SetAttributeFlag(flag=0, value = TRUE)
+   {
+      if value
+      {
+         piAttributes = piAttributes | flag;
+      }
+      else
+      {
+         piAttributes = piAttributes & ~flag;
+      }
+
+      return;
+   }
+
+   SetSpeed(speed=20)
+   {
+      piSpeed = speed;
+	  
+	  return;
+   }
+
    IsWizard()
    {
       return FALSE;
@@ -6998,7 +7089,7 @@ messages:
       // Go through the monster's sell list.  If the monster has a spell or 
       //  skill to sell, add it to their dialogue.
 
-      if NOT (viAttributes & MOB_TEACHER)
+      if NOT (piAttributes & MOB_TEACHER)
       {
          return;
       }
@@ -7225,7 +7316,7 @@ messages:
       }
 
       GodLog(Send(self,@GetTrueName)," level: ",viLevel,", karma: ",viKarma,
-         ", speed: ",viSpeed, GetTempString());
+         ", speed: ",piSpeed, GetTempString());
 
       return;
    }
@@ -7266,6 +7357,66 @@ messages:
       GodLog("NPC: ",Send(self,@GetName),", Map: ",Send(poOwner,@GetName));
 
       return;
+   }
+
+   // Resistance Helpers
+   ColdResistance(amount=90)
+   {
+      plResistances = AppendListElem([-ATCK_SPELL_COLD, amount], plResistances);
+	  
+	  return;
+   }
+
+   HeatResistance(amount=90)
+   {
+      plResistances = AppendListElem([-ATCK_SPELL_FIRE, amount], plResistances);
+
+	  return;
+   }
+
+   ShockResistance(amount=90)
+   {
+      plResistances = AppendListElem([-ATCK_SPELL_SHOCK, amount], plResistances);
+
+	  return;
+   }
+
+   QuakeResistance(amount=90)
+   {
+      plResistances = AppendListElem([-ATCK_SPELL_QUAKE, amount], plResistances);
+
+	  return;
+   }
+
+   UnholyResistance(amount=90)
+   {
+      plResistances = AppendListElem([-ATCK_SPELL_UNHOLY, amount], plResistances);
+
+	  return;
+   }
+
+   HolyResistance(amount=90)
+   {
+      plResistances = AppendListElem([-ATCK_SPELL_HOLY, amount], plResistances);
+
+	  return;
+   }
+
+   WeapResistance(amount=90)
+   {
+      plResistances = AppendListElem([-ATCK_WEAP_ALL, amount], plResistances);
+
+	  return;
+   }
+
+   NatureResistance(amount=90)
+   {
+      Send(self, @ColdResistance, #amount=amount);
+      Send(self, @HeatResistance, #amount=amount);
+      Send(self, @ShockResistance, #amount=amount);
+      Send(self, @QuakeResistance, #amount=amount);
+
+	  return;
    }
 
 end

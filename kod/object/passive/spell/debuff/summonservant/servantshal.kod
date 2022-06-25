@@ -1,0 +1,47 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+ShalServant is SummonServant
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   servant_shal_name_rsc = "summon shal'ille"
+   servant_shal_icon_rsc = shalservantspell.bgf
+   servant_shal_desc_rsc = \
+      "A magical creature awaits your command."
+
+   servant_shal_sound = rperappr.ogg
+
+classvars:
+
+   vrName = servant_shal_name_rsc
+   vrIcon = servant_shal_icon_rsc
+   vrDesc = servant_shal_desc_rsc
+
+   viSpell_num = SID_SHAL_SERVANT
+   viSchool = SS_SHALILLE
+   viSpell_level = 1
+   
+   vrSucceed_wav = servant_shal_sound
+
+properties:
+
+   // Nothing yet
+
+messages:
+
+	// Nothing yet
+
+end
+////////////////////////////////////////////////////////////////////////////////
