@@ -47,21 +47,21 @@ resources:
    monster_drastically = "drastically "     // for 75+ pts to gain
 
    monster_teach_karma = \
-      "Your karma is not far enough along the true path for you to learn %s."
+      "~kYour karma is not far enough along the true path for you to learn %s.~n~k"
    monster_teach_quest_needed = \
-      "I can teach you %s, but first you must prove your worth as a pupil."
+      "~kI can teach you %s, but first you must prove your worth as a pupil.~n~k"
    monster_teach_base = \
-      "Your mind is focused properly, and with %sfurther progress in the "
-      "previous %s levels you can learn %s." 
+      "~kYour mind is focused properly, and with %sfurther progress in the "
+      "previous %s levels you can learn %s.~n~k" 
    monster_teach_success = \
-      "You are currently qualified to learn %s.  Congratulations."
-   monster_teach_already = "You have already been taught %s."
+      "~kYou are currently qualified to learn %s.  Congratulations.~n~k"
+   monster_teach_already = "~kYou have already been taught %s.~k"
    monster_teach_nobase = \
-      "You first need to have some knowledge of the previous level before you "
-      "can learn %s."
+      "~kYou first need to have some knowledge of the previous level before you "
+      "can learn %s.~n~k"
    monster_teach_impossible = \
-      "Indeed, you have learned so much already! A fine accomplishment.  You "
-      "have no... need... to learn further in this school."
+      "~kIndeed, you have learned so much already! A fine accomplishment.  You "
+      "have no... need... to learn further in this school.~n~k"
 
    monster_level = "level"
    monster_one = "one"
@@ -131,6 +131,15 @@ resources:
 
    Lm_monster_healing = \
       "%s%s falls back to recover for a moment, then returns to the fight."
+
+   Lm_minion_first_damage_level = "~B~k%s%s is slightly wounded."
+   Lm_minion_second_damage_level = "~B~k%s%s is clearly injured."
+   Lm_minion_third_damage_level = "~B~k%s%s is seriously wounded."
+   Lm_minion_fourth_damage_level = "~B~k%s%s is weak, and near death."
+   Lm_minion_party_killed_monster = "~B~k%s%s has killed %s%s!"
+
+   Lm_minion_monster_healing = \
+      "~B~k%s%s recovers some, then returns to the fight."
    
    monster_desc_level = "This monster will take you to %i hitpoints."
    Lm_condition_healthy = "%s\n\n%r"
@@ -207,7 +216,7 @@ resources:
 
    monster_say_to_one = "~k%s%s tells you, \"%s~n~k\""
 
-   monster_iteach = "I teach %s%s%s%s%s%s%s%s%s%s%s%s at that level."
+   monster_iteach = "~kI teach %s%s%s%s%s%s%s%s%s%s%s%s at that level.~n~k"
    monster_teachnothing = "I teach no abilities at that level."
 
    monster_koc_name = "moch"
@@ -335,11 +344,18 @@ classvars:
    vrCondition_fair = Lm_condition_fair
    vrCondition_poor = Lm_condition_poor
    vrCondition_bad = Lm_condition_bad
+   
    vrFirst_damage_level = Lm_first_damage_level
    vrSecond_damage_level = Lm_second_damage_level
    vrThird_damage_level = Lm_third_damage_level
    vrFourth_damage_level = Lm_fourth_damage_level
    vrParty_killed_monster = Lm_party_killed_monster
+
+   vrFirst_minion_damage_level = Lm_minion_first_damage_level
+   vrSecond_minion_damage_level = Lm_minion_second_damage_level
+   vrThird_minion_damage_level = Lm_minion_third_damage_level
+   vrFourth_minion_damage_level = Lm_minion_fourth_damage_level
+   vrParty_minion_killed_monster = Lm_minion_party_killed_monster
 
    vrTeach_message = monster_iteach
    vrTeach_nothing = monster_teachnothing
@@ -446,7 +462,11 @@ properties:
    // Timer to expire turning.
    ptUnturn = $
    piHatred = 0
-   // Emulates agility and aim for monsters based on difficulty.
+   
+   // Default stats for the monster
+   piMight = 50
+   piIntellect = 50
+   piStamina = 50
    piAgility = 25
    piAim = 25
 
@@ -1813,7 +1833,32 @@ messages:
 
       return piAim - iOrigAim;
    }
-
+   
+   GetMight()
+   {
+      return piMight;
+   }
+   
+   GetAgility()
+   {
+      return piAgility;
+   }
+   
+   GetIntellect()
+   {
+      return piIntellect;
+   }
+   
+   GetAim()
+   {
+      return piAim;
+   }
+   
+   GetStamina()
+   {
+      return piStamina;
+   }
+   
    AddMonsterAgility(points=0)
    {
       local iOrigAgil;
@@ -5012,7 +5057,7 @@ messages:
 
    HitPointThresholdDamage()
    {
-      local i, iThreshold, rDamage_report, each_obj;
+      local i, iThreshold, rDamage_report, rDamage_report_minion, each_obj;
 
       iThreshold = piHit_points / (piMax_hit_points * 20);
 
@@ -5023,32 +5068,55 @@ messages:
       else if iThreshold = 3
       {
          rDamage_report = vrFirst_damage_level;
+		 rDamage_report_minion = vrFirst_minion_damage_level;
       }
       else if iThreshold = 2
       {
          rDamage_report = vrSecond_damage_level;
+		 rDamage_report_minion = vrSecond_minion_damage_level;
       }
       else if iThreshold = 1
       {
          rDamage_report = vrThird_damage_level;
+		 rDamage_report_minion = vrThird_minion_damage_level;
       }
       else
       {
          rDamage_report = vrFourth_damage_level;
+		 rDamage_report_minion = vrFourth_minion_damage_level;
       }
+	  
+	  if IsClass(self, &Servant) AND poMaster <> $
+	  {
+	     // Report damage to our master.
+         Post(poMaster,@MsgSendUser,#what=self,#message_rsc=rDamage_report_minion,
+	        #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+			
+	     return;
+	  }
 
       foreach i in Send(poOwner,@GetHolderActive)
       {
          each_obj = First(i);
-         if IsClass(each_obj,&User)
-            AND Send(each_obj,@GetKillTarget) = self
+		 
+         if IsClass(each_obj,&User) AND Send(each_obj,@GetKillTarget) = self
          {
-            Post(each_obj,@MsgSendUser,#what=self,#message_rsc=rDamage_report,
-                  #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+		    Post(each_obj,@MsgSendUser,#what=self,#message_rsc=rDamage_report,
+			   #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
          }
       }
 
       return;
+   }
+   
+   GetKillTarget()
+   {
+      if poTarget <> $
+	  {
+         //Debug("GetKillTarget",Send(self,@GetName),Send(poTarget,@GetName));
+	  }
+	  
+      return poTarget;
    }
 
    HitPointThresholdHeal()
@@ -5075,7 +5143,7 @@ messages:
          foreach i in Send(poOwner,@GetHolderActive)
          {
             each_obj = First(i);
-            if IsClass(each_obj,&User)
+            if (IsClass(each_obj,&User) OR IsClass(each_obj,&Servant))
                AND Send(each_obj,@GetKillTarget) = self
             {
                Post(each_obj,@MsgSendUser,#what=self,
@@ -5655,6 +5723,11 @@ messages:
          // Player needs to do a quest for the priestess to gain this spell or
          //  skill.
          
+	     // Private
+	     //Send(who, @MsgSendUser, #message_rsc=vrTeach_quest_needed,
+		 //	  #parm1=Send(oAbility,@GetName));
+			  
+// Room say	     
       //   Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
       //        #string=vrTeach_quest_needed,#parm1=Send(oAbility,@GetName));
 
@@ -5670,8 +5743,13 @@ messages:
          // Player needs to do a quest for the seller to gain this spell or
          //  skill.
          
-         Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-              #string=vrTeach_quest_needed,#parm1=Send(oAbility,@GetName));
+	     // Private
+	     Send(who, @MsgSendUser, #message_rsc=vrTeach_quest_needed,
+			  #parm1=Send(oAbility,@GetName));
+			  
+// Room say	     
+//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+//              #string=vrTeach_quest_needed,#parm1=Send(oAbility,@GetName));
 
          return FALSE;
       }
@@ -5692,40 +5770,65 @@ messages:
 
       if iVal = PLAYER_LEARN_SUCCESS
       {
-         Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-              #string=monster_teach_success,#parm1=Send(oAbility,@GetName));
+	     // Private
+		 Debug(monster_teach_success);
+	     Send(who, @MsgSendUser, #message_rsc=monster_teach_success,
+			  #parm1=Send(oAbility,@GetName));
+			  
+// Room say	     
+//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+//              #string=monster_teach_success,#parm1=Send(oAbility,@GetName));
 
          return TRUE;
       }
 
       if iVal = PLAYER_LEARN_ALREADY
       {
-         Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-              #string=monster_teach_already,#parm1=Send(oAbility,@GetName));
+	     // Private
+	     Send(who, @MsgSendUser, #message_rsc=monster_teach_already,
+			  #parm1=Send(oAbility,@GetName));
+			  
+// Room say	     
+//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+//              #string=monster_teach_already,#parm1=Send(oAbility,@GetName));
 
          return FALSE;
       }
 
       if iVal = PLAYER_LEARN_NOBASE
       {
-         Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-              #string=monster_teach_nobase,#parm1=Send(oAbility,@GetName));
+	     // Private
+	     Send(who, @MsgSendUser, #message_rsc=monster_teach_nobase,
+			  #parm1=Send(oAbility,@GetName));
+			  
+// Room say	     
+//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+//              #string=monster_teach_nobase,#parm1=Send(oAbility,@GetName));
 
          return FALSE;
       }
 
       if iVal = PLAYER_LEARN_KARMA 
       {
-         Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-              #string=monster_teach_karma,#parm1=Send(oAbility,@GetName));
+	     // Private
+	     Send(who, @MsgSendUser, #message_rsc=monster_teach_karma,
+			  #parm1=Send(oAbility,@GetName));
+			  
+// Room say	     
+//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+//              #string=monster_teach_karma,#parm1=Send(oAbility,@GetName));
 
          return FALSE;
       }
 
       if iVal = PLAYER_LEARN_IMPOSSIBLE 
       {
-         Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-              #string=monster_teach_impossible);
+	     // Private
+	     Send(who, @MsgSendUser, #message_rsc=monster_teach_impossible);
+			  
+// Room say	     
+//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+//              #string=monster_teach_impossible);
 
          return FALSE;
       }
@@ -5739,10 +5842,17 @@ messages:
       
       if iReason = PLAYER_LEARN_BASE
       {
-         Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-              #string=monster_teach_base,#parm1=rAmount,
+	     // Private
+	     Send(who, @MsgSendUser, #message_rsc=monster_teach_base,
+			  #parm1=rAmount,
               #parm2=Send(oAbility,@GetSchoolStr),
               #parm3=Send(oAbility,@GetName));
+
+// Room say			  
+//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+//              #string=monster_teach_base,#parm1=rAmount,
+//              #parm2=Send(oAbility,@GetSchoolStr),
+//              #parm3=Send(oAbility,@GetName));
 
          return FALSE;
       }
@@ -6000,7 +6110,7 @@ messages:
       return 200;
    }
 
-   GetForSale(who = $)
+   GetForSale(who = $, report = TRUE, conditional = TRUE, items = TRUE, spells = TRUE, skills = TRUE)
    "Returns the list of objects the mob has for sale "
    "(items, skills, spells, conditionals)"
    {
@@ -6019,7 +6129,7 @@ messages:
       lForSale = $;
 
       // first do conditional items
-      if Length(plFor_sale) = 4
+      if Length(plFor_sale) = 4 AND conditional
       {
          foreach i in Nth(plFor_sale,4)
          {
@@ -6028,32 +6138,41 @@ messages:
       }
 
       // now do spells
-      foreach i in Nth(plFor_sale,3)
-      {
-         if Send(self,@CanAddSpell,#who=who,#num=i)
-            AND (Send(who,@GetSpellAbility,#spell_num=i) = 0)
+	  if spells
+	  {
+         foreach i in Nth(plFor_sale,3)
          {
-            lForSale = cons(Send(SYS,@FindSpellByNum,#num=i),lForSale);
+            if (who = $ OR Send(self,@CanAddSpell,#who=who,#num=i))
+               AND (who = $ OR Send(who,@GetSpellAbility,#spell_num=i) = 0)
+            {
+               lForSale = cons(Send(SYS,@FindSpellByNum,#num=i),lForSale);
+            }
          }
-      }
+	  }
 
       // now do skills
-      foreach i in Nth(plFor_sale,2)
-      {
-         if Send(self,@CanAddSkill,#who=who,#num=i)
-            AND (Send(who,@GetSkillAbility,#skill_num=i) = 0)
+	  if skills
+	  {
+         foreach i in Nth(plFor_sale,2)
          {
-            lForSale = cons(Send(SYS,@FindSkillByNum,#num=i),lForSale);
+            if (who = $ OR Send(self,@CanAddSkill,#who=who,#num=i))
+               AND (who = $ OR Send(who,@GetSkillAbility,#skill_num=i) = 0)
+            {
+               lForSale = cons(Send(SYS,@FindSkillByNum,#num=i),lForSale);
+            }
          }
-      }
+	  }
 
       // now do the items
-      foreach i in First(plFor_sale)
-      {
-         lForSale = cons(i,lForSale);
-      }
+	  if items
+	  {
+         foreach i in First(plFor_sale)
+         {
+            lForSale = cons(i,lForSale);
+         }
+	  }
 
-      if lForSale=$ 
+      if report AND lForSale=$ AND who <> $ AND poOwner <> $
       {
          Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
                #string=vrNothing_for_sale);

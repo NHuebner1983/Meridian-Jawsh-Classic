@@ -121,8 +121,47 @@ resources:
    servant_rant_aay = "So...that monster just popped up from nowhere, and you don't find that strange?"
    servant_rant_aaz = "I think you left some loot back there."
    
-   servant_tells_you_rsc = "~kYour servant whispers, ''%s~n~k''"
-
+   servant_tells_you_rsc = "~kYour servant whispers, ''%s~n''~k"
+   
+   servant_already_learned = "~kYour servant whispers, ''You're dumb, you already know %s~n''~k"
+   
+   // This could be moved up to monster.kod
+   // We'll just use it here for now.
+   
+   npc_a = "Rook"
+   npc_b = "Drechx"
+   npc_c = "Alzahakar"
+   npc_d = "Jonas D'Accor"
+   npc_e = "Monk of Riija"
+   npc_f = "Priestess Zuxana"
+   npc_g = "Priestess Tenuv'vyal"
+   npc_h = "Priestess Xiana"
+   npc_i = "Parrin Aragone"
+   npc_j = "D'Franco"
+   npc_k = "Maleval"
+   npc_l = "Miriana"
+   npc_m = "Tendrath"
+   npc_n = "Esseldi"
+   npc_o = "Cylill"
+   npc_p = "Bei Naq"
+   npc_q = "Duke Akardius"
+   npc_r = "Princess Kateriina"
+   npc_s = "Priestess Qerti'nya"
+   npc_t = "Roq"
+   npc_u = "Joguer"
+   npc_v = "Fehr'loi Qan"
+   npc_w = "Yevitan"
+   npc_x = "Afiera D'xor"
+   npc_y = "Widow Qesino"
+   npc_z = "Quintor"
+   npc_aa = "The Bone Priestess"
+   npc_ab = "Wulfgang zax'Ak"
+   npc_ac = "Kochtal ko'Tulca"
+   npc_ad = "Ran er'Hoth"
+   npc_ae = "Lady Aftyn"
+   npc_af = "Colhorr"
+   npc_ag = "Frisconar"
+   
 classvars:
    
    vrDesc = servant_desc_rsc
@@ -210,6 +249,10 @@ properties:
    ptCasts = $
    ptTalk = $
    ptImp = $
+   
+   // For use when we need to interact with NPCs from afar.
+   plNPCLibrary = $
+   plNPCNames = $
    
 messages:
 
@@ -321,6 +364,12 @@ messages:
 	  foreach iSpellGroup in plBuffs
 	  {
 	     iSpellPower = Nth(iSpellGroup, 1);
+		 
+		 if piSpellPower < iSpellPower
+		 {
+		    continue;
+		 }
+		 
 		 iSpellNum = Nth(iSpellGroup, 2);
 		 iSpellRandom = Nth(iSpellGroup, 3);
 		 iSpellRemove = Nth(iSpellGroup, 4);
@@ -337,7 +386,7 @@ messages:
 		 
 		 iRandom = Random(0, 100);
 		 
-		 if iRandom <= iSpellRandom
+		 if iSpellRandom >= iRandom
 		 {
 		    iBuffPower = Send(poMaster, @GetSpellAbility, #spell_num=iSpellNum);
 			
@@ -580,7 +629,7 @@ messages:
    SetShalSpells()
    {
       plCasts = [
-	     [40, SID_DAZZLE, 10],
+	     [50, SID_DAZZLE, 20],
 	     [60, SID_MARK_OF_DISHONOR, 30],
 	     [90, SID_PURGE, 5]
 	  ];
@@ -657,7 +706,7 @@ messages:
 	  
 	  foreach iSpellGroup in plCasts
 	  {
-	     if Nth(iSpellGroup, 1) <= piSpellPower
+	     if piSpellPower >= Nth(iSpellGroup, 1)
 		 {
 	        if plSpellBook = $
 			{
@@ -896,15 +945,16 @@ messages:
 
    Killed(what=$)
    {
-      if IsClass(what, &Servant) AND Send(poMaster,@GetServant) = what
+      if (IsClass(what, &Servant) AND Send(poMaster,@GetServant) = what)
+	     OR (IsClass(what, &Player) AND poMaster = what)
 	  {
-	     Send(self,@Delete);
+	     Send(self,@GracefullyDeleteServant);
 	  }
 	  
 	  propagate;
    }
-
-   Delete()
+   
+   GracefullyDeleteServant()
    {
    	  Send(self,@ClearServantTimers);
 
@@ -913,6 +963,20 @@ messages:
          Send(self,@RemoveImportantServantEnchants);
 	     Send(poMaster,@RemoveControlledMinion,#what=self);
 		 Send(poMaster,@SetServant,#oServant=$);
+	  }
+	  
+	  poMaster = $;
+	  
+	  Send(self,@Delete);
+	  
+	  return;
+   }
+
+   Delete()
+   {
+      if poMaster <> $
+	  {
+	     Send(self,@GracefullyDeleteServant);
 	  }
 	  	  
       propagate;
@@ -1027,6 +1091,164 @@ messages:
 	  }
 	  
       propagate;
+   }
+   
+   
+   // Whenever someone says something, our servant is listening in case it's something we can help with.
+   // We need to perform several checks on what the user said.
+   // They might be asking for things like:
+   //    mace fighting    or    blind    or     punch
+   // These can return the "how much further" response the normal NPC sends.
+   // Other commands could be:
+   //    shut up (makes them stop talking)
+   //    stop buffing (makes them stop buffing)
+   //    stop casting (makes them stop casting)
+   //    stop attacking (makes them docile and useless)
+   SomeoneSaid(what = $,type = $,string = $)
+   {
+      local bResponded;
+	  
+	  //Debug("Someone said",Send(what,@GetName),type,string);
+	  
+	  bResponded = FALSE;
+
+      if IsClass(what,&User) AND poMaster = what
+      {
+		 // Check for player advancement (skills/spells).
+		 Send(self,@GetSaidProgress,#said_string=string);
+      }
+	  
+	  // Clear out the NPC library - it may be causing errors if we leave the data.
+	  plNPCLibrary = $;
+	  
+      propagate;
+   }
+   
+   GetSaidProgress(who=$, said_string="derpaderp")
+   {
+      local lNPCLibraryItem, oAbility, oAbilityName, iAbilityNum, oNPC, iLearnedAlready, bCanLearn, oSpell, oSkill;
+	  
+      // When we finally determine the NPC, we should check if the NPC is already in the room with us.
+	  // We don't want duplicate messages appearing.
+	  // Let's first see if what they said is in our ability library (spells & skills).
+	  
+	  Send(self,@PrepareNPCList);
+	  
+	  if plNPCLibrary <> $
+	  {
+	     // Iterate the NPC objects and see if they teach what we said...
+		 foreach lNPCLibraryItem in plNPCLibrary
+		 {
+		    oNPC = Nth(lNPCLibraryItem, 1);
+			
+			if oNPC = $
+			{
+			   continue;
+			}
+			
+		    foreach oAbility in Nth(lNPCLibraryItem, 2)
+			{
+			   iLearnedAlready = FALSE;
+			   oAbilityName = $;
+			   
+			   if oAbility <> $ AND IsClass(oAbility, &Spell)
+			   {
+			      // Spell name
+			      oAbilityName = Send(oAbility,@GetName);
+				  iAbilityNum = Send(oAbility,@GetSpellNum);
+			   }
+
+			   if oAbility <> $ AND IsClass(oAbility, &Skill)
+			   {
+			      // Skill name
+			      oAbilityName = Send(oAbility,@GetName);
+				  iAbilityNum = Send(oAbility,@GetSkillNum);
+			   }
+			   
+			   if oAbilityName <> $
+			   {
+			      // Check if this matches what we said...
+				  if NOT StringContain(said_string, oAbilityName)
+				  {
+				     continue;
+				  }
+				  
+				  Debug("String Contain",said_string,oAbilityName);
+				  
+			      // Check if we know this spell or skill already.
+				  if IsClass(oAbility, &Spell)
+				  {
+				     iLearnedAlready = Send(poMaster, @GetSpellAbility, #spell_num=Send(oAbility,@GetSpellNum));
+				  }
+				  
+				  if IsClass(oAbility, &Skill)
+				  {
+				     iLearnedAlready = Send(poMaster, @GetSkillAbility, #Skill_num=Send(oAbility,@GetSkillNum));
+				  }
+				  
+				  if iLearnedAlready > 0
+				  {
+				     // We have already learned this.
+					 // Tell the master!
+					 Post(poMaster,@MsgSendUser,#message_rsc=servant_already_learned,#parm1=oAbilityName);
+					 
+					 return;
+				  }
+				  
+				  // Let's reach out to this NPC and see if we can learn it...
+				  bCanLearn = Send(oNPC, @CanDoTeach, #who=poMaster, #sid=iAbilityNum);
+				  
+				  if bCanLearn <> $
+				  {
+				     Debug("Can learn",oAbilityName,"from",Send(oNPC,@GetTrueName),bCanLearn);
+				  }
+			   }
+			}
+		 }
+	  }
+	  
+	  return;
+   }
+   
+   PrepareNPCList()
+   {
+      local sNPCName, oNPC, lNPCForSale;
+	  
+      if plNPCNames = $
+	  {
+	     plNPCNames = [
+		    npc_a, npc_b, npc_c, npc_d, npc_e, npc_f, npc_g, npc_h, npc_i, npc_j, npc_k, npc_l, npc_m, npc_n,
+		    npc_o, npc_p, npc_q, npc_r, npc_s, npc_t, npc_u, npc_v, npc_w, npc_x, npc_y, npc_z, 
+		    npc_aa, npc_ab, npc_ac, npc_ad, npc_ae, npc_af, npc_ag
+		 ];
+	  }
+	  
+      if plNPCLibrary = $
+	  {
+		 plNPCLibrary = [];
+		 
+		 foreach sNPCName in plNPCNames
+		 {
+            oNPC = Send(SYS,@FindNPCByString,#string=sNPCName);
+						
+            if oNPC <> $
+            {
+			   if plNPCLibrary = $
+			   {
+			      plNPCLibrary = [];
+			   }
+			   
+			   lNPCForSale = Send(oNPC, @GetForSale, #report=FALSE, #conditional=FALSE, #items=FALSE);
+			   
+			   if lNPCForSale <> $
+			   {
+                  plNPCLibrary = AppendListElem([oNPC, lNPCForSale], plNPCLibrary);
+			   }
+            }
+         }		 
+	  }
+	  
+	  return;
    }
    
 end

@@ -9577,7 +9577,12 @@ messages:
             oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem,
             iRoom, lInventoryContents, lReagentBagContents;
 
-      // If this player has created any evil twins, delete them.
+      if poServant <> $
+	  {
+	     Send(poServant,@GracefullyDeleteServant);
+	  }
+	  
+	  // If this player has created any evil twins, delete them.
       Send(self,@RemoveAllCreatedEvilTwins);
 
       // If we have Apparitions attacking us, delete them.
