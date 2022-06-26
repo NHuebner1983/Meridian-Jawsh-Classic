@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   servant_faren_name_rsc = "summon faren"
+   servant_faren_name_rsc = "servant of faren"
    servant_faren_icon_rsc = farenservantspell.bgf
    servant_faren_desc_rsc = \
       "A magical creature awaits your command."
@@ -41,7 +41,7 @@ properties:
 
 messages:
 
-	// Nothing yet
-
+   // Nothing yet
+   
 end
 ////////////////////////////////////////////////////////////////////////////////

@@ -124,7 +124,7 @@ messages:
 		     Send(bExistingServant, @Delete);
 		  }
 		  
-		  oServant = Create(&Servant);
+		  oServant = Create(&Servant,#iSpellNum=viSpell_num);
 
 		  iGenRow = Send(who,@GetRow);
 		  iGenCol = Send(who,@GetCol);

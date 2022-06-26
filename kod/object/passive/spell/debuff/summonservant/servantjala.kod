@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   servant_jala_name_rsc = "summon jala"
+   servant_jala_name_rsc = "servant of jala"
    servant_jala_icon_rsc = jalaservantspell.bgf
    servant_jala_desc_rsc = \
       "A magical creature awaits your command."

@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   servant_qor_name_rsc = "summon qor"
+   servant_qor_name_rsc = "servant of qor"
    servant_qor_icon_rsc = qorservantspell.bgf
    servant_qor_desc_rsc = \
       "A magical creature awaits your command."

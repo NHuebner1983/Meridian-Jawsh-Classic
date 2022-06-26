@@ -47,21 +47,21 @@ resources:
    monster_drastically = "drastically "     // for 75+ pts to gain
 
    monster_teach_karma = \
-      "~kYour karma is not far enough along the true path for you to learn %s.~n~k"
+      "~kYour teacher whispers, ''Your karma is not far enough along the true path for you to learn %s.''~n~k"
    monster_teach_quest_needed = \
-      "~kI can teach you %s, but first you must prove your worth as a pupil.~n~k"
+      "~kYour teacher whispers, ''I can teach you %s, but first you must prove your worth as a pupil.''~n~k"
    monster_teach_base = \
-      "~kYour mind is focused properly, and with %sfurther progress in the "
-      "previous %s levels you can learn %s.~n~k" 
+      "~kYour teacher whispers, ''Your mind is focused properly, and with %sfurther progress in the "
+      "previous %s levels you can learn %s.''~n~k" 
    monster_teach_success = \
-      "~kYou are currently qualified to learn %s.  Congratulations.~n~k"
+      "~kYour teacher whispers, ''You are currently qualified to learn %s.  Congratulations.''~n~k"
    monster_teach_already = "~kYou have already been taught %s.~k"
    monster_teach_nobase = \
-      "~kYou first need to have some knowledge of the previous level before you "
-      "can learn %s.~n~k"
+      "~kYour teacher whispers, ''You first need to have some knowledge of the previous level before you "
+      "can learn %s.''~n~k"
    monster_teach_impossible = \
-      "~kIndeed, you have learned so much already! A fine accomplishment.  You "
-      "have no... need... to learn further in this school.~n~k"
+      "~kYour teacher whispers, ''Indeed, you have learned so much already! A fine accomplishment.  You "
+      "have no... need... to learn further in this school.''~n~k"
 
    monster_level = "level"
    monster_one = "one"
@@ -3368,6 +3368,11 @@ messages:
    SomeoneSaidLevel(what = $,type = $,string = $)
    {
       local iLevel;
+	  
+	  if plFor_Sale = $
+	  {
+	     return FALSE;
+	  }
 
       if (Nth(plFor_Sale,2) = $ AND Nth(plFor_Sale,3) = $)
          OR NOT StringContain(string,monster_level)
@@ -5744,7 +5749,7 @@ messages:
          //  skill.
          
 	     // Private
-	     Send(who, @MsgSendUser, #message_rsc=vrTeach_quest_needed,
+	     Post(who, @MsgSendUser, #message_rsc=vrTeach_quest_needed,
 			  #parm1=Send(oAbility,@GetName));
 			  
 // Room say	     
@@ -5771,8 +5776,7 @@ messages:
       if iVal = PLAYER_LEARN_SUCCESS
       {
 	     // Private
-		 Debug(monster_teach_success);
-	     Send(who, @MsgSendUser, #message_rsc=monster_teach_success,
+	     Post(who, @MsgSendUser, #message_rsc=monster_teach_success,
 			  #parm1=Send(oAbility,@GetName));
 			  
 // Room say	     
@@ -5785,7 +5789,7 @@ messages:
       if iVal = PLAYER_LEARN_ALREADY
       {
 	     // Private
-	     Send(who, @MsgSendUser, #message_rsc=monster_teach_already,
+	     Post(who, @MsgSendUser, #message_rsc=monster_teach_already,
 			  #parm1=Send(oAbility,@GetName));
 			  
 // Room say	     
@@ -5798,7 +5802,7 @@ messages:
       if iVal = PLAYER_LEARN_NOBASE
       {
 	     // Private
-	     Send(who, @MsgSendUser, #message_rsc=monster_teach_nobase,
+	     Post(who, @MsgSendUser, #message_rsc=monster_teach_nobase,
 			  #parm1=Send(oAbility,@GetName));
 			  
 // Room say	     
@@ -5811,7 +5815,7 @@ messages:
       if iVal = PLAYER_LEARN_KARMA 
       {
 	     // Private
-	     Send(who, @MsgSendUser, #message_rsc=monster_teach_karma,
+	     Post(who, @MsgSendUser, #message_rsc=monster_teach_karma,
 			  #parm1=Send(oAbility,@GetName));
 			  
 // Room say	     
@@ -5824,7 +5828,7 @@ messages:
       if iVal = PLAYER_LEARN_IMPOSSIBLE 
       {
 	     // Private
-	     Send(who, @MsgSendUser, #message_rsc=monster_teach_impossible);
+	     Post(who, @MsgSendUser, #message_rsc=monster_teach_impossible);
 			  
 // Room say	     
 //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
@@ -5843,7 +5847,7 @@ messages:
       if iReason = PLAYER_LEARN_BASE
       {
 	     // Private
-	     Send(who, @MsgSendUser, #message_rsc=monster_teach_base,
+	     Post(who, @MsgSendUser, #message_rsc=monster_teach_base,
 			  #parm1=rAmount,
               #parm2=Send(oAbility,@GetSchoolStr),
               #parm3=Send(oAbility,@GetName));

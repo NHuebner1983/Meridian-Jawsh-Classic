@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   servant_shal_name_rsc = "summon shal'ille"
+   servant_shal_name_rsc = "servant of shal'ille"
    servant_shal_icon_rsc = shalservantspell.bgf
    servant_shal_desc_rsc = \
       "A magical creature awaits your command."

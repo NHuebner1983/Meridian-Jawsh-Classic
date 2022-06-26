@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   servant_kran_name_rsc = "summon kraanan"
+   servant_kran_name_rsc = "servant of kraanan"
    servant_kran_icon_rsc = kranservantspell.bgf
    servant_kran_desc_rsc = \
       "A magical creature awaits your command."

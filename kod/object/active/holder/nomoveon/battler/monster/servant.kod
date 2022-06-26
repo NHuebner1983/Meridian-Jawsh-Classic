@@ -22,13 +22,11 @@ constants:
 
 resources:
 
-   servant_koc_name_rsc = "servant"
+   servant_koc_name_rsc = "servantfairyshouldnotkocname"
    servant_name_rsc = "servant"
    servant_icon_rsc = faerie-g.bgf
    servant_desc_rsc = \
-      "One of the noble woodland fairies, the servant of light, "
-      "will follow you with a guiding light and deal moderate "
-      "damage to your enemies."
+      "A magical creature."
 
    servant_dead_icon_rsc = faerieXG.bgf
    servant_dead_name_rsc = "dead servant"
@@ -40,6 +38,49 @@ resources:
    servant_sound_death = none
    servant_sound_aware = none
    
+   // RPG Random Names
+   servant_name_1 = "Eimmilth, The Mammoth"
+   servant_name_2 = "Purve, Champion Of The Black"
+   servant_name_3 = "Lathynth, The Fast One"
+   servant_name_4 = "Oadat, Lady Of Ice"
+   servant_name_5 = "Purse, The Quiet"
+   servant_name_6 = "Cuvy, Lady Of The Red"
+   servant_name_7 = "Cirros, Eater Of Sheep"
+   servant_name_8 = "Inarryl, The Young One"
+   servant_name_9 = "Legiry, Lady Of The Brown"
+   servant_name_10 = "Nekonys, The Swift"
+   servant_name_11 = "Mammoth, Protector Of The Sky"
+   servant_name_12 = "Aekorth, Champion Of The Green"
+   servant_name_13 = "Osseorth, Lady Of The Red"
+   servant_name_14 = "Conu, The Puny"
+   servant_name_15 = "Zirlorth, Longtail"
+   servant_name_16 = "Doni, The Swift"
+   servant_name_17 = "Qaghar, The Loud"
+   servant_name_18 = "Govnontys, The Black"
+   servant_name_19 = "Eldridelth, Redeemer Of Men"
+   servant_name_20 = "Termarro, The Black"
+   servant_name_21 = "Chaynnuth, The Scary One"
+   servant_name_22 = "Tommei, The Powerful"
+   servant_name_23 = "Xaeloar, Protector Of The Sky"
+   servant_name_24 = "Taileon, Lord Of Ice"
+   servant_name_25 = "Zaeghuth, The Barbarian"
+   servant_name_26 = "Niepad, The Mysterious One"
+   servant_name_27 = "Daithunth, The Eternal One"
+   servant_name_28 = "Xiodreiphae, The Firestarter"
+   servant_name_29 = "Deindurut, The Mysterious One"
+   servant_name_30 = "Iadhuphil, Lord Of Ice"
+   servant_name_31 = "Chesorth, Eater Of Bunnies"
+   servant_name_32 = "Qavy, The Strong"
+   servant_name_33 = "Oka, Icebreath"
+   servant_name_34 = "Yvno, The Gentle"
+   servant_name_35 = "Idil, The Champion"
+   servant_name_36 = "Qirmit, Protector Of Life"
+   servant_name_37 = "Imre, The White One"
+   servant_name_38 = "Chuneintarth, Protector Of The Forest"
+   servant_name_39 = "Orgyrrut, The Insane"
+   servant_name_40 = "Eivnirarth, The Evil One"
+
+   // Chatter   
    servant_rant_a = "This room could use a little more sunlight."
    servant_rant_b = "That was a close one."
    servant_rant_c = "Pking is pretty fun if I say so myself."
@@ -162,9 +203,15 @@ resources:
    npc_af = "Colhorr"
    npc_ag = "Frisconar"
    
+   servant_desc_riija = "The servant of riija will play tricks on your enemy."
+   servant_desc_faren = "The servant of faren will burn your enemy to a crisp and protect you from the elements."
+   servant_desc_kran = "The servant of kraanan will prepare you for battle and protect you from all harm."
+   servant_desc_shal = "The servant of shal'ille will protect you from evil and smite your enemies."
+   servant_desc_qor = "The servant of qor will blind your enemies and hide you in a shroud of invisiblity."
+   servant_desc_jala = "The servant of jala will sing songs to help you survive in battle and flee quickly."
+   
 classvars:
    
-   vrDesc = servant_desc_rsc
    vrKocName = servant_koc_name_rsc
    vrName = servant_name_rsc
    vrIcon = servant_icon_rsc
@@ -192,7 +239,7 @@ classvars:
    viVisionDistance = 5
    viCashmin = 1
    viCashmax = 2
-   viAttributes = MOB_LISTEN | MOB_RECEIVE
+   viAttributes = MOB_LISTEN | MOB_RECEIVE | MOB_TEACHER
    
    vrSound_hit = servant_sound_hit
    vrSound_miss = servant_sound_miss
@@ -200,6 +247,8 @@ classvars:
    vrSound_death = servant_sound_death
 
 properties:
+
+   vrDesc = servant_desc_rsc
 
    piDrawEffectFlag = OF_BOUNCING
    viKarma = 0
@@ -254,11 +303,34 @@ properties:
    plNPCLibrary = $
    plNPCNames = $
    
+   // Servant's randomized name
+   sServantName = $
+
 messages:
 
-   Constructor()
+   Constructor(iSpellNum=$)
    {
+	  // The spell we used to summon the servant
+	  piSpellNum = iSpellNum;
+	  
+	  if piSpellNum <> $ AND sServantName = $
+	  {
+        Send(self,@SetServantName);
+	    Send(self,@SetServantDesc,#iSpellNum=piSpellNum);
+	  }
+	  
       propagate;
+   }
+   
+   Constructed()
+   {
+	  if piSpellNum <> $ AND sServantName = $
+	  {
+        Send(self,@SetServantName);
+	    Send(self,@SetServantDesc,#iSpellNum=piSpellNum);
+	  }
+	  
+	  propagate;
    }
    
    MasterCheck()
@@ -1168,12 +1240,12 @@ messages:
 			   if oAbilityName <> $
 			   {
 			      // Check if this matches what we said...
-				  if NOT StringContain(said_string, oAbilityName)
+				  if NOT StringEqual(oAbilityName, said_string)
 				  {
 				     continue;
 				  }
 				  
-				  Debug("String Contain",said_string,oAbilityName);
+				  //Debug("String Contain",said_string,oAbilityName);
 				  
 			      // Check if we know this spell or skill already.
 				  if IsClass(oAbility, &Spell)
@@ -1196,11 +1268,11 @@ messages:
 				  }
 				  
 				  // Let's reach out to this NPC and see if we can learn it...
-				  bCanLearn = Send(oNPC, @CanDoTeach, #who=poMaster, #sid=iAbilityNum);
+				  bCanLearn = Send(oNPC, @CanDoTeach, #who=poMaster, #sid=iAbilityNum, #bSkill=IsClass(oAbility, &Skill));
 				  
 				  if bCanLearn <> $
 				  {
-				     Debug("Can learn",oAbilityName,"from",Send(oNPC,@GetTrueName),bCanLearn);
+				     //Debug("Can learn",oAbilityName,"from",Send(oNPC,@GetTrueName),bCanLearn);
 				  }
 			   }
 			}
@@ -1251,5 +1323,97 @@ messages:
 	  return;
    }
    
+   SetServantDesc(iSpellNum=$)
+   {
+      if iSpellNum = $
+	  {
+	     //Debug("Spell Num is empty");
+	     return;
+	  }
+      
+      switch(iSpellNum) {
+		case SID_RIIJA_SERVANT:
+		   vrDesc = servant_desc_riija;
+		break;
+		case SID_FAREN_SERVANT:
+		   vrDesc = servant_desc_faren;
+		break;
+		case SID_KRAN_SERVANT:
+		   vrDesc = servant_desc_kran;
+		break;
+		case SID_SHAL_SERVANT:
+		   vrDesc = servant_desc_shal;
+		break;
+		case SID_QOR_SERVANT:
+		   vrDesc = servant_desc_qor;
+		break;
+		case SID_JALA_SERVANT:   
+		   vrDesc = servant_desc_jala;
+		break;
+	  }
+	  
+	  //Debug("vrDesc", vrDesc);
+	  
+      return;
+   }
+
+   SetServantName()
+   {
+      local lServantNames;
+	  
+	  lServantNames = [
+	     servant_name_1, servant_name_2, servant_name_3, servant_name_4, servant_name_5,
+	     servant_name_6, servant_name_7, servant_name_8, servant_name_9, servant_name_10,
+	     servant_name_11, servant_name_12, servant_name_13, servant_name_14, servant_name_15,
+	     servant_name_16, servant_name_17, servant_name_18, servant_name_19, servant_name_20,
+	     servant_name_21, servant_name_22, servant_name_23, servant_name_24, servant_name_25,
+	     servant_name_26, servant_name_27, servant_name_28, servant_name_29, servant_name_30,
+	     servant_name_31, servant_name_32, servant_name_33, servant_name_34, servant_name_35,
+	     servant_name_36, servant_name_37, servant_name_38, servant_name_39, servant_name_40
+	  ];
+	  
+	  sServantName = Nth(lServantNames, Random(1, Length(lServantNames)));
+	  
+	  //Debug("Servant is named",sServantName);
+	  
+	  return;
+   }
+   
+   GetName()
+   {
+      if sServantName = $
+	  {
+	     Send(self,@SetServantName);
+	  }
+	  
+	  //Debug("Returned Name",sServantName);
+	  
+      return sServantName;
+   }
+   
+   GetTrueName()
+   {
+      return Send(self,@GetName);
+   }
+   
+   GetApparentName()
+   {
+      return Send(self,@GetName);
+   }
+
+   DoBaseDesc()
+   {
+      Send(self,@ShowDesc);
+
+      return;
+   }
+   
+   ShowDesc()
+   {
+      AddPacket(4,vrDesc);
+	  
+      return;
+   }
+
 end
 ////////////////////////////////////////////////////////////////////////////////
