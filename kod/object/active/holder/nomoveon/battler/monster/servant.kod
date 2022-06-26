@@ -239,7 +239,7 @@ classvars:
    viVisionDistance = 5
    viCashmin = 1
    viCashmax = 2
-   viAttributes = MOB_LISTEN | MOB_RECEIVE | MOB_TEACHER
+   viAttributes = MOB_LISTEN | MOB_RECEIVE
    
    vrSound_hit = servant_sound_hit
    vrSound_miss = servant_sound_miss
@@ -1268,7 +1268,8 @@ messages:
 				  }
 				  
 				  // Let's reach out to this NPC and see if we can learn it...
-				  bCanLearn = Send(oNPC, @CanDoTeach, #who=poMaster, #sid=iAbilityNum, #bSkill=IsClass(oAbility, &Skill));
+				  bCanLearn = Send(oNPC, @CanDoTeach, #who=poMaster, #sid=iAbilityNum, 
+				      #bSkill=IsClass(oAbility, &Skill), #oRequester=self);
 				  
 				  if bCanLearn <> $
 				  {

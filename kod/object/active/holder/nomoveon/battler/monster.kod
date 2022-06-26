@@ -47,20 +47,20 @@ resources:
    monster_drastically = "drastically "     // for 75+ pts to gain
 
    monster_teach_karma = \
-      "~kYour teacher whispers, ''Your karma is not far enough along the true path for you to learn %s.''~n~k"
+      "~k%s tells you, ''Your karma is not far enough along the true path for you to learn %s.''~n~k"
    monster_teach_quest_needed = \
-      "~kYour teacher whispers, ''I can teach you %s, but first you must prove your worth as a pupil.''~n~k"
+      "~k%s tells you, ''I can teach you %s, but first you must prove your worth as a pupil.''~n~k"
    monster_teach_base = \
-      "~kYour teacher whispers, ''Your mind is focused properly, and with %sfurther progress in the "
+      "~k%s tells you, ''Your mind is focused properly, and with %sfurther progress in the "
       "previous %s levels you can learn %s.''~n~k" 
    monster_teach_success = \
-      "~kYour teacher whispers, ''You are currently qualified to learn %s.  Congratulations.''~n~k"
-   monster_teach_already = "~kYou have already been taught %s.~k"
+      "~k%s tells you, ''You are currently qualified to learn %s.  Congratulations.''~n~k"
+   monster_teach_already = "~k%s tells you, ''You have already been taught %s.''~k"
    monster_teach_nobase = \
-      "~kYour teacher whispers, ''You first need to have some knowledge of the previous level before you "
+      "~k%s tells you, ''You first need to have some knowledge of the previous level before you "
       "can learn %s.''~n~k"
    monster_teach_impossible = \
-      "~kYour teacher whispers, ''Indeed, you have learned so much already! A fine accomplishment.  You "
+      "~k%s tells you, ''Indeed, you have learned so much already! A fine accomplishment.  You "
       "have no... need... to learn further in this school.''~n~k"
 
    monster_level = "level"
@@ -5687,12 +5687,33 @@ messages:
       return (QUEST_HISTORY_SUCCESS & iQuestHistory);
    }
 
-   CanDoTeach(who = $, sid = 0, bSkill = FALSE)
+   CanDoTeach(who = $, sid = 0, bSkill = FALSE, oRequester = $)
    {
       local oAbility, iVal, iReason, iAmount, rAmount, bitSchools, i, tmp,
-            lSchools;
+            lSchools, bIsRequestedByServant;
 
-      if sid = 0 OR who = $
+      bIsRequestedByServant = FALSE;
+	  
+	  if IsClass(oRequester,&Servant)
+	  {
+	     bIsRequestedByServant = TRUE;
+	     Debug("CanDoTeach From Servant");
+	  }
+	  
+	  Debug("CanDoTeach",Send(self,@GetTrueName));
+	  
+	  if oRequester <> $
+	  {
+	     Debug("Requester",Send(oRequester,@GetName));
+	  } else {
+	     if (piAttributes & MOB_TEACHER) AND Send(who,@HasServant)
+		 {
+		    Debug("Not showing NPC response with servant in the room");
+		    return;
+		 }
+	  }
+	  
+	  if sid = 0 OR who = $
       { 
          Debug("Invalid data sent to CanDoTeach!");  
 
@@ -5750,7 +5771,7 @@ messages:
          
 	     // Private
 	     Post(who, @MsgSendUser, #message_rsc=vrTeach_quest_needed,
-			  #parm1=Send(oAbility,@GetName));
+			  #parm1=Send(self,@GetName), #parm2=Send(oAbility,@GetName));
 			  
 // Room say	     
 //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
@@ -5777,7 +5798,7 @@ messages:
       {
 	     // Private
 	     Post(who, @MsgSendUser, #message_rsc=monster_teach_success,
-			  #parm1=Send(oAbility,@GetName));
+			  #parm1=Send(self,@GetName), #parm2=Send(oAbility,@GetName));
 			  
 // Room say	     
 //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
@@ -5790,7 +5811,7 @@ messages:
       {
 	     // Private
 	     Post(who, @MsgSendUser, #message_rsc=monster_teach_already,
-			  #parm1=Send(oAbility,@GetName));
+			  #parm1=Send(self,@GetName), #parm2=Send(oAbility,@GetName));
 			  
 // Room say	     
 //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
@@ -5803,7 +5824,7 @@ messages:
       {
 	     // Private
 	     Post(who, @MsgSendUser, #message_rsc=monster_teach_nobase,
-			  #parm1=Send(oAbility,@GetName));
+			  #parm1=Send(self,@GetName), #parm2=Send(oAbility,@GetName));
 			  
 // Room say	     
 //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
@@ -5816,7 +5837,7 @@ messages:
       {
 	     // Private
 	     Post(who, @MsgSendUser, #message_rsc=monster_teach_karma,
-			  #parm1=Send(oAbility,@GetName));
+			  #parm1=Send(self,@GetName),#parm2=Send(oAbility,@GetName));
 			  
 // Room say	     
 //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
@@ -5828,7 +5849,7 @@ messages:
       if iVal = PLAYER_LEARN_IMPOSSIBLE 
       {
 	     // Private
-	     Post(who, @MsgSendUser, #message_rsc=monster_teach_impossible);
+	     Post(who, @MsgSendUser, #message_rsc=monster_teach_impossible, #parm1=Send(self,@GetName));
 			  
 // Room say	     
 //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
@@ -5848,9 +5869,10 @@ messages:
       {
 	     // Private
 	     Post(who, @MsgSendUser, #message_rsc=monster_teach_base,
-			  #parm1=rAmount,
-              #parm2=Send(oAbility,@GetSchoolStr),
-              #parm3=Send(oAbility,@GetName));
+			  #parm1=Send(self,@GetName),
+			  #parm2=rAmount,
+              #parm3=Send(oAbility,@GetSchoolStr),
+              #parm4=Send(oAbility,@GetName));
 
 // Room say			  
 //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,

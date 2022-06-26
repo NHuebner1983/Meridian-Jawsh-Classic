@@ -2548,6 +2548,11 @@ messages:
    {
       return poServant;
    }
+   
+   HasServant()
+   {
+      return poServant <> $;
+   }
 
    SendUserAllWindowOverlays()
    "Send the user any overlays that they might have.  Called when they logon "
