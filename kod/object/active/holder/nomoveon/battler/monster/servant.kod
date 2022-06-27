@@ -473,6 +473,11 @@ messages:
 	     DeleteTimer(ptImp);
 		 ptImp = $;
 	  }
+	  if ptTaunt <> $ AND IsTimer(ptTaunt) AND GetTimeRemaining(ptTaunt) > 0
+	  {
+	     DeleteTimer(ptTaunt);
+		 ptTaunt = $;
+	  }
 	  
 	  return;
    }
@@ -481,7 +486,7 @@ messages:
    {
       local iRandom, iSpellGroup, iSpellPower, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove;
 	  
-	  if NOT Send(self,@MasterCheck) OR NOT pbAllowBuff
+	  if NOT Send(self,@MasterCheck)
 	  {
 	     return;
 	  }
@@ -489,6 +494,11 @@ messages:
 	  plRemoveEnchants = $;
    
 	  Send(self,@StartBuffTimer);
+	  
+	  if NOT pbAllowBuff
+	  {
+	     return;
+	  }
 	  
 	  foreach iSpellGroup in plBuffs
 	  {
@@ -607,12 +617,17 @@ messages:
    {
       local iRandomPart, iRandomPiece, chosen_resource, tmp_rsc;
 	  
-	  if NOT Send(self,@MasterCheck) OR NOT pbAllowTalk
+	  if NOT Send(self,@MasterCheck)
 	  {
 	     return;
 	  }
 	  
       Send(self,@StartTalkTimer);
+	  
+	  if NOT pbAllowTalk
+	  {
+	     return;
+	  }
 
 	  iRandomPart = Random(0, Length(plTalk));
 	  iRandomPiece = Random(0, Length(Nth(plTalk, iRandomPart)));
@@ -956,6 +971,7 @@ messages:
          return FALSE;
       }
 	  
+	  // Master may have turned off attacking through commands.
 	  if NOT pbAllowAttack
 	  {
 	     return FALSE;
@@ -1484,12 +1500,17 @@ messages:
 
    TauntEnemies()
    {
-   	  if NOT Send(self,@MasterCheck) OR NOT pbAllowTaunt
+   	  if NOT Send(self,@MasterCheck)
 	  {
 	     return;
 	  }
    
       ptTaunt = CreateTimer(self,@TauntEnemies,1000);
+	  
+	  if NOT pbAllowTaunt
+	  {
+	     return;
+	  }
 	  
 	  return;
    }
