@@ -537,7 +537,7 @@ messages:
    "4. If you have a master, go to his side."
    "5. Otherwise, wander aimlessly."
    {
-      local oMaster, oOwner, oMasterRoom, oFrightener;
+      local oMaster, oOwner, oMasterRoom, oFrightener, bDoMoveMaster;
 
       if mob = $
       {
@@ -600,8 +600,22 @@ messages:
             oMasterRoom = Send(oMaster,@GetOwner);
             if oOwner = oMasterRoom
             {
+			   bDoMoveMaster = FALSE;
+			   
                /// Attempt to move towards master.
-               Send(mob,@MoveToMaster);
+			   if IsClass(mob, &Servant)
+			   {
+			      // Only move to master if we're too far away.
+				  if (Send(mob,@SquaredFineDistanceTo3D,#what=oMaster) / 100) > 100
+				  {
+				     bDoMoveMaster = TRUE;
+				  }
+			   }
+			   
+			   if bDoMoveMaster
+			   {
+                  Send(mob,@MoveToMaster);
+			   }
             }
             else
             {

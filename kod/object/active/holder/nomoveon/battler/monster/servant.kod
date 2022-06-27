@@ -519,7 +519,10 @@ messages:
       Send(self,@SetBehaviorFlag,#flag=AI_MOVE_REGROUP,#value=TRUE);
       Send(self,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS,#value=pbAllowWalkThroughWalls);
       Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_THROUGH_WALLS,#value=pbAllowAttackThroughWalls);
-
+      
+	  // Disable these, they're annoying.
+	  Send(self,@SetBehaviorFlag,#flag=AI_MOVE_RANDOM,#value=FALSE);
+	  
       return;
    }
 

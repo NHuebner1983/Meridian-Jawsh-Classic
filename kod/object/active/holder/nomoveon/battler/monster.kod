@@ -1052,6 +1052,14 @@ messages:
 
       return;
    }
+   
+   IsMobile()
+   {
+      return 
+	     (piState & STATE_ATTACK)
+		 OR (piState & STATE_CHASE)
+		 OR (piState & STATE_MOVE);
+   }
 
    EnterStateMove( actnow=FALSE )
    {
@@ -1428,8 +1436,9 @@ messages:
          return;
       }
 
-      if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 25)
+      if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 25) OR IsClass(self, &Servant)
       {
+	     // Servants always enter, even if there's 25+ monsters.
          Send(oNewRoom,@NewHold,#what=self,
                #new_row=Send(poMaster,@GetRow),#new_col=Send(poMaster,@GetCol),
                #new_angle=Send(poMaster,@GetAngle));
