@@ -9402,9 +9402,7 @@ messages:
 			// Boost their servant to max health if they have one.
 			if poServant <> $
 			{
-			   Debug("Boosting Servant",Send(poServant,@GetHealth),"of",Send(poServant,@GetMaxHealth));
 			   Send(poServant, @GainHealthNormal, #amount=Send(poServant,@GetMaxHealth), #precision=FALSE);
-			   Debug("Servant Health is now",Send(poServant,@GetHealth),"of",Send(poServant,@GetMaxHealth));
 			}
          }
 
