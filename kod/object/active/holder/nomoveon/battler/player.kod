@@ -1145,6 +1145,21 @@ properties:
    // Player's summoned servant
    poServant = $
 
+   // Player's list of resources that build up over time (but have a maximum).
+   // Resources, such as "heal me", "feed me", "mystify me"
+   // If the player can receive the whole amount, they will.
+   // A timer while the servant is active will help replenish these resources.
+   piServantHealthResourceRegenInterval = 5 // seconds
+   piServantVigorResourceRegenInterval = 2 // seconds
+   piServantManaResourceRegenInterval = 3 // seconds
+   piServantHealthResourceMax = 50 // HP
+   piServantManaResourceMax = 50   // Mana
+   piServantVigorResourceMax = 200 // Vigor
+   
+   // Actual Servant Resource repo.
+   // There will be an HP, Vigor, Mana resource and an accumulation Nth(1) = HP/Vigor/Mana Nth(2) = Amount Available
+   plServantResources = $
+   
 messages:
 
    Constructor()
@@ -7057,6 +7072,36 @@ messages:
 
       return (piHealth - iOldhealth);
    }
+   
+   GainVigor(amount=$)
+   {
+      if amount = $ OR amount <= 0
+	  {
+	     return FALSE;
+	  }
+	  
+	  piVigor = piVigor + amount;
+	  piVigor = Bound(piVigor, 1, viMax_vigor);
+
+      Send(self,@NewVigor);
+	  
+	  return TRUE;
+   }
+   
+   GainMana(amount=$)
+   {
+      if amount = $ OR amount <= 0
+	  {
+	     return FALSE;
+	  }
+	  
+	  piMana = piMana + amount;
+	  piMana = Bound(piMana, 1, piMax_Mana);
+
+      Send(self,@NewMana);
+	  
+	  return TRUE;
+   }
 
    NewUnboundEnergy(bDelay = FALSE)
    {
@@ -7601,6 +7646,21 @@ messages:
    GetExactHealth()
    {
       return piHealth;
+   }
+   
+   GetMissingHealth()
+   {
+      return Send(self,@GetBaseMaxHealth) - Send(self,@GetHealth);
+   }
+   
+   GetMissingMana()
+   {
+      return piMax_Mana - piMana;
+   }
+   
+   GetMissingVigor()
+   {
+      return viMax_vigor - piVigor;
    }
 
    SetHealth(amount=$)
@@ -9338,6 +9398,14 @@ messages:
             {
                Send(oShrunken,@Tougher,#hp=Send(self,@GetBaseMaxHealth));
             }
+			
+			// Boost their servant to max health if they have one.
+			if poServant <> $
+			{
+			   Debug("Boosting Servant",Send(poServant,@GetHealth),"of",Send(poServant,@GetMaxHealth));
+			   Send(poServant, @GainHealthNormal, #amount=Send(poServant,@GetMaxHealth), #precision=FALSE);
+			   Debug("Servant Health is now",Send(poServant,@GetHealth),"of",Send(poServant,@GetMaxHealth));
+			}
          }
 
          // If they are at max HP, award some training points instead.
@@ -15371,6 +15439,204 @@ messages:
       }
 
       propagate;
+   }
+   
+   PrepareServantResources()
+   {
+      if plServantResources = $
+	  {
+	     plServantResources = [];
+		 
+		 plServantResources = AppendListElem([SERVANT_RESOURCE_HP,    piServantHealthResourceMax, 0], plServantResources);
+		 plServantResources = AppendListElem([SERVANT_RESOURCE_MANA,  piServantManaResourceMax,   0], plServantResources);
+		 plServantResources = AppendListElem([SERVANT_RESOURCE_VIGOR, piServantVigorResourceMax,  0], plServantResources);
+	  }
+	  
+	  return;
+   }
+   
+   DecrementServantResource(what=$, amount=1)
+   {
+      local iResource, bFoundResource, iNewValue, iMaxValue, iPulledAmount;
+	  
+	  if what = $
+	  {
+	     return $;
+	  }
+	  
+	  iResource = Send(self, @GetServantResource, #what=what);
+	  
+	  iNewValue = 0;
+	  iPulledAmount = 0;
+	  
+	  if iResource <> $
+	  {
+	     // Allows the value to decrement to zero, not negative.
+		 iMaxValue = Send(self, @GetServantResourceMax, #what=Nth(iResource,1));
+	     iNewValue = Bound(Nth(iResource, 2) - amount, 0, Nth(iResource, 2));
+		 
+		 if iNewValue <> Nth(iResource, 2)
+		 {
+		    iPulledAmount = Bound(amount, 1, Nth(iResource, 2));
+			plServantResources = DelListElem(plServantResources, iResource);
+		    plServantResources = AppendListElem([Nth(iResource, 1), iNewValue, 0], plServantResources);
+		 }
+	  }
+	  
+	  return iPulledAmount;
+   }
+   
+   IncrementServantResource(what=$, amount=1)
+   {
+      local iResource, bFoundResource, iNewValue, iMaxValue;
+	  
+	  if what = $
+	  {
+	     return $;
+	  }
+	  
+	  iResource = Send(self, @GetServantResource, #what=what);
+	  
+	  if iResource <> $
+	  {
+	     // Ensures the value increments at least from 1 to max.
+	     iMaxValue = Send(self, @GetServantResourceMax, #what=Nth(iResource,1));
+	     iNewValue = Bound((Nth(iResource, 2) + amount), 1, iMaxValue);
+		 plServantResources = DelListElem(plServantResources, iResource);
+		 plServantResources = AppendListElem([Nth(iResource, 1), iNewValue, 0], plServantResources);
+	  }
+	  
+	  return;
+   }
+   
+   IncrementServantResourceInterval(what=$)
+   {
+      local iResource, iNewValue, bIsReadyToIncrement;
+	  
+      if what = $
+	  {
+	     return FALSE;
+	  }
+	  
+	  bIsReadyToIncrement = FALSE;
+	  
+	  iResource = Send(self, @GetServantResource, #what=what);
+	  
+	  if iResource <> $
+	  {
+	     iNewValue = Nth(iResource, 3) + 1;
+		 
+		 if iNewValue >= Send(self,@GetServantResourceInterval,#what=what)
+		 {
+		    iNewValue = 0;
+			bIsReadyToIncrement = TRUE;
+		 }
+		 
+		 plServantResources = DelListElem(plServantResources, iResource);
+		 plServantResources = AppendListElem([Nth(iResource, 1), Nth(iResource, 2), iNewValue], plServantResources);
+	  }
+	  
+	  return bIsReadyToIncrement;
+   }
+   
+   GetServantResource(what=$)
+   {
+      local iResource, bFoundResource;
+	  
+	  if what = $
+	  {
+	     return $;
+	  }
+	  
+	  if plServantResources = $
+	  {
+	     Send(self, @PrepareServantResources);
+		 
+	     if plServantResources = $
+	     {
+		    // This shouldn't happen.
+			Debug("Unable to set Servant Resources for player.");
+	        return;
+	     }
+	  }
+	  	  
+	  bFoundResource = FALSE;
+	  
+	  foreach iResource in plServantResources
+	  {
+	     if what = Nth(iResource, 1)
+		 {
+		    bFoundResource = TRUE;
+			break;
+		 }
+	  }
+	  
+	  if bFoundResource
+	  {
+	     return iResource;
+	  }
+	  
+	  return $;
+   }
+   
+   GetServantResourceAmount(what=$)
+   {
+      local iResource;
+	  
+      if what = $
+	  {
+	     return 0;
+	  }
+	  
+	  iResource = Send(self,@GetServantResource,#what=what);
+	  
+	  return Nth(iResource, 2);
+   }
+   
+   GetServantResourceMax(what=$)
+   {
+	  if what = $
+	  {
+	     return $;
+	  }
+	  
+      switch(what)
+	  {
+	     case SERVANT_RESOURCE_HP:
+		    return piServantHealthResourceMax;
+		 break;
+	     case SERVANT_RESOURCE_MANA:
+		    return piServantManaResourceMax;
+		 break;
+	     case SERVANT_RESOURCE_VIGOR:
+		    return piServantVigorResourceMax;
+		 break;
+	  }
+	  
+	  return $;
+   }
+
+   GetServantResourceInterval(what=$)
+   {
+	  if what = $
+	  {
+	     return $;
+	  }
+	  
+      switch(what)
+	  {
+	     case SERVANT_RESOURCE_HP:
+		    return piServantHealthResourceRegenInterval;
+		 break;
+	     case SERVANT_RESOURCE_MANA:
+		    return piServantManaResourceRegenInterval;
+		 break;
+	     case SERVANT_RESOURCE_VIGOR:
+		    return piServantVigorResourceRegenInterval;
+		 break;
+	  }
+	  
+	  return $;
    }
 
 end

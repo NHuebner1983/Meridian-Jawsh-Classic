@@ -121,6 +121,11 @@
 
    // Constants for spell removal for Servants & Masters
    ENCHANT_REMOVE_SERVANT_DELETED = 1
+   
+   // Servant Resource constants
+   SERVANT_RESOURCE_HP = 1
+   SERVANT_RESOURCE_MANA = 2
+   SERVANT_RESOURCE_VIGOR = 3
 
    // Player name color sent as hex RGB value. Define constants
    // for ease of use as needed. Requires OF_PLAYER boolean flag

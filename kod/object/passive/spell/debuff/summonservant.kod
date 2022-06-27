@@ -124,7 +124,7 @@ messages:
 		     Send(bExistingServant, @Delete);
 		  }
 		  
-		  oServant = Create(&Servant,#iSpellNum=viSpell_num);
+		  oServant = Create(&Servant,#who=who,#oSpell=self,#iSpellNum=viSpell_num,#iSpellPower=iSpellPower);
 
 		  iGenRow = Send(who,@GetRow);
 		  iGenCol = Send(who,@GetCol);
@@ -145,10 +145,7 @@ messages:
 			 // Attach the servant to the player + player to the servant.
 			 Send(who,@SetServant,#oServant=oServant);
 			 Send(oServant,@SetMaster,#oMaster=who);
-			 
-			 // Fabricate servant based on the spell being used and its spell power.
-			 Send(oServant,@FabricateServant,#who=who,#oSpell=self,#iSpellNum=viSpell_num,#iSpellPower=iSpellPower);
-			 
+
 			 // Tell the player about their servant being summoned.
 			 Post(who,@MsgSendUser,#message_rsc=summon_servant_arrived,#parm1=Send(oServant,@GetName));
 		  }	  

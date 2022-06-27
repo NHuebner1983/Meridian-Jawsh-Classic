@@ -46,7 +46,7 @@ resources:
    servant_command_no_buffs = "stop buffing me"
    servant_command_do_buffs = "buff me"
    servant_command_taunt = "taunt"
-   servant_command_fight_for_me = "fight for me"
+   servant_command_attack = "attack"
    servant_command_stop_taunting = "stop taunting"
    servant_command_stop_attacking = "stop attacking"
    servant_command_heal_me = "heal me"
@@ -66,7 +66,7 @@ resources:
       "~r~B''say stop taunting'' ~r~B~kand I will stop trying to steal your aggro.~k\n"
       "~r~B''say taunt'' ~r~B~kand it will send me into a rage, stealing your aggro, but it will hurt me a lot.~k\n"
       "~r~B''say stop attacking'' ~r~B~kand I will let you do all of the hard work.~k\n"
-      "~r~B''say fight for me'' ~r~B~kand I will attack your enemies.~k\n"
+      "~r~B''say attack'' ~r~B~kand I will attack your enemies.~k\n"
       "~r~B''say heal me'' ~r~B~kand I will try to use a heal wand I stoled from that corpse over there.~k\n"
       "~r~B''say feed me'' ~r~B~kand I will try to feed you some food I ''may'' have stolen from you. You can't prove anything.~k\n"
       "~r~B''say mystify me'' ~r~B~kand I will give you some of the mana I have been stealing from you.~k\n"
@@ -243,6 +243,20 @@ resources:
    servant_desc_shal = "The servant of shal'ille will protect you from evil and smite your enemies."
    servant_desc_qor = "The servant of qor will blind your enemies and hide you in a shroud of invisiblity."
    servant_desc_jala = "The servant of jala will sing songs to help you survive in battle and flee quickly."
+
+   servant_response_heal_me = "~B~b%s heals you for %i health. We have %i remaining while we collect more."
+   servant_response_heal_me_empty = "~B~k%s does not have enough health preserved to heal you."
+   servant_response_heal_me_full = "~k%s whispers, ''I can't heal you right now. Something tells me you're going to be ok.''"
+   servant_response_feed_me = "~B~b%s feeds you %i ration. We have %i remaining while we collect more."
+   servant_response_feed_me_empty = "~B~k%s does not have enough rations preserved to feed you."
+   servant_response_feed_me_full = "~k%s whispers, ''If I feed you any more food you'll become fat & slow and then I will eat you.''"
+   servant_response_mystify_me = "~B~b%s feeds you %i mystical energy. We have %i remaining while we collect more."
+   servant_response_mystify_me_empty = "~B~k%s does not have enough mystical energy preserved to channel."
+   servant_response_mystify_me_full = "~k%s whispers, ''Maybe you should get one of your faren friends if you need more mana than this.''"
+   
+   servant_talk_max_heal_me = "~k%s whispers, ''Our health reserves are full again. If you need additional health, just ~rsay heal me~r.''~k"
+   servant_talk_max_feed_me = "~k%s whispers, ''Our food reserves are full again. If you need additional vigor, just ~rsay feed me~r.''~k"
+   servant_talk_max_mystify_me = "~k%s whispers, ''Our mana reserves are full again. If you need additional mana, just ~rsay mystify me~r.''~k"
    
 classvars:
    
@@ -332,6 +346,7 @@ properties:
    ptTalk = $
    ptImp = $
    ptTaunt = $
+   ptServantResources = $
    
    // For use when we need to interact with NPCs from afar.
    plNPCLibrary = $
@@ -348,43 +363,138 @@ properties:
    pbAllowBuff = TRUE
    pbAllowAttack = TRUE
    pbAllowCast = TRUE
+   pbAllowTaunt = TRUE
    pbAllowFollow = TRUE
    pbAllowWalkThroughWalls = TRUE
    pbAllowAttackThroughWalls = TRUE
    
    // Servant PVP flags
-   // TODO: Enable PVP defensive
+   // TODO: Enable PVP defensive!
+   //       MORE PVP SETTINGS COMING SOON!
    pbAllowAttackMurderers = FALSE
    
-   // When taunting, the servant will try to grab all master's aggro.
-   // Tank Servant!
-   pbAllowTaunt = FALSE
-
 messages:
-
-   Constructor(iSpellNum=$)
+   
+   // Send these values when you use the Create(&Servant, #...) function.
+   Constructor(who = $, oSpell = $, iSpellNum = $, iSpellPower = $)
    {
+      local iStats, iResistance, iNegativeResistance;
+	  
+	  if who = $ OR NOT IsClass(who, &Player)
+	  {
+	     // Only a player can have a servant.
+		 
+	     propagate;
+	  }
+	  
+	  // Set our master
+	  poMaster = who;
+	  
+	  // The spell object
+	  poSpell = oSpell;
+      
+	  // The spell power from their summon cast.
+	  piSpellPower = iSpellPower;
+	  
 	  // The spell we used to summon the servant
 	  piSpellNum = iSpellNum;
 	  
-	  if piSpellNum <> $ AND sServantName = $
-	  {
-        Send(self,@SetServantName);
-	    Send(self,@SetServantDesc,#iSpellNum=piSpellNum);
-	  }
+	  // The spell school
+	  piSpellSchool = Send(poSpell,@GetSchool);
 	  
+	  // Set damage this servant can do to players & monsters based on spell power.
+	  // They are the same, but I made two versions in case we want to balance PVP and PVE.
+ 	  piPlayerDamage = Bound(piSpellPower / 4, 1, 25) * 100;
+	  piMonsterDamage = Bound(piSpellPower / 4, 1, 25) * 100;
+	  
+	  // Resistances based on spell power.
+      iResistance = Bound(iSpellPower, 1, 90);
+	  iNegativeResistance = Bound(-iSpellPower, -90, -1);
+	  
+	  // Stats based on spell power.
+	  iStats = Bound(iSpellPower / 2, 1, 50);
+	  
+	  // Aim & Agility are the main stats for the servant.
+	  piAim = iStats;
+	  piAgility = iStats;
+	  
+      switch(iSpellNum) {
+		case SID_RIIJA_SERVANT:
+		   Send(self, @SetRiijaSpells);
+		   Send(self, @ShockResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_RIIJA;
+		break;
+		case SID_FAREN_SERVANT:
+		   Send(self, @SetFarenSpells);
+		   Send(self, @NatureResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_FAREN;
+		break;
+		case SID_KRAN_SERVANT:
+		   Send(self, @SetKranSpells);
+		   Send(self, @HolyResistance, #amount=iResistance);
+		   Send(self, @UnholyResistance, #amount=iResistance);
+		   Send(self, @NatureResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iResistance);
+		   poAura = LIGHT_KRAANAN;
+		break;
+		case SID_SHAL_SERVANT:
+		   Send(self, @SetShalSpells);
+		   Send(self, @UnholyResistance, #amount=iNegativeResistance);
+		   Send(self, @HolyResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_SHALILLE;
+		break;
+		case SID_QOR_SERVANT:
+		   Send(self, @SetQorSpells);
+		   Send(self, @HolyResistance, #amount=iNegativeResistance);
+		   Send(self, @UnholyResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_QOR;
+		break;
+		case SID_JALA_SERVANT:
+		   Send(self, @SetJalaSpells);
+		   Send(self, @HolyResistance, #amount=iResistance);
+		   Send(self, @UnholyResistance, #amount=iResistance);
+		   Send(self, @NatureResistance, #amount=iResistance);
+           Send(self, @WeapResistance, #amount=iNegativeResistance);
+		   poAura = LIGHT_JALA;
+		break;
+	  }
+      
+	  // Prepare player's servant resources
+	  // feed me, heal me, mystify me
+	  Send(poMaster,@PrepareServantResources);
+	  
+	  // Set their name and description
+	  Send(self,@PrepareServantNameAndDesc);
+
+	  // Set the plSpellBook attack spells our monster can use
+	  Send(self,@SetServantSpellBook);
+	 
+	  // Start all of the servant's timers.
+	  Send(self,@CreateServantTimers);
+	 	  
       propagate;
    }
    
    Constructed()
+   {   
+	  Send(self,@PrepareServantNameAndDesc);
+	  
+	  propagate;
+   }
+   
+   PrepareServantNameAndDesc()
    {
-	  if piSpellNum <> $ AND sServantName = $
+   	  if piSpellNum <> $ AND sServantName = $
 	  {
         Send(self,@SetServantName);
 	    Send(self,@SetServantDesc,#iSpellNum=piSpellNum);
 	  }
 	  
-	  propagate;
+	  return;
    }
    
    MasterCheck()
@@ -426,8 +536,17 @@ messages:
       Send(self,@StartBuffTimer);
 	  Send(self,@StartTalkTimer);
 	  Send(self,@StartImpTimer);
+	  Send(self,@StartTauntTimer);
+	  Send(self,@StartServantResourcesTimer);
       
       return;
+   }
+   
+   StartServantResourcesTimer()
+   {
+      ptServantResources = CreateTimer(self,@UpdateServantResources,1000);
+	  
+	  return;
    }
    
    StartBuffTimer()
@@ -451,6 +570,40 @@ messages:
 	  return;
    }
    
+   StartTauntTimer()
+   {
+      ptTaunt = CreateTimer(self,@TauntEnemies,1000);
+	  
+	  return;
+   }
+   
+   UpdateServantResources()
+   {
+      if NOT Send(self,@MasterCheck)
+	  {
+	     return;
+	  }
+	  
+	  Send(self,@StartServantResourcesTimer);
+
+	  if Send(poMaster,@IncrementServantResourceInterval,#what=SERVANT_RESOURCE_HP)
+	  {
+	     Send(poMaster,@IncrementServantResource,#what=SERVANT_RESOURCE_HP,#amount=1);
+	  }
+	  
+	  if Send(poMaster,@IncrementServantResourceInterval,#what=SERVANT_RESOURCE_MANA)
+	  {
+	     Send(poMaster,@IncrementServantResource,#what=SERVANT_RESOURCE_MANA,#amount=1);
+	  }
+	  
+	  if Send(poMaster,@IncrementServantResourceInterval,#what=SERVANT_RESOURCE_VIGOR)
+	  {
+	     Send(poMaster,@IncrementServantResource,#what=SERVANT_RESOURCE_VIGOR,#amount=1);
+	  }
+	  
+	  return;
+   }
+
    ClearServantTimers()
    {
       if NOT Send(self,@MasterCheck)
@@ -864,95 +1017,6 @@ messages:
       return piMonsterDamage;
    }
 
-   // ----
-   // Our main setup for the servant.
-   // ----
-   FabricateServant(who = $, oSpell = $, iSpellNum = $, iSpellPower = $)
-   {
-      local iStats, iResistance, iNegativeResistance;
-	  
-	  // The spell object
-	  poSpell = oSpell;
-      
-	  // The spell power from their summon cast.
-	  piSpellPower = iSpellPower;
-	  
-	  // The spell we used to summon the servant
-	  piSpellNum = iSpellNum;
-	  
-	  // The spell school
-	  piSpellSchool = Send(poSpell,@GetSchool);
-	  
-	  // Set damage this servant can do to players & monsters based on spell power.
-	  // They are the same, but I made two versions in case we want to balance PVP and PVE.
- 	  piPlayerDamage = Bound(piSpellPower / 4, 1, 25) * 100;
-	  piMonsterDamage = Bound(piSpellPower / 4, 1, 25) * 100;
-	  
-	  // Resistances based on spell power.
-      iResistance = Bound(iSpellPower, 1, 90);
-	  iNegativeResistance = Bound(-iSpellPower, -90, -1);
-	  
-	  // Stats based on spell power.
-	  iStats = Bound(iSpellPower / 2, 1, 50);
-	  
-	  // Aim & Agility are the main stats for the servant.
-	  piAim = iStats;
-	  piAgility = iStats;
-	  
-      switch(iSpellNum) {
-		case SID_RIIJA_SERVANT:
-		   Send(self, @SetRiijaSpells);
-		   Send(self, @ShockResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_RIIJA;
-		break;
-		case SID_FAREN_SERVANT:
-		   Send(self, @SetFarenSpells);
-		   Send(self, @NatureResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_FAREN;
-		break;
-		case SID_KRAN_SERVANT:
-		   Send(self, @SetKranSpells);
-		   Send(self, @HolyResistance, #amount=iResistance);
-		   Send(self, @UnholyResistance, #amount=iResistance);
-		   Send(self, @NatureResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iResistance);
-		   poAura = LIGHT_KRAANAN;
-		break;
-		case SID_SHAL_SERVANT:
-		   Send(self, @SetShalSpells);
-		   Send(self, @UnholyResistance, #amount=iNegativeResistance);
-		   Send(self, @HolyResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_SHALILLE;
-		break;
-		case SID_QOR_SERVANT:
-		   Send(self, @SetQorSpells);
-		   Send(self, @HolyResistance, #amount=iNegativeResistance);
-		   Send(self, @UnholyResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_QOR;
-		break;
-		case SID_JALA_SERVANT:
-		   Send(self, @SetJalaSpells);
-		   Send(self, @HolyResistance, #amount=iResistance);
-		   Send(self, @UnholyResistance, #amount=iResistance);
-		   Send(self, @NatureResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_JALA;
-		break;
-	  }
-     
-	 // Set the plSpellBook attack spells our monster can use
-	 Send(self,@SetServantSpellBook);
-	 
-	 // Start all of the servant's timers.
-	 Send(self,@CreateServantTimers);
-	 
-	 return;
-   }
-   
    // Can't attack players.
    // YET.
    // TODO: Allow attacking players if a player attacks the servant owner.
@@ -1536,7 +1600,7 @@ messages:
 
    GetSaidServantCommand(said_string="derpaderp")
    {
-      local bIsCommand;
+      local bIsCommand, iPlayerMissingHealth, iPlayerMissingMana, iPlayerMissingVigor, iPulledAmount;
 	  
 	  bIsCommand = FALSE;
 	  
@@ -1545,7 +1609,6 @@ messages:
 	     if pbAllowTalk
 		 {
 		    pbAllowTalk = FALSE;
-		    Debug("Servant will stop talking");
 		 }
 		 
 	     bIsCommand = TRUE;
@@ -1556,7 +1619,6 @@ messages:
 	     if NOT pbAllowTalk
 		 {
 		    pbAllowTalk = TRUE;
-	        Debug("Servant will talk again");
 		 }
 		 
 	     bIsCommand = TRUE;
@@ -1571,7 +1633,6 @@ messages:
 	     if pbAllowBuff
 		 {
 		    pbAllowBuff = FALSE;
-	        Debug("Servant will stop buffing");
 		 }
 		 
 	     bIsCommand = TRUE;
@@ -1581,7 +1642,6 @@ messages:
 	     if NOT pbAllowBuff
 		 {
 		    pbAllowBuff = TRUE;
-	        Debug("Servant will do buffs");
 		 }
 		 
 	     bIsCommand = TRUE;
@@ -1591,8 +1651,6 @@ messages:
 	     if pbAllowTaunt
 		 {
 		    pbAllowTaunt = FALSE;
-		    Send(self,@ClearTauntTimer);
-	        Debug("Servant will stop taunting");
 		 }
 		 
 	     bIsCommand = TRUE;
@@ -1602,8 +1660,6 @@ messages:
 	     if NOT pbAllowTaunt
 		 {
 		    pbAllowTaunt = TRUE;
-		    Send(self,@TauntEnemies);
-			Debug("Servant will taunt");
 		 }
 		 
 	     bIsCommand = TRUE;
@@ -1616,42 +1672,115 @@ messages:
 			plSpellBook = $;
             Send(self,@TweakBehavior);
 			Send(self,@SetState,#bit=STATE_WAIT);
-
-	        Debug("Servant will stop attacking");
 		 }
 		 
 	     bIsCommand = TRUE;
       }
-      if StringEqual(said_string, servant_command_fight_for_me)
+      if StringEqual(said_string, servant_command_attack)
       {
 	     if NOT pbAllowAttack
 		 {
 		    pbAllowAttack = TRUE;
 			Send(self,@SetServantSpellBook);
             Send(self,@TweakBehavior);
-	        Debug("Servant will resume attacking");
 		 }
 		 
 	     bIsCommand = TRUE;
       }
       if StringEqual(said_string, servant_command_heal_me)
       {
-	     Debug("Servant will heal me");
+	     iPlayerMissingHealth = Send(poMaster, @GetMissingHealth);
+		 
+		 if iPlayerMissingHealth <> 0
+		 {
+		    iPulledAmount = Send(poMaster, @DecrementServantResource,#what=SERVANT_RESOURCE_HP,#amount=iPlayerMissingHealth);
+
+		    if iPulledAmount <= 0
+		    {
+		       Post(poMaster,@MsgSendUser,#message_rsc=servant_response_heal_me_empty,
+			      #parm1=Send(self,@GetName));
+		    }
+		    else
+		    {
+		       Post(poMaster,@MsgSendUser,#message_rsc=servant_response_heal_me,
+			      #parm1=Send(self,@GetName),#parm2=iPulledAmount,
+			      #parm3=Send(poMaster, @GetServantResourceAmount, #what=SERVANT_RESOURCE_HP));
+				  
+			   Send(poMaster,@GainHealth,#amount=iPulledAmount,#precision=FALSE);
+		    }
+		 }
+		 else
+		 {
+		    Post(poMaster,@MsgSendUser,#message_rsc=servant_response_heal_me_full,
+			   #parm1=Send(self,@GetName));
+		 }
+		 
 	     bIsCommand = TRUE;
       }
       if StringEqual(said_string, servant_command_feed_me)
       {
-	     Debug("Servant will feed me");
+	     iPlayerMissingVigor = Send(poMaster, @GetMissingVigor);
+
+		 if iPlayerMissingVigor <> 0
+		 {
+		    iPulledAmount = Send(poMaster, @DecrementServantResource,#what=SERVANT_RESOURCE_VIGOR,#amount=iPlayerMissingVigor);
+
+		    if iPulledAmount <= 0
+		    {
+		       Post(poMaster,@MsgSendUser,#message_rsc=servant_response_feed_me_empty,
+			      #parm1=Send(self,@GetName));
+		    }
+		    else
+		    {
+		       Post(poMaster,@MsgSendUser,#message_rsc=servant_response_feed_me,
+			      #parm1=Send(self,@GetName),#parm2=iPulledAmount,
+			      #parm3=Send(poMaster, @GetServantResourceAmount, #what=SERVANT_RESOURCE_VIGOR));
+				  
+			   Send(poMaster,@GainVigor,#amount=iPulledAmount);
+		    }
+		 }
+		 else
+		 {
+		    Post(poMaster,@MsgSendUser,#message_rsc=servant_response_feed_me_full,
+			   #parm1=Send(self,@GetName));
+		 }
+
 	     bIsCommand = TRUE;
       }
       if StringEqual(said_string, servant_command_mystify_me)
       {
-	     Debug("Servant will mystic touch me");
+	     iPlayerMissingMana = Send(poMaster, @GetMissingMana);
+
+		 if iPlayerMissingMana <> 0
+		 {
+		    iPulledAmount = Send(poMaster, @DecrementServantResource,#what=SERVANT_RESOURCE_MANA,#amount=iPlayerMissingMana);
+
+		    if iPulledAmount <= 0
+		    {
+		       Post(poMaster,@MsgSendUser,#message_rsc=servant_response_mystify_me_empty,
+			      #parm1=Send(self,@GetName));
+		    }
+		    else
+		    {
+		       Post(poMaster,@MsgSendUser,#message_rsc=servant_response_mystify_me,
+			      #parm1=Send(self,@GetName),#parm2=iPulledAmount,
+			      #parm3=Send(poMaster, @GetServantResourceAmount, #what=SERVANT_RESOURCE_MANA));
+				  
+			   Send(poMaster,@GainMana,#amount=iPulledAmount);
+		    }
+		 }
+		 else
+		 {
+		    Post(poMaster,@MsgSendUser,#message_rsc=servant_response_mystify_me_full,
+			   #parm1=Send(self,@GetName));
+		 }
+		 
 	     bIsCommand = TRUE;
       }
       if StringEqual(said_string, servant_command_go_away)
       {
-	     Debug("Servant will go away");
+	     Send(self,@GracefullyDeleteServant);
+		 
 	     bIsCommand = TRUE;
       }	  
       
