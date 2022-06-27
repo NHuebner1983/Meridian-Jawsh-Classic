@@ -28,15 +28,49 @@ resources:
    servant_desc_rsc = \
       "A magical creature."
 
+   servant_empty_rsc = ""
+   
    servant_dead_icon_rsc = faerieXG.bgf
    servant_dead_name_rsc = "dead servant"
 
    servant_fireball = feyball.bgf
-
    servant_sound_hit = none
    servant_sound_miss = none
    servant_sound_death = none
    servant_sound_aware = none
+   
+   // Servant commands
+   servant_command_quiet = "shut up"
+   servant_command_loud = "talk more"
+   servant_command_help = "help"
+   servant_command_no_buffs = "stop buffing me"
+   servant_command_do_buffs = "buff me"
+   servant_command_taunt = "taunt"
+   servant_command_fight_for_me = "fight for me"
+   servant_command_stop_taunting = "stop taunting"
+   servant_command_stop_attacking = "stop attacking"
+   servant_command_heal_me = "heal me"
+   servant_command_feed_me = "feed me"
+   servant_command_mystify_me = "mystify me"
+   servant_command_go_away = "go away"
+   
+   // Servant help response
+   servant_response_help = \
+      "~kYour servant replies in a sarcastic tone...''Well, if it isn't the almighty master asking for my help...''~k\n"
+      "~kYour servant whispers to you, ''Don't worry, I've got you covered. Also, check my description to see my powers.''~k\n"
+      "~b~BYour servant clears their throat to begin a long speech...~B~b\n"
+      "~r~B''say shut up'' ~r~B~kand I will certainly stop talking. So rude of you.~k\n"
+      "~r~B''say talk more'' ~r~B~kand I will be encouraged to talk more. I have lots to say about myself.~k\n"
+      "~r~B''say stop buffing me'' ~r~B~kand I will stop casting beneficial spells...your loss pal.~k\n"
+      "~r~B''say buff me'' ~r~B~kand I will resume casting beneficial spells.~k\n"
+      "~r~B''say stop taunting'' ~r~B~kand I will stop trying to steal your aggro.~k\n"
+      "~r~B''say taunt'' ~r~B~kand it will send me into a rage, stealing your aggro, but it will hurt me a lot.~k\n"
+      "~r~B''say stop attacking'' ~r~B~kand I will let you do all of the hard work.~k\n"
+      "~r~B''say fight for me'' ~r~B~kand I will attack your enemies.~k\n"
+      "~r~B''say heal me'' ~r~B~kand I will try to use a heal wand I stoled from that corpse over there.~k\n"
+      "~r~B''say feed me'' ~r~B~kand I will try to feed you some food I ''may'' have stolen from you. You can't prove anything.~k\n"
+      "~r~B''say mystify me'' ~r~B~kand I will give you some of the mana I have been stealing from you.~k\n"
+      "~r~B''say go away'' ~r~B~kand I will leave you to fend for yourself. I have better things to do anyways, loser.~k\n"
    
    // RPG Random Names
    servant_name_1 = "Eimmilth, The Mammoth"
@@ -227,7 +261,7 @@ classvars:
    
    viDefault_behavior = AI_MOVE_FOLLOW_MASTER     | AI_FIGHT_MONSTERS \
                       | AI_FIGHT_HYPERAGGRESSIVE  | AI_FIGHT_SWITCHALOT    | AI_MOVE_REGROUP \
-	                  | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_THROUGH_WALLS
+	                  | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_THROUGH_WALLS | AI_FIGHT_NEWBIESAFE
 	   
    viWimpy = 2
 
@@ -295,9 +329,9 @@ properties:
    
    // Timers
    ptBuffs = $
-   ptCasts = $
    ptTalk = $
    ptImp = $
+   ptTaunt = $
    
    // For use when we need to interact with NPCs from afar.
    plNPCLibrary = $
@@ -305,6 +339,26 @@ properties:
    
    // Servant's randomized name
    sServantName = $
+   
+   // Servant's commands
+   plServantCommands = $
+
+   // Servant Defaults
+   pbAllowTalk = TRUE
+   pbAllowBuff = TRUE
+   pbAllowAttack = TRUE
+   pbAllowCast = TRUE
+   pbAllowFollow = TRUE
+   pbAllowWalkThroughWalls = TRUE
+   pbAllowAttackThroughWalls = TRUE
+   
+   // Servant PVP flags
+   // TODO: Enable PVP defensive
+   pbAllowAttackMurderers = FALSE
+   
+   // When taunting, the servant will try to grab all master's aggro.
+   // Tank Servant!
+   pbAllowTaunt = FALSE
 
 messages:
 
@@ -345,6 +399,20 @@ messages:
 	  return TRUE;
    }
    
+   TweakBehavior(mob = $)
+   {
+      Send(self,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=pbAllowFollow);
+      Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_MURDERERS,#value=pbAllowAttackMurderers);
+      Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS,#value=pbAllowAttack);
+      Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_HYPERAGGRESSIVE,#value=TRUE);
+      Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_SWITCHALOT,#value=TRUE);
+      Send(self,@SetBehaviorFlag,#flag=AI_MOVE_REGROUP,#value=TRUE);
+      Send(self,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS,#value=pbAllowWalkThroughWalls);
+      Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_THROUGH_WALLS,#value=pbAllowAttackThroughWalls);
+
+      return;
+   }
+
    CreateServantTimers()
    {
       // Clear existing timers
@@ -352,9 +420,10 @@ messages:
 	  
 	  // Create some default data we need while working with timers
 	  Send(self,@SetServantTalk);
-
+	  
+	  // Start the servant's timers
+	  // TODO: Figure out why we're getting "Delete Timer / Cleanup Timer Failures all over our logs"...
       Send(self,@StartBuffTimer);
-	  Send(self,@StartCastTimer);
 	  Send(self,@StartTalkTimer);
 	  Send(self,@StartImpTimer);
       
@@ -368,13 +437,6 @@ messages:
 	  return;
    }
 
-   StartCastTimer()
-   {
-      ptCasts = CreateTimer(self,@ServantCasts,5000);
-	  
-	  return;
-   }
-
    StartTalkTimer()
    {
       ptTalk = CreateTimer(self,@ServantTalk,120000);
@@ -384,7 +446,7 @@ messages:
 
    StartImpTimer()
    {
-      ptImp = CreateTimer(self,@ServantImps,3000);
+      ptImp = CreateTimer(self,@ServantImps,10000);
 	  
 	  return;
    }
@@ -400,11 +462,6 @@ messages:
 	  {
 	     DeleteTimer(ptBuffs);
 		 ptBuffs = $;
-	  }
-      if ptCasts <> $ AND IsTimer(ptCasts) AND GetTimeRemaining(ptCasts) > 0
-	  {
-	     DeleteTimer(ptCasts);
-		 ptCasts = $;
 	  }
       if ptTalk <> $ AND IsTimer(ptTalk) AND GetTimeRemaining(ptTalk) > 0
 	  {
@@ -424,7 +481,7 @@ messages:
    {
       local iRandom, iSpellGroup, iSpellPower, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove;
 	  
-	  if NOT Send(self,@MasterCheck)
+	  if NOT Send(self,@MasterCheck) OR NOT pbAllowBuff
 	  {
 	     return;
 	  }
@@ -546,25 +603,11 @@ messages:
       return 200;
    }
    
-   ServantCasts()
-   {
-	  if NOT Send(self,@MasterCheck)
-	  {
-	     return;
-	  }
-   
-	  // Do nothing for now, this is supposed to be automatically handled :(
-	  
-	  Send(self,@StartCastTimer);
-	  
-      return;
-   }
-
    ServantTalk()
    {
       local iRandomPart, iRandomPiece, chosen_resource, tmp_rsc;
 	  
-	  if NOT Send(self,@MasterCheck)
+	  if NOT Send(self,@MasterCheck) OR NOT pbAllowTalk
 	  {
 	     return;
 	  }
@@ -912,6 +955,11 @@ messages:
 	     // TODO: Detect if the player has started PVP against the servant owner.
          return FALSE;
       }
+	  
+	  if NOT pbAllowAttack
+	  {
+	     return FALSE;
+	  }
 
       propagate;
    }
@@ -1186,17 +1234,23 @@ messages:
 
       if IsClass(what,&User) AND poMaster = what
       {
-		 // Check for player advancement (skills/spells).
-		 Send(self,@GetSaidProgress,#said_string=string);
+	     // Check for basic servant commands, they're the easiest to figure out first.
+		 bResponded = Send(self,@GetSaidServantCommand,#said_string=string);
+		 
+	     if NOT bResponded
+	     {
+		    // Check for player advancement (skills/spells).
+		    bResponded = Send(self,@GetSaidProgress,#said_string=string);
+	     }
       }
 	  
 	  // Clear out the NPC library - it may be causing errors if we leave the data.
 	  plNPCLibrary = $;
-	  
+	  	  
       propagate;
    }
-   
-   GetSaidProgress(who=$, said_string="derpaderp")
+      
+   GetSaidProgress(said_string="derpaderp")
    {
       local lNPCLibraryItem, oAbility, oAbilityName, iAbilityNum, oNPC, iLearnedAlready, bCanLearn, oSpell, oSkill;
 	  
@@ -1414,6 +1468,164 @@ messages:
       AddPacket(4,vrDesc);
 	  
       return;
+   }
+   
+   // Adds "the or a <servant name>" to things the servant shows in chat.
+   GetDef()
+   {
+      return servant_empty_rsc;
+   }
+   
+   // Adds "The or A <servant name>" to things the servant shows in chat.
+   GetCapDef()
+   {
+      return servant_empty_rsc;
+   }
+
+   TauntEnemies()
+   {
+   	  if NOT Send(self,@MasterCheck) OR NOT pbAllowTaunt
+	  {
+	     return;
+	  }
+   
+      ptTaunt = CreateTimer(self,@TauntEnemies,1000);
+	  
+	  return;
+   }
+   
+   ClearTauntTimer()
+   {
+      if ptTaunt <> $ AND IsTimer(ptTaunt)
+	  {
+	     DeleteTimer(ptTaunt);
+	  }
+	  
+	  return;
+   }
+
+   GetSaidServantCommand(said_string="derpaderp")
+   {
+      local bIsCommand;
+	  
+	  bIsCommand = FALSE;
+	  
+      if StringEqual(said_string, servant_command_quiet)
+      {
+	     if pbAllowTalk
+		 {
+		    pbAllowTalk = FALSE;
+		    Debug("Servant will stop talking");
+		 }
+		 
+	     bIsCommand = TRUE;
+      }
+	  
+      if StringEqual(said_string, servant_command_loud)
+      {
+	     if NOT pbAllowTalk
+		 {
+		    pbAllowTalk = TRUE;
+	        Debug("Servant will talk again");
+		 }
+		 
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_help)
+      {
+	     Post(poMaster,@MsgSendUser,#message_rsc=servant_response_help);
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_no_buffs)
+      {
+	     if pbAllowBuff
+		 {
+		    pbAllowBuff = FALSE;
+	        Debug("Servant will stop buffing");
+		 }
+		 
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_do_buffs)
+      {
+	     if NOT pbAllowBuff
+		 {
+		    pbAllowBuff = TRUE;
+	        Debug("Servant will do buffs");
+		 }
+		 
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_stop_taunting)
+      {
+	     if pbAllowTaunt
+		 {
+		    pbAllowTaunt = FALSE;
+		    Send(self,@ClearTauntTimer);
+	        Debug("Servant will stop taunting");
+		 }
+		 
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_taunt)
+      {
+	     if NOT pbAllowTaunt
+		 {
+		    pbAllowTaunt = TRUE;
+		    Send(self,@TauntEnemies);
+			Debug("Servant will taunt");
+		 }
+		 
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_stop_attacking)
+      {
+	     if pbAllowAttack
+		 {
+		    pbAllowAttack = FALSE;
+			plSpellBook = $;
+            Send(self,@TweakBehavior);
+			Send(self,@SetState,#bit=STATE_WAIT);
+
+	        Debug("Servant will stop attacking");
+		 }
+		 
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_fight_for_me)
+      {
+	     if NOT pbAllowAttack
+		 {
+		    pbAllowAttack = TRUE;
+			Send(self,@SetServantSpellBook);
+            Send(self,@TweakBehavior);
+	        Debug("Servant will resume attacking");
+		 }
+		 
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_heal_me)
+      {
+	     Debug("Servant will heal me");
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_feed_me)
+      {
+	     Debug("Servant will feed me");
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_mystify_me)
+      {
+	     Debug("Servant will mystic touch me");
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_go_away)
+      {
+	     Debug("Servant will go away");
+	     bIsCommand = TRUE;
+      }	  
+      
+	  return bIsCommand;
    }
 
 end
