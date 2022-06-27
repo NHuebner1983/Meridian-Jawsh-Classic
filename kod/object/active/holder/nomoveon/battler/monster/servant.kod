@@ -453,7 +453,7 @@ messages:
    
    ClearServantTimers()
    {
-      if poMaster = $
+      if NOT Send(self,@MasterCheck)
 	  {
 	     return;
 	  }
@@ -1094,7 +1094,7 @@ messages:
    {
    	  Send(self,@ClearServantTimers);
 
-      if poMaster <> $ 
+      if Send(self,@MasterCheck) 
 	  {
          Send(self,@RemoveImportantServantEnchants);
 	     Send(poMaster,@RemoveControlledMinion,#what=self);
@@ -1185,7 +1185,7 @@ messages:
    {
       local iMasterDistance, iServantState, iActionDistance;
 	  
-      if poOwner <> $ AND poMaster <> $
+      if poOwner <> $ AND Send(self,@MasterCheck)
       {
          Send(poOwner,@DeleteWallsAroundBattler,#who=self);
       }
@@ -1195,7 +1195,7 @@ messages:
 	     propagate;
 	  }
 	  
-	  if poMaster <> $ AND what = poMaster
+	  if Send(self,@MasterCheck) AND what = poMaster
 	  {
 	     iMasterDistance = Send(self,@SquaredDistanceTo,#what=poMaster);
 		 iServantState = Send(self,@GetState);
@@ -1510,6 +1510,15 @@ messages:
 	  if NOT pbAllowTaunt
 	  {
 	     return;
+	  }
+	  
+	  if poTarget <> $ AND IsClass(poTarget,&Monster)
+	  {
+	     // Tells the target to switch to the servant
+		 // with a massive amount of hate.
+		 // Only works if you enter combat with the monster.
+         Send(poTarget,@TargetSwitch,#what=self,
+            #iHatred=10000);
 	  }
 	  
 	  return;
