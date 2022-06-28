@@ -936,9 +936,10 @@ messages:
 	     [60, SID_MARK_OF_DISHONOR, 30],
 	     [90, SID_PURGE, 5]
 	  ];
+     
+	  // 	     [0,  SID_BREATH_OF_LIFE, 4, $],  --- Disabled, steals life from master for some reason.
 	  
       plBuffs = [
-	     [0,  SID_BREATH_OF_LIFE, 4, $],
 	     [0,  SID_MINOR_HEAL, 20, $],
 	     [0,  SID_DETECT_EVIL, 100, $],
 	     [0,  SID_CURE_POISON, 100, $],
