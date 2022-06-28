@@ -1711,6 +1711,7 @@
    SPEED_FASTER        = 18
    SPEED_VERY_FAST     = 20
    SPEED_HACKER        = 50
+   SPEED_WOLFPACKER    = 75
    
    // Flags indicating enchantments
    ENCH_PALSY       = 0x01

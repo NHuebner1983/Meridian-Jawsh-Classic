@@ -269,7 +269,7 @@ classvars:
 
    viTreasure_type = TID_NONE
 
-   viSpeed = SPEED_HACKER
+   viSpeed = SPEED_WOLFPACKER
    viAttack_type = ATCK_WEAP_SLASH
    viAttack_spell = 0
    
