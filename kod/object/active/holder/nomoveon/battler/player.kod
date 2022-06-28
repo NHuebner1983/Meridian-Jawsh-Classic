@@ -14488,7 +14488,7 @@ messages:
 		 if NOT FindListElem(plAggro, what)
 		 {
             plAggro = AppendListElem(what, plAggro);
-		    Debug("Added Aggro",Send(what,@GetName),Length(plAggro));
+		    //Debug("Added Aggro",Send(what,@GetName),Length(plAggro));
 		 }
 	  }
 	  
@@ -14508,7 +14508,7 @@ messages:
 	     if FindListElem(plAggro, what)
 		 {
 		    plAggro = DelListElem(plAggro, what);
-		    Debug("Removed Aggro",Send(what,@GetName),Length(plAggro));
+		    //Debug("Removed Aggro",Send(what,@GetName),Length(plAggro));
 		 }
 	  }
 	  
