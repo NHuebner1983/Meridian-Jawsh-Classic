@@ -882,13 +882,13 @@ messages:
 
       return;
    }
+   //	     [40, SID_REFLECTION, 20],   --- Disabled (need restraint on max # of reflections monsters can have).
 
    SetRiijaSpells()
    {
       plCasts = [
 	     [0,  SID_FLASH, 50],
 	     [30, SID_ILLUSIONARY_WOUNDS, 50],
-	     [40, SID_REFLECTION, 20],
 	     [40, SID_FORGET, 5],
 	     [50, SID_VERTIGO, 20],
 	     [60, SID_APPARITION, 20],
@@ -901,6 +901,7 @@ messages:
 	  
       return;
    }
+   // 	     [20, SID_RELAY, 5, $],  --- Disabled (currently reduces vigor to 150 if above 150).
 
    SetKranSpells()
    {
@@ -910,7 +911,6 @@ messages:
       plCasts = $;
 
       plBuffs = [
-	     [20, SID_RELAY, 5, $],
 		 [30, SID_MARTYRS_BATTLEGROUND, 100, $],
 		 [30, SID_NIGHT_VISION, 100, $],
 	     [40, SID_BLESS, 100, $],
@@ -965,12 +965,13 @@ messages:
 	     [95, SID_BLIND, 9]
 	  ];
 
+      // 	     [90, SID_SHALILLEBANE, 90, $],  --- Disabled (untested in PVP) - May flag player orange.
+
       plBuffs = [
 	     [0,  SID_CLOAK, 100, $],
 	     [20, SID_DARKNESS, 100, $],
 	     [30, SID_DETECT_GOOD, 100, $],
 	     [40, SID_UNHOLY_RESOLVE, 100, $],
-	     [90, SID_SHALILLEBANE, 90, $],
 	     [90, SID_DEATH_LINK, 100, $],
 	     [90, SID_INVISIBILITY, 50, $]
 	  ];
