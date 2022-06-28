@@ -657,7 +657,7 @@ messages:
    
    ServantBuffs()
    {
-      local iRandom, iSpellGroup, iSpellPower, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove;
+      local iRandom, iSpellGroup, iSpellPower, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions;
 	  
 	  if NOT Send(self,@MasterCheck)
 	  {
@@ -715,6 +715,15 @@ messages:
 			   AND (NOT Send(poOwner,@IsEnchanted,#what=oSpell))
             {
 			   //Debug("Casting",Send(oSpell,@GetName));
+		       
+			   // Prevent servants from having too many reflections/minions.
+		       lMinions = Send(self,@GetControlledMinions);
+			
+		       if iSpellNum = SID_REFLECTION AND lMinions <> $ AND Length(lMinions) >= MAX_SERVANT_MINIONS
+		       {
+		          return;
+			   }
+			   
                Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
             }			   
 		 }
@@ -882,21 +891,21 @@ messages:
 
       return;
    }
-   //	     [40, SID_REFLECTION, 20],   --- Disabled (need restraint on max # of reflections monsters can have).
 
    SetRiijaSpells()
    {
       plCasts = [
 	     [0,  SID_FLASH, 50],
 	     [30, SID_ILLUSIONARY_WOUNDS, 50],
-	     [40, SID_FORGET, 5],
+		 [40, SID_FORGET, 5],
 	     [50, SID_VERTIGO, 20],
 	     [60, SID_APPARITION, 20],
 	     [95, SID_EVIL_TWIN, 20]
 	  ];
 
       plBuffs = [
-	     [0,  SID_SHADOW_FORM, 100, $]
+	     [0,  SID_SHADOW_FORM, 100, $],
+		 [40, SID_REFLECTION, 20, $]
 	  ];
 	  
       return;
@@ -1178,6 +1187,8 @@ messages:
    
    GracefullyDeleteServant()
    {
+      Send(self,@RemoveAllMinions);
+
    	  Send(self,@ClearServantTimers);
 
       if Send(self,@MasterCheck) 
@@ -1806,6 +1817,11 @@ messages:
       }	  
       
 	  return bIsCommand;
+   }
+
+   DMCanArmageddon()
+   {
+      return FALSE;
    }
 
 end

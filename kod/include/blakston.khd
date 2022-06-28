@@ -2090,6 +2090,9 @@
    SID_FAREN_SERVANT = 204
    SID_QOR_SERVANT = 205
    SID_JALA_SERVANT = 206
+   
+   // Maximum number of pets our servant can have
+   MAX_SERVANT_MINIONS = 2
 
    SID_LIGHTNING_BOLT = 1
    SID_MINOR_HEAL = 2

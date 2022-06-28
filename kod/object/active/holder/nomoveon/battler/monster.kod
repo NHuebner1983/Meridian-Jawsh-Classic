@@ -4993,7 +4993,7 @@ messages:
    MonsterCastSpell()
    "Handle monster spellcasting here."
    {
-      local i, iDistance, oSpell, iRandom, lTargets, iSpellNum, iManaCost;
+      local i, iDistance, oSpell, iRandom, lTargets, iSpellNum, iManaCost, lMinions;
 	  
 	  ptMonsterCastTimer = CreateTimer(self,@MonsterCastSpell,piMonsterCastInterval);
 	  
@@ -5064,6 +5064,17 @@ messages:
          // Find the valid targets, defaulting to poTarget.
          lTargets = [poTarget];
          lTargets = Send(oSpell,@GetTargets,#who=self,#lTargets=lTargets);
+		 
+		 if IsClass(self, &Servant)
+		 {
+		    // Prevent servants from having too many reflections/minions.
+		    lMinions =  Send(self,@GetControlledMinions);
+			
+		    if iSpellNum = SID_REFLECTION AND lMinions <> $ AND Length(lMinions) >= MAX_SERVANT_MINIONS
+		    {
+		       return FALSE;
+		    }
+		 }
 
          // See if we can cast the spell here.
          if Send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,#lItems=lTargets)
