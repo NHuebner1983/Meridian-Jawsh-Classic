@@ -163,7 +163,16 @@ messages:
       {
          return;
       }
-
+	  
+	  if what <> $ AND IsClass(what, &Player)
+	  {
+	     if Send(what,@GetAggroCount) >= MAX_AGGRO AND NOT Send(what,@HasAggro,#what=mob)
+		 {
+		    // Ignore the user, they are already being aggro'd by too many things.
+			return;
+		 }
+	  }
+	  
       /// We now process all SomethingMoved calls for fluidity.
       //if (ignoreWait = FALSE)
       //   AND Random(1,5) <> 5
@@ -251,7 +260,7 @@ messages:
       local oTarget, iType, bSwitch;
 
       oTarget = Send(mob,@GetTarget);
-
+	  
       //// Sanity check
       if what=$
       {
@@ -262,6 +271,22 @@ messages:
       {
          return;
       }
+	  
+	  if IsClass(what, &Monster) AND IsClass(victim, &Player) AND NOT IsClass(what, &Servant)
+	  {
+	     // Monster attacked player
+		 // Make sure the monster is known as an aggressor.
+		 Send(victim,@AddAggro,#what=what);
+	  }
+	  
+	  if IsClass(what, &Player) AND IsClass(victim, &Monster) AND NOT IsClass(victim, &Servant)
+	  {
+	     // Player attacked monster
+		 // Make sure the monster is known as an aggressor.
+		 Send(what,@AddAggro,#what=victim);
+	  }
+
+      //Debug(Send(what,@GetName),"attacked",Send(victim,@GetName));
 
       iType = TS_FIGHT;
       if victim = mob
@@ -1200,7 +1225,7 @@ messages:
 
       if iHatred <= 0 AND NOT (behavior & AI_FIGHT_AGGRESSIVE)
       {
-         return 0;
+	     return 0;
       }
 
       // This is the monster vision check. If 'what' attacked us, skip
@@ -1297,6 +1322,15 @@ messages:
          return FALSE;
       }
 
+	  if what <> $ AND IsClass(what, &Player)
+	  {
+	     if Send(what,@GetAggroCount) >= MAX_AGGRO AND NOT Send(what,@HasAggro,#what=mob)
+		 {
+		    // Ignore the user, they are already being aggro'd by too many things.
+			return FALSE;
+		 }
+	  }
+	  
       behavior = Send(mob,@GetBehavior);
       iHatred = Send(self,@GetHatred,#what=what,#mob=mob,
                      #event=event,#behavior=behavior);

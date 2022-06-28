@@ -1079,7 +1079,8 @@ properties:
    ptAttackTimer = $
 
    plHonor = $
-
+   
+   plAggro = $
    piMonsterChasers = 0
 
    piView = $
@@ -14449,6 +14450,7 @@ messages:
 
    ResetMonsterChasers()
    {
+      plAggro = $;
       piMonsterChasers = 0;
 
       return;
@@ -14470,7 +14472,77 @@ messages:
 
    GetMonsterChasers()
    {
-      return piMonsterChasers;
+	  return piMonsterChasers;
+   }
+   
+   AddAggro(what=$)
+   {
+      if what <> $ AND IsClass(what, &Monster) AND NOT IsClass(what, &Servant)
+	  {
+         if plAggro = $
+	     {
+	        plAggro = [];
+		    Debug("Set plAggro to []");
+	     }
+		 
+		 if NOT FindListElem(plAggro, what)
+		 {
+            plAggro = AppendListElem(what, plAggro);
+		    Debug("Added Aggro",Send(what,@GetName),Length(plAggro));
+		 }
+	  }
+	  
+	  return Length(plAggro);
+   }
+   
+   ReduceAggro(what=$)
+   {
+      if what <> $ AND IsClass(what, &Monster) AND NOT IsClass(what, &Servant)
+	  {
+         if plAggro = $
+	     {
+	        plAggro = [];
+		    Debug("Set plAggro to []");
+	     }
+		 
+	     if FindListElem(plAggro, what)
+		 {
+		    plAggro = DelListElem(plAggro, what);
+		    Debug("Removed Aggro",Send(what,@GetName),Length(plAggro));
+		 }
+	  }
+	  
+      return Length(plAggro);
+   }
+   
+   GetAggroCount()
+   {
+      local iCount;
+	  
+	  iCount = 0;
+	  
+	  if plAggro = $
+	  {
+	     return 0;
+	  }
+	  
+	  iCount = Length(plAggro);
+	  
+      return iCount;
+   }
+   
+   HasAggro(what=$)
+   {
+      local bHasAggro;
+	  
+	  bHasAggro = FALSE;
+	  
+      if plAggro <> $
+	  {
+	     bHasAggro = FindListElem(plAggro, what);
+	  }
+	  
+	  return bHasAggro;
    }
 
    SomeoneSaid(what=$,type=$,string=$,parm1=$,parm2=$,

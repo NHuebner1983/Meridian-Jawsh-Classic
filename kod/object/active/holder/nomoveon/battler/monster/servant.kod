@@ -274,7 +274,7 @@ classvars:
    viAttack_spell = 0
    
    viDefault_behavior = AI_MOVE_FOLLOW_MASTER     | AI_FIGHT_MONSTERS \
-                      | AI_FIGHT_HYPERAGGRESSIVE  | AI_FIGHT_SWITCHALOT    | AI_MOVE_REGROUP \
+                      | AI_FIGHT_SWITCHALOT       | AI_MOVE_REGROUP \
 	                  | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_THROUGH_WALLS | AI_FIGHT_NEWBIESAFE
 	   
    viWimpy = 2
@@ -514,14 +514,14 @@ messages:
       Send(self,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=pbAllowFollow);
       Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_MURDERERS,#value=pbAllowAttackMurderers);
       Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS,#value=pbAllowAttack);
-      Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_HYPERAGGRESSIVE,#value=TRUE);
       Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_SWITCHALOT,#value=TRUE);
       Send(self,@SetBehaviorFlag,#flag=AI_MOVE_REGROUP,#value=TRUE);
       Send(self,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS,#value=pbAllowWalkThroughWalls);
       Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_THROUGH_WALLS,#value=pbAllowAttackThroughWalls);
       
-	  // Disable these, they're annoying.
+	  // Disabled flags
 	  Send(self,@SetBehaviorFlag,#flag=AI_MOVE_RANDOM,#value=FALSE);
+      Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_HYPERAGGRESSIVE,#value=FALSE);
 	  
       return;
    }
@@ -1584,8 +1584,7 @@ messages:
 	     // Tells the target to switch to the servant
 		 // with a massive amount of hate.
 		 // Only works if you enter combat with the monster.
-         Send(poTarget,@TargetSwitch,#what=self,
-            #iHatred=10000);
+         Send(poTarget,@TargetSwitch,#what=self,#iHatred=10000);
 	  }
 	  
 	  return;

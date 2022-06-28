@@ -85,7 +85,8 @@ messages:
          AND Send(poTarget,@GetOwner) = poOwner
          AND IsClass(poTarget,&user)
       {
-         Send(poTarget,@SubtractFromMonsterChasers,
+         Send(poTarget,@ReduceAggro,#what=self);
+		 Send(poTarget,@SubtractFromMonsterChasers,
                #level=Send(self,@GetLevel));
       }
 

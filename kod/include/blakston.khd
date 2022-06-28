@@ -1633,7 +1633,10 @@
    STATE_WAIT        = 0x00008
    STATE_MOVE        = 0x00010
    STATE_ZERO_MASK   = 0xFF000
-
+   
+   // Needs to be moved to the settings library
+   MAX_AGGRO = 2
+   
    ESTATE_AVOIDING   = 0x04000
    ESTATE_CLOCKWISE  = 0x08000
 

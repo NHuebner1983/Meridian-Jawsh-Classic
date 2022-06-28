@@ -1013,6 +1013,7 @@ messages:
          AND Send(poTarget,@GetOwner) = poOwner
          AND isClass(poTarget,&User)
       {
+	     Send(poTarget,@ReduceAggro,#what=self);
          Send(poTarget,@SubtractFromMonsterChasers,
               #level=viLevel);
       }
@@ -1031,6 +1032,7 @@ messages:
          AND Send(poTarget,@GetOwner) = poOwner
          AND isClass(poTarget,&user)
       {
+	     Send(poTarget,@ReduceAggro,#what=self);
          Send(poTarget,@SubtractFromMonsterChasers,
               #level=viLevel);
       }
@@ -1070,6 +1072,7 @@ messages:
          AND Send(poTarget,@GetOwner) = poOwner
          AND isClass(poTarget,&User)
       {
+	     Send(poTarget,@ReduceAggro,#what=self);
          Send(poTarget,@SubtractFromMonsterChasers,
               #level=viLevel);
       }
@@ -1092,9 +1095,10 @@ messages:
    }
 
    EnterStateAttack(target = $, actnow=TRUE)
-   {     
+   {
       Send(self,@SetState,#bit=STATE_ATTACK);
       Send(self,@ClearBehavior);
+	  
       if actnow
       {
          Send(self,@AttackTimer);
@@ -1109,7 +1113,21 @@ messages:
 
    EnterStateChase( target = $, actnow = TRUE )
    {
-      if poTarget <> target AND vrSound_aware <> $
+      local bPlaySound;
+	  
+      bPlaySound = (NOT IsClass(self, &Servant));
+
+	  if target <> $
+	  {
+	     bPlaySound = (NOT IsClass(target, &Servant));
+	  }
+	  
+	  if poTarget <> $
+	  {
+	     bPlaySound = (NOT IsClass(poTarget, &Servant));
+	  }
+	  
+      if poTarget <> target AND vrSound_aware <> $ AND bPlaySound
       {
          Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=vrSound_aware,
               #flags=SOUND_RANDOM_PITCH);
@@ -7121,6 +7139,7 @@ messages:
          AND IsClass(poTarget,&User)
          AND Send(poTarget,@GetOwner) = poOwner
       {
+	     Send(poTarget,@ReduceAggro,#what=self);
          Send(poTarget,@SubtractFromMonsterChasers,#level=viLevel);
       }
 
@@ -7128,13 +7147,14 @@ messages:
       if IsClass(poTarget,&User)
          AND Send(poTarget,@GetOwner) = poOwner
       {
-         Send(poTarget,@AddToMonsterChasers,#level=viLevel);
+         Send(poTarget,@AddAggro,#what=self);
+		 Send(poTarget,@AddToMonsterChasers,#level=viLevel);
       }
 
       piState = (piState & VSTATE_VALIDITY_MASK);
 
-      // 'lock' sound
-      if vrSound_aware <> $
+      // 'lock' sound (but don't do it for servants, they are taunting)
+      if vrSound_aware <> $ AND NOT IsClass(what, &Servant)
       {
          Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=vrSound_aware);
       }
