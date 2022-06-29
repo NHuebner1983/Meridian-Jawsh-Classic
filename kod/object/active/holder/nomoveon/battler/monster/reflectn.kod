@@ -71,7 +71,7 @@ classvars:
    vrMinion_trouble = reflection_trouble
 
    viDefault_behavior = AI_FIGHT_MONSTERS | AI_FIGHT_NEWBIESAFE \
-                        | AI_FIGHT_AGGRESSIVE
+                        | AI_FIGHT_AGGRESSIVE | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_THROUGH_WALLS
 
 properties:
 

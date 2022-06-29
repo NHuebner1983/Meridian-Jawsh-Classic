@@ -894,8 +894,8 @@ messages:
 
    SetRiijaSpells()
    {
+      // [0,  SID_FLASH, 50],   --- Disabled (enters PVP Mode - gong plays)
       plCasts = [
-	     [0,  SID_FLASH, 50],
 	     [30, SID_ILLUSIONARY_WOUNDS, 50],
 		 [40, SID_FORGET, 5],
 	     [50, SID_VERTIGO, 20],
