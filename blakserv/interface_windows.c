@@ -143,6 +143,7 @@ void InitInterface(void)
 	WaitForSingleObject(hEvent,INFINITE);
 	CloseHandle(hEvent);
 	
+	SetDlgItemText(HWND_ADMIN, IDC_ADMIN_COMMAND, "send o 0 recreateall");
 }
 
 void StoreInstanceData(HINSTANCE hInstance,int how_show)
@@ -1194,6 +1195,7 @@ long CALLBACK InterfaceAdminResponseProc(HWND hwnd, UINT message, UINT wParam, L
 		if (wParam == '\t')
 		{
 			SetFocus(GetDlgItem(HWND_ADMIN,IDC_ADMIN_COMMAND));
+
 			return 0;      
 		}
 		
