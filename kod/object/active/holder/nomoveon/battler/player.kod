@@ -8980,6 +8980,11 @@ messages:
    {
       local i, bGainedCharge, oSpellDeathLink;
 
+      if victim <> $ AND IsClass(victim, &Monster)
+	  {
+	     Send(self,@ReduceAggro,#what=victim);
+	  }
+
       if NOT IsClass(victim,&Battler)
       {
          propagate;
@@ -14477,18 +14482,21 @@ messages:
    
    AddAggro(what=$)
    {
+      if Length(plAggro) >= 39
+	  {
+	     plAggro = [];
+	  }
+	  
       if what <> $ AND IsClass(what, &Monster) AND NOT IsClass(what, &Servant)
 	  {
          if plAggro = $
 	     {
 	        plAggro = [];
-		    Debug("Set plAggro to []");
 	     }
 		 
 		 if NOT FindListElem(plAggro, what)
 		 {
             plAggro = AppendListElem(what, plAggro);
-		    //Debug("Added Aggro",Send(what,@GetName),Length(plAggro));
 		 }
 	  }
 	  
@@ -14497,18 +14505,23 @@ messages:
    
    ReduceAggro(what=$)
    {
+      if Length(plAggro) >= 39
+	  {
+	     plAggro = [];
+		 
+		 return 0;
+	  }
+	  
       if what <> $ AND IsClass(what, &Monster) AND NOT IsClass(what, &Servant)
 	  {
          if plAggro = $
 	     {
 	        plAggro = [];
-		    Debug("Set plAggro to []");
 	     }
 		 
 	     if FindListElem(plAggro, what)
 		 {
 		    plAggro = DelListElem(plAggro, what);
-		    //Debug("Removed Aggro",Send(what,@GetName),Length(plAggro));
 		 }
 	  }
 	  

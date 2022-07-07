@@ -40,6 +40,7 @@ resources:
    servant_sound_aware = none
    
    // Servant commands
+   servant_command_nodes = "nodes"
    servant_command_quiet = "shut up"
    servant_command_loud = "talk more"
    servant_command_help = "help"
@@ -82,6 +83,8 @@ resources:
    // Servant help response
    servant_response_help = \
       "~b~BYour servant clears their throat to begin a long-winded speech...~B~b\n"
+      "~r~B''say nodes'' ~r~B~kand I can find out which nodes you have.~k\n"
+      "~r~B''say axe wielding'' ~r~B~kand I can tell you your skill or spell progress.~k\n"
       "~r~B''say shut up'' ~r~B~kand I will certainly stop talking. Don't be rude!~k\n"
       "~r~B''say talk more'' ~r~B~kand I will be encouraged to talk more. I have lots to say about myself.~k\n"
       "~r~B''say stop buffing me'' ~r~B~kand I will stop casting beneficial spells...your loss pal.~k\n"
@@ -560,6 +563,12 @@ messages:
 	  propagate;
    }
    
+   // TODO: We will need to get this turned on so the servant can protect the master.
+   CanAttackPlayer(who = $)
+   {
+      return FALSE;
+   }
+   
    PrepareServantNameAndDesc()
    {
    	  if piSpellNum <> $ AND sServantName = $
@@ -771,8 +780,6 @@ messages:
 			   AND (NOT Send(poMaster,@IsEnchanted,#what=oSpell))
 			   AND (NOT Send(poOwner,@IsEnchanted,#what=oSpell))
             {
-			   //Debug("Casting",Send(oSpell,@GetName));
-		       
 			   // Prevent servants from having too many reflections/minions.
 		       lMinions = Send(self,@GetControlledMinions);
 			
@@ -793,8 +800,6 @@ messages:
    {
       local iSpellNum, oSpell, lPlayers, lPlayer;
 	  
-	  //Debug("Removing important servant enchants");
-	  
 	  if NOT Send(self,@MasterCheck)
 	  {
 	     return;
@@ -812,14 +817,10 @@ messages:
 	  {
 	     oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
 
-         //Debug("Checking",Send(oSpell,@GetName));
-		 
 		 if oSpell <> $
 		    AND (Send(poMaster,@IsEnchanted,#what=oSpell)
 		         OR Send(poOwner,@IsEnchanted,#what=oSpell))
 		 {
-		    //Debug("Removing",Send(oSpell,@GetName));
-			
 			if Send(poMaster,@IsEnchanted,#what=oSpell)
 			{
 		       Send(poMaster,@RemoveEnchantment,#what=oSpell);
@@ -1094,7 +1095,6 @@ messages:
 			// See plCasts.
 			oSpell = Send(SYS,@FindSpellByNum,#num=Nth(iSpellGroup, 2));
 	        plSpellBook = AppendListElem([Nth(iSpellGroup, 2), 1, Nth(iSpellGroup, 3)], plSpellBook);
-			//Debug("Spell Added",Send(oSpell,@GetName),Nth(iSpellGroup, 3));
 		 }
 	  }
 	  
@@ -1123,9 +1123,9 @@ messages:
          return FALSE;
       }
 
-      if IsClass(victim,&Player)
+      if (IsClass(victim,&Player) OR IsClass(victim,&User)) AND NOT Send(self,@CanAttackPlayer,#who=victim)
       {
-	     // TODO: Detect if the player has started PVP against the servant owner.
+	     // Servant is not allowed to attack this player.
          return FALSE;
       }
 	  
@@ -1325,14 +1325,15 @@ messages:
          return;
       }
 	  
-	  //Debug("State",Send(self,@GetCurrentState));
-
       oRoom = Send(poMaster,@GetOwner);
 	  
       if oRoom = $ OR poOwner = $
       {
          return;
       }
+	  
+      Send(self,@EnterStateWait);
+      Send(self,@TweakBehavior);
 
 	  Send(SYS,@UtilGoNearSquare,#what=self,#where=oRoom,
 		    #new_row=Send(poMaster,@GetRow),
@@ -1404,8 +1405,6 @@ messages:
    {
       local bResponded;
 	  
-	  //Debug("Someone said",Send(what,@GetName),type,string);
-	  
 	  bResponded = FALSE;
 
       if IsClass(what,&User) AND poMaster = what
@@ -1475,8 +1474,6 @@ messages:
 				     continue;
 				  }
 				  
-				  //Debug("String Contain",said_string,oAbilityName);
-				  
 			      // Check if we know this spell or skill already.
 				  if IsClass(oAbility, &Spell)
 				  {
@@ -1500,11 +1497,6 @@ messages:
 				  // Let's reach out to this NPC and see if we can learn it...
 				  bCanLearn = Send(oNPC, @CanDoTeach, #who=poMaster, #sid=iAbilityNum, 
 				      #bSkill=IsClass(oAbility, &Skill), #oRequester=self);
-				  
-				  if bCanLearn <> $
-				  {
-				     //Debug("Can learn",oAbilityName,"from",Send(oNPC,@GetTrueName),bCanLearn);
-				  }
 			   }
 			}
 		 }
@@ -1558,7 +1550,6 @@ messages:
    {
       if iSpellNum = $
 	  {
-	     //Debug("Spell Num is empty");
 	     return;
 	  }
       
@@ -1583,8 +1574,6 @@ messages:
 		break;
 	  }
 	  
-	  //Debug("vrDesc", vrDesc);
-	  
       return;
    }
 
@@ -1605,8 +1594,6 @@ messages:
 	  
 	  sServantName = Nth(lServantNames, Random(1, Length(lServantNames)));
 	  
-	  //Debug("Servant is named",sServantName);
-	  
 	  return;
    }
    
@@ -1616,8 +1603,6 @@ messages:
 	  {
 	     Send(self,@SetServantName);
 	  }
-	  
-	  //Debug("Returned Name",sServantName);
 	  
       return sServantName;
    }
@@ -1715,14 +1700,19 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
-      }
-	  
+      }	  
       if StringEqual(said_string, servant_command_loud)
       {
 	     if NOT pbAllowTalk
 		 {
 		    pbAllowTalk = TRUE;
 		 }
+		 
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_nodes)
+      {
+         Send(Send(SYS,@GetLibrary), @PlayerManaNodeList, #mob=self, #person=poMaster);
 		 
 	     bIsCommand = TRUE;
       }
@@ -1982,8 +1972,6 @@ messages:
 			bCanIdentify = Send(iItem,@CanIdentify) AND Send(iItem,@IsOdd) AND NOT Send(iItem,@IsFake);
 			bFake = Send(iItem,@IsFake);
 			
-			Debug("Identify",sItemName,Send(iItem,@CanIdentify),Send(iItem,@IsOdd),bCanIdentify,bFake);
-			
 			if bFake
 			{
 			   Post(poMaster,@MsgSendUser,#message_rsc=servant_response_identify_fakse, #parm1=sItemName);
@@ -2038,8 +2026,6 @@ messages:
 		    sItemName = Send(iItem,@GetName);
 			bCanIdentify = Send(iItem,@CanIdentify) AND Send(iItem,@IsOdd) AND NOT Send(iItem,@IsFake);
 			bFake = Send(iItem,@IsFake);
-			
-			Debug("Reveal",sItemName,Send(iItem,@CanIdentify),Send(iItem,@IsOdd),bCanIdentify,bFake);
 			
 			if bFake
 			{

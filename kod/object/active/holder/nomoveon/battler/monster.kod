@@ -1468,6 +1468,11 @@ messages:
    SomethingKilled(what = $,victim = $,use_weapon = $)
    "Someone just died, perhaps we need to clear our target."
    {
+      if victim <> $ AND IsClass(victim, &Player)
+	  {
+	     Send(victim,@ReduceAggro,#what=self);
+	  }
+
       Send(poBrain,@SomethingKilled,#mob=self,#state=piState,
            #what=what,#victim=victim,#use_weapon=use_weapon);
 
@@ -5008,6 +5013,12 @@ messages:
       {
 	     return FALSE;
       }
+	  
+	  if IsClass(poTarget, &Player) AND IsClass(self, &Servant) AND NOT Send(self, @CanAttackPlayer, #who=poTarget)
+	  {
+	     // Servant cannot attack this player (poTarget) with spells.
+	     return FALSE;
+	  }
 
       // Get the adjusted chance to cast, based on whether we're demented
       // or if AmA is up. Multiply this by 6 because we've decreased the
@@ -5741,6 +5752,7 @@ messages:
       }
 
       iQuestHistory = First(Send(who,@GetQuestHistory,#index=viQuestID));
+	  
       return (QUEST_HISTORY_SUCCESS & iQuestHistory);
    }
 
@@ -5754,25 +5766,19 @@ messages:
 	  if IsClass(oRequester,&Servant)
 	  {
 	     bIsRequestedByServant = TRUE;
-	     Debug("CanDoTeach From Servant");
 	  }
 	  
-	  Debug("CanDoTeach",Send(self,@GetTrueName));
-	  
-	  if oRequester <> $
+	  if oRequester = $
 	  {
-	     Debug("Requester",Send(oRequester,@GetName));
-	  } else {
 	     if (piAttributes & MOB_TEACHER) AND Send(who,@HasServant)
 		 {
-		    Debug("Not showing NPC response with servant in the room");
 		    return;
 		 }
 	  }
 	  
 	  if sid = 0 OR who = $
       { 
-         Debug("Invalid data sent to CanDoTeach!");  
+         Debug("Invalid data sent to CanDoTeach!");
 
          return FALSE; 
       }
@@ -5945,6 +5951,11 @@ messages:
       Debug("Oops, fell through in our testing for learning.");
 
       return FALSE;
+   }
+   
+   CanAttackPlayer()
+   {
+      return TRUE;
    }
 
    LearnHowMuchFurther(iAmount=0,rval=0)
