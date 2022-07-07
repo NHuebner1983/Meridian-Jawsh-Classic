@@ -1,0 +1,74 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+//an Arrow is a NumberItem used by a bow--it needs properties and procedures
+//for ShowSomething() and GetDamage()
+//
+PracticeArrow is Ammo
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include practicearrow.lkod
+
+   practice_arrow_name_rsc = "practice arrows"
+   practice_arrow_icon_rsc = arrow.bgf
+   practice_arrow_desc_rsc = \
+      "A set of poorly made practice arrows. Used primarily for improving "
+      "your skills. This splintery practice arrow works best "
+	  "on monsters typically found in Ko'catan."
+
+classvars:
+
+   vrName = practice_arrow_name_rsc
+   vrIcon = practice_arrow_icon_rsc
+   vrDesc = practice_arrow_desc_rsc
+
+   viAmmo_type = AMMO_ARROW
+   viValue_average = 3
+
+   viGround_group = 4
+   viInventory_group = 3
+   viBroken_group = 2
+
+   viBulk = 0
+   viWeight = 0
+   
+   viMinDamage = 1
+   viMaxDamage = 1
+
+properties:
+
+   piNumber = 500
+
+messages:
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 7;
+   }
+
+   GetProjectileIcon()
+   {
+      return vrIcon;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

@@ -5766,6 +5766,7 @@ messages:
       plItemTemplates = cons(create(&IceArrow),plItemTemplates);
       plItemTemplates = cons(create(&AcidArrow),plItemTemplates);
       plItemTemplates = cons(create(&GoldenArrow),plItemTemplates);
+      plItemTemplates = cons(create(&PracticeArrow),plItemTemplates);
 
       // Weapons
       plItemTemplates = cons(create(&MagicBow),plItemTemplates);
@@ -7865,6 +7866,37 @@ messages:
       resistance_list = Cons([what,value],resistance_list);
 
       return resistance_list;
+   }
+   
+   GetSchoolName(iSchoolNum = $)
+   {
+      local sSchoolName;
+	  
+	  sSchoolName = $;
+	  
+      switch(iSchoolNum)
+	  {
+	     case SS_SHALILLE:
+		    sSchoolName = SetString($, "Shal'ille");
+	     break;
+	     case SS_QOR:
+		    sSchoolName = SetString($, "Qor");
+	     break;
+	     case SS_KRAANAN:
+		    sSchoolName = SetString($, "Kraanan");
+	     break;
+	     case SS_FAREN:
+		    sSchoolName = SetString($, "Faren");
+	     break;
+	     case SS_RIIJA:
+		    sSchoolName = SetString($, "Riija");
+	     break;
+	     case SS_JALA:
+		    sSchoolName = SetString($, "Jala");
+	     break;
+	  }
+	  
+	  return sSchoolName;
    }
 
 #region Print Game Info
