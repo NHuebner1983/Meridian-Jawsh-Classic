@@ -32,16 +32,17 @@ messages:
                      [ &Sapphire, 10 ],
                      [ &Diamond,  10 ],
                      [ &Ruby,  10 ],
-                     [ &PurpleMushroom, 5],
-                     [ &CyanMushroom, 5],
-                     [ &GrayMushroom, 5],
-                     [ &YellowMushroom, 5],
-                     [ &GreenMushroom, 5],
-                     [ &TrueLute, 1],
-                     [ &OrcShield, 1],
+                     [ &PurpleMushroom, 5 ],
+                     [ &CyanMushroom, 5 ],
+                     [ &GrayMushroom, 5 ],
+                     [ &YellowMushroom, 5 ],
+                     [ &GreenMushroom, 4 ],
+                     [ &TrueLute, 1 ],
+                     [ &OrcShield, 1 ],
                      [ &WeaponWand, 1 ],
-                     [ &Rose, 1],
-                     [ &PlateArmor, 1]
+                     [ &Rose, 1 ],
+                     [ &PlateArmor, 1 ],
+					 [ &Wizardhat, 1 ]
                    ];
 
       propagate;

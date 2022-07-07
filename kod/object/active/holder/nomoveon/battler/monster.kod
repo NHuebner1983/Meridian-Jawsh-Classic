@@ -5953,8 +5953,22 @@ messages:
       return FALSE;
    }
    
-   CanAttackPlayer()
+   CanAttackPlayer(who=$)
    {
+      local lMinions;
+	  
+      if who <> $ AND poMaster <> $
+	  {
+	     // Don't attack the master
+         lMinions = Send(poMaster,@GetControlledMinions);
+		 
+         if (lMinions <> $ AND FindListElem(lMinions, who))
+         {
+            return FALSE;
+         }
+
+	  }
+	  
       return TRUE;
    }
 
