@@ -24,6 +24,16 @@ resources:
       "This becoming, young woman appears as cold and curt to new faces.  "
       "Despite that, it is obvious to all that her true passion lies in the "
       "crafting of fine bows."
+	  
+   KocatanBowMaker_Chalice_sale = \
+      "I've been collecting these Chalices of Rain from the caves "
+	  "which connect the mainland to the island. I would only part with one "
+	  "if the price is right. They give off a strange energy I've only "
+	  "sensed in Shal'ille followers. I feel as though their energy could "
+	  "take you to somewhere magical. Maybe you can use it to escape "
+	  "this god forsaken jungle. It's weird, every time I bring it outside "
+	  "it fills with water on its own. It surely has been a nice source "
+	  "of drinking water."
 
    KocatanBowMaker_KriipaClaw_sale = \
       "I have claws from several Kriipa I've killed in the jungle.  The "
@@ -102,8 +112,10 @@ messages:
    {
       plFor_sale = [ 
          [ 
+            Create(&PracticeArrow),
             Create(&Arrow),
-            Create(&LongBow)
+            Create(&LongBow),
+            Create(&PracticeBow)
          ],
       $,$,$];
 
@@ -119,6 +131,12 @@ messages:
             #triggers=[Send(oObj,@GetName)],
             #action=[LIBACT_CONDITIONAL,oObj,250,
             KocatanBowMaker_KriipaClaw_sale]);
+
+      oObj=Create(&Chalice);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,1000000,
+            KocatanBowMaker_Chalice_sale]);
 
       return;
    }
