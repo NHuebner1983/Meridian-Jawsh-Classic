@@ -186,7 +186,7 @@ messages:
    SetForSale()
    {
       plFor_sale = [ 
-         $,$,
+         [Create(&Chalice)],$,
          [
             SID_DETECT_INVIS,
             SID_HOLY_RESOLVE,
