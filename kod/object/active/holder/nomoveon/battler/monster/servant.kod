@@ -46,31 +46,61 @@ resources:
    servant_command_no_buffs = "stop buffing me"
    servant_command_do_buffs = "buff me"
    servant_command_taunt = "taunt"
-   servant_command_attack = "attack"
    servant_command_stop_taunting = "stop taunting"
+   servant_command_attack = "attack"
    servant_command_stop_attacking = "stop attacking"
+   servant_command_cast = "cast spells"
+   servant_command_stop_casting = "stop casting spells"
    servant_command_heal_me = "heal me"
    servant_command_feed_me = "feed me"
    servant_command_mystify_me = "mystify me"
    servant_command_go_away = "go away"
    
+   // School spells your servant might know
+   servant_command_identify = "identify this"
+   servant_command_reveal = "reveal this"
+   servant_command_mend = "mend this"
+   servant_command_bait = "throw bait"
+   servant_command_disguise = "disguise me"
+   
+   servant_response_wrong_school = "~B~rBlasphemy.~B~r ~kI can't perform miracles. Maybe one of the other servants of magic will know how to help you.~k"
+   servant_response_nothing_equipped = \
+      "~B~rYou're testing my patience.~B~r ~kIf you want me to perform this spell, you will need to have it equipped first.~k"
+   servant_response_perfect_items = \
+      "~B~rMy patience is growing thin.~B~r ~kEverything equipped is in perfect condition, what more do you want from me.~k"
+   servant_response_cursed_equipment = \
+      "~B~rYou're cursed.~B~r ~kI cannot help you until the curse is lifted. You must invoke the power of Shal'ille.~k"
+   servant_response_mend_success = \
+      "~bThe servant concentrates on the %s. The item magically returns to new again.~b"
+   servant_response_identify_success = \
+      "~bThe servant concentrates on the %s to identify its truth.~b"
+   servant_response_reveal_success = \
+      "~bThe servant concentrates on the %s to reveal its truth.~b"
+   servant_response_identify_fakse = \
+      "~bThe servant has revealed your %s to be fake, perhaps a trickery of Riija.~b"
+   
    // Servant help response
    servant_response_help = \
-      "~kYour servant replies in a sarcastic tone...''Well, if it isn't the almighty master asking for my help...''~k\n"
-      "~kYour servant whispers to you, ''Don't worry, I've got you covered. Also, check my description to see my powers.''~k\n"
-      "~b~BYour servant clears their throat to begin a long speech...~B~b\n"
-      "~r~B''say shut up'' ~r~B~kand I will certainly stop talking. So rude of you.~k\n"
+      "~b~BYour servant clears their throat to begin a long-winded speech...~B~b\n"
+      "~r~B''say shut up'' ~r~B~kand I will certainly stop talking. Don't be rude!~k\n"
       "~r~B''say talk more'' ~r~B~kand I will be encouraged to talk more. I have lots to say about myself.~k\n"
       "~r~B''say stop buffing me'' ~r~B~kand I will stop casting beneficial spells...your loss pal.~k\n"
       "~r~B''say buff me'' ~r~B~kand I will resume casting beneficial spells.~k\n"
       "~r~B''say stop taunting'' ~r~B~kand I will stop trying to steal your aggro.~k\n"
       "~r~B''say taunt'' ~r~B~kand it will send me into a rage, stealing your aggro, but it will hurt me a lot.~k\n"
-      "~r~B''say stop attacking'' ~r~B~kand I will let you do all of the hard work.~k\n"
+	  "~r~B''say stop attacking'' ~r~B~kand I will let you do all of the hard work.~k\n"
       "~r~B''say attack'' ~r~B~kand I will attack your enemies.~k\n"
-      "~r~B''say heal me'' ~r~B~kand I will try to use a heal wand I stoled from that corpse over there.~k\n"
+	  "~r~B''say stop casting spells'' ~r~B~kand I will stop casting harmful spells on your enemies.~k\n"
+      "~r~B''say cast spells'' ~r~B~kand I will cast harmful spells I've learned on your enemies.~k\n"
+	  "~r~B''say mend this'' ~r~B~k in my Kraanan form and I will mend whatever you are wearing.~k\n"
+      "~r~B''say identify this'' ~r~B~kin my Shal'ille form and I will try to identify whatever you are wearing.~k\n"
+      "~r~B''say reveal this'' ~r~B~kin my Shal'ille form and I will try to reveal whatever you are wearing.~k\n"
+      "~r~B''say disguise me'' ~r~B~kin my Riija form and I may just turn you into a giant rat.~k\n"
+      "~r~B''say throw bait'' ~r~B~kin my Riija form and I will attract monsters with delicious treats.~k\n"
+	  "~r~B''say heal me'' ~r~B~kand I will try to use a heal wand I stoled from that corpse over there.~k\n"
       "~r~B''say feed me'' ~r~B~kand I will try to feed you some food I ''may'' have stolen from you. You can't prove anything.~k\n"
       "~r~B''say mystify me'' ~r~B~kand I will give you some of the mana I have been stealing from you.~k\n"
-      "~r~B''say go away'' ~r~B~kand I will leave you to fend for yourself. I have better things to do anyways, loser.~k\n"
+      "~r~B''say go away'' ~r~B~kand I will leave your side until you summon me for more adventures.~k\n"
    
    // RPG Random Names
    servant_name_1 = "Eimmilth, The Mammoth"
@@ -195,6 +225,33 @@ resources:
    servant_rant_aax = "You ever wonder how thrashers mate? I imagine it's scary as hell."
    servant_rant_aay = "So...that monster just popped up from nowhere, and you don't find that strange?"
    servant_rant_aaz = "I think you left some loot back there."
+   
+   servant_rant_aaaa = "I've heard some of the island natives are learning to make crossbows? Sounds lazy if you ask me."
+   servant_rant_aaab = "I thought about asking the Princess on a date. She thought I was cute, but underwhelmingly small."
+   servant_rant_aaac = "Have you visited Jonas D'Accor lately? The guy is going to take over if we're not careful."
+   servant_rant_aaad = "Roses are red, violets are blue. I like potatoes in my beef stew."
+   servant_rant_aaae = "Save the trees!"
+   servant_rant_aaaf = "A skeleton walks into a bar and is immediately looted."
+   servant_rant_aaag = "Have you ever tried the spell Spore Burst? I've seen an adventurer trap an entire guild in it."
+   servant_rant_aaah = "Ogre is overrated. Who needs an entity list when you have me watching your back."
+   servant_rant_aaai = "There's a virus called QORVID 19 going around. Put on your mummy mask before traveling to Tos."
+   servant_rant_aaaj = "Pew pew."
+   servant_rant_aaak = "By the grace of the gods, I bestow you all my powers at 100 percent. I got you didn't I! Ha Ha."
+   servant_rant_aaal = "If I had a cat, I would eat it."
+   servant_rant_aaam = "Why do dogs taste so bad?"
+   servant_rant_aaan = "I think I swallowed a lupogg."
+   servant_rant_aaao = "Hold on, we need to go back. I left some loot behind."
+   servant_rant_aaap = "You ever wonder what the 59 means in our world name? Maybe in a parallel universe it's 69."
+   servant_rant_aaaq = "Shopping List: rubies in jasper store, teeth in fams and marion, kriipa claws in the bow hut and chalice at bone priestess!"
+   servant_rant_aaar = "I dare you to 'say join public survival' while in a safe place."
+   servant_rant_aaas = "Pantyhose would look great on me. In fact, we could both wear it, together, alone, right here."
+   servant_rant_aaat = "If you want to be really powerful, use the Jewel of Froz. You can hold two at a time with touch spells."
+   servant_rant_aaau = "You got a toothbrush I can borrow?"
+   servant_rant_aaav = "You may be wondering why there are no horses around...we kind of ran out of cows."
+   servant_rant_aaaw = "Don't forget to pick up your nodes, you need them for mana!"
+   servant_rant_aaax = "I have 400,000 health and can hit for 100,000 hit points. Oh that was before you summoned me."
+   servant_rant_aaay = "There's literally nobody else I would rather bother than you."
+   servant_rant_aaaz = "Free hug!"
    
    servant_tells_you_rsc = "~kYour servant whispers, ''%s~n''~k"
    
@@ -866,7 +923,11 @@ messages:
 	     [servant_rant_aaa, servant_rant_aab, servant_rant_aac, servant_rant_aad, servant_rant_aae, servant_rant_aaf, servant_rant_aag,
 	     servant_rant_aah, servant_rant_aai, servant_rant_aaj, servant_rant_aak, servant_rant_aal, servant_rant_aam, servant_rant_aan,
 	     servant_rant_aao, servant_rant_aap, servant_rant_aaq, servant_rant_aar, servant_rant_aas, servant_rant_aat, servant_rant_aau,
-	     servant_rant_aav, servant_rant_aaw, servant_rant_aax, servant_rant_aay, servant_rant_aaz]
+	     servant_rant_aav, servant_rant_aaw, servant_rant_aax, servant_rant_aay, servant_rant_aaz],
+	     [servant_rant_aaaa, servant_rant_aaab, servant_rant_aaac, servant_rant_aaad, servant_rant_aaae, servant_rant_aaaf, servant_rant_aaag,
+	     servant_rant_aaah, servant_rant_aaai, servant_rant_aaaj, servant_rant_aaak, servant_rant_aaal, servant_rant_aaam, servant_rant_aaan,
+	     servant_rant_aaao, servant_rant_aaap, servant_rant_aaaq, servant_rant_aaar, servant_rant_aaas, servant_rant_aaat, servant_rant_aaau,
+	     servant_rant_aaav, servant_rant_aaaw, servant_rant_aaax, servant_rant_aaay, servant_rant_aaaz]
 	  ];
 	  
 	  return;
@@ -894,7 +955,7 @@ messages:
 
    SetRiijaSpells()
    {
-      // [0,  SID_FLASH, 50],   --- Disabled (enters PVP Mode - gong plays)
+      // [0,  SID_FLASH, 50],   --- Disabled (enters PVP Mode - gong plays when this is cast :(...)
       plCasts = [
 	     [30, SID_ILLUSIONARY_WOUNDS, 50],
 		 [40, SID_FORGET, 5],
@@ -917,6 +978,8 @@ messages:
       // Kraanan has some offensive spells, but they might mess with the master.
 	  // Such as, dispel illusion if the master is running around as a shadowbeast pking.
 	  // Mana bomb might also be an issue.
+	  // Anti-magic aura, another huge problem.
+	  
       plCasts = $;
 
       plBuffs = [
@@ -1636,6 +1699,14 @@ messages:
 	  
 	  bIsCommand = FALSE;
 	  
+	  // Show the help command output to our master.
+      if StringEqual(said_string, servant_command_help)
+      {
+	     Post(poMaster,@MsgSendUser,#message_rsc=servant_response_help);
+	     bIsCommand = TRUE;
+      }
+	  
+	  
       if StringEqual(said_string, servant_command_quiet)
       {
 	     if pbAllowTalk
@@ -1653,11 +1724,6 @@ messages:
 		    pbAllowTalk = TRUE;
 		 }
 		 
-	     bIsCommand = TRUE;
-      }
-      if StringEqual(said_string, servant_command_help)
-      {
-	     Post(poMaster,@MsgSendUser,#message_rsc=servant_response_help);
 	     bIsCommand = TRUE;
       }
       if StringEqual(said_string, servant_command_no_buffs)
@@ -1701,6 +1767,7 @@ messages:
 	     if pbAllowAttack
 		 {
 		    pbAllowAttack = FALSE;
+			pbAllowCast = FALSE;
 			plSpellBook = $;
             Send(self,@TweakBehavior);
 			Send(self,@SetState,#bit=STATE_WAIT);
@@ -1713,6 +1780,29 @@ messages:
 	     if NOT pbAllowAttack
 		 {
 		    pbAllowAttack = TRUE;
+			pbAllowCast = TRUE;
+			Send(self,@SetServantSpellBook);
+            Send(self,@TweakBehavior);
+		 }
+		 
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_stop_casting)
+      {
+	     if pbAllowCast
+		 {
+		    pbAllowCast = FALSE;
+			plSpellBook = $;
+            Send(self,@TweakBehavior);
+		 }
+		 
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_cast)
+      {
+	     if NOT pbAllowCast
+		 {
+		    pbAllowCast = TRUE;
 			Send(self,@SetServantSpellBook);
             Send(self,@TweakBehavior);
 		 }
@@ -1815,6 +1905,31 @@ messages:
 		 
 	     bIsCommand = TRUE;
       }	  
+      if StringEqual(said_string, servant_command_identify)
+      {
+	     Send(self,@IdentifyMasterHolding);
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_reveal)
+      {
+	     Send(self,@RevealMasterHolding);
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_mend)
+      {
+	     Send(self,@MendMasterHolding);
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_bait)
+      {
+	     Send(self,@BaitMonsters);
+	     bIsCommand = TRUE;
+      }
+      if StringEqual(said_string, servant_command_disguise)
+      {
+	     Send(self,@DisguiseMaster);
+	     bIsCommand = TRUE;
+      }
       
 	  return bIsCommand;
    }
@@ -1822,6 +1937,268 @@ messages:
    DMCanArmageddon()
    {
       return FALSE;
+   }
+   
+   IsCursedCheck(lItems = $)
+   {
+      local bIsCursed, iItem;
+	  
+	  bIsCursed = FALSE;
+	  
+      foreach iItem in lItems
+      {
+         bIsCursed = Send(iItem,@IsCursed);
+		    
+		 if bIsCursed
+		 {
+		    Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_cursed_equipment);
+		    
+		    return;
+		 }
+      }
+      
+	  return bIsCursed;
+   }
+   
+   IdentifyMasterHolding()
+   {
+      local lEquipped, iItem, sItemName, bCanIdentify, bDidIdentify, bFake;
+	  
+	  bDidIdentify = FALSE;
+	  
+      if piSpellSchool = SS_SHALILLE
+	  {
+	     lEquipped = Send(poMaster, @GetEquippedItems);
+		 
+		 if Send(self,@IsCursedCheck,#lItems=lEquipped)
+		 {
+		    // The master is holding a cursed item, we shouldn't help them until they remove it.
+		    return;
+		 }
+		 
+		 foreach iItem in lEquipped
+		 {
+		    sItemName = Send(iItem,@GetName);
+			bCanIdentify = Send(iItem,@CanIdentify) AND Send(iItem,@IsOdd) AND NOT Send(iItem,@IsFake);
+			bFake = Send(iItem,@IsFake);
+			
+			Debug("Identify",sItemName,Send(iItem,@CanIdentify),Send(iItem,@IsOdd),bCanIdentify,bFake);
+			
+			if bFake
+			{
+			   Post(poMaster,@MsgSendUser,#message_rsc=servant_response_identify_fakse, #parm1=sItemName);
+			   
+			   return;
+			}
+			
+			if bCanIdentify
+			{
+			   bDidIdentify = TRUE;
+			   
+               Post(poMaster,@MsgSendUser,#message_rsc=servant_response_identify_success, #parm1=sItemName);
+				   
+               Send(poMaster,@SendLook,#what=iItem,#bShow_All=TRUE);
+			   
+			   return;
+			}
+         }
+		 
+		 if NOT bDidIdentify
+		 {
+		    Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_nothing_equipped);
+		 }
+		 
+         return;
+	  }
+	  
+	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
+	  
+      return;
+   }
+   
+   // A lot of code copied from reveal.kod
+   RevealMasterHolding()
+   {
+      local lEquipped, iItem, sItemName, bCanIdentify, bDidIdentify, lData, iAdvance, oItemAtt, iPower, bFake;
+	  
+	  bDidIdentify = FALSE;
+	  
+      if piSpellSchool = SS_SHALILLE
+	  {
+	     lEquipped = Send(poMaster, @GetEquippedItems);
+		 
+		 if Send(self,@IsCursedCheck,#lItems=lEquipped)
+		 {
+		    // The master is holding a cursed item, we shouldn't help them until they remove it.
+		    return;
+		 }
+		 
+		 foreach iItem in lEquipped
+		 {
+		    sItemName = Send(iItem,@GetName);
+			bCanIdentify = Send(iItem,@CanIdentify) AND Send(iItem,@IsOdd) AND NOT Send(iItem,@IsFake);
+			bFake = Send(iItem,@IsFake);
+			
+			Debug("Reveal",sItemName,Send(iItem,@CanIdentify),Send(iItem,@IsOdd),bCanIdentify,bFake);
+			
+			if bFake
+			{
+			   Post(poMaster,@MsgSendUser,#message_rsc=servant_response_identify_fakse, #parm1=sItemName);
+			   
+			   return;
+			}
+			
+			if bCanIdentify
+			{
+			   bDidIdentify = TRUE;
+			   
+			   iAdvance = Send(iItem,@RevealHiddenAttributes);
+
+			   // Show newly revealed color
+			   if iAdvance
+			   {
+				  Send(iItem,@RevealHiddenColor);
+				  Send(Send(iItem,@GetOwner),@SomethingChanged,#what=iItem);
+			   }
+
+               Post(poMaster,@MsgSendUser,#message_rsc=servant_response_reveal_success, #parm1=sItemName);
+				   
+               Send(poMaster,@SendLook,#what=iItem,#bShow_All=TRUE);
+
+			   lData = Send(iItem,@GetAttributeData,#ItemAtt=IA_MISDIRECTION);
+
+			   if (lData <> $)
+			   {
+				  oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
+				  iPower = Send(oItemAtt,@TranslatePowerFromCompound,#iCompound=First(lData));
+
+				  if (iPower*2) < piSpellPower
+				  {
+					 Send(iItem,@RemoveAttribute,#ItemAtt=IA_MISDIRECTION);
+				  }
+			   }
+
+			   return;
+			}
+         }
+		 
+		 if NOT bDidIdentify
+		 {
+		    Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_nothing_equipped);
+		 }
+		 
+         return;
+	  }
+	  
+	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
+	  
+      return;
+   }
+
+   MendMasterHolding()
+   {
+      local lEquipped, iItem, sItemName, bCanMend, bDidMend, bHasMendables, bIsCursed, iMaxHits, iHits;
+	  
+	  bDidMend = FALSE;
+	  bHasMendables = FALSE;
+	  
+      if piSpellSchool = SS_KRAANAN
+	  {
+	     lEquipped = Send(poMaster, @GetEquippedItems);
+		 
+		 if Send(self,@IsCursedCheck,#lItems=lEquipped)
+		 {
+		    // The master is holding a cursed item, we shouldn't help them until they remove it.
+		    return;
+		 }
+		 
+		 foreach iItem in lEquipped
+		 {
+		    sItemName = Send(iItem,@GetName);
+			bCanMend = Send(iItem,@CanMend);
+			
+			if bCanMend
+			{
+			   bHasMendables = TRUE;
+               iHits = Send(iItem,@GetHits);
+               iMaxHits = Send(iItem,@GetMaxHits) - 15;
+			   
+			   if iMaxHits < 100
+			   {
+			      iMaxHits = 100;
+			   }
+
+			   Debug(sItemName,iHits,Send(iItem,@GetMaxHits));
+			   
+			   if iHits < Send(iItem,@GetMaxHits)
+			   {
+			      // Mend this item
+				  bDidMend = TRUE;
+				  
+                  Send(iItem,@SetMaxHits,#number=iMaxHits);
+                  Send(iItem,@SetHits,#number=iMaxHits);
+
+				  Post(poMaster,@MsgSendUser,#message_rsc=servant_response_mend_success, #parm1=sItemName);
+			   }
+			}
+		 }
+		 
+		 if NOT bHasMendables
+		 {
+	        Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_nothing_equipped);
+			
+		    return;
+		 }
+		 
+		 if NOT bDidMend
+		 {
+	        Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_perfect_items);
+			
+		    return;
+		 }
+		 
+         return;
+	  }
+	  
+	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
+	  
+      return;
+   }
+   
+   DisguiseMaster()
+   {
+      local oSpell;
+	  
+      if piSpellSchool = SS_RIIJA
+	  {
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_ILLUSIONARY_FORM);
+		 
+         Send(oSpell,@CastSpell,#who=poMaster,#lTargets=[poMaster],#iSpellPower=piSpellPower);
+		 
+         return;
+	  }
+	  
+	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
+	  
+      return;
+   }
+   
+   BaitMonsters()
+   {
+      local oSpell;
+	  
+      if piSpellSchool = SS_RIIJA
+	  {
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_BAIT);
+		 
+         Send(oSpell,@CastSpell,#who=poMaster,#lTargets=[self],#iSpellPower=piSpellPower);
+
+         return;
+	  }
+	  
+	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
+	  
+      return;
    }
 
 end
