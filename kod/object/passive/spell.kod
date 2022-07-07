@@ -424,7 +424,12 @@ messages:
    {
       return viSchool;
    }
-
+   
+   GetSchoolName()
+   {
+      return Send(SYS,@GetSchoolName,#iSchoolNum=viSchool);
+   }
+   
    GetReagents()
    {
       return plReagents;
