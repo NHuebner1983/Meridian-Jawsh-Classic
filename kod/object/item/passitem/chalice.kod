@@ -23,7 +23,8 @@ resources:
    chalice_icon_rsc = chalice.bgf
    chalice_desc_rsc = \
       "This ornate chalice is adorned with holy markings "
-      "of Shal'ille.  An inscription reads \"to catch her tears.\""
+      "of Shal'ille.  An inscription reads \"to catch her tears.\" "
+	  "Placing this object in a humid area may help it replenish."
    chalice_cant_get = \
       "You try to pick up the chalice, but it mystically clings to "
       "the stone altar."
@@ -48,7 +49,7 @@ classvars:
    viWeight = 20
    viHits_init_min = 3
    viHits_init_max = 5
-   viValue_average = 500
+   viValue_average = 350000
 
 properties:
 
