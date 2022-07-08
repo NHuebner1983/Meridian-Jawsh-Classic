@@ -2578,7 +2578,12 @@ messages:
       local i, temp, each_obj, packet_built, lNode, iQflags, 
             iRflags, iHeightF, iHeightFWD, iHeightC, iServerID;
 
-      if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
+      if IsClass(what, &Player)
+	  {
+	     Send(what, @JustMoved);
+	  }
+	  
+	  if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
       {
          Debug("Tried to SomethingMoved",Send(what,@GetName),"at bad coords.");
          new_row = viTeleport_row;
