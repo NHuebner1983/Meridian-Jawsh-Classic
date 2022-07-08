@@ -116,6 +116,9 @@ properties:
    piGuildh15ContentsLimit = 180
 
    poNecromancerGuild = $
+   
+   pbStartupDistribution = FALSE
+   ptStartup = $
 
 messages:
 
@@ -137,6 +140,8 @@ messages:
 
    Recreate()
    {
+      Send(self,@DeactivateScenario);
+	  
       /// called only by recreateall in updates.
       if plArchivedPKCounts = $ { plArchivedPKCounts = [ 20 ]; }
       if plArchivedNKCounts = $ { plArchivedNKCounts = [ 8 ]; }
@@ -155,6 +160,8 @@ messages:
          poNecromancerGuild = Send(Send(SYS,@FindRoomByNum,#num=RID_GUILDH15),
                                     @GetGuildOwner);
       }
+	  
+	  Send(self,@ActivateScenario);
 
       return;
    }
@@ -167,6 +174,9 @@ messages:
 
          return;
       }
+	  
+	  Send(self,@DeleteOrphanArtifacts);
+	  ptStartup = CreateTimer(self,@StartupDistribution,10000);
 
       pbScenarioActivated = TRUE;
       if ptTriggerAmuletGeneration <> $
@@ -183,7 +193,31 @@ messages:
       //piNumSwordsGenerated = 0;
       Send(self,@TriggerAmuletGeneration);
       Send(self,@TriggerSwordGeneration);
-
+	  
+      return;
+   }
+   
+   StartupDistribution()
+   {
+	  if NOT pbStartupDistribution
+	  {
+	     pbStartupDistribution = TRUE;
+		 
+	     // Let's get some AO3's and SoTHs out!
+	     Send(self,@GenerateAmulet);
+	     Send(self,@GenerateAmulet);
+	     Send(self,@GenerateAmulet);
+	     Send(self,@GenerateAmulet);
+	     Send(self,@GenerateAmulet);
+	     Send(self,@GenerateSword);
+	     Send(self,@GenerateSword);
+	     Send(self,@GenerateSword);
+	     Send(self,@GenerateSword);
+	     Send(self,@GenerateSword);	  
+	  }
+	  
+	  ptStartup = $;
+	  
       return;
    }
 
@@ -271,7 +305,7 @@ messages:
    "generation at somewhat random times."
    {
       local iPeriod;
-
+	  
       // General principle: # of artifacts generated rises from 0 to
       // piSteadyStateNumOfArtifacts in about piRechargeTime days, then
       // rises from piSteadyStateNumOfArtifacts to piCriticalMassOfArtifacts
@@ -280,7 +314,7 @@ messages:
          * (piNumAmuletsGenerated+piNumSwordsGenerated) / 100)
       {
          // We're off-balance, better hurry up!
-         Debug("Had to bump up Amulet generation to balance numbers.");
+         //Debug("Had to bump up Amulet generation to balance numbers.");
          iPeriod = 1000;
       }
       else
@@ -374,7 +408,7 @@ messages:
          * (piNumAmuletsGenerated+piNumSwordsGenerated) / 100)
       {
          // We're off-balance, better hurry up!
-         Debug("Had to bump up Sword generation to balance numbers.");
+         //Debug("Had to bump up Sword generation to balance numbers.");
          iPeriod = 1000;
       }
       else
@@ -566,9 +600,18 @@ messages:
 
       return;
    }
+   
+   DeleteOrphanArtifacts()
+   {
+      Send(&NecromancerAmulet, @Reset);
+	  Send(&HunterSword, @Reset);
+	  
+	  return;
+   }
 
    Delete()
    {
+      Send(self,@DeleteOrphanArtifacts);
       Send(self,@ClearNecromancerGuild);
 
       if ptTriggerAmuletGeneration <> $
@@ -609,7 +652,7 @@ messages:
          ptPlaceNecromancerTreasure = $;
       }
 
-      propagate;
+      return;
    }
 
    GetNumAmulets()
