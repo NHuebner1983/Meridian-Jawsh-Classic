@@ -1164,6 +1164,8 @@ properties:
    // There will be an HP, Vigor, Mana resource and an accumulation Nth(1) = HP/Vigor/Mana Nth(2) = Amount Available
    plServantResources = $
    
+   piLastMoved = 0
+   
 messages:
 
    Constructor()
@@ -1173,6 +1175,18 @@ messages:
       piReward_timestamp = GetTime();
 
       propagate;
+   }
+   
+   JustMoved()
+   {
+      piLastMoved = GetTime();
+	  
+	  return;
+   }
+   
+   SinceLastMove()
+   {
+      return GetTime() - piLastMoved;
    }
 
    Delete()
@@ -2346,6 +2360,8 @@ messages:
    UserLogonHook()
    {
       local i, oObj, iBonus, iDefaultBonus, iTimespan;
+	  
+	  piLastMoved = GetTime();
 
       SendList(plPassive, 0, @UserLogon);
       SendList(plActive, 0, @UserLogon);
@@ -2482,6 +2498,8 @@ messages:
    UserLogoffHook()
    {
       local i;
+	  
+	  piLastMoved = 0;
 
       // Let's delete our servant
       if poServant <> $
