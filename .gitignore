@@ -1,4 +1,10 @@
 #################
+## Advanced Installer
+#################
+Meridian 420-SetupFiles
+Meridian 420-cache
+
+#################
 ## Meridian Intermediate files
 #################
 *.bof
