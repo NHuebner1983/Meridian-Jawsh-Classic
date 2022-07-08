@@ -273,12 +273,15 @@ messages:
 
       // General fail conditions, not enough users, bad node, attacking an
       //  already dead node.
-      iNum = Send(SYS,@GetUniqueIPs);
+      iNum = Send(SYS,@GetUniqueIPs,#with_movement_since=120);
       if poAttackedNode <> $
          OR (iNum < piNumIPsOnForAttack AND NOT bOverride)
       {
+	     Debug("NodeAttack Not Started",iNum,"<",piNumIPsOnForAttack,"IPs");
          return FALSE;
       }
+	  
+	  Debug("NodeAttack ACTIVE",iNum,">=",piNumIPsOnForAttack,"IPs");
 
       if iNode = $
       {
