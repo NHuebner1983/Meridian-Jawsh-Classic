@@ -794,6 +794,11 @@ messages:
 
    SomethingKilled(what=$,victim=$)
    {
+      if IsClass(what,&Player) AND Send(what,@HasAttacked,#victim=victim)
+	  {
+	     Send(what,@RemoveAttacked,#victim=victim);
+	  }
+	  
       Send(self,@SetGroupTime,#victim=victim);
 
       propagate;
@@ -2043,6 +2048,11 @@ messages:
       }
 
       bUser = IsClass(what,&User);
+	  
+	  if bUser
+	  {
+	     Send(what, @ClearAttacked);
+	  }
 
       if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
          OR new_angle = $
@@ -2321,7 +2331,7 @@ messages:
       {
          propagate;
       }
-
+	  
       Send(what,@LeaveBuilderGroup);
 
       // unenchant this one occupant
@@ -4926,7 +4936,7 @@ messages:
          {
             if Send(mob,@CanReach,#what=what)
             {
-               Send(mob,@EnterStateAttack,#target=what,#actnow=TRUE);
+			   Send(mob,@EnterStateAttack,#target=what,#actnow=TRUE);
 
                return;
             }

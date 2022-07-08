@@ -1020,6 +1020,9 @@ properties:
    // Default strength of light source at player is 5
    piLight = 5
 
+   // Everything we have attacked in this zone
+   plAttacked = $
+   
    // Attack modifiers to attack roll & damage (includes items & spells)
    plAttack_modifiers = $
 
@@ -5247,8 +5250,58 @@ messages:
             Send(First(i),@ImproveAbility,#who=self,#target=what);
          }
       }
+	  
+	  Send(self,@AddAttacked,#victim=what);
 
       propagate;
+   }
+   
+   AddAttacked(victim=$)
+   {
+      if plAttacked = $ OR Length(plAttacked) >= 39
+	  {
+	     plAttacked = [];
+	  }
+	  
+	  plAttacked = AppendListElem(victim, plAttacked);
+	  
+	  return;
+   }
+   
+   RemoveAttacked(victim=$)
+   {
+      if plAttacked = $ OR Length(plAttacked) >= 39
+	  {
+	     plAttacked = [];
+		 
+		 return;
+	  }
+	  
+	  if Send(self, @HasAttacked, #victim=victim)
+	  {
+	     plAttacked = DelListElem(plAttacked, victim);
+	  }
+	  
+	  return;
+   }
+   
+   HasAttacked(victim=$)
+   {
+      if plAttacked = $
+	  {
+	     plAttacked = [];
+		 
+		 return FALSE;
+	  }
+      
+	  return FindListElem(plAttacked, victim);
+   }
+   
+   ClearAttacked()
+   {
+      plAttacked = [];
+	  
+	  return;
    }
 
    // Determines if target is within attacking range, and within sight.
@@ -15148,7 +15201,17 @@ messages:
 
       return;
    }
-
+   
+   IsMinion()
+   {
+      return FALSE;
+   }
+   
+   IsMinionOf(who=$)
+   {
+      return FALSE;
+   }
+   
    // This section deals with minion code.
    CommandMinionAttack(oTarget=$)
    {

@@ -212,12 +212,19 @@ messages:
       {
          return;
       }
-
-      if (state & STATE_MOVE) OR (state & STATE_WAIT)
+	  
+	  // Reflections should only attack if provoked
+	  if what <> $ AND mob <> $ AND IsClass(what, &Player) AND IsClass(mob, &Reflection) AND NOT Send(what, @HasAttacked, #victim=mob)
+	  {
+	     return;
+	  }
+	  
+	  if (state & STATE_MOVE) OR (state & STATE_WAIT)
       {
          if Send(mob,@CanReachLocation,#row=new_row,#col=new_col,
                   #fine_row=fine_row,#fine_col=fine_col)
          {
+		    //Debug("AttackNow221",GetClass(mob),GetClass(what));
             Send(mob,@EnterStateAttack,#actnow=True);   // Used to be post.
 
             return;
@@ -233,6 +240,7 @@ messages:
          if Send(mob,@CanReachLocation,#row=new_row,#col=new_col,
                   #fine_row=fine_row,#fine_col=fine_col)
          {
+		    //Debug("AttackNow237",GetClass(mob),GetClass(what));
             Send(mob,@EnterStateAttack,#target=what,#actnow=True); // Used to be post.
          }
 
@@ -318,6 +326,7 @@ messages:
          {
             if Send(mob,@CanReach,#what=what)
             {
+			   //Debug("AttackNow323",GetClass(mob),GetClass(what));
                Send(mob,@EnterStateAttack,#target=what,#actnow=True);
 
                return;
@@ -437,6 +446,7 @@ messages:
          {
             if Send(mob,@CanReach,#what=what)
             {
+			   //Debug("AttackNow443",GetClass(mob),GetClass(what));
                Send(mob,@EnterStateAttack,#target=what,#actnow=True);
 
                return;
@@ -455,11 +465,13 @@ messages:
          {
             if Send(mob,@CanReach,#what=what)
             {
+			   //Debug("AttackNow462",GetClass(mob),GetClass(what));
                Send(mob,@EnterStateAttack,#target=what,#actnow=True);
                return;
             }
 
            // If they hit us, we chase them whether we can see them or not.
+		    //Debug("AttackNow468",GetClass(mob),GetClass(what));
             Send(mob,@EnterStateChase,#target=what,#actnow=True);
 
             return;
@@ -479,6 +491,7 @@ messages:
       }
 
       oTarget = Send(mob,@GetTarget);
+	  //Debug("AttackNow488",GetClass(mob),GetClass(oTarget));
       Send(mob,@EnterStateAttack,#target=oTarget,#actnow=False);
 
       return;

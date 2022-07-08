@@ -566,6 +566,8 @@ messages:
    // TODO: We will need to get this turned on so the servant can protect the master.
    CanAttackPlayer(who = $)
    {
+      Debug("ServantKODAttack",Send(self,@GetName),Send(who,@GetName));
+	  
       return FALSE;
    }
    
@@ -967,7 +969,7 @@ messages:
 
       plBuffs = [
 	     [0,  SID_SHADOW_FORM, 100, $],
-		 [40, SID_REFLECTION, 20, $]
+		 [40, SID_REFLECTION, 100, $]
 	  ];
 	  
       return;

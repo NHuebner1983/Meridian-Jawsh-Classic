@@ -1101,7 +1101,7 @@ messages:
 	  
       if actnow
       {
-         Send(self,@AttackTimer);
+	     Send(self,@AttackTimer);
       }
       else
       {
@@ -1598,7 +1598,8 @@ messages:
 
       if poTarget = $ OR NOT IsClass(poTarget,&Battler)
       {
-         Debug("Unreachable. Null poTarget","monster",self);
+	     // Disabled, spammy - will fix later.
+         //Debug("Unreachable. Null poTarget","monster",self);
          poTarget = $;
          Send(self,@EnterStateWait);
 
@@ -2184,7 +2185,14 @@ messages:
       {
          return FALSE;
       }
-
+	  
+      // Prevent minions from attacking their master's master.
+	  // Reflection [self] -> Servant [master] -> Player [master's master]
+	  if poMaster <> $ AND IsClass(self, &Reflection) AND IsClass(victim, &Player) AND poMaster = Send(victim, @GetServant)
+	  {
+		 return FALSE;
+	  }
+	  
       // NPCs can't attack. Don't check AI_NOFIGHT here, as those mobs
       // might have a non-direct attack to cause damage with (e.g. brambles).
       if (piBehavior & AI_NPC)
@@ -5014,7 +5022,7 @@ messages:
 	     return FALSE;
       }
 	  
-	  if IsClass(poTarget, &Player) AND IsClass(self, &Servant) AND NOT Send(self, @CanAttackPlayer, #who=poTarget)
+	  if IsClass(poTarget, &Player) AND NOT Send(self, @CanAttackPlayer, #who=poTarget)
 	  {
 	     // Servant cannot attack this player (poTarget) with spells.
 	     return FALSE;
@@ -5955,21 +5963,7 @@ messages:
    
    CanAttackPlayer(who=$)
    {
-      local lMinions;
-	  
-      if who <> $ AND poMaster <> $
-	  {
-	     // Don't attack the master
-         lMinions = Send(poMaster,@GetControlledMinions);
-		 
-         if (lMinions <> $ AND FindListElem(lMinions, who))
-         {
-            return FALSE;
-         }
-
-	  }
-	  
-      return TRUE;
+      return NOT Send(self,@IsMinionOf,#who=who);
    }
 
    LearnHowMuchFurther(iAmount=0,rval=0)
@@ -6772,7 +6766,16 @@ messages:
 
       return FALSE;
    }
-
+   
+   IsMinionOf(who=$)
+   {
+      local lMinions;
+	  
+	  lMinions = Send(who,@GetControlledMinions);
+	  
+	  return lMinions <> $ AND FindListElem(lMinions, self);
+   }
+   
    IsMinion()
    "Returns TRUE for seduced and animated mobs, reflections, "
    "evil twins and apparitions."
@@ -7154,6 +7157,8 @@ messages:
 
    TargetSwitch(what=$, iHatred = 0)
    {
+      //Debug("TargetSwitch",GetClass(self),GetClass(what));
+	  
       if what = $
          OR poOwner = $
       {
@@ -7161,13 +7166,23 @@ messages:
 
          return;
       }
-
+	  
       if IsClass(what,&User)
          AND NOT Send(what,@IsLoggedOn)
       {
          // Trying to switch to someone logged off. Can't do that.
          return;
       }
+
+	  // A reflection or servant wants to target a player.
+	  if (IsClass(self,&Reflection) OR IsClass(self,&Servant)) AND IsClass(what, &Player)
+	  {
+		 if NOT Send(what,@HasAttacked,#victim=self)
+		 {
+		    // I will only attack if you attack first.
+		    return FALSE;
+		 }
+	  }
 
       piHatred = iHatred;
 
