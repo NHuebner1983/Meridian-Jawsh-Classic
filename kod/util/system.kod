@@ -8066,12 +8066,33 @@ messages:
       return resistance_list;
    }
 
-   GetUniqueIPs()
+   GetUniqueIPs(with_movement_since=$)
    {
-      local i, j, lUserIPList, lIP, bFound;
+      local i, j, lUserIPList, lIP, bFound, iLastMoved;
 
       foreach i in plUsers_logged_on
       {
+	     if NOT IsClass(i, &User) OR NOT Send(i, @IsLoggedOn)
+		 {
+		    // Why is this user in the logged on users list but not logged on.
+			// Or why are they not a user.
+		    continue;
+		 }
+		 
+		 if with_movement_since <> $
+		 {
+		    iLastMoved = Send(i, @SinceLastMove);
+			
+			if iLastMoved < 0 OR iLastMoved > with_movement_since
+			{
+		       // Check for movement since a certain amount of seconds.
+			   // Entered room, moved around, etc.
+			   // Continue if this IP has not moved since the required time.
+			   
+			   continue;
+			}
+		 }
+		 
          bFound = FALSE;
 
          lIP = Send(i,@GetIP);
@@ -8100,7 +8121,7 @@ messages:
 
       return Length(lUserIPList);
    }
-
+   
    SortItemsByType(lItems = $, lClassOrder=$)
    {
       local lBaseList, lSortedItems, oItem, lSuperClass, cClass,
