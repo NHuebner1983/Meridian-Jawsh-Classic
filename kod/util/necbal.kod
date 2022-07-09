@@ -176,6 +176,9 @@ messages:
       }
 	  
 	  Send(self,@DeleteOrphanArtifacts);
+	  
+	  pbStartupDistribution = FALSE;
+	  
 	  ptStartup = CreateTimer(self,@StartupDistribution,10000);
 
       pbScenarioActivated = TRUE;
