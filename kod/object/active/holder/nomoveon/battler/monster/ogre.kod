@@ -58,7 +58,7 @@ classvars:
    vrSound_death = ogre_sound_death
 
    viBonusXP = 2000
-   viBonusTP = 50
+   viBonusTP = 25
 
 properties:
 
