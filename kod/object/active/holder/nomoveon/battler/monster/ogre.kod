@@ -41,13 +41,13 @@ classvars:
    vrDead_name = ogre_dead_name_rsc
 
    viTreasure_type = TID_OGRE
-   viSpeed = SPEED_FAST
+   viSpeed = SPEED_SLOW
    viAttributes = 0
    viLevel = 300
    viDifficulty = 9
-   viVisionDistance = 18
+   viVisionDistance = 15
    // Attack range of 192, or 3 row/col.
-   viAttackRange = 192
+   viAttackRange = 136
    viKarma = -100
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
    viCashmin = 5000
@@ -57,8 +57,8 @@ classvars:
    vrSound_aware = ogre_sound_aware
    vrSound_death = ogre_sound_death
 
-   viBonusXP = 900
-   viBonusTP = 3
+   viBonusXP = 2000
+   viBonusTP = 50
 
 properties:
 
