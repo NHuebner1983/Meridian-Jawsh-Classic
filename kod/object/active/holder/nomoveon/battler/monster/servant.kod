@@ -46,6 +46,9 @@ resources:
    servant_desc_level_five = "Level 5 %s servant (81-98 spellpower)."
    servant_desc_level_six = "Level 6 %s servant (99 spellpower)."
    
+   servant_heals_self_shalille = "~bYour servant calls to Shal'ille and is showered in holy light for ~B~k%i~B~k ~bhealth.~b"
+   servant_heals_self_wand = "~bYour servant siphons the air around it and heals for ~B~k%i~B~k ~bhealth.~b"
+   
    // Servant commands
    servant_command_nodes = "nodes"
    servant_command_quiet = "shut up"
@@ -346,7 +349,7 @@ classvars:
 	   
    viWimpy = 2
 
-   viLevel = 150
+   viLevel = 200
    viDifficulty = 10
    
    // Attack range of 192, or 3 row/col.
@@ -765,7 +768,7 @@ messages:
    
    ServantBuffs()
    {
-      local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions;
+      local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions, iChance, iHealth, iHealAmount, iMaxHealth;
 	  
 	  if NOT Send(self,@MasterCheck)
 	  {
@@ -775,6 +778,37 @@ messages:
 	  plRemoveEnchants = $;
    
 	  Send(self,@StartBuffTimer);
+	  
+	  iHealth = Send(self,@GetHealth);
+	  iMaxHealth = Send(self,@GetMaxHealth);
+	  
+	  // Check servant health and try to heal self.
+	  Debug(iHealth,"<",iMaxHealth);
+	  
+	  if piSpellSchool = SS_SHALILLE
+	  {
+	     iChance = 40;
+	  }
+	  else
+	  {
+	     iChance = 35;
+	  }
+	  
+	  if iHealth < iMaxHealth AND Random(1, 80) <= iChance
+	  {
+	     if piSpellSchool = SS_SHALILLE
+	     {
+		    iHealAmount = Random(35, 60);
+		    Post(poMaster,@MsgSendUser,#message_rsc=servant_heals_self_shalille,#parm1=iHealAmount);
+		 }
+		 else
+		 {
+		    iHealAmount = Random(25, 35);
+		    Post(poMaster,@MsgSendUser,#message_rsc=servant_heals_self_wand,#parm1=iHealAmount);
+		 }
+		 
+		 Send(self,@HealHitPoint,#exact_amount=Bound(iHealAmount, 1, iMaxHealth - iHealth));
+	  }
 	  
 	  if NOT pbAllowBuff
 	  {
