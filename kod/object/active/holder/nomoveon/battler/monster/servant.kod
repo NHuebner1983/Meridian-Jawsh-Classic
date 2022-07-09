@@ -39,6 +39,13 @@ resources:
    servant_sound_death = none
    servant_sound_aware = none
    
+   servant_desc_level_one = "Level 1 %s servant (0-20 spellpower)."
+   servant_desc_level_two = "Level 2 %s servant (21-40 spellpower)."
+   servant_desc_level_three = "Level 3 %s servant (41-60 spellpower)."
+   servant_desc_level_four = "Level 4 %s servant (61-80 spellpower)."
+   servant_desc_level_five = "Level 5 %s servant (81-98 spellpower)."
+   servant_desc_level_six = "Level 6 %s servant (99 spellpower)."
+   
    // Servant commands
    servant_command_nodes = "nodes"
    servant_command_quiet = "shut up"
@@ -384,6 +391,7 @@ properties:
    piSpellSchool = $
    
    piSpellPower = 0
+   piSpellLevel = 1
    piPlayerDamage = 1
    piMonsterDamage = 1
    
@@ -465,6 +473,8 @@ messages:
       
 	  // The spell power from their summon cast.
 	  piSpellPower = iSpellPower;
+	  
+	  Send(self,@SetSpellsLevel);
 	  
 	  // The spell we used to summon the servant
 	  piSpellNum = iSpellNum;
@@ -561,6 +571,36 @@ messages:
 	  Send(self,@PrepareServantNameAndDesc);
 	  
 	  propagate;
+   }
+   
+   SetSpellsLevel()
+   {
+      if piSpellPower > 0 AND piSpellPower <= 20
+	  {
+	     piSpellLevel = 1;
+	  }
+      if piSpellPower > 20 AND piSpellPower <= 40
+	  {
+	     piSpellLevel = 2;
+	  }
+      if piSpellPower > 40 AND piSpellPower <= 60
+	  {
+	     piSpellLevel = 3;
+	  }
+      if piSpellPower > 60 AND piSpellPower <= 80
+	  {
+	     piSpellLevel = 4;
+	  }
+      if piSpellPower > 80 AND piSpellPower <= 98
+	  {
+	     piSpellLevel = 5;
+	  }
+      if piSpellPower >= 99
+	  {
+	     piSpellLevel = 6;
+	  }
+	  
+	  return;
    }
    
    // TODO: We will need to get this turned on so the servant can protect the master.
@@ -725,7 +765,7 @@ messages:
    
    ServantBuffs()
    {
-      local iRandom, iSpellGroup, iSpellPower, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions;
+      local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions;
 	  
 	  if NOT Send(self,@MasterCheck)
 	  {
@@ -743,9 +783,9 @@ messages:
 	  
 	  foreach iSpellGroup in plBuffs
 	  {
-	     iSpellPower = Nth(iSpellGroup, 1);
+	     iSpellLevel = Nth(iSpellGroup, 1);
 		 
-		 if piSpellPower < iSpellPower
+		 if piSpellLevel < iSpellLevel
 		 {
 		    continue;
 		 }
@@ -939,18 +979,18 @@ messages:
    SetFarenSpells()
    {
       plCasts = [
-	     [50, SID_BLAST_OF_FIRE, 50],
-	     [60, SID_FIREBALL, 30],
-	     [70, SID_LIGHTNING_BOLT, 20],
-	     [80, SID_EXPLOSIVE_FROST, 15]
+	     [4, SID_BLAST_OF_FIRE, 50],
+	     [4, SID_FIREBALL, 30],
+	     [4, SID_EXPLOSIVE_FROST, 15],
+	     [5, SID_LIGHTNING_BOLT, 20]
 	  ];
 	  
       plBuffs = [
-	     [0,  SID_LIGHT, 100, $],
-	     [50, SID_MYSTIC_TOUCH, 10, $],
-	     [60, SID_RESIST_COLD, 100, $],
-	     [70, SID_RESIST_FIRE, 100, $],
-	     [80, SID_RESIST_SHOCK, 100, $]
+	     [1, SID_LIGHT, 100, $],
+	     [1, SID_MYSTIC_TOUCH, 2, $],
+	     [2, SID_RESIST_COLD, 100, $],
+	     [2, SID_RESIST_FIRE, 100, $],
+	     [3, SID_RESIST_SHOCK, 100, $]
 	  ];
 
       return;
@@ -958,23 +998,22 @@ messages:
 
    SetRiijaSpells()
    {
-      // [0,  SID_FLASH, 50],   --- Disabled (enters PVP Mode - gong plays when this is cast :(...)
       plCasts = [
-	     [30, SID_ILLUSIONARY_WOUNDS, 50],
-		 [40, SID_FORGET, 5],
-	     [50, SID_VERTIGO, 20],
-	     [60, SID_APPARITION, 20],
-	     [95, SID_EVIL_TWIN, 20]
+	     [2, SID_FORGET, 2],
+	     [3, SID_ILLUSIONARY_WOUNDS, 50],
+		 [3, SID_VERTIGO, 10],
+		 [3, SID_DEMENT, 5],
+	     [4, SID_APPARITION, 20],
+	     [5, SID_EVIL_TWIN, 20]
 	  ];
 
       plBuffs = [
-	     [0,  SID_SHADOW_FORM, 100, $],
-		 [40, SID_REFLECTION, 100, $]
+	     [1, SID_SHADOW_FORM, 100, $],
+		 [3, SID_REFLECTION, 100, $]
 	  ];
 	  
       return;
    }
-   // 	     [20, SID_RELAY, 5, $],  --- Disabled (currently reduces vigor to 150 if above 150).
 
    SetKranSpells()
    {
@@ -986,19 +1025,19 @@ messages:
       plCasts = $;
 
       plBuffs = [
-		 [30, SID_MARTYRS_BATTLEGROUND, 100, $],
-		 [30, SID_NIGHT_VISION, 100, $],
-	     [40, SID_BLESS, 100, $],
-	     [40, SID_HASTE, 100, $],
-		 [50, SID_SUPER_STRENGTH, 100, $],
-		 [60, SID_MAGIC_SHIELD, 100, $],
-		 [90, SID_KILLING_FIELDS, 90, $],
-		 [90, SID_DETECT_INVISIBLE, 20, $],
-		 [90, SID_ARMOR_OF_GORT, 5, $],
-		 [90, SID_RESIST_MAGIC, 5, $],
-		 [90, SID_DEFLECT, 5, $],
-		 [90, SID_EAGLE_EYES, 15, $],
-		 [90, SID_FREE_ACTION, 15, $]
+	     [2, SID_BLESS, 100, $],
+	     [2, SID_HASTE, 100, $],
+		 [2, SID_SUPER_STRENGTH, 100, $],
+		 [3, SID_MARTYRS_BATTLEGROUND, 100, $],
+		 [3, SID_NIGHT_VISION, 100, $],
+		 [3, SID_MAGIC_SHIELD, 100, $],
+		 [3, SID_DETECT_INVISIBLE, 50, $],
+		 [3, SID_FREE_ACTION, 25, $],
+		 [4, SID_DEFLECT, 10, $],
+		 [4, SID_EAGLE_EYES, 25, $],
+		 [5, SID_KILLING_FIELDS, 100, $],
+		 [5, SID_ARMOR_OF_GORT, 10, $],
+		 [5, SID_RESIST_MAGIC, 10, $]
 	  ];
 	  
       return;
@@ -1007,25 +1046,23 @@ messages:
    SetShalSpells()
    {
       plCasts = [
-	     [50, SID_DAZZLE, 20],
-	     [60, SID_MARK_OF_DISHONOR, 30],
-	     [90, SID_PURGE, 5]
+	     [4, SID_DAZZLE, 5],
+	     [4, SID_MARK_OF_DISHONOR, 25],
+	     [5, SID_PURGE, 5]
 	  ];
      
-	  // 	     [0,  SID_BREATH_OF_LIFE, 4, $],  --- Disabled, steals life from master for some reason.
-	  
-      plBuffs = [
-	     [0,  SID_MINOR_HEAL, 20, $],
-	     [0,  SID_DETECT_EVIL, 100, $],
-	     [0,  SID_CURE_POISON, 100, $],
-	     [0,  SID_REMOVE_CURSE, 100, $],
-	     [0,  SID_FORCES_OF_LIGHT, 90, $],
-	     [60, SID_RESIST_ACID, 100, $],
-	     [60, SID_CURE_DISEASE, 100, $],
-	     [70, SID_HOLY_RESOLVE, 100, $],
-	     [80, SID_HOSPICE, 3, $],
-	     [80, SID_PURIFY, 10, $],
-	     [90, SID_MAJOR_HEAL, 2, $]
+	  plBuffs = [
+	     [1, SID_MINOR_HEAL, 20, $],
+	     [1, SID_DETECT_EVIL, 100, $],
+	     [2, SID_CURE_POISON, 100, $],
+	     [2, SID_REMOVE_CURSE, 100, $],
+	     [2, SID_RESIST_ACID, 100, $],
+	     [3, SID_CURE_DISEASE, 100, $],
+	     [3, SID_HOLY_RESOLVE, 100, $],
+	     [3, SID_HOSPICE, 3, $],
+	     [4, SID_FORCES_OF_LIGHT, 90, $],
+	     [4, SID_PURIFY, 10, $],
+	     [5, SID_MAJOR_HEAL, 2, $]
 	  ];
 
       return;
@@ -1034,22 +1071,21 @@ messages:
    SetQorSpells()
    {
       plCasts = [
-	     [40, SID_ENFEEBLE, 60],
-		 [50, SID_SPLASH_OF_ACID, 50],
-	     [60, SID_VAMPIRIC_DRAIN, 50],
-	     [95, SID_HOLD, 10],
-	     [95, SID_BLIND, 9]
+	     [3, SID_ENFEEBLE, 60],
+	     [3, SID_VAMPIRIC_DRAIN, 50],
+	     [3, SID_POISON_FOG, 5],
+		 [4, SID_SPLASH_OF_ACID, 50],
+	     [4, SID_HOLD, 5],
+	     [5, SID_BLIND, 5]
 	  ];
 
-      // 	     [90, SID_SHALILLEBANE, 90, $],  --- Disabled (untested in PVP) - May flag player orange.
-
       plBuffs = [
-	     [0,  SID_CLOAK, 100, $],
-	     [20, SID_DARKNESS, 100, $],
-	     [30, SID_DETECT_GOOD, 100, $],
-	     [40, SID_UNHOLY_RESOLVE, 100, $],
-	     [90, SID_DEATH_LINK, 100, $],
-	     [90, SID_INVISIBILITY, 50, $]
+	     [1, SID_CLOAK, 100, $],
+	     [1, SID_DARKNESS, 100, $],
+	     [1, SID_DETECT_GOOD, 100, $],
+	     [1, SID_UNHOLY_RESOLVE, 100, $],
+	     [5, SID_DEATH_LINK, 100, $],
+	     [5, SID_INVISIBILITY, 50, $]
 	  ];
 	  
       return;
@@ -1061,10 +1097,10 @@ messages:
 	  plCasts = $;
 	  
       plBuffs = [
-	     [0,  SID_WOLFPACK, 100, ENCHANT_REMOVE_SERVANT_DELETED],
-	     [20, SID_INVIGORATE, 100, ENCHANT_REMOVE_SERVANT_DELETED],
-	     [30, SID_RESTORATE, 100, ENCHANT_REMOVE_SERVANT_DELETED],
-	     [90, SID_REJUVENATE, 100, ENCHANT_REMOVE_SERVANT_DELETED]
+	     [1, SID_INVIGORATE, 100, ENCHANT_REMOVE_SERVANT_DELETED],
+	     [3, SID_WOLFPACK, 100, ENCHANT_REMOVE_SERVANT_DELETED],
+	     [3, SID_RESTORATE, 100, ENCHANT_REMOVE_SERVANT_DELETED],
+	     [5, SID_REJUVENATE, 100, ENCHANT_REMOVE_SERVANT_DELETED]
 	  ];
 
       return;
@@ -1086,7 +1122,7 @@ messages:
 	  
 	  foreach iSpellGroup in plCasts
 	  {
-	     if piSpellPower >= Nth(iSpellGroup, 1)
+	     if piSpellLevel >= Nth(iSpellGroup, 1)
 		 {
 	        if plSpellBook = $
 			{
@@ -1618,18 +1654,125 @@ messages:
    {
       return Send(self,@GetName);
    }
-
-   DoBaseDesc()
-   {
-      Send(self,@ShowDesc);
-
-      return;
-   }
    
-   ShowDesc()
+   ShowDesc(iHitPoint_Percent = $)
+   "Shows what the servant is capable of (basically the level of magic)."
    {
-      AddPacket(4,vrDesc);
-	  
+      local iHit_Percent, rMonster_condition;
+
+      if iHitPoint_Percent = $
+      {
+         iHit_Percent = piHit_points / piMax_hit_points;
+      }
+      else
+      {
+         iHit_Percent = iHitPoint_Percent;
+      }
+
+      if iHit_Percent > 80
+      {
+         if piBehavior & AI_NPC
+         {
+            AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,monster_nothing);
+         }
+         else
+         {
+		    if piSpellLevel = 1
+			{
+               AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,servant_desc_level_one,
+                         4,Send(poSpell,@GetSchoolStr));
+			}
+		    if piSpellLevel = 2
+			{
+               AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,servant_desc_level_two,
+                         4,Send(poSpell,@GetSchoolStr));
+			}
+		    if piSpellLevel = 3
+			{
+               AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,servant_desc_level_three,
+                         4,Send(poSpell,@GetSchoolStr));
+			}
+		    if piSpellLevel = 4
+			{
+               AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,servant_desc_level_four,
+                         4,Send(poSpell,@GetSchoolStr));
+			}
+		    if piSpellLevel = 5
+			{
+               AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,servant_desc_level_five,
+                         4,Send(poSpell,@GetSchoolStr));
+			}
+		    if piSpellLevel = 6
+			{
+               AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,servant_desc_level_six,
+                         4,Send(poSpell,@GetSchoolStr));
+			}
+         }
+
+         return;
+      }
+      else if iHit_Percent > 60
+      {
+         rMonster_condition = vrCondition_good;
+      }
+      else if iHit_Percent > 40
+      {
+         rMonster_condition = vrCondition_fair;
+      }
+      else if iHit_Percent > 20
+      {
+         rMonster_condition = vrCondition_poor;
+      }
+      else
+      {
+         rMonster_condition = vrCondition_bad;
+      }
+
+      if piBehavior & AI_NPC
+      {
+         AddPacket(4,rMonster_Condition, 4,vrDesc, 4,monster_nothing,
+                   4,Send(self,@GetCapDef), 4,Send(self,@GetName));
+      }
+      else
+      {
+	     if piSpellLevel = 1
+		 {
+            AddPacket(4,rMonster_Condition, 4,vrDesc, 4,servant_desc_level_one,
+                      4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
+                      4,Send(self,@GetName));
+         }
+	     if piSpellLevel = 2
+		 {
+            AddPacket(4,rMonster_Condition, 4,vrDesc, 4,servant_desc_level_two,
+                      4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
+                      4,Send(self,@GetName));
+         }
+	     if piSpellLevel = 3
+		 {
+            AddPacket(4,rMonster_Condition, 4,vrDesc, 4,servant_desc_level_three,
+                      4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
+                      4,Send(self,@GetName));
+         }
+	     if piSpellLevel = 4
+		 {
+            AddPacket(4,rMonster_Condition, 4,vrDesc, 4,servant_desc_level_four,
+                      4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
+                      4,Send(self,@GetName));
+         }
+	     if piSpellLevel = 5
+		 {
+            AddPacket(4,rMonster_Condition, 4,vrDesc, 4,servant_desc_level_five,
+                      4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
+                      4,Send(self,@GetName));
+         }
+	     if piSpellLevel = 6
+		 {
+            AddPacket(4,rMonster_Condition, 4,vrDesc, 4,servant_desc_level_six,
+                      4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
+                      4,Send(self,@GetName));
+         }
+	  }
+
       return;
    }
    
