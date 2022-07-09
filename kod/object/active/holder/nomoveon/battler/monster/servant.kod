@@ -783,8 +783,6 @@ messages:
 	  iMaxHealth = Send(self,@GetMaxHealth);
 	  
 	  // Check servant health and try to heal self.
-	  Debug(iHealth,"<",iMaxHealth);
-	  
 	  if piSpellSchool = SS_SHALILLE
 	  {
 	     iChance = 40;
