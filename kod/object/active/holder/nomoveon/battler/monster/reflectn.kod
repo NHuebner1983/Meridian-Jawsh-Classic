@@ -53,7 +53,7 @@ classvars:
 
    viTreasure_type = TID_NONE
 
-   viSpeed = SPEED_VERY_FAST
+   viSpeed = SPEED_HACKER
    viAttack_type = ATCK_WEAP_SLASH
    viAttributes = 0
    viLevel = 44
@@ -71,7 +71,7 @@ classvars:
    vrMinion_trouble = reflection_trouble
 
    viDefault_behavior = AI_FIGHT_MONSTERS | AI_FIGHT_NEWBIESAFE \
-                        | AI_FIGHT_AGGRESSIVE
+                        | AI_FIGHT_AGGRESSIVE | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_THROUGH_WALLS
 
 properties:
 

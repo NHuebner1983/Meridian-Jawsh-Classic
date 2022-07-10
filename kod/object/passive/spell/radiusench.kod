@@ -773,23 +773,18 @@ messages:
          }
 
          // Original spell is ending, unenchant all in range.
-		 oSourceOwner = Send(oSource,@GetOwner);
-		 if oSourceOwner <> $ AND IsClass(oSourceOwner, &User)
+		 if Send(oSource,@GetOwner) <> $
 		 {
-		    lHolderActive = Send(Send(oSource,@GetOwner),@GetHolderActive);
-            if lHolderActive <> $
-            {			
-               foreach i in lHolderActive
+            foreach i in Send(Send(oSource,@GetOwner),@GetHolderActive)
+            {
+               each_obj = First(i);
+               if (each_obj <> who
+                  AND IsClass(each_obj,&NoMoveOn))
                {
-                  each_obj = First(i);
-                  if (each_obj <> who
-                     AND IsClass(each_obj,&NoMoveOn))
-                  {
-                     Send(each_obj,@RemoveRadiusEnchantment,#what=self,#state=state,
-                           #report=report,#recheck=recheck);
-                  }
+                  Send(each_obj,@RemoveRadiusEnchantment,#what=self,#state=state,
+                        #report=report,#recheck=recheck);
                }
-			}
+            }
 		 }
       }
 

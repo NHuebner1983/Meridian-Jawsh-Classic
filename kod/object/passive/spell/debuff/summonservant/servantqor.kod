@@ -1,0 +1,47 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+QorServant is SummonServant
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   servant_qor_name_rsc = "servant of qor"
+   servant_qor_icon_rsc = qorservantspell.bgf
+   servant_qor_desc_rsc = \
+      "A magical creature awaits your command."
+
+   servant_qor_sound = rperappr.ogg
+
+classvars:
+
+   vrName = servant_qor_name_rsc
+   vrIcon = servant_qor_icon_rsc
+   vrDesc = servant_qor_desc_rsc
+
+   viSpell_num = SID_QOR_SERVANT
+   viSchool = SS_QOR
+   viSpell_level = 1
+   
+   vrSucceed_wav = servant_qor_sound
+
+properties:
+
+   // Nothing yet
+
+messages:
+
+	// Nothing yet
+
+end
+////////////////////////////////////////////////////////////////////////////////

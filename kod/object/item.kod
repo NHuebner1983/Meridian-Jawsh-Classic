@@ -752,6 +752,35 @@ messages:
 
       return;
    }
+   
+   IsFake()
+   {
+      return Send(self,@HasAttribute,#ItemAtt=IA_MISDIRECTION);
+   }
+   
+   IsOdd()
+   {
+      local bIdentified, oItemAtt, i, iNum;
+
+      if plItem_Attributes <> $
+      {
+         foreach i in plItem_Attributes
+         {
+            iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+            oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+            bIdentified = Send(self,@GetIDStatusFromCompound,
+                              #compound=First(i));
+
+            if NOT bIdentified
+            {
+	           // Item is ODD
+               return TRUE;
+            }
+         }
+      }
+
+      return FALSE;
+   }
 
    ShowDesc(who=$,bShowAll = FALSE)
    {

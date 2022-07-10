@@ -90,6 +90,11 @@ messages:
 
       propagate;
    }
+   
+   GetBaseSpellModifier(oSpell=$)
+   {
+      return 3;
+   }   
 
    ReqUseSomething(what=$)
    {

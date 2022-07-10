@@ -41,6 +41,20 @@ resources:
       "You're broke, and you're wasting my time."
    EvilGuard_not_enough = "Not enough."
 
+   evilguard_not_bullied = \
+      "You think you can just threaten me? The other guard would have you thrown in jail. "
+	  "I might be able to let you pass if you were to provide me with a 'tip'? "
+	  "You might be able to overpower the guards and sneak past, but that would require a powerful sorcerer. "
+   
+   evilguard_bullied = \
+      "Whoa, Is that a servant of magical arts? "
+      "My guards are no match for you and your servant! "
+	  "You may pass. I heard that dark wizards are trying to summon them to open a gate to hell itself. "
+      "I wish I could summon a servant, but I am not special like the chosen ones of our great land. "
+	  "If I had one, I wouldn't be working at this boring guard post. My boss is such a slime."
+   
+   evilguard_bullied_said = "threaten"
+
 classvars:
 
    vrName = KocatanCaptainEvil_name_rsc
@@ -57,6 +71,7 @@ classvars:
 properties:
 
    plBribes = $
+   pbThreatened = FALSE
 
 messages:
 
@@ -76,7 +91,16 @@ messages:
 
    AllowContrabandToPass(What=$)
    {
-      local i;
+      local i, bThreatened;
+	  
+	  bThreatened = pbThreatened;
+	  
+	  if bThreatened
+	  {
+	     pbThreatened = FALSE;
+		 
+	     return TRUE;
+	  }
 
       foreach i in plBribes
       {
@@ -108,6 +132,27 @@ messages:
 
       propagate;
 
+   }
+
+   SomeoneSaid(what = $,type = $,string = $)
+   {
+      if StringEqual(string, evilguard_bullied_said)
+	  {
+         if what <> $ and IsClass(what, &Player)
+	     {
+	        if Send(what, @GetServant) <> $
+		    {
+			   pbThreatened = TRUE;
+			   Post(self,@SayToOne,#target=what,#message_rsc=evilguard_bullied);
+			}
+			else
+			{
+			   Post(self,@SayToOne,#target=what,#message_rsc=evilguard_not_bullied);
+			}
+		 }
+	  }
+	  
+	  propagate;
    }
 
    CheckForBribe(who=$,obj=0)

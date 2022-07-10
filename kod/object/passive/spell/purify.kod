@@ -131,9 +131,12 @@ messages:
 
       if NOT bHasEnchantment
       {
-         Send(who,@MsgSendUser,#message_rsc=purify_not_enchanted,
-               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
-
+         if IsClass(who, &Player)
+		 {
+		    Send(who,@MsgSendUser,#message_rsc=purify_not_enchanted,
+                  #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+		 }
+		 
          return FALSE;
       }
 
@@ -141,9 +144,12 @@ messages:
       if NOT pbCan_cast_on_others
          AND oTarget <> who
       {
-         Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
-         Send(who,@MsgSendUser,#message_rsc=purify_spell_self_cast_rsc,
+	     if IsClass(who, &Player)
+		 {
+            Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
+            Send(who,@MsgSendUser,#message_rsc=purify_spell_self_cast_rsc,
                #parm1=vrName);
+		 }
 
          return FALSE;
       }
@@ -162,15 +168,7 @@ messages:
       }
 
       oTarget = First(lTargets);
-      if oTarget <> who
-      {
-         Send(who,@MsgSendUser,#message_rsc=spell_cast_on_target,
-               #parm1=Send(self,@GetName),#parm2=Send(oTarget,@GetDef),
-               #parm3=Send(oTarget,@GetName));
-      }
-
-      Send(oTarget,@MsgSendUser,#message_rsc=purify_on);
-
+	  
       // keep tabs on guides/bards, but not admins.
       if IsClass(who, &DM)
       {
@@ -188,12 +186,15 @@ messages:
          }
       }
 
-      Send(self,@DoPurify,#who=oTarget,#iChance=iSpellPower);
+      if NOT Send(self,@DoPurify,#who=oTarget,#caster=who,#iChance=iSpellPower)
+	  {
+	     return FALSE;
+	  }
 
       propagate;
    }
 
-   DoPurify(who=$, iChance=$)
+   DoPurify(who=$, caster=$, iChance=$)
    "Remove negative enchantments on who with a given chance to remove each one."
    {
       local iNumEnchantments, lEnchantments, iModifiedChance, oEnchantment,
@@ -252,6 +253,24 @@ messages:
             bRemovedSomething = TRUE;
          }
       }
+	  
+	  if bRemovedSomething
+	  {
+         if (who <> caster)
+         {
+	        if IsClass(caster, &Player)
+		    {
+               Send(caster,@MsgSendUser,#message_rsc=spell_cast_on_target,
+                     #parm1=Send(self,@GetName),#parm2=Send(who,@GetDef),
+                     #parm3=Send(who,@GetName));
+		    }
+		 
+		    if IsClass(who, &Player)
+		    {
+               Send(who,@MsgSendUser,#message_rsc=purify_on);
+		    }
+         }	  
+	  }
 
       return bRemovedSomething;
    }

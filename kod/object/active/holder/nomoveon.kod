@@ -330,8 +330,11 @@ messages:
 
       foreach i in plRadiusEnchantments
       {
-         Send(self,@RemoveRadiusEnchantment,#what=Nth(i,2),#state=Nth(i,3),
-               #report=report);
+	     if Nth(i,2) <> $ AND Nth(i,3) <> 0
+		 {
+            Send(self,@RemoveRadiusEnchantment,#what=Nth(i,2),#state=Nth(i,3),
+                  #report=report);
+	     }
       }
 
       return;

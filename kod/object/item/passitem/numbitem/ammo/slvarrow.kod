@@ -37,7 +37,7 @@ classvars:
    vrDesc = silver_arrow_desc_rsc
 
    viAmmo_type = AMMO_ARROW
-   viValue_average = 30
+   viValue_average = 150
 
    viGround_group = 4
    viInventory_group = 3

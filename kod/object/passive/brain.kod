@@ -163,7 +163,16 @@ messages:
       {
          return;
       }
-
+	  
+	  if what <> $ AND IsClass(what, &Player)
+	  {
+	     if Send(what,@GetAggroCount) >= MAX_AGGRO AND NOT Send(what,@HasAggro,#what=mob)
+		 {
+		    // Ignore the user, they are already being aggro'd by too many things.
+			return;
+		 }
+	  }
+	  
       /// We now process all SomethingMoved calls for fluidity.
       //if (ignoreWait = FALSE)
       //   AND Random(1,5) <> 5
@@ -203,12 +212,19 @@ messages:
       {
          return;
       }
-
-      if (state & STATE_MOVE) OR (state & STATE_WAIT)
+	  
+	  // Reflections should only attack if provoked
+	  if what <> $ AND mob <> $ AND IsClass(what, &Player) AND IsClass(mob, &Reflection) AND NOT Send(what, @HasAttacked, #victim=mob)
+	  {
+	     return;
+	  }
+	  
+	  if (state & STATE_MOVE) OR (state & STATE_WAIT)
       {
          if Send(mob,@CanReachLocation,#row=new_row,#col=new_col,
                   #fine_row=fine_row,#fine_col=fine_col)
          {
+		    //Debug("AttackNow221",GetClass(mob),GetClass(what));
             Send(mob,@EnterStateAttack,#actnow=True);   // Used to be post.
 
             return;
@@ -224,6 +240,7 @@ messages:
          if Send(mob,@CanReachLocation,#row=new_row,#col=new_col,
                   #fine_row=fine_row,#fine_col=fine_col)
          {
+		    //Debug("AttackNow237",GetClass(mob),GetClass(what));
             Send(mob,@EnterStateAttack,#target=what,#actnow=True); // Used to be post.
          }
 
@@ -251,7 +268,7 @@ messages:
       local oTarget, iType, bSwitch;
 
       oTarget = Send(mob,@GetTarget);
-
+	  
       //// Sanity check
       if what = $
       {
@@ -262,6 +279,22 @@ messages:
       {
          return;
       }
+	  
+	  if IsClass(what, &Monster) AND IsClass(victim, &Player) AND NOT IsClass(what, &Servant)
+	  {
+	     // Monster attacked player
+		 // Make sure the monster is known as an aggressor.
+		 Send(victim,@AddAggro,#what=what);
+	  }
+	  
+	  if IsClass(what, &Player) AND IsClass(victim, &Monster) AND NOT IsClass(victim, &Servant)
+	  {
+	     // Player attacked monster
+		 // Make sure the monster is known as an aggressor.
+		 Send(what,@AddAggro,#what=victim);
+	  }
+
+      //Debug(Send(what,@GetName),"attacked",Send(victim,@GetName));
 
       iType = TS_FIGHT;
       if victim = mob
@@ -293,6 +326,7 @@ messages:
          {
             if Send(mob,@CanReach,#what=what)
             {
+			   //Debug("AttackNow323",GetClass(mob),GetClass(what));
                Send(mob,@EnterStateAttack,#target=what,#actnow=True);
 
                return;
@@ -412,6 +446,7 @@ messages:
          {
             if Send(mob,@CanReach,#what=what)
             {
+			   //Debug("AttackNow443",GetClass(mob),GetClass(what));
                Send(mob,@EnterStateAttack,#target=what,#actnow=True);
 
                return;
@@ -430,11 +465,13 @@ messages:
          {
             if Send(mob,@CanReach,#what=what)
             {
+			   //Debug("AttackNow462",GetClass(mob),GetClass(what));
                Send(mob,@EnterStateAttack,#target=what,#actnow=True);
                return;
             }
 
            // If they hit us, we chase them whether we can see them or not.
+		    //Debug("AttackNow468",GetClass(mob),GetClass(what));
             Send(mob,@EnterStateChase,#target=what,#actnow=True);
 
             return;
@@ -454,6 +491,7 @@ messages:
       }
 
       oTarget = Send(mob,@GetTarget);
+	  //Debug("AttackNow488",GetClass(mob),GetClass(oTarget));
       Send(mob,@EnterStateAttack,#target=oTarget,#actnow=False);
 
       return;
@@ -537,7 +575,7 @@ messages:
    "4. If you have a master, go to his side."
    "5. Otherwise, wander aimlessly."
    {
-      local oMaster, oOwner, oMasterRoom, oFrightener;
+      local oMaster, oOwner, oMasterRoom, oFrightener, bDoMoveMaster;
 
       if mob = $
       {
@@ -600,8 +638,22 @@ messages:
             oMasterRoom = Send(oMaster,@GetOwner);
             if oOwner = oMasterRoom
             {
+			   bDoMoveMaster = FALSE;
+			   
                /// Attempt to move towards master.
-               Send(mob,@MoveToMaster);
+			   if IsClass(mob, &Servant)
+			   {
+			      // Only move to master if we're too far away.
+				  if (Send(mob,@SquaredFineDistanceTo3D,#what=oMaster) / 100) > 100
+				  {
+				     bDoMoveMaster = TRUE;
+				  }
+			   }
+			   
+			   if bDoMoveMaster
+			   {
+                  Send(mob,@MoveToMaster);
+			   }
             }
             else
             {
@@ -1186,7 +1238,7 @@ messages:
 
       if iHatred <= 0 AND NOT (behavior & AI_FIGHT_AGGRESSIVE)
       {
-         return 0;
+	     return 0;
       }
 
       // This is the monster vision check. If 'what' attacked us, skip
@@ -1283,6 +1335,15 @@ messages:
          return FALSE;
       }
 
+	  if what <> $ AND IsClass(what, &Player)
+	  {
+	     if Send(what,@GetAggroCount) >= MAX_AGGRO AND NOT Send(what,@HasAggro,#what=mob)
+		 {
+		    // Ignore the user, they are already being aggro'd by too many things.
+			return FALSE;
+		 }
+	  }
+	  
       behavior = Send(mob,@GetBehavior);
       iHatred = Send(self,@GetHatred,#what=what,#mob=mob,
                      #event=event,#behavior=behavior);

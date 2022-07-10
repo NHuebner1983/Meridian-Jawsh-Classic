@@ -190,6 +190,23 @@ messages:
 
       propagate;
    }
+   
+   // If the AO3 does not have an owner, let's remove it from the system.
+   Reset()
+   {
+   	  if poOwner <> $ AND IsClass(poOwner, &Player)
+	  {
+	     Debug("AO3 held by",Send(poOwner,@GetName));
+	  }
+	  
+      if poOwner <> $ AND NOT IsClass(poOwner, &Player)
+	  {
+	     Debug("AO3 Orphan Removed", poOwner);
+	     Send(self, @Delete);
+	  }
+	  
+	  return;
+   }
 
    ReqNewOwner(what = $)
    {
@@ -876,6 +893,11 @@ messages:
 
    Delete()
    {
+      if poOwner = $
+	  {
+	     return;
+	  }
+	  
       if pbCounted
       {
          pbCounted = FALSE;
@@ -931,12 +953,14 @@ messages:
    "When something tries to unuse the Amulet, it will not come off, and will"
    "teach the user a lesson in the process."
    {
-      // if Send(poOwner,@PlayerIsImmortal) {return True;}
-      //Post(self,@TortureOwner);
-
-      //return FALSE;
+      if Send(poOwner,@PlayerIsImmortal)
+	  {
+	     return TRUE;
+	  }
 	  
-	  return TRUE;
+      Post(self,@TortureOwner);
+
+	  return FALSE;
    }
 
    TortureOwner()

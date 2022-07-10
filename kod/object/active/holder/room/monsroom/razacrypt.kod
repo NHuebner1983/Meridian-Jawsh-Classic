@@ -568,10 +568,10 @@ messages:
       foreach i in plActive
       {
          each_obj = First(i);
-         if count = COUNT_MONSTERS
-             AND IsClass(each_obj,&Monster) 
-            OR count = COUNT_PLAYERS
-             AND IsClass(each_obj,&User)
+         if (count = COUNT_MONSTERS
+             AND IsClass(each_obj,&Monster) AND NOT IsClass(each_obj, &Servant))
+            OR (count = COUNT_PLAYERS
+             AND IsClass(each_obj,&User))
          {
             iRow = Send(each_obj,@GetRow);
             
@@ -602,7 +602,7 @@ messages:
       foreach i in plActive
       {
          each_obj = First(i);
-         if IsClass(each_obj,&Monster)
+         if IsClass(each_obj,&Monster) AND NOT IsClass(each_obj, &Servant)
          {
             iRow = Send(each_obj,@GetRow);
             iCol = Send(each_obj,@GetCol);

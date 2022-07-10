@@ -157,6 +157,23 @@ messages:
       propagate;
    }
 
+   // If the SOTH does not have an owner, let's remove it from the system.
+   Reset()
+   {
+   	  if poOwner <> $ AND IsClass(poOwner, &Player)
+	  {
+	     Debug("SOTH held by",Send(poOwner,@GetName));
+	  }
+
+	  if poOwner <> $ AND NOT IsClass(poOwner, &Player)
+	  {
+	     Debug("SOTH Orphan Removed", poOwner);
+	     Send(self, @Delete);
+	  }
+	  	  
+	  return;
+   }
+
    NewOwner(what = $)
    {
       pbWarned = FALSE;
@@ -768,6 +785,11 @@ messages:
 
    Delete()
    {
+      if poOwner = $
+	  {
+	     return;
+	  }
+	  
       Send(self,@NewOwner,#what=$);
 
       if pbCounted
@@ -907,7 +929,9 @@ messages:
          Send(poOwner,@AssessDamage,#what=self,
                #damage=(Send(poOwner,@GetHealth)*2/3),#report=FALSE);
       }
-
+      
+	  Debug("SOTH-DELETE-FROM", Send(poOwner,@GetName));
+	  
       Send(self,@Delete);
 
       return;

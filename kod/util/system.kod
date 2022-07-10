@@ -3241,7 +3241,17 @@ messages:
             iSchool = Send(oSpell,@GetSchool);
             if (iSchool >= SS_SHALILLE AND iSchool <= SS_JALA)
             {
-               plNewCharSpells = Cons(oSpell,plNewCharSpells);
+			    // Do not allow the new character to purchase these.
+				// They are automatically given upon creation.
+				if num <> SID_RIIJA_SERVANT
+				   AND num <> SID_KRAN_SERVANT
+				   AND num <> SID_SHAL_SERVANT
+				   AND num <> SID_FAREN_SERVANT
+				   AND num <> SID_QOR_SERVANT
+				   AND num <> SID_JALA_SERVANT
+			   {
+			      plNewCharSpells = Cons(oSpell,plNewCharSpells);
+			   }
             }
          }
       }
@@ -3475,6 +3485,14 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_PHASE,#class=&Phase);
 	  
       Send(self,@CreateOneSpellIfNew,#num=SID_VAULT_LOADOUT,#class=&VaultLoadout);
+
+      // Servant Spells
+      Send(self,@CreateOneSpellIfNew,#num=SID_RIIJA_SERVANT,#class=&RiijaServant);
+      Send(self,@CreateOneSpellIfNew,#num=SID_KRAN_SERVANT,#class=&KranServant);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SHAL_SERVANT,#class=&ShalServant);
+      Send(self,@CreateOneSpellIfNew,#num=SID_FAREN_SERVANT,#class=&FarenServant);
+      Send(self,@CreateOneSpellIfNew,#num=SID_QOR_SERVANT,#class=&QorServant);
+      Send(self,@CreateOneSpellIfNew,#num=SID_JALA_SERVANT,#class=&JalaServant);
 
       // Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
@@ -5444,6 +5462,9 @@ messages:
       plMonsterTemplates = cons(create(&CaptainKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&HalfKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Ogre),plMonsterTemplates);
+      
+	  // Servant monster
+	  plMonsterTemplates = cons(create(&Servant),plMonsterTemplates);
 
       //Death Realm
       plMonsterTemplates = cons(create(&HeadlessSkeleton),plMonsterTemplates);
@@ -5852,6 +5873,7 @@ messages:
       plItemTemplates = cons(create(&IceArrow),plItemTemplates);
       plItemTemplates = cons(create(&AcidArrow),plItemTemplates);
       plItemTemplates = cons(create(&GoldenArrow),plItemTemplates);
+      plItemTemplates = cons(create(&PracticeArrow),plItemTemplates);
 
       // Weapons
       plItemTemplates = cons(create(&MagicBow),plItemTemplates);
@@ -7953,6 +7975,37 @@ messages:
 
       return resistance_list;
    }
+   
+   GetSchoolName(iSchoolNum = $)
+   {
+      local sSchoolName;
+	  
+	  sSchoolName = $;
+	  
+      switch(iSchoolNum)
+	  {
+	     case SS_SHALILLE:
+		    sSchoolName = SetString($, "Shal'ille");
+	     break;
+	     case SS_QOR:
+		    sSchoolName = SetString($, "Qor");
+	     break;
+	     case SS_KRAANAN:
+		    sSchoolName = SetString($, "Kraanan");
+	     break;
+	     case SS_FAREN:
+		    sSchoolName = SetString($, "Faren");
+	     break;
+	     case SS_RIIJA:
+		    sSchoolName = SetString($, "Riija");
+	     break;
+	     case SS_JALA:
+		    sSchoolName = SetString($, "Jala");
+	     break;
+	  }
+	  
+	  return sSchoolName;
+   }
 
 #region Print Game Info
 
@@ -8121,12 +8174,33 @@ messages:
       return resistance_list;
    }
 
-   GetUniqueIPs()
+   GetUniqueIPs(with_movement_since=$)
    {
-      local i, j, lUserIPList, lIP, bFound;
+      local i, j, lUserIPList, lIP, bFound, iLastMoved;
 
       foreach i in plUsers_logged_on
       {
+	     if NOT IsClass(i, &User) OR NOT Send(i, @IsLoggedOn)
+		 {
+		    // Why is this user in the logged on users list but not logged on.
+			// Or why are they not a user.
+		    continue;
+		 }
+		 
+		 if with_movement_since <> $
+		 {
+		    iLastMoved = Send(i, @SinceLastMove);
+			
+			if iLastMoved < 0 OR iLastMoved > with_movement_since
+			{
+		       // Check for movement since a certain amount of seconds.
+			   // Entered room, moved around, etc.
+			   // Continue if this IP has not moved since the required time.
+			   
+			   continue;
+			}
+		 }
+		 
          bFound = FALSE;
 
          lIP = Send(i,@GetIP);
@@ -8155,7 +8229,7 @@ messages:
 
       return Length(lUserIPList);
    }
-
+   
    SortItemsByType(lItems = $, lClassOrder=$)
    {
       local lBaseList, lSortedItems, oItem, lSuperClass, cClass,

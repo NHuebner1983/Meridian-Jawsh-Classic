@@ -1,0 +1,47 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+JalaServant is SummonServant
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   servant_jala_name_rsc = "servant of jala"
+   servant_jala_icon_rsc = jalaservantspell.bgf
+   servant_jala_desc_rsc = \
+      "A magical creature awaits your command."
+
+   servant_jala_sound = rperappr.ogg
+
+classvars:
+
+   vrName = servant_jala_name_rsc
+   vrIcon = servant_jala_icon_rsc
+   vrDesc = servant_jala_desc_rsc
+
+   viSpell_num = SID_JALA_SERVANT
+   viSchool = SS_JALA
+   viSpell_level = 1
+   
+   vrSucceed_wav = servant_jala_sound
+
+properties:
+
+   // Nothing yet
+
+messages:
+
+	// Nothing yet
+
+end
+////////////////////////////////////////////////////////////////////////////////

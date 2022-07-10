@@ -156,7 +156,8 @@ messages:
    MonsterCastSpell()
    {
       local oSpell;
-      if Random(1,piSpellChance) = 1
+      if poOwner <> $ 
+	     AND Random(1,piSpellChance) = 1
          AND Send(poOwner,@IsEnchanted,#what=$)
       {
          Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=yeti_cast_sound);
@@ -228,7 +229,7 @@ messages:
       }
 
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_TRUCE);
-      if Send(poOwner,@IsEnchanted,#what=oSpell)
+      if oSpell <> $ AND Send(poOwner,@IsEnchanted,#what=oSpell)
       {
          Send(self,@MonsterCastAttackSpell);
       }

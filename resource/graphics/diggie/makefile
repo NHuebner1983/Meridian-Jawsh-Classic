@@ -28,8 +28,9 @@ BGFS = neeleme.bgf neelemeX.bgf iunholyt.bgf xeoneru.bgf xeoneruX.bgf \
        hydrab.bgf hydrabX.bgf hydrag.bgf hydragX.bgf hydrar.bgf hydrarX.bgf hydray.bgf \
        hydrayX.bgf greyseeker.bgf greenseeker.bgf brownseeker.bgf dthmitea.bgf dthmiteaX.bgf \
        dthmiteb.bgf dthmitebX.bgf dthmitec.bgf dthmitecX.bgf dthmited.bgf dthmitedX.bgf \
-       reavera.bgf reaveraX.bgf reaverb.bgf reaverbX.bgf reaverc.bgf reavercX.bgf 
-
+       reavera.bgf reaveraX.bgf reaverb.bgf reaverbX.bgf reaverc.bgf reavercX.bgf \
+       farenservantspell.bgf jalaservantspell.bgf kranservantspell.bgf qorservantspell.bgf \
+       riijaservantspell.bgf shalservantspell.bgf \
 
 !include $(RESOURCEDIR)\copy.mak
 

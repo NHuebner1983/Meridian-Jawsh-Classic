@@ -136,7 +136,12 @@ messages:
    {
       ptActive = $;
       piAnimation = ANIM_POPUP;
-      Send(poOwner,@SomethingChanged,#what=self);
+	  
+	  if poOwner <> $
+	  {
+         Send(poOwner,@SomethingChanged,#what=self);
+	  }
+	  
       piAnimation = ANIM_NONE;
 
       return;
@@ -224,7 +229,12 @@ messages:
    MonsterAttack(what = $)
    {
       piAnimation = ANIM_ATTACK;
-      Send(poOwner,@SomethingChanged,#what=self);
+	  
+	  if poOwner <> $
+	  {
+         Send(poOwner,@SomethingChanged,#what=self);
+	  }
+	  
       piAnimation = ANIM_NONE;
 
       return;
@@ -236,6 +246,11 @@ messages:
    MonsterCastSpell()
    {
       local iBase;
+	  
+	  if poOwner = $ OR poTarget = $
+	  {
+	     return FALSE;
+	  }
 
       iBase = Send(self,@RangedAttackChance,#base=(piSpellChance*6));
 
@@ -257,11 +272,20 @@ messages:
    DoMissileAttack()
    {
       piAnimation = ANIM_THROW;
-      Send(poOwner,@SomethingChanged,#what=self);
+	  
+	  if poOwner <> $
+	  {
+         Send(poOwner,@SomethingChanged,#what=self);
+	  }
+	  
       piAnimation = ANIM_NONE;
-      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
-      Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
-
+	  
+	  if poOwner <> $ AND poTarget <> $
+	  {
+         Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
+         Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
+	  }
+	  
       return;
    }
 

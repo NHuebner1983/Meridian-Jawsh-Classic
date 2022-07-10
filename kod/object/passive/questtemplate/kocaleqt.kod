@@ -209,6 +209,7 @@ messages:
                #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &InkyCap, 10 ],
                             [ QN_PRIZETYPE_ITEMCLASS, &LongBow, 1 ],
                             [ QN_PRIZETYPE_ITEMCLASS, &Arrow, 60 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &PracticeArrow, 2000 ],
                             [ QN_PRIZETYPE_ITEMCLASS, &NeruditeArrow, 30 ],
                             [ QN_PRIZETYPE_ITEMCLASS, &SilverArrow, 30 ],
                             [ QN_PRIZETYPE_ITEMCLASS, &KaraholsCursePotion, 1 ],

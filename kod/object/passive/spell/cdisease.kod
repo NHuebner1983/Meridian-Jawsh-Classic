@@ -90,17 +90,14 @@ messages:
 
    CastSpell(who=$,lTargets=$,iSpellpower=0)
    {
-      local oTarget, oDisease, iRandom, iOrigStatLoss, iNewStatLoss, lState;
+      local bDiseased, oTarget, oDisease, iRandom, iOrigStatLoss, iNewStatLoss, lState;
 
       iRandom = Random(1,100);
       oTarget = First(lTargets);
-
-      Send(oTarget,@MsgSendUser,#message_rsc=curedisease_on);
-      Send(who,@MsgSendUser,#message_rsc=spell_cast_on_target,
-            #parm1=Send(self,@GetName),#parm2=Send(oTarget,@GetDef),
-            #parm3=Send(oTarget,@GetName));
-
-      if iRandom < iSpellpower
+      
+	  bDiseased = FALSE;
+	  
+	  if iRandom < iSpellpower
       {
          Send(oTarget,@RemoveEnchantmentClass,#class=&Disease);
       }
@@ -113,6 +110,8 @@ messages:
 
          if Send(oTarget,@IsEnchanted,#what=oDisease)
          {
+		    bDiseased = TRUE;
+			
             lState = Send(oTarget,@GetEnchantedState,#what=oDisease);
             iOrigStatLoss = First(lState);
             iNewStatLoss = iOrigStatLoss - ((iOrigStatLoss * iSpellpower) / 100);
@@ -133,7 +132,9 @@ messages:
 
          if Send(oTarget,@IsEnchanted,#what=oDisease)
          {
-            lState = Send(otarget,@GetEnchantedState,#what=oDisease);
+            bDiseased = TRUE;
+			
+			lState = Send(otarget,@GetEnchantedState,#what=oDisease);
             iOrigStatLoss = First(lState);
             iNewStatLoss = iOrigStatLoss - ((iOrigStatLoss * iSpellpower) / 100);
 
@@ -149,6 +150,16 @@ messages:
             }
          }
       }
+	  
+	  if bDiseased
+	  {
+         Send(oTarget,@MsgSendUser,#message_rsc=curedisease_on);
+         Send(who,@MsgSendUser,#message_rsc=spell_cast_on_target,
+            #parm1=Send(self,@GetName),#parm2=Send(oTarget,@GetDef),
+            #parm3=Send(oTarget,@GetName));
+	  } else {
+	     return FALSE;
+	  }
 
       propagate;
    }

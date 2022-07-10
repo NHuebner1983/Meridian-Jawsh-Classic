@@ -1020,6 +1020,9 @@ properties:
    // Default strength of light source at player is 5
    piLight = 5
 
+   // Everything we have attacked in this zone
+   plAttacked = $
+   
    // Attack modifiers to attack roll & damage (includes items & spells)
    plAttack_modifiers = $
 
@@ -1079,7 +1082,8 @@ properties:
    ptAttackTimer = $
 
    plHonor = $
-
+   
+   plAggro = $
    piMonsterChasers = 0
 
    piView = $
@@ -1141,7 +1145,27 @@ properties:
    ptPhaseVisualEffectTimer = $
    piRemainingPhaseTime = 60000 * 8
    ptCanPhaseTimer = $
+
+   // Player's summoned servant
+   poServant = $
+
+   // Player's list of resources that build up over time (but have a maximum).
+   // Resources, such as "heal me", "feed me", "mystify me"
+   // If the player can receive the whole amount, they will.
+   // A timer while the servant is active will help replenish these resources.
+   piServantHealthResourceRegenInterval = 5 // seconds
+   piServantVigorResourceRegenInterval = 2 // seconds
+   piServantManaResourceRegenInterval = 3 // seconds
+   piServantHealthResourceMax = 50 // HP
+   piServantManaResourceMax = 50   // Mana
+   piServantVigorResourceMax = 200 // Vigor
    
+   // Actual Servant Resource repo.
+   // There will be an HP, Vigor, Mana resource and an accumulation Nth(1) = HP/Vigor/Mana Nth(2) = Amount Available
+   plServantResources = $
+   
+   piLastMoved = 0
+
 messages:
 
    Constructor()
@@ -1151,6 +1175,18 @@ messages:
       piReward_timestamp = GetTime();
 
       propagate;
+   }
+   
+   JustMoved()
+   {
+      piLastMoved = GetTime();
+	  
+	  return;
+   }
+   
+   SinceLastMove()
+   {
+      return GetTime() - piLastMoved;
    }
 
    Delete()
@@ -1256,6 +1292,11 @@ messages:
       Send(Send(SYS,@GetAssassinGame),@RemoveFromGame,#who=self);
       Send(Send(SYS,@GetLore),@PlayerSuicides,#who=self);
       plSchools = $;
+
+      if poServant <> $
+      {
+         Send(poServant,@Delete);
+      }
 
       propagate;
    }
@@ -2355,6 +2396,8 @@ messages:
    UserLogonHook()
    {
       local i, oObj, iBonus, iDefaultBonus, iTimespan;
+	  
+	  piLastMoved = GetTime();
 
       SendList(plPassive, 0, @UserLogon);
       SendList(plActive, 0, @UserLogon);
@@ -2491,6 +2534,15 @@ messages:
    UserLogoffHook()
    {
       local i;
+	  
+	  piLastMoved = 0;
+
+      // Let's delete our servant
+      if poServant <> $
+      {
+         Send(poServant,@Delete);
+		 poServant = $;
+      }
 
       SendList(plPassive,0,@UserLogoff);
       SendList(plActive,0,@UserLogoff);
@@ -2556,6 +2608,23 @@ messages:
       }
 
       return;
+   }
+   
+   SetServant(oServant = $)
+   {
+      poServant = oServant;
+	  
+	  return;
+   }
+   
+   GetServant()
+   {
+      return poServant;
+   }
+   
+   HasServant()
+   {
+      return poServant <> $;
    }
 
    SendUserAllWindowOverlays()
@@ -3012,6 +3081,12 @@ messages:
    "Add the spells a player is given when creating a character"
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_RIIJA_SERVANT,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_KRAN_SERVANT,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_SHAL_SERVANT,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_FAREN_SERVANT,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_QOR_SERVANT,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_JALA_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_TRANSFERENCE,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_PHASE,#initial=TRUE);
@@ -3033,16 +3108,16 @@ messages:
 
       // Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
-      Send(self,@NewHold,#what=Create(&Money,#number=500));
-      Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
+      Send(self,@NewHold,#what=Create(&Money,#number=50));
+      Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=50);
       Send(self,@AddReagentsForSpells,#iNumCasts=10);
 
       // If player hasn't suicided in last 5 hours, give them cash and prizes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=500));
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
-         Send(self,@AddReagentsForSpells,#iNumCasts=10);
+         Send(self,@NewHold,#what=Create(&Money,#number=35000));
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=35000);
+         Send(self,@AddReagentsForSpells,#iNumCasts=15);
       }
 
       return;
@@ -4465,6 +4540,13 @@ messages:
       // Default location to check is where we are.
       oRoom = poOwner;
 
+      if victim <> $ AND IsClass(victim, &Monster) AND Send(victim, @IsMinion)
+	  {
+	     // Do not attack your own minions.
+		 
+	     return FALSE;
+	  }
+
       // If the victim is in a room, then check that location instead.  This
       // allows distance attacks (like wall spells) to work properly.
       if victim <> $
@@ -5239,8 +5321,58 @@ messages:
             Send(First(i),@ImproveAbility,#who=self,#target=what);
          }
       }
+	  
+	  Send(self,@AddAttacked,#victim=what);
 
       propagate;
+   }
+   
+   AddAttacked(victim=$)
+   {
+      if plAttacked = $ OR Length(plAttacked) >= 39
+	  {
+	     plAttacked = [];
+	  }
+	  
+	  plAttacked = AppendListElem(victim, plAttacked);
+	  
+	  return;
+   }
+   
+   RemoveAttacked(victim=$)
+   {
+      if plAttacked = $ OR Length(plAttacked) >= 39
+	  {
+	     plAttacked = [];
+		 
+		 return;
+	  }
+	  
+	  if Send(self, @HasAttacked, #victim=victim)
+	  {
+	     plAttacked = DelListElem(plAttacked, victim);
+	  }
+	  
+	  return;
+   }
+   
+   HasAttacked(victim=$)
+   {
+      if plAttacked = $
+	  {
+	     plAttacked = [];
+		 
+		 return FALSE;
+	  }
+      
+	  return FindListElem(plAttacked, victim);
+   }
+   
+   ClearAttacked()
+   {
+      plAttacked = [];
+	  
+	  return;
    }
 
    // Determines if target is within attacking range, and within sight.
@@ -7078,6 +7210,36 @@ messages:
 
       return (piHealth - iOldhealth);
    }
+   
+   GainVigor(amount=$)
+   {
+      if amount = $ OR amount <= 0
+	  {
+	     return FALSE;
+	  }
+	  
+	  piVigor = piVigor + amount;
+	  piVigor = Bound(piVigor, 1, viMax_vigor);
+
+      Send(self,@NewVigor);
+	  
+	  return TRUE;
+   }
+   
+   GainMana(amount=$)
+   {
+      if amount = $ OR amount <= 0
+	  {
+	     return FALSE;
+	  }
+	  
+	  piMana = piMana + amount;
+	  piMana = Bound(piMana, 1, piMax_Mana);
+
+      Send(self,@NewMana);
+	  
+	  return TRUE;
+   }
 
    NewUnboundEnergy(bDelay = FALSE)
    {
@@ -7622,6 +7784,21 @@ messages:
    GetExactHealth()
    {
       return piHealth;
+   }
+   
+   GetMissingHealth()
+   {
+      return Send(self,@GetBaseMaxHealth) - Send(self,@GetHealth);
+   }
+   
+   GetMissingMana()
+   {
+      return piMax_Mana - piMana;
+   }
+   
+   GetMissingVigor()
+   {
+      return viMax_vigor - piVigor;
    }
 
    SetHealth(amount=$)
@@ -8940,6 +9117,11 @@ messages:
    {
       local i, bGainedCharge, oSpellDeathLink;
 
+      if victim <> $ AND IsClass(victim, &Monster)
+	  {
+	     Send(self,@ReduceAggro,#what=victim);
+	  }
+
       if NOT IsClass(victim,&Battler)
       {
          propagate;
@@ -9363,6 +9545,12 @@ messages:
             {
                Send(oShrunken,@Tougher,#hp=Send(self,@GetBaseMaxHealth));
             }
+			
+			// Boost their servant to max health if they have one.
+			if poServant <> $
+			{
+			   Send(poServant, @GainHealthNormal, #amount=Send(poServant,@GetMaxHealth), #precision=FALSE);
+			}
          }
 
          // If they are at max HP, award some training points instead.
@@ -9607,7 +9795,12 @@ messages:
             oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem,
             iRoom, lInventoryContents, lReagentBagContents;
 
-      // If this player has created any evil twins, delete them.
+      if poServant <> $
+	  {
+	     Send(poServant,@GracefullyDeleteServant);
+	  }
+	  
+	  // If this player has created any evil twins, delete them.
       Send(self,@RemoveAllCreatedEvilTwins);
 
       // If we have Apparitions attacking us, delete them.
@@ -12310,6 +12503,12 @@ messages:
 
          if IsClass(nObj,&UtilitySpell)
             OR IsClass(nObj,&Blink)
+            OR IsClass(nObj,&RiijaServant)
+            OR IsClass(nObj,&KranServant)
+            OR IsClass(nObj,&ShalServant)
+            OR IsClass(nObj,&FarenServant)
+            OR IsClass(nObj,&QorServant)
+            OR IsClass(nObj,&JalaServant)
          {
             continue;
          }
@@ -12543,6 +12742,12 @@ messages:
          }
 
          if NOT IsClass(nobj,&Blink)  // DON'T COUNT BLINK!
+            AND NOT IsClass(nObj,&RiijaServant)
+            AND NOT IsClass(nObj,&KranServant)
+            AND NOT IsClass(nObj,&ShalServant)
+            AND NOT IsClass(nObj,&FarenServant)
+            AND NOT IsClass(nObj,&QorServant)
+            AND NOT IsClass(nObj,&JalaServant)
             AND NOT IsClass(nobj,&UtilitySpell) // Don't count utility spells
          {
             switch (nSchool)
@@ -12779,6 +12984,12 @@ messages:
          iLevel = Send(oSpellObj,@GetLevel);
 
          if NOT IsClass(oSpellObj,&Blink)  // DON'T COUNT BLINK!
+            AND NOT IsClass(oSpellObj,&RiijaServant)
+            AND NOT IsClass(oSpellObj,&KranServant)
+            AND NOT IsClass(oSpellObj,&ShalServant)
+            AND NOT IsClass(oSpellObj,&FarenServant)
+            AND NOT IsClass(oSpellObj,&QorServant)
+            AND NOT IsClass(oSpellObj,&JalaServant)            		 
             AND NOT IsClass(oSpellObj,&UtilitySpell) // Don't count utility spells
             AND iSchool <> SS_DM_COMMAND
             AND except <> iSchool
@@ -14388,6 +14599,7 @@ messages:
 
    ResetMonsterChasers()
    {
+      plAggro = $;
       piMonsterChasers = 0;
 
       return;
@@ -14409,7 +14621,85 @@ messages:
 
    GetMonsterChasers()
    {
-      return piMonsterChasers;
+	  return piMonsterChasers;
+   }
+   
+   AddAggro(what=$)
+   {
+      if Length(plAggro) >= 39
+	  {
+	     plAggro = [];
+	  }
+	  
+      if what <> $ AND IsClass(what, &Monster) AND NOT IsClass(what, &Servant)
+	  {
+         if plAggro = $
+	     {
+	        plAggro = [];
+	     }
+		 
+		 if NOT FindListElem(plAggro, what)
+		 {
+            plAggro = AppendListElem(what, plAggro);
+		 }
+	  }
+	  
+	  return Length(plAggro);
+   }
+   
+   ReduceAggro(what=$)
+   {
+      if Length(plAggro) >= 39
+	  {
+	     plAggro = [];
+		 
+		 return 0;
+	  }
+	  
+      if what <> $ AND IsClass(what, &Monster) AND NOT IsClass(what, &Servant)
+	  {
+         if plAggro = $
+	     {
+	        plAggro = [];
+	     }
+		 
+	     if FindListElem(plAggro, what)
+		 {
+		    plAggro = DelListElem(plAggro, what);
+		 }
+	  }
+	  
+      return Length(plAggro);
+   }
+   
+   GetAggroCount()
+   {
+      local iCount;
+	  
+	  iCount = 0;
+	  
+	  if plAggro = $
+	  {
+	     return 0;
+	  }
+	  
+	  iCount = Length(plAggro);
+	  
+      return iCount;
+   }
+   
+   HasAggro(what=$)
+   {
+      local bHasAggro;
+	  
+	  bHasAggro = FALSE;
+	  
+      if plAggro <> $
+	  {
+	     bHasAggro = FindListElem(plAggro, what);
+	  }
+	  
+	  return bHasAggro;
    }
 
    SomeoneSaid(what=$,type=$,string=$,parm1=$,parm2=$,
@@ -15002,7 +15292,17 @@ messages:
 
       return;
    }
-
+   
+   IsMinion()
+   {
+      return FALSE;
+   }
+   
+   IsMinionOf(who=$)
+   {
+      return FALSE;
+   }
+   
    // This section deals with minion code.
    CommandMinionAttack(oTarget=$)
    {
@@ -15376,6 +15676,204 @@ messages:
       }
 
       propagate;
+   }
+   
+   PrepareServantResources()
+   {
+      if plServantResources = $
+	  {
+	     plServantResources = [];
+		 
+		 plServantResources = AppendListElem([SERVANT_RESOURCE_HP,    piServantHealthResourceMax, 0], plServantResources);
+		 plServantResources = AppendListElem([SERVANT_RESOURCE_MANA,  piServantManaResourceMax,   0], plServantResources);
+		 plServantResources = AppendListElem([SERVANT_RESOURCE_VIGOR, piServantVigorResourceMax,  0], plServantResources);
+	  }
+	  
+	  return;
+   }
+   
+   DecrementServantResource(what=$, amount=1)
+   {
+      local iResource, bFoundResource, iNewValue, iMaxValue, iPulledAmount;
+	  
+	  if what = $
+	  {
+	     return $;
+	  }
+	  
+	  iResource = Send(self, @GetServantResource, #what=what);
+	  
+	  iNewValue = 0;
+	  iPulledAmount = 0;
+	  
+	  if iResource <> $
+	  {
+	     // Allows the value to decrement to zero, not negative.
+		 iMaxValue = Send(self, @GetServantResourceMax, #what=Nth(iResource,1));
+	     iNewValue = Bound(Nth(iResource, 2) - amount, 0, Nth(iResource, 2));
+		 
+		 if iNewValue <> Nth(iResource, 2)
+		 {
+		    iPulledAmount = Bound(amount, 1, Nth(iResource, 2));
+			plServantResources = DelListElem(plServantResources, iResource);
+		    plServantResources = AppendListElem([Nth(iResource, 1), iNewValue, 0], plServantResources);
+		 }
+	  }
+	  
+	  return iPulledAmount;
+   }
+   
+   IncrementServantResource(what=$, amount=1)
+   {
+      local iResource, bFoundResource, iNewValue, iMaxValue;
+	  
+	  if what = $
+	  {
+	     return $;
+	  }
+	  
+	  iResource = Send(self, @GetServantResource, #what=what);
+	  
+	  if iResource <> $
+	  {
+	     // Ensures the value increments at least from 1 to max.
+	     iMaxValue = Send(self, @GetServantResourceMax, #what=Nth(iResource,1));
+	     iNewValue = Bound((Nth(iResource, 2) + amount), 1, iMaxValue);
+		 plServantResources = DelListElem(plServantResources, iResource);
+		 plServantResources = AppendListElem([Nth(iResource, 1), iNewValue, 0], plServantResources);
+	  }
+	  
+	  return;
+   }
+   
+   IncrementServantResourceInterval(what=$)
+   {
+      local iResource, iNewValue, bIsReadyToIncrement;
+	  
+      if what = $
+	  {
+	     return FALSE;
+	  }
+	  
+	  bIsReadyToIncrement = FALSE;
+	  
+	  iResource = Send(self, @GetServantResource, #what=what);
+	  
+	  if iResource <> $
+	  {
+	     iNewValue = Nth(iResource, 3) + 1;
+		 
+		 if iNewValue >= Send(self,@GetServantResourceInterval,#what=what)
+		 {
+		    iNewValue = 0;
+			bIsReadyToIncrement = TRUE;
+		 }
+		 
+		 plServantResources = DelListElem(plServantResources, iResource);
+		 plServantResources = AppendListElem([Nth(iResource, 1), Nth(iResource, 2), iNewValue], plServantResources);
+	  }
+	  
+	  return bIsReadyToIncrement;
+   }
+   
+   GetServantResource(what=$)
+   {
+      local iResource, bFoundResource;
+	  
+	  if what = $
+	  {
+	     return $;
+	  }
+	  
+	  if plServantResources = $
+	  {
+	     Send(self, @PrepareServantResources);
+		 
+	     if plServantResources = $
+	     {
+		    // This shouldn't happen.
+			Debug("Unable to set Servant Resources for player.");
+	        return;
+	     }
+	  }
+	  	  
+	  bFoundResource = FALSE;
+	  
+	  foreach iResource in plServantResources
+	  {
+	     if what = Nth(iResource, 1)
+		 {
+		    bFoundResource = TRUE;
+			break;
+		 }
+	  }
+	  
+	  if bFoundResource
+	  {
+	     return iResource;
+	  }
+	  
+	  return $;
+   }
+   
+   GetServantResourceAmount(what=$)
+   {
+      local iResource;
+	  
+      if what = $
+	  {
+	     return 0;
+	  }
+	  
+	  iResource = Send(self,@GetServantResource,#what=what);
+	  
+	  return Nth(iResource, 2);
+   }
+   
+   GetServantResourceMax(what=$)
+   {
+	  if what = $
+	  {
+	     return $;
+	  }
+	  
+      switch(what)
+	  {
+	     case SERVANT_RESOURCE_HP:
+		    return piServantHealthResourceMax;
+		 break;
+	     case SERVANT_RESOURCE_MANA:
+		    return piServantManaResourceMax;
+		 break;
+	     case SERVANT_RESOURCE_VIGOR:
+		    return piServantVigorResourceMax;
+		 break;
+	  }
+	  
+	  return $;
+   }
+
+   GetServantResourceInterval(what=$)
+   {
+	  if what = $
+	  {
+	     return $;
+	  }
+	  
+      switch(what)
+	  {
+	     case SERVANT_RESOURCE_HP:
+		    return piServantHealthResourceRegenInterval;
+		 break;
+	     case SERVANT_RESOURCE_MANA:
+		    return piServantManaResourceRegenInterval;
+		 break;
+	     case SERVANT_RESOURCE_VIGOR:
+		    return piServantVigorResourceRegenInterval;
+		 break;
+	  }
+	  
+	  return $;
    }
 
 end

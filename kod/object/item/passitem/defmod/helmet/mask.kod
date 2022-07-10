@@ -64,6 +64,11 @@ messages:
       // Special item, add minimap dot.
       return MM_RARE_ITEM;
    }
+   
+   CanMend()
+   {
+      return FALSE;
+   }
 
 end
 ////////////////////////////////////////////////////////////////////////////////

@@ -91,6 +91,11 @@ properties:
 
 messages:
 
+   GetBaseSpellModifier(oSpell=$)
+   {
+      return -5;
+   }
+
    ReqUseSomething(what = $)
    {
       if IsClass(what,&Gauntlet)

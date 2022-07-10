@@ -450,6 +450,28 @@ messages:
 
       return;
    }
+   
+   GetPlayers()
+   {
+      local i, lPlayers;
+	  
+	  lPlayers = $;
+	  
+      foreach i in plActive
+	  {
+	     if IsClass(i, &Player)
+		 {
+		    if lPlayers = $
+			{
+			   lPlayers = [];
+			}
+			
+			lPlayers = AppendListElem(i, lPlayers);
+		 }
+	  }
+	  
+	  return lPlayers;
+   }
 
    Recreate()
    {
@@ -781,6 +803,11 @@ messages:
 
    SomethingKilled(what=$,victim=$)
    {
+      if IsClass(what,&Player) AND Send(what,@HasAttacked,#victim=victim)
+	  {
+	     Send(what,@RemoveAttacked,#victim=victim);
+	  }
+	  
       Send(self,@SetGroupTime,#victim=victim);
 
       propagate;
@@ -2030,10 +2057,12 @@ messages:
       }
 
       bUser = IsClass(what,&User);
-	  
-	  if (bUser) {
+	
+      if bUser
+      {
          pbUser = what;
-	  }
+	 Send(what, @ClearAttacked);
+      }
 
       if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
          OR new_angle = $
@@ -2133,21 +2162,31 @@ messages:
 
          // Now send music.
          Send(what,@SendRoomMusic,#music_rsc=prMusic);
-
-         // Add room enchantment effects, if not spectated or phased.
-         if (NOT Send(what,@IsInCannotInteractMode))
-         {
-            foreach i in plEnchantments
-            {
-               // User will request to get enchantment icons, so don't
-               // need to send here.
-               Send(Nth(i,2),@StartEnchantmentNewOccupant,#who=what,
-                     #state=(Nth(i,3)));
-            }
-         }
+		 
+		 // Reset my room enchantment effects and send icons to client.
+		 Send(self,@ResetMyRoomEnchantments,#who=what);
       }
 
       return;
+   }
+   
+   ResetMyRoomEnchantments(who=$)
+   {
+      local i;
+	  
+      // Add room enchantment effects, if not spectated or phased.
+      if (NOT Send(who,@IsInCannotInteractMode))
+      {
+	     foreach i in plEnchantments
+	     {
+	        // User will request to get enchantment icons, so don't
+	        // need to send here.
+	        Send(Nth(i,2),@StartEnchantmentNewOccupant,#who=who,
+		  	      #state=(Nth(i,3)));
+	     }
+      }
+	  
+	  return;
    }
 
    SomethingHitHotPlate(what=$,hpid=$)
@@ -2302,7 +2341,7 @@ messages:
       {
          propagate;
       }
-
+	  
       Send(what,@LeaveBuilderGroup);
 
       // unenchant this one occupant
@@ -2554,7 +2593,12 @@ messages:
       local i, temp, each_obj, packet_built, lNode, iQflags, 
             iRflags, iHeightF, iHeightFWD, iHeightC, iServerID;
 
-      if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
+      if IsClass(what, &Player)
+	  {
+	     Send(what, @JustMoved);
+	  }
+	  
+	  if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
       {
          Debug("Tried to SomethingMoved",Send(what,@GetName),"at bad coords.");
          new_row = viTeleport_row;
@@ -4912,7 +4956,7 @@ messages:
          {
             if Send(mob,@CanReach,#what=what)
             {
-               Send(mob,@EnterStateAttack,#target=what,#actnow=TRUE);
+			   Send(mob,@EnterStateAttack,#target=what,#actnow=TRUE);
 
                return;
             }
