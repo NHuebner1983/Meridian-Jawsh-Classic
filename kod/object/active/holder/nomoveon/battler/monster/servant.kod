@@ -1064,12 +1064,12 @@ messages:
 		 [3, SID_NIGHT_VISION, 100, $],
 		 [3, SID_MAGIC_SHIELD, 100, $],
 		 [3, SID_DETECT_INVISIBLE, 50, $],
-		 [3, SID_FREE_ACTION, 25, $],
-		 [4, SID_DEFLECT, 10, $],
-		 [4, SID_EAGLE_EYES, 25, $],
+		 [3, SID_FREE_ACTION, 50, $],
+		 [4, SID_DEFLECT, 50, $],
+		 [4, SID_EAGLE_EYES, 50, $],
 		 [5, SID_KILLING_FIELDS, 100, $],
-		 [5, SID_ARMOR_OF_GORT, 10, $],
-		 [5, SID_RESIST_MAGIC, 10, $]
+		 [5, SID_ARMOR_OF_GORT, 50, $],
+		 [5, SID_RESIST_MAGIC, 50, $]
 	  ];
 	  
       return;
@@ -1080,6 +1080,7 @@ messages:
       plCasts = [
 	     [4, SID_DAZZLE, 5],
 	     [4, SID_MARK_OF_DISHONOR, 25],
+	     [4, SID_HOLY_BLAZE, 50],
 	     [5, SID_PURGE, 5]
 	  ];
      
