@@ -11042,18 +11042,10 @@ messages:
 	  
 	  //Debug(Send(self,@GetName),"moving towards coords",iRow,iCol,iFineRow,iFineCol);
 	  
-	  Send(self,@UserMove,#new_row=iRow,#new_col=iCol,#fine_row=iFineRow,#fine_col=iFineCol,#speed=199);
+	  Send(self,@UserMove,#new_row=iRow,#new_col=iCol,#fine_row=iFineRow,#fine_col=iFineCol,#speed=50);
 	  
-		/*Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
-			#new_row=iRow,
-			#new_col=iCol,
-			#fine_row=iFineRow,
-			#fine_col=iFineCol);
-*/
 		Send(self,@MonsterOrient,#new_row=iRow,#new_col=iCol,
 			#new_finerow=iFineRow,#new_finecol=iFineCol);
-
-	  //Send(self,@UserMove,#new_row=iRow,#new_col=iCol,#fine_row=iFineRow,#fine_col=iFineCol,#speed=50);
 	  
 	  return TRUE;
    }
@@ -11220,7 +11212,7 @@ messages:
    
    AttackMonster()
    {
-	   local bMonsterAttacked, bTargetReady;
+	   local bMonsterAttacked, bTargetReady, iDistance;
 	   
 	   bMonsterAttacked = FALSE;
 	   bTargetReady = FALSE;
@@ -11247,17 +11239,24 @@ messages:
 	   
 	   if poTarget <> $ AND bTargetReady
 	   {
-		   bMonsterAttacked = Send(self,@UserAttack,#what=poTarget);
+	       iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
 		   
-		   if NOT bMonsterAttacked
+		   if iDistance < 2
 		   {
-			   // Probably can't see target
+		      // We need to be close enough to attack.
+		      bMonsterAttacked = Send(self,@UserAttack,#what=poTarget);
+		   
+		      if NOT bMonsterAttacked
+		      {
+			      // Probably can't see target
 			   Send(self,@MoveTowards,#oTarget=poTarget);
+		      }
 		   }
 		   
 		   bAutoAttacking = TRUE;
 		   
 		   tAutoAttack = CreateTimer(self,@AttackMonster,500);
+		   
 	   }
 	   else
 	   {

@@ -2356,16 +2356,110 @@ messages:
 
       return;
    }
+   
+   // Check if the logged on user is a Roaming NPC Player
+   // These players are logged on via client and controlled via Server.
+   IsRoamingNPCPlayer()
+   {
+	  return StringEqual(Send(self,@GetName), system_player_mob_aquatic)
+	     OR StringEqual(Send(self,@GetName), system_player_mob_island)
+	     OR StringEqual(Send(self,@GetName), system_player_mob_graveyard)
+	     OR StringEqual(Send(self,@GetName), system_player_mob_castle)
+	     OR StringEqual(Send(self,@GetName), system_player_mob_crypt)
+	     OR StringEqual(Send(self,@GetName), system_player_mob_arch)
+	     OR StringEqual(Send(self,@GetName), system_player_mob_ancient)
+	     OR StringEqual(Send(self,@GetName), system_player_mob_undead)
+	     OR StringEqual(Send(self,@GetName), system_player_mob_holy)
+	     OR StringEqual(Send(self,@GetName), system_player_mob_unholy);
+   }
+   
+   // Prepare the logged on NPC Player.
+   // One more check is performed just in case someone accidentally calls this.
+   // Because it wipes out skills/spells and does a lot of WEIRD stuff to the player.
+   // Normal players would really be mad if you used this on them.
+   SetupRoamingNPCPlayer()
+   {
+      local oObj;
+	  
+      if NOT Send(self, @IsRoamingNPCPlayer)
+	  {
+	     return;
+	  }
+	  
+	  Debug("Roaming NPC-Player ONLINE",Send(self,@GetName));
+	  
+	  // Leave the name color alone until population returns to normal.
+	  //Send(self,@SetNameColor,#red=130,#green=130,#blue=130);
+	  
+	  // Adjust stats
+	  piMight = 50;
+	  piIntellect = 50;
+	  piStamina = 50;
+	  piAgility = 50;
+	  piMysticism = 50;
+	  piAim = 50;
+	  
+	  // Stat mods
+	  piMightMod = 20;
+	  piIntellectMod = 20;
+	  piStaminaMod = 20;
+	  piAgilityMod = 20;
+	  piMysticismMod = 20;
+	  piAimMod = 20;
+	  
+	  // Hp, Mana, Vigor
+	  piMana = 1000;
+	  piVigor = 1000;
+      piHealth = 10000 * 100;
+      Send(self,@NewHealth);
+      piBase_Max_Health = 10000;
+      piMax_health = piBase_max_health;
+      Send(self,@GainBaseMaxHealth);
+      	  
+	  // Set XP to Max Health
+	  Send(self, @ResetXPToLevel);
+	  
+	  // Skills
+	  Send(self, @GivePlayerAllSkills, #level=6, #iability=99, #override=TRUE);
+	  
+	  // Spells
+	  Send(self, @GivePlayerAllSpells, #level=6, #iability=99, #override=TRUE);
+	  
+	  // Do not empty the inventory.
+	  // If there are items already, do not add anything.
+	  if (plActive = $ OR Length(plActive) <= 0) AND (plPassive = $ OR Length(plPassive) <= 0)
+	  {
+	     // Give them some fighting gear to start with
+		 oObj = Create(&NeruditeSword);
+		 Send(self,@NewHold,#what=oObj);
+         Send(self,@NewHold,#what=Create(&Money,#number=35000));
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=35000);
+         Send(self,@AddReagentsForSpells,#iNumCasts=3);
+	  }
+	  
+	  // Make the NPC Player PKable
+	  Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);
+      Send(self,@PlayerIsIntriguing);
+
+      return;
+   }
 
    UserLogonHook()
    {
       local i, oObj, iBonus, iDefaultBonus, iTimespan;
 	  
-	  piLastMoved = GetTime();
-
       SendList(plPassive, 0, @UserLogon);
       SendList(plActive, 0, @UserLogon);
 
+	  if Send(self, @IsRoamingNPCPlayer)
+	  {
+	     Send(self, @SetupRoamingNPCPlayer);
+	  }
+	  else
+	  {
+	     piLastMoved = GetTime();
+	  }
+	  
       // Restart Unbound Energy, Health and Mana timers
       Send(self,@NewUnboundEnergy);
       Send(self,@NewHealth);

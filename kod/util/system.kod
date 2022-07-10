@@ -44,6 +44,21 @@ constants:
 resources:
 
    include system.lkod
+   
+   // Expedition Patch July 2022
+   // Event characters that roam the lands
+   // Accounts are taken over by the server upon logon.
+   // Basic detection by Player Name Exact Match
+   system_player_mob_aquatic    = "Aquatic Researcher"
+   system_player_mob_island     = "Island Native"
+   system_player_mob_graveyard  = "Graveyard Watchman"
+   system_player_mob_castle     = "Castle Guard"
+   system_player_mob_crypt      = "Crypt Keeper"
+   system_player_mob_arch       = "Archaeologist"
+   system_player_mob_ancient    = "Ancient Collector"
+   system_player_mob_undead     = "Undead Researcher"
+   system_player_mob_holy       = "Holy Inquisitor"
+   system_player_mob_unholy     = "Unholy Inquisitor"
 
    system_user_killed = "~B~U~k[###]~n ~B~v%q was just killed by %s%q."
    system_user_killed_by_pker = "~B~U~k[###]~n ~B~v%q has been murdered in cold blood."

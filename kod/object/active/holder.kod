@@ -273,6 +273,12 @@ messages:
    ReqNewHold(what = $)
    {
       local i,each_obj;
+	  
+	  if IsClass(self, &Player) AND Send(self, @IsRoamingNPCPlayer)
+	  {
+	     // NPC Players can hold infinite amounts of items.
+	     return TRUE;
+	  }
 
       if Send(what,@GetOwner) <> $
          AND IsClass(Send(what,@GetOwner),&ReagentBag)
@@ -307,6 +313,12 @@ messages:
       {
          return TRUE;
       }
+
+	  if IsClass(self, &Player) AND Send(self, @IsRoamingNPCPlayer)
+	  {
+	     // NPC Players can hold infinite amounts of items.
+	     return TRUE;
+	  }
 
       if Send(self,@GetWeightMax) <> $
          AND (((Send(self,@GetWeightHold) + weight) > Send(self,@GetWeightMax))
