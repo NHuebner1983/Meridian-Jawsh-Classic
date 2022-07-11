@@ -1,0 +1,371 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+NPCTotem is Rod
+
+constants:
+
+   include blakston.khd
+   
+   // These constants specify placeholders in a list, containing message resources.
+   // We will want to keep track of each index in the player, perhaps called plNPCProfile (player.kod).
+   // This way they get a fluid story, until it starts over.
+   
+   // NPC Logon Message
+   NPC_PROFILE_LOGON = 1
+   
+   // NPC Speech Consecutive Order
+   NPC_PROFILE_SPEECH = 2
+   
+   // NPC Map Consecutive Order
+   NPC_PROFILE_ROAM = 3
+   
+   // NPC Reactions (most likely attacks for now).
+   NPC_PROFILE_REACT = 4
+   
+   // NPC Death Operations
+   NPC_PROFILE_DEATH = 5
+   
+   // NPC Revive Operations
+   NPC_PROFILE_REVIVE = 6
+
+resources:
+
+   // TODO: Maybe Tyrant can provide translations for us.
+   //include npctotem.lkod
+
+   npc_totem_name_rsc = "npc totem"
+   npc_totem_icon_rsc = joltstaf.bgf
+   npc_totem_desc_rsc = \
+      "This NPC totem brings out the character in you. "
+      "It is unwise to hold it in public, as you could make a fool of yourself."
+   npc_totem_broken_desc_rsc = \
+      "Broken into pieces, this NPC totem shares no personality with you. "
+      "You are no longer the life of the party."
+   npc_totem_jolt = "You let the room know you are the center of attention."
+   npc_totem_used = \
+      "You call for attention, but there is nobody around to listen."
+   npc_totem_sound = woodstaf.ogg
+   
+   // NPC Response Triggers
+   npc_where_are_you = "where are you?"
+   
+   /////////////////////////////////////
+   // ANCIENT NPC [Wulfgang, Faren & Riija Story]
+   /////////////////////////////////////
+   ancient_logon = "~BThe expedition team has arrived at Wulfgang's Trading Post to study an ancient rock formation, with magical runes, being worshiped by powerful creatures."
+   ancient_speech_a = "Expedition Log: Day one. Several of our crew were exposed to something while deciphering ancient runes on a rock formation. We can't tell if it's a virus or a supernatural effect."
+   ancient_speech_b = "We have quarantined several crew members exposed to something unknown. Our specialists are running tests now, but they are getting scared. One of our crew members have flames bursting from their hands, yet no burns. We have burried their hands in the sand for now to keep them from burning down our camp. I don't know how long we can keep them isolated like this."
+   ancient_speech_c = "One of our specialists was changed into what appears to be a gigantic mouse or ''rat''. Something weird is happening and we can't figure out what is going on. Our crew are exhibiting supernatural abilities but are unable to control them. This is becoming more dangerous than interesting."
+   ancient_speech_d = "A strange symbol appeared on the hand of one of the infected crew members, which looks like a ''monk outlined in a purple ink''. We're sifting through some of the ancient archives for signs of this symbol."
+   ancient_speech_e = "Our research team found some drawings in the archive which look exactly like the symbol on our infected crew member's hand. The words Riija are inscribed on the page, with a warning ''God of Mischief''. This is not looking good for our crew or our specialists. Could an ancient being still roam these lands? What do they want with our crew?"
+   ancient_speech_f = "We're collecting some samples from the creatures out here that might help us understand what is going on with our crew."
+   ancient_speech_g = "There's an interesting fruit that grows here, called Telo. It seems to be the reason some of these animals are swarming. We'll use this fruit to capture some of the creatures and take some samples of their blood."
+   ancient_speech_h = "A priest on this island is known to control some of these animals. The priest may be using the same power that infected our crew. We should be careful not to cross paths with the priest, or we might be turned into giant rats."
+   ancient_speech_i = "We took a blood sample from an animal the natives call ''avar shaman'' and injected it into a captured kriipa. The same symbol appeared a few hours later on the kriipa's back. The kriipa began to teleport to random places - especially out of the cage we put it in. After chasing the kriipa, it just suddenly disappeared? We have no idea where it went. It's certainly not in its cage."
+   ancient_speech_j = "Today has been uneventful, nothing has turned into a ''giant rat'' and our camp is still in one piece. Our head archaeologist has deemed the runes unsafe to be studied further and as a result, no more crew have become infected. We are still trying to figure out why some of our crew have the ability to create fire in their hands from nothing."
+   ancient_speech_k = "It has been a few days since our infected crew were experiencing strange and supernatural abilities. Another symbol has appeared on the hand of a crew member, this one appears to be a woman in flames. Our research team is looking through the archives to see if this is another god trying to possess our crew."
+   ancient_speech_l = "Just as we thought, the ''woman on fire'' symbolizes the ''God of Fire'' known as ''Faren''. This explains why things have been catching on fire. The weird thing is, when we put water on their hands to put out the flames, the water turns to ice. There must be other natural elements controlled by this supernatural power. We even felt the earth shake from under our feet."
+   ancient_speech_m = "It has been no more than a few days and we have already discovered two gods among us. This place is dangerous, we should have never come here."
+   ancient_speech_n = "We were forced to leave behind the infected crew members. They are now in the care of the humble island natives. They are too dangerous to bring back with us. One of the natives has ancient knowledge of the gods and has agreed to help our crew control their powers. Maybe we will see them again some day, but for now they are forbidden to return with our expedition team."
+   ancient_speech_o = "We just need to collect a few more samples and then we should get going."
+   
+   /////////////////////////////////////
+   // AQUATIC NPC [Marion, Ocean and Barloque Story]
+   /////////////////////////////////////
+   aquatic_logon = "~BThe expedition team has arrived in Marion and will be investigating the marine life of the great ocean."
+   aquatic_speech_a = "Expedition Log: Day one. We have arrived near the ocean where odd creatures are roaming abroad. Nature could not have come up with this on its own. We need to keep studying these creatures to learn how they came to be."
+   aquatic_speech_b = "These creatures...they are so, fascinating!"
+   aquatic_speech_c = "We need more samples to see what makes this one so powerful."
+   aquatic_speech_d = "There's a creature made purely from fungus, it's impossible. It's almost like something glued together the remains of a sheep and strings of gooey mushrooms. It's quite gross, yet intriguing."
+   aquatic_speech_e = "The slime creature must be a by-product of the fungus beast. We should take a sample and see if we can find any relationship to the fungus beasts. The question is, where are the sheep coming from? The fungus beast can't be made purely from fungus and slime, there has to be something going on here."
+   aquatic_speech_f = "There has been some strange activity near the flag poles. Some soldiers have been through here checking for poachers. We should stay out of their way and perhaps far away from those flag poles."
+   aquatic_speech_g = "If only we had a boat or raft to float on, we could get some samples of the marine life in the area."
+   aquatic_speech_h = "I've seen a boat in the horizon, do you see it too? It looks like a transportation company because the side of the boat says ''Ko'catan Travel Co.''. There must be a dock somewhere in town that may travel to a place called Ko'catan? That sounds like a dangerous place. It looks like it came from the docks in Barloque."
+   aquatic_speech_i = "With the samples we've collected, it's clear now that the fungus beast and slime are completely different!"
+   aquatic_speech_j = "We thought maybe the fungus beast was made from sheep remains and mushrooms, but we couldn't find a single bone in the fungus beast."
+   aquatic_speech_k = "We found a village nearby called Marion. A wise old man kept going on about Ancient Trinkets and Orc Teeth. We visited a blacksmith who was trying to teach us how to repair our equipment, and kept mentioning the word Kraanan. We're not sure what that means, perhaps one of the gods we keep hearing about. We thought all of the gods were gone from this land."
+   aquatic_speech_l = "There seems to be a path into a sewer nearby which leads to a town called Barloque. Nobody really knows how to pronounce it. Maybe we should have asked someone who wasn't drunk in the tavern. Barloque has an amazing history. There are several guild halls and even a justicar. Be careful, the justicar has a jail as well."
+   aquatic_speech_m = "The sewers leading to Barloque have some interesting creatures. I don't think we'll be venturing there today as some of the creatures are far too dangerous. Some say there's a king in the sewers, but not like the kind of king you and I are thinking of."
+   aquatic_speech_n = "We found an ancient temple near Marion, surrounded by a forest of what looks like fairies. We have heard of the god Kraanan, and now we know there is also a goddess know as Shal'ille. She appears to be the protector of all that is holy and good. If I had to guess, she teaches magic to those who are worthy to learn."
+   aquatic_speech_o = "We're almost done collecting samples here."
+   aquatic_speech_p = "Maybe a few more samples and then we should head back to camp before it gets too dark."
+
+   /////////////////////////////////////
+   // ARCHAEOLOGIST NPC [Brax Story]
+   /////////////////////////////////////
+   arch_logon = "~BThe expedition team has arrived in the undead city of Brax to study skeletal remains with unusual bone structures."
+   arch_speech_a = "Expedition Log: Day one. There appear to be strange winged creatures that have a thirst for blood. They seem to be harmonious with the horned skeletons and do not show signs of aggression unless provoked. We will need to gather samples of the bones of these horned skeletons and study the dark angel feathers left behind from these creatures. They seem to have collected an unusual amount of what can only be known as ''dragon scales'' with a bright blue color. The origin of the dragon these came from is a mystery."
+   arch_speech_b = "We spoke to a ghost known as Tendrath. He is haunting the cliffs directly outside the city of Brax. He gave us some very interesting information. The winged creatures are called narthyl worms and the horned skeletons are called daemon skeletons. He said we should be on the lookout for giant daemon skeletons, centaurs, necromancers and mimics. These creatures are extremely powerful and not to be contested. Certain death is all we can expect from these encounters."
+   arch_speech_c = "Stories from Tendrath have revealed hidden rooms in the city of Brax. We need to investigate these hidden rooms to gather samples for our specialists."
+   arch_speech_d = "We received word of advice not to venture into a place known as Goad's Grinder. This creature is friendly, but has a dark side. He encourages adventurers to fight to the death. We should avoid accepting any kind of duel, as it may lead us to the Underworld."
+   arch_speech_e = "The walls of Brax are covered in ancient runes. It could be a sign that the abominations may be controlled by an evil entity."
+   arch_speech_f = "We asked Tendrath what could possibly be manifesting all of the undead creatures in Brax, and he told us there is an evil queen at the edge of Brax with dark magic. We should avoid picking up any Amulet of Three or Sword of The Hunt equipment, as there is heavy toll to pay for obtaining such powerful weapons."
+   arch_speech_g = "We've been recovering bones from some of the ancient buildings in brax and have found that the skeletons with tusks are evolving into daemon skeletons upon their death. We have not seen any kind of transformation with the narthyl worms, but we will keep our eyes open for something abnormal."
+   arch_speech_h = "One of our archaeologists recovered a Sword of The Hunt, even though we strictly told them not to pick it up. They seem to be receiving immense amounts of energy upon slaying enemies in the city of Brax. They may be stuck with this godly weapon until they meet death. We are depending on them to protect us while we venture further into the city of Brax."
+   arch_speech_i = "We have found a special room in the city of Brax where giant daemon skeletons are flourishing. The room appears to be like a maze. After we defeated the daemon skeletons, centaur and mimic, we discovered a large glowing globe. After touching the globe we felt a search of mystical energy."
+   arch_speech_j = "Finally, we found an Amulet of Three. After studying it, we found that it is connected to pure evil. We will give more information to the Undead Researcher, but it would be unwise to pick up this item unless we are evil at heart. It should only be wielded by a strong necromancer of the dark arts."
+   arch_speech_k = "We just need a few more samples of these narthyl worms. They're very odd, we should study them more."
+   arch_speech_l = "I think we've collected enough blood and bone samples. We should head back to camp soon."
+   
+   /////////////////////////////////////
+   // CASTLE NPC [Castle Victoria Story]
+   /////////////////////////////////////
+   castle_logon = "~BThe expedition team has arrived at Castle Victoria to investigate sightings of a ghost."
+   castle_speech_a = "Expedition Log: Day one. We met an interesting person named Drechx. He tried teaching us something called ''Second Wind'', but he determined we weren't hearty enough to learn it."
+   castle_speech_b = "Drechx explained how Castle Victoria is haunted by skeletons and zombies, most likely from the previous caretakers and fallen adventurers."
+   castle_speech_c = "There was mention of a secret room through a door in the floor which leads to a basement. There's a crate that sometimes gives the adventurer something they desire the most. It happens on rare occassions only though."
+   castle_speech_d = "During our conversation with Drechx, he mentioned a mystical globe upstairs in the castle. When you interact with the globe, it gives you mystical energy. We should study this magical globe more closely."
+   castle_speech_e = "In the left side of the castle there is a secret room where knights once guarded Far'Nohl, master of Castle Victoria, while he was still in his mortal form. Some of these knights wield mystic swords, one of the most powerful swords we have found."
+   castle_speech_f = "Drechx warned us against entering the Throne Room. The ghost of Far'Nohl awaits and unleashes fireballs onto its victims. Legend has it, he was struck down by the great powerful Faren and in his return from the dead obtained her powers. He is a deadly foe and we should avoid him at all costs."
+   castle_speech_g = "We have discovered that a magical energy protects us inside of the castle where skeletons roam. Castle Victoria is a very popular location to find murderers, so be on the lookout."
+   castle_speech_h = "We should take a sample of the zombie's flesh to see how old it was when it died. It's very strange to find emeralds and sapphires. It's as if the caretakers were killed for reasons other than their wealth."
+   castle_speech_i = "Some of the markings on the skeletal remains give us clues as to how the caretakers died. It would explain why some have been cut and others were bludgeoned. Perhaps they carry the weapon that struck them down."
+   castle_speech_j = "The tusked skeletons are extremely aggressive. Perhaps they were once knights, seeing as they are carrying a knight shield. This castle must have been an amazing place before everyong was slaughtered."
+   castle_speech_k = "The zombies and battered skeletons seem to be casting spells. Maybe the mystical ball upstairs is feeding them magical powers?"
+   castle_speech_l = "We found an interesting item in the basement crate...something called a ''Shrunken Head''. It babbles... a lot! It must be some kind of magically enchanted soul trapped in an ornate object. Thankfully it doesn't bite because its mouth is sewed shut. It's hard to believe it can make so much noise without a mouth. It's definitely enchanted by magic."
+   castle_speech_m = "I think we're about done here. We should finish collecting samples and make our way back to Drechx before that ghost finds us."
+   
+   /////////////////////////////////////
+   // CRYPT NPC [Marion Crypt Story]
+   /////////////////////////////////////
+   crypt_logon = "~BThe expedition team has arrived in the Marion Crypt, where mummies and statues are guarding an ancient secret."
+   crypt_speech_a = ""
+
+   /////////////////////////////////////
+   // GRAVEYARD NPC [Tos Graveyard Story]
+   /////////////////////////////////////
+   graveyard_logon = "~BThe expedition team is investigating reports of the dead rising in the graveyard of Tos."
+   graveyard_speech_a = ""
+   
+   /////////////////////////////////////
+   // HOLY NPC [Shal'ille Story]
+   /////////////////////////////////////
+   holy_logon = "~BShal'ille has sent me to protect adventurers from the Unholy Inquisitor."
+   holy_speech_a = ""
+
+   /////////////////////////////////////
+   // ISLAND NPC [Ko'catan Story]
+   /////////////////////////////////////
+   island_login = "~BThe expedition team has arrived in Ko'catan and is preparing to venture into the jungle."
+   island_speech_a = "We seem to be stranded on an island, we should take samples while we're among the natives."
+
+   /////////////////////////////////////
+   // UNDEAD NPC [Necromancer Story]
+   /////////////////////////////////////
+   undead_logon = "~BThe expedition team has arrived in the Lair of Queen Venya'cyr. This unholy ground appears to be guarded by necromancers, bewitched by her power."
+   undead_speech_a = ""
+
+   /////////////////////////////////////
+   // UNHOLY NPC [Qor Story]
+   /////////////////////////////////////
+   unholy_logon = "~BAre you shivering in fear, mortal? You should be warned, I will reclaim what once was mine."
+   unholy_speech_a = ""
+
+classvars:
+
+   vrName = npc_totem_name_rsc
+   vrIcon = npc_totem_icon_rsc
+   vrGoodDesc = npc_totem_desc_rsc
+   vrBrokenDesc = npc_totem_broken_desc_rsc
+
+   viBulk = 1
+   viWeight = 1
+   viValue_average = 1000000
+   viInventory_group = 2
+
+   viStartHits = 1
+   viStartMaxHits = 1
+   
+   vrFailSound = npc_totem_sound
+   vrFail = npc_totem_used
+   vrSuccess = npc_totem_jolt
+   vrSuccessSound = npc_totem_sound
+
+properties:
+
+   // NPC_PLAYER constant at the bottom of blakston
+   piNPCPlayer = $
+   
+   // Player name holding the totem (or monster name)
+   psPlayerName = $
+   
+   // NPC Tick Timer
+   ptNPC = $
+   
+   // NPC Profile
+   plProfile = $
+   
+   // Announced
+   pbAnnounced = FALSE
+
+messages:
+   
+   Recreate()
+   {
+      // Upon recreate, reset all NPC Player Profiles
+	  // They will start over, with new profile indexes.
+      Send(&Player, @ResetNPCPlayerProfile);
+	  	  
+      return;
+   }
+   
+   NPCPlayerTick()
+   {
+      // Every 1 second we can perform an action.
+	  Send(self,@StartNPCPlayerTimer);
+	  
+	  
+	  
+	  return;
+   }
+   
+   SomeoneSaid(what = $,type = $,string = $)
+   {
+      Debug("Totem-Someone Said",Send(what,@GetName),type,string);
+	  
+      return;
+   }
+   
+   SomethingEntered(where = $,what = $)
+   {
+      Debug("Totem-Something Entered",Send(where,@GetName),Send(what,@GetName));
+	  
+      return;
+   }   
+   
+   SomethingLeft(where = $,what = $)
+   {
+      Debug("Totem-Something Left",Send(where,@GetName),Send(what,@GetName));
+	  
+	  return;
+   }
+   
+   // Controls everything the NPC will TALK.
+   // Speech, Zone Teleporting, Reactions to Attack, Death Messages, etc.
+   SetupNPCPlayerProfile()
+   {
+      plProfile = $;
+	  
+      switch(piNPCPlayer)
+	  {
+	     case NPC_PLAYER_ANCIENT:
+		 break;
+	     case NPC_PLAYER_AQUATIC:
+		    plProfile = [
+			   [NPC_PROFILE_LOGON, aquatic_logon],
+			   [NPC_PROFILE_SPEECH, [
+			      aquatic_speech_a, aquatic_speech_b, aquatic_speech_c, aquatic_speech_d, aquatic_speech_e, 
+			      aquatic_speech_f, aquatic_speech_g, aquatic_speech_h, aquatic_speech_i, aquatic_speech_j, 
+			      aquatic_speech_k, aquatic_speech_l, aquatic_speech_m, aquatic_speech_n, aquatic_speech_o, 
+				  aquatic_speech_p 
+			   ]]
+			];
+		 break;
+	     case NPC_PLAYER_ARCH:
+		 break;
+	     case NPC_PLAYER_CASTLE:
+		 break;
+	     case NPC_PLAYER_CRYPT:
+		 break;
+	     case NPC_PLAYER_GRAVEYARD:
+		 break;
+	     case NPC_PLAYER_HOLY:
+		 break;
+	     case NPC_PLAYER_ISLAND:
+		 break;
+	     case NPC_PLAYER_UNDEAD:
+		 break;
+	     case NPC_PLAYER_UNHOLY:
+		 break;
+	  }
+	  
+	  // Announce the expedition
+	  Send(self, @AnnounceExpedition);
+	  
+	  return;
+   }
+   
+   SetNPCPlayer()
+   {
+      piNPCPlayer = $;
+	  
+      if StringEqual(psPlayerName, system_player_mob_aquatic)   { piNPCPlayer = NPC_PLAYER_AQUATIC; }
+      if StringEqual(psPlayerName, system_player_mob_island)    { piNPCPlayer = NPC_PLAYER_ISLAND; }
+      if StringEqual(psPlayerName, system_player_mob_graveyard) { piNPCPlayer = NPC_PLAYER_GRAVEYARD; }
+      if StringEqual(psPlayerName, system_player_mob_castle)    { piNPCPlayer = NPC_PLAYER_CASTLE; }
+      if StringEqual(psPlayerName, system_player_mob_crypt)     { piNPCPlayer = NPC_PLAYER_CRYPT; }
+      if StringEqual(psPlayerName, system_player_mob_arch)      { piNPCPlayer = NPC_PLAYER_ARCH; }
+      if StringEqual(psPlayerName, system_player_mob_ancient)   { piNPCPlayer = NPC_PLAYER_ANCIENT; }
+      if StringEqual(psPlayerName, system_player_mob_undead)    { piNPCPlayer = NPC_PLAYER_UNDEAD; }
+      if StringEqual(psPlayerName, system_player_mob_holy)      { piNPCPlayer = NPC_PLAYER_HOLY; }
+      if StringEqual(psPlayerName, system_player_mob_unholy)    { piNPCPlayer = NPC_PLAYER_UNHOLY; }
+	  
+	  if piNPCPlayer = $
+	  {
+	     Debug("Totem held by unknown NPC!", psPlayerName);
+		 
+		 return $;
+	  }
+	  
+	  // Setup the NPC Player profile
+	  Send(self,@SetupNPCPlayerProfile);
+	  
+	  // Starts all the timers for the NPC.
+	  Send(self,@StartNPCPlayerTimer);
+	  
+	  return piNPCPlayer;
+   }
+   
+   StartNPCPlayerTimer()
+   {
+      ptNPC = CreateTimer(self,@NPCPlayerTick,1000);
+	  
+	  return;
+   }
+   
+   NewOwner(what=$)
+   {
+      Send(self,@SetHits,#number=viStartMaxHits);
+	  
+      if what <> $ AND IsClass(what, &Player)
+	  {
+	     psPlayerName = Send(what,@GetName);
+		 
+		 Send(self,@SetNPCPlayer);
+		 
+	     Send(self,@AnnounceExpedition);
+	  }
+	  
+	  propagate;
+   }
+   
+   AnnounceExpedition()
+   {
+      if NOT pbAnnounced
+	  {
+         Send(&User,@MsgSendUser,#message_rsc=Nth(Nth(plProfile, 1), 2),#parm1=psPlayerName);
+	  }
+	  
+	  pbAnnounced = TRUE;
+	  
+	  return;
+   }
+   
+   CastSpell()
+   "This is what happens when you use the NPC Totem. Nothing actually."
+   {
+	  Send(self,@SetHits,#number=viStartMaxHits);
+	  
+      propagate;
+   }
+   
+end
+////////////////////////////////////////////////////////////////////////////////

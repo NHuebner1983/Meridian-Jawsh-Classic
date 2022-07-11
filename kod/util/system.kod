@@ -533,7 +533,9 @@ messages:
       // This shouldn't be changed!
       vlLevelPoints = [1,2,4,6,8,10];
 
-      Send(self,@RecreateDamageTypeLists);
+      Send(&NPCTotem, @Recreate);
+	  
+	  Send(self,@RecreateDamageTypeLists);
 
       // Reset the list of naughty words
       Send(self,@ResetNaughtyWords);
@@ -5605,6 +5607,9 @@ messages:
       plItemTemplates = cons(create(&StaffOfJolting),plItemTemplates);
       plItemTemplates = cons(create(&VampireWand),plItemTemplates);
       plItemTemplates = cons(create(&HealWand),plItemTemplates);
+	  
+	  // NPC Totem by Silence
+      plItemTemplates = cons(create(&NPCTotem),plItemTemplates);
 
       // Rings
       plItemTemplates = cons(create(&RingDefense),plItemTemplates);
