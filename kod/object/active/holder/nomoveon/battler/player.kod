@@ -2374,13 +2374,11 @@ messages:
    {
 	  return pbRoamingNPCPlayerInitialized 
 	      OR StringEqual(Send(self,@GetName), system_player_mob_aquatic)
-	      OR StringEqual(Send(self,@GetName), system_player_mob_island)
 	      OR StringEqual(Send(self,@GetName), system_player_mob_graveyard)
 	      OR StringEqual(Send(self,@GetName), system_player_mob_castle)
 	      OR StringEqual(Send(self,@GetName), system_player_mob_crypt)
 	      OR StringEqual(Send(self,@GetName), system_player_mob_arch)
 	      OR StringEqual(Send(self,@GetName), system_player_mob_ancient)
-	      OR StringEqual(Send(self,@GetName), system_player_mob_undead)
 	      OR StringEqual(Send(self,@GetName), system_player_mob_holy)
 	      OR StringEqual(Send(self,@GetName), system_player_mob_unholy);
    }
@@ -2466,14 +2464,14 @@ messages:
 	  piAimMod = 20;
 	  
 	  // Hp, Mana, Vigor
-	  piMana = 1000;
-	  piVigor = 1000;
-      piHealth = 10000 * 100; // 10,000 HP.
+	  piMana = 200;
+	  piVigor = 200;
+      piHealth = 150 * 100; // 150 HP.
       
 	  // Set HP
 	  Send(self,@NewHealth);
       
-	  piBase_Max_Health = 10000;
+	  piBase_Max_Health = 150;
       piMax_health = piBase_max_health;
 	  
 	  // Gain HP
@@ -14835,7 +14833,15 @@ messages:
    SomeoneSaid(what=$,type=$,string=$,parm1=$,parm2=$,
                parm3=$,parm4=$,parm5=$,parm6=$,parm7=$,parm8=$)
    {
-      local oSnoop;
+      local oSnoop, oObj;
+
+	  // Forward someone said to NPC Totem
+	  oObj = Send(self,@FindHaving,#class=&NPCTotem);
+		 
+	  if oObj <> $
+	  {
+	     Send(oObj,@SomeoneSaid,#what=what,#type=type,#string=string);
+	  }
 
       if type = SAY_NORMAL AND IsClass(what,&Player)
       {

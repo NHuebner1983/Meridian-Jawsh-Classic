@@ -3174,7 +3174,7 @@ messages:
    ReqGive(what = $, item_list = $, notify_about_unwanted_items = True)
    "Returns TRUE if we'll take everything that was offered."
    {
-      local i, j, bWanted, oQuestNode, bAllWanted;
+      local i, j, bWanted, oQuestNode, bAllWanted, iWantedRejected;
 
       bAllWanted = TRUE;
 
@@ -3208,8 +3208,16 @@ messages:
             if IsClass(i,j)
             {
                // We were offered something we want.
-               Send(Self,@GotWantedItem,#obj=i,#who=what);
-               bWanted = TRUE;
+               iWantedRejected = Send(Self,@GotWantedItem,#obj=i,#who=what);
+			   
+			   if iWantedRejected = $ OR iWantedRejected = TRUE
+			   {
+                  bWanted = TRUE;
+			   }
+			   else
+			   {
+			      bWanted = FALSE;
+			   }
 
                break;
             }

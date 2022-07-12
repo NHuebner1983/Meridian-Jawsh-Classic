@@ -11241,7 +11241,7 @@ messages:
 	   {
 	       iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
 		   
-		   if iDistance < 2
+		   if iDistance <> $ AND iDistance < 2
 		   {
 		      // We need to be close enough to attack.
 		      bMonsterAttacked = Send(self,@UserAttack,#what=poTarget);

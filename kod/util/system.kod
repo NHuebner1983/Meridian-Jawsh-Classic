@@ -5778,6 +5778,9 @@ messages:
       plItemTemplates = cons(create(&Shirt),plItemTemplates);
       plItemTemplates = cons(create(&Tanktop),plItemTemplates);
 
+      // Boat Ticket
+      plItemTemplates = cons(create(&BoatTicket),plItemTemplates);
+
       // Ammo
       plItemTemplates = cons(create(&NeruditeArrow),plItemTemplates);
       plItemTemplates = cons(create(&SilverArrow),plItemTemplates);

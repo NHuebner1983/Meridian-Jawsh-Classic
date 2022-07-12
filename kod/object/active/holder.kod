@@ -373,7 +373,7 @@ messages:
          foreach i in plPassive
          {
             each_obj = Send(self,@HolderExtractObject,#data=i);
-
+			
             if each_obj <> what
             {
                if GetClass(what) = GetClass(each_obj)

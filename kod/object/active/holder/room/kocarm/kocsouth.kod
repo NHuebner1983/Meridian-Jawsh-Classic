@@ -67,6 +67,15 @@ properties:
 
 messages:
 
+   CreateStandardObjects()
+   {
+      // Expedition Update (Diggie) July 2022	
+      Send(self,@NewHold,#what=Create(&BoatCaptain),
+         #new_row=68,#new_col=30,#fine_row=44,#fine_col=45,#new_angle=ANGLE_NORTH);
+
+      propagate;
+   }
+
    CreateStandardExits()
    {
       plExits = $;

@@ -35,6 +35,16 @@ constants:
    
    // NPC Revive Operations
    NPC_PROFILE_REVIVE = 6
+   
+   // RIDs where our NPC Players will start
+   RID_START_AQUATIC = RID_MARION
+   RID_START_GRAVEYARD = RID_TOS_GRAVEYARD
+   RID_START_CASTLE = RID_CASTLE1C
+   RID_START_CRYPT = RID_MARION
+   RID_START_ARCH = RID_BRAX_GRAVEYARD
+   RID_START_ANCIENT = RID_JUNGLE_TRADING_POST
+   RID_START_HOLY = RID_CRAGGED
+   RID_START_UNHOLY = RID_H9
 
 resources:
 
@@ -80,10 +90,10 @@ resources:
    /////////////////////////////////////
    // AQUATIC NPC [Marion, Ocean and Barloque Story]
    /////////////////////////////////////
-   aquatic_logon = "~BThe expedition team has arrived in Marion and will be investigating the marine life of the great ocean."
-   aquatic_speech_a = "Expedition Log: Day one. We have arrived near the ocean where odd creatures are roaming abroad. Nature could not have come up with this on its own. We need to keep studying these creatures to learn how they came to be."
-   aquatic_speech_b = "These creatures...they are so, fascinating!"
-   aquatic_speech_c = "We need more samples to see what makes this one so powerful."
+   aquatic_logon = "~BThe expedition team has arrived in Marion and will be making a trek towards the great ocean."
+   aquatic_speech_a = "Expedition Log: Day one. We have arrived in a small town called Marion. A team of explorers went into the mausoleum but have not returned. We should send help if they are not back by time we have finished our investigation at the great ocean."
+   aquatic_speech_b = "These creatures...they are so, fascinating! A tree has literally just sent a bolt of lightning through the air. We should be careful not to get in their way."
+   aquatic_speech_c = "We have arrived near the ocean where odd creatures are roaming abroad. Nature could not have come up with this on its own. We need to keep studying these creatures to learn how they came to be. We need more samples to see what makes this one so powerful."
    aquatic_speech_d = "There's a creature made purely from fungus, it's impossible. It's almost like something glued together the remains of a sheep and strings of gooey mushrooms. It's quite gross, yet intriguing."
    aquatic_speech_e = "The slime creature must be a by-product of the fungus beast. We should take a sample and see if we can find any relationship to the fungus beasts. The question is, where are the sheep coming from? The fungus beast can't be made purely from fungus and slime, there has to be something going on here."
    aquatic_speech_f = "There has been some strange activity near the flag poles. Some soldiers have been through here checking for poachers. We should stay out of their way and perhaps far away from those flag poles."
@@ -106,7 +116,7 @@ resources:
    arch_speech_b = "We spoke to a ghost known as Tendrath. He is haunting the cliffs directly outside the city of Brax. He gave us some very interesting information. The winged creatures are called narthyl worms and the horned skeletons are called daemon skeletons. He said we should be on the lookout for giant daemon skeletons, centaurs, necromancers and mimics. These creatures are extremely powerful and not to be contested. Certain death is all we can expect from these encounters."
    arch_speech_c = "Stories from Tendrath have revealed hidden rooms in the city of Brax. We need to investigate these hidden rooms to gather samples for our specialists."
    arch_speech_d = "We received word of advice not to venture into a place known as Goad's Grinder. This creature is friendly, but has a dark side. He encourages adventurers to fight to the death. We should avoid accepting any kind of duel, as it may lead us to the Underworld."
-   arch_speech_e = "The walls of Brax are covered in ancient runes. It could be a sign that the abominations may be controlled by an evil entity."
+   arch_speech_e = "The walls of Brax are covered in ancient runes. It could be a sign that the abominations may be controlled by an evil entity. We should be careful reciting the runes - some of our crew have reported an incident with the rock formation expedition team who were exposed to runes like these."
    arch_speech_f = "We asked Tendrath what could possibly be manifesting all of the undead creatures in Brax, and he told us there is an evil queen at the edge of Brax with dark magic. We should avoid picking up any Amulet of Three or Sword of The Hunt equipment, as there is heavy toll to pay for obtaining such powerful weapons."
    arch_speech_g = "We've been recovering bones from some of the ancient buildings in brax and have found that the skeletons with tusks are evolving into daemon skeletons upon their death. We have not seen any kind of transformation with the narthyl worms, but we will keep our eyes open for something abnormal."
    arch_speech_h = "One of our archaeologists recovered a Sword of The Hunt, even though we strictly told them not to pick it up. They seem to be receiving immense amounts of energy upon slaying enemies in the city of Brax. They may be stuck with this godly weapon until they meet death. We are depending on them to protect us while we venture further into the city of Brax."
@@ -137,37 +147,80 @@ resources:
    // CRYPT NPC [Marion Crypt Story]
    /////////////////////////////////////
    crypt_logon = "~BThe expedition team has arrived in the Marion Crypt, where mummies and statues are guarding an ancient secret."
-   crypt_speech_a = ""
-
+   crypt_speech_a = "Expedition Log: Day one. The old man standing out front of the mausoleum looks like he might die of old age - yet he stands, constantly. What keeps him so strong?"
+   crypt_speech_b = "This village used to thrive with adventurers. Many have gone down to the depths of the mausoleum and never returned. The waning population has left the economy distraught and without any ability to recover. I'm afraid Marion will become abandoned if this village isn't revived soon. Why did all of those adventurers never return? What's down there?"
+   crypt_speech_c = "We found an interesting room with a statue in the middle. After close examination, the statue came to life and attacked us. Our axe wielding warriors made quick work of the cursed statue and a door opened. We're planning to travel deeper - soon, very soon."
+   crypt_speech_d = "This room is gigantic and riddled with puzzles. Statues are lined in every direction. We seem to be finding what appears to be everlasting roses? Are they cursed - or blessed? We'll need to study these roses much more closely to determine its origin."
+   crypt_speech_e = "It has been hours, we are still destroying statues. Every time a statue is destroyed we hear a noise in the distance, as if we are making our way towards a guarded location. What could be beyond the doors to the south?"
+   crypt_speech_f = "We're about to break the last statue. Our men are standing by. You shouldn't wander too far, this may be an extraordinary discovery. What if we find a room full of people, trapped? We would be heroes! Or worse, a room full of dead bodies. Where did all of those adventurers go?"
+   crypt_speech_g = "The door is open. We're heading to the other side. Something tells me there are powerful creatures beyond this door. If you're coming, don't take too long, the door won't stay open forever. If you're staying here, send help if we're not back in an hour!"
+   crypt_speech_h = "What kind of absurd creatures are these. It's like something attached weapons, shields and armor to them. Did they do that on their own or is something playing with nature in this room?"
+   crypt_speech_i = "We're still looking for the lost adventurers. There's no sign of them. We have found several piles of human remains, but it appears as these creatures are globulating from those remains and building stronger versions of themselves. They're made of some kind of muscular golem clay."
+   crypt_speech_j = "These creatures are extremely powerful. Some of the equipment they leave behind has helped us become better prepared to move through this maze. What is at the end of this maze, other than the beginning? Perhaps the lost adventurers will be there? We cannot hear a single noise - it may be too late for them if they were alive."
+   crypt_speech_k = "Be careful, jumping down here, there appear to be two of these creatures guarding this small room. You must defeat them to open the next part of the maze."
+   crypt_speech_l = "This looks like an excellent place to set a trap. Look, they aren't crossing the line where the door opened. Are they prevented from crossing magical barriers?"
+   crypt_speech_m = "This next room appears to be guarded by three creatures. They are staring at us, but not flinching. You can tell they want nothing more than for you to fall into this pit to be devoured by their unnatural appendages."
+   crypt_speech_n = "This door seems to open once you have defeated the three creatures. A chest is manifesting something we need? I don't understand. Where are all of the adventurers that never returned to Marion?"
+   crypt_speech_o = "We should report back to Marion to let them know we could not find the lost adventurers."
+   
    /////////////////////////////////////
    // GRAVEYARD NPC [Tos Graveyard Story]
    /////////////////////////////////////
    graveyard_logon = "~BThe expedition team is investigating reports of the dead rising in the graveyard of Tos."
-   graveyard_speech_a = ""
+   graveyard_speech_a = "Expedition Log: Day one. This tombstone appears to have been erased as if by magic. It's completely blank. Why would someone burry someone and not give a momento of who they were. There's not even a date on this mortar. We should dig up this grave to see who was burried here."
+   graveyard_speech_b = "This grave is empty? What the hell is going on here...is this some kind of sick joke? I know I'm not the mightiest warrior in our expedition team, but I deserve a little more respect than fake cries of the living dead rising when there's clearly nothing dead here. Let's find another grave to inspect."
+   graveyard_speech_c = "Ok, something was definitely burried here once, but there's no tombstone. Let's dig this up."
+   graveyard_speech_d = "Again, an empty grave. This doesn't make any sense. We have graves without tombstones, and tombstones without bodies. What kind of graveyard is this? It's definitely not for pets - we attended a burial yesterday and it was definitely for a fallen warrior. Let's wait a while to see if we witness anything strange happening here."
+   graveyard_speech_e = "I spoke with Frisconar and he mentioned that we need to be in the graveyard at midnight. He said the graveyard during the day is resting in the underworld and during the night it is completely the opposite."
+   graveyard_speech_f = "There's a door over here leading into a crypt. We should investigate to see if there are any tombstones we can read."
+   graveyard_speech_g = "This place is quiet and dark. It's definitely a place of peace but easily disturbed by evil. I keep finding emeralds and sapphires in the corners next to gross piles of flesh. It's obvious that the locals do not want anything to do with this place. It must scare them."
+   graveyard_speech_h = "It will be midnight soon. We'll want to be on our guard for zombies and skeletons if what Frisconar says is true."
+   graveyard_speech_i = "Are you familiar with the goddess Shal'ille? Frisconar says that the only reason this town is safe is because followers of the goddess protect this town, every single night. If our protectors were to fall, the town of Tos would be overrun by the living dead."
+   graveyard_speech_j = "Frisconar says we need to use something called ''Holy Weapon'' to imbue our weapons with Shal'ille's magic. I'm afraid I cannot wield magic. Without it, we may need a lot of help from the townsfolk to keep the undead from roaming the city."
+   graveyard_speech_k = "Look! In the distance there... Can you also see a stream of purple haze connecting the crypt to the Duke's castle? A dark wizard appears to be in control of the Duke and may be the source of the undead rising."
+   graveyard_speech_l = "Why would a dark wizard bring back the dead? There surely must be more behind this story."
+   graveyard_speech_m = "Maleval does look lonely. It begs to question why he turned evil in the first place. Was he married, did he have children? Whatever there is to learn about Maleval, it's probably dark and ominous."
+   graveyard_speech_n = "Frisconar thinks Maleval was in love with the Shal'ille priestess, shunned for his ugliness and he sought out to destroy her by invoking the dark power of Qor. He is truly forsaken. Once you have sided with evil, it's usually permanent, unfortunately."
+   graveyard_speech_o = "We should collect a few more samples and then head back to camp, before Maleval sees what we have done here."
    
-   /////////////////////////////////////
-   // HOLY NPC [Shal'ille Story]
-   /////////////////////////////////////
-   holy_logon = "~BShal'ille has sent me to protect adventurers from the Unholy Inquisitor."
-   holy_speech_a = ""
-
-   /////////////////////////////////////
-   // ISLAND NPC [Ko'catan Story]
-   /////////////////////////////////////
-   island_login = "~BThe expedition team has arrived in Ko'catan and is preparing to venture into the jungle."
-   island_speech_a = "We seem to be stranded on an island, we should take samples while we're among the natives."
-
-   /////////////////////////////////////
-   // UNDEAD NPC [Necromancer Story]
-   /////////////////////////////////////
-   undead_logon = "~BThe expedition team has arrived in the Lair of Queen Venya'cyr. This unholy ground appears to be guarded by necromancers, bewitched by her power."
-   undead_speech_a = ""
-
    /////////////////////////////////////
    // UNHOLY NPC [Qor Story]
    /////////////////////////////////////
-   unholy_logon = "~BAre you shivering in fear, mortal? You should be warned, I will reclaim what once was mine."
-   unholy_speech_a = ""
+   unholy_logon = "~B~kThe expedition team has opened a rift. It appears the runes of an ancient rock formation were disturbed. An Unholy Inquisitor of Qor has entered these lands and is seeking Tendrath in the Cragged Mountains."
+   unholy_speech_a = "What day is it? I can't remember how I came to be? I just know I feel evil coursing through my veigns. I feel nothing but hate. What am I?"
+   unholy_speech_b = "It's all coming back to me now. I am the dormant Unholy Inquisitor of Qor. I wonder how long I've slept in a cocoon of sludge. Queen Venya'cyr appears to have fallen while I was away, perhaps this is why I have been gone. The Amulet of Three may have taken my soul to the Underworld."
+   unholy_speech_c = "That explains why I feel so weak. I should make a trek to Tendrath and bargain for a new Amulet of Three. Perhaps I will feel whole again."
+   unholy_speech_d = "Ahhh, I do feel whole again. I should absorb the life of these creatures, so inferior, so weak, so helpless."
+   unholy_speech_e = "My thirst for blood is returning slowly. I sense the Holy Inquisitor has been summoned to keep me at bay, what a joke. Shal'ille has always been so weak, so ''blind'' muahaha."
+   unholy_speech_f = "The Holy Inquisitor's blood is thriving with life. I will drain every last drop and feed the corpse to my seduced minions. The necromancers will rise once again."
+   unholy_speech_g = "If you give yourself to Qor, you may be worthy to fight the Holy Inquisitor. If you show signs of weakness, I will not hesitate to take your life force. You have been warned, mortal."
+   unholy_speech_h = "The battle will be legendary in the eyes of Shal'ille, but for Qor it is just another day, another soul to be had. Evil comes in many forms, I am just a vessle. There are many more followers of Qor. Shal'ille will not be prepared for what I have planned."
+   unholy_speech_i = "Is it finally time to defeat the forces of light?"
+   unholy_speech_j = "I sense the Holy Inquisitor may be nearby."
+   unholy_speech_k = "Shal'ille must be struck down."
+   unholy_speech_l = "This battle is tiring you. I will win in the end."
+   unholy_speech_m = "Your powers are weak. You think a Sword of The Hunt will best me in combat? You are mistaken, follower of a fool."
+   unholy_speech_n = "Coward! Run away with your tail between your legs. You are no match for Qor."
+
+   /////////////////////////////////////
+   // HOLY NPC [Shal'ille Story]
+   /////////////////////////////////////
+   holy_logon = "~BShal'ille has sent the Holy Inquisitor to protect adventurers from evil forces. A great battle is being prepared near the Lake of Jala."
+   holy_speech_a = "What day is it? Once again, I was resting, peacefully. Shal'ille has requested me to battle the Unholy Inquisitor. There's nothing I enjoy more than my rest, so I will make sure this unholy spirit is dealt with swiftly."
+   holy_speech_b = "You know, being a master of Shal'ille is not an easy thing. It takes much discipline to become this way. Some say it takes a lifetime to master the art of magic. I've learned so much that my spirit is bonded with Shal'ille - if I were to fall in battle, I could return back to fight once again. Returning from the Underworld always comes with a hefty price."
+   holy_speech_c = "What if I told you ''Karma'' was real? You have it, I have it, even that creature has it (careful, that thing may bite). But I am not talking about your fictitous karma concept or idea that is more in line with ''luck'' or ''fate''. I am talking about real karma. It's measurable, consistent and flows through every living thing. Everything you do that is good or bad will tip the balance of a scale in a different direction. Your karma does not change until you want to change it. Being a Shal'ille master, I must have an enormous amount of positive karma. It takes a long time to accumulate this much karma. I can see you are doing well on your path towards good karma."
+   holy_speech_d = "Before battle, masters will prepare their equipment. Real masters of the magic arts are also warriors. We wield mighty hammers, bows and axes. We imbue our weapons to attune to the forces of light. We study our evil enemies for weakness and smite them with a powerful blow, staggering them to the ground where we can deliver them to the underworld."
+   holy_speech_e = "We will be going into battle against the Unholy Inquisitor. His karma is dripping negatively, like a bloody stream flowing in the wrong direction. Every holy enchantment we make on our equipment will lead to more damage. Our hands, weapons and even our ivy circlets must be holy. We must bathe in Shal'illes light if we want to defeat pure evil."
+   holy_speech_f = "When battling the Unholy Inquisitor, we need to be on the lookout for his pupils. The lands of Meridian are littered with evil souls, ready to do his bidding. It's only a matter of time until he convinces some poor soul to join him. A true master stands to all who challenge, even at impossible odds. We will stand and if the afterlife is our destiny, so be it."
+   holy_speech_g = "We must be prepared. Qor is evil and will stop at nothing to keep us blinded from the truth. Their acid will rack our bones, but Shal'ille will sooth us. Keep your unholy protection up at all times."
+   holy_speech_h = "Shal'ille will be watching us, taking care to notice our shortcomings but also our victories. It is important that we do not show weakness, even if we are faced against many foes. Weakness is not a trait for a master of the holy arts. Fear and weakness lead to evil, from which there is no return."
+   holy_speech_i = "It is too quiet here... much too quiet. Pay attention! Evil may seek to destroy us while we're unprepared. The dark magic of Qor can even make them invisible."
+   holy_speech_j = "I sense the Unholy Inquisitor may be nearby."
+   holy_speech_k = "We must defeat the Unholy Inquisitor before it's too late. Qor cannot reign over these lands."
+   holy_speech_l = "The holy power of Shal'ille will prevail."
+   holy_speech_m = "Even if you win this battle, our goddess will hunt you down."
+   holy_speech_n = "There is clearly no victor in this battle, I will return with an army of light."
+   
 
 classvars:
 
@@ -191,6 +244,9 @@ classvars:
 
 properties:
 
+   // Player
+   poPlayer = $
+   
    // NPC_PLAYER constant at the bottom of blakston
    piNPCPlayer = $
    
@@ -234,26 +290,75 @@ messages:
       return;
    }
    
-   SomethingEntered(where = $,what = $)
+   TeleportToStartingMap(NPCID=$)
    {
-      Debug("Totem-Something Entered",Send(where,@GetName),Send(what,@GetName));
+      local iRID, oRoom;
 	  
-      return;
-   }   
-   
-   SomethingLeft(where = $,what = $)
-   {
-      Debug("Totem-Something Left",Send(where,@GetName),Send(what,@GetName));
+	  iRID = $;
+	  
+	  if poPlayer <> $ AND NPCID <> $
+	  {
+	     switch(NPCID)
+		 {
+            case NPC_PLAYER_AQUATIC:
+			   iRID = RID_START_AQUATIC;
+			break;
+            case NPC_PLAYER_GRAVEYARD:
+			   iRID = RID_START_GRAVEYARD;
+			break;
+            case NPC_PLAYER_CASTLE:
+			   iRID = RID_START_CASTLE;
+			break;
+            case NPC_PLAYER_CRYPT:
+			   iRID = RID_START_CRYPT;
+			break;
+            case NPC_PLAYER_ARCH:
+			   iRID = RID_START_ARCH;
+			break;
+            case NPC_PLAYER_ANCIENT:
+			   iRID = RID_START_ANCIENT;
+			break;
+            case NPC_PLAYER_HOLY:
+			   iRID = RID_START_HOLY;
+			break;
+            case NPC_PLAYER_UNHOLY:
+			   iRID = RID_START_UNHOLY;
+			break;
+		 }
+		 
+		 Send(self,@TeleportToMap,#iRID=iRID);
+	  }
 	  
 	  return;
    }
    
+   TeleportToMap(iRID=$)
+   {
+      local oRoom;
+	  
+      if iRID <> $
+      {
+         oRoom = Send(SYS,@FindRoomByNum,#num=iRID);
+
+         if oRoom <> $
+         {
+            Send(oRoom, @Teleport, #what=poPlayer);
+			Send(poPlayer, @AdminGotoBlink);
+         }
+      }
+
+      return;
+   }
+
    // Controls everything the NPC will TALK.
    // Speech, Zone Teleporting, Reactions to Attack, Death Messages, etc.
    SetupNPCPlayerProfile()
    {
       plProfile = $;
 	  
+	  // Send the NPC to their starting map
+      Send(self,@TeleportToStartingMap,#NPCID=piNPCPlayer);
+
       switch(piNPCPlayer)
 	  {
 	     case NPC_PLAYER_ANCIENT:
@@ -262,10 +367,22 @@ messages:
 		    plProfile = [
 			   [NPC_PROFILE_LOGON, aquatic_logon],
 			   [NPC_PROFILE_SPEECH, [
-			      aquatic_speech_a, aquatic_speech_b, aquatic_speech_c, aquatic_speech_d, aquatic_speech_e, 
-			      aquatic_speech_f, aquatic_speech_g, aquatic_speech_h, aquatic_speech_i, aquatic_speech_j, 
-			      aquatic_speech_k, aquatic_speech_l, aquatic_speech_m, aquatic_speech_n, aquatic_speech_o, 
-				  aquatic_speech_p 
+			      [aquatic_speech_a,$,$], 
+				  [aquatic_speech_b, RID_C4, [29,66,32,24,98]], 
+				  [aquatic_speech_c, RID_D4, [7,56,8,29,128]], 
+				  [aquatic_speech_d, RID_E2, [1,24,62,3,140]], 
+				  [aquatic_speech_e,$,$], 
+			      [aquatic_speech_f,$,$], 
+				  [aquatic_speech_g,$,$], 
+				  [aquatic_speech_h,$,$], 
+				  [aquatic_speech_i,$,$], 
+				  [aquatic_speech_j,$,$], 
+			      [aquatic_speech_k,$,$], 
+				  [aquatic_speech_l,$,$], 
+				  [aquatic_speech_m,$,$], 
+				  [aquatic_speech_n,$,$], 
+				  [aquatic_speech_o,$,$], 
+				  [aquatic_speech_p,$,$] 
 			   ]]
 			];
 		 break;
@@ -279,16 +396,15 @@ messages:
 		 break;
 	     case NPC_PLAYER_HOLY:
 		 break;
-	     case NPC_PLAYER_ISLAND:
-		 break;
-	     case NPC_PLAYER_UNDEAD:
-		 break;
 	     case NPC_PLAYER_UNHOLY:
 		 break;
 	  }
 	  
 	  // Announce the expedition
 	  Send(self, @AnnounceExpedition);
+	  
+	  // The NPC Player will now become a monster and attack other monsters.
+	  Send(poPlayer, @BecomeMonster);
 	  
 	  return;
    }
@@ -298,13 +414,11 @@ messages:
       piNPCPlayer = $;
 	  
       if StringEqual(psPlayerName, system_player_mob_aquatic)   { piNPCPlayer = NPC_PLAYER_AQUATIC; }
-      if StringEqual(psPlayerName, system_player_mob_island)    { piNPCPlayer = NPC_PLAYER_ISLAND; }
       if StringEqual(psPlayerName, system_player_mob_graveyard) { piNPCPlayer = NPC_PLAYER_GRAVEYARD; }
       if StringEqual(psPlayerName, system_player_mob_castle)    { piNPCPlayer = NPC_PLAYER_CASTLE; }
       if StringEqual(psPlayerName, system_player_mob_crypt)     { piNPCPlayer = NPC_PLAYER_CRYPT; }
       if StringEqual(psPlayerName, system_player_mob_arch)      { piNPCPlayer = NPC_PLAYER_ARCH; }
       if StringEqual(psPlayerName, system_player_mob_ancient)   { piNPCPlayer = NPC_PLAYER_ANCIENT; }
-      if StringEqual(psPlayerName, system_player_mob_undead)    { piNPCPlayer = NPC_PLAYER_UNDEAD; }
       if StringEqual(psPlayerName, system_player_mob_holy)      { piNPCPlayer = NPC_PLAYER_HOLY; }
       if StringEqual(psPlayerName, system_player_mob_unholy)    { piNPCPlayer = NPC_PLAYER_UNHOLY; }
 	  
@@ -335,9 +449,13 @@ messages:
    {
       Send(self,@SetHits,#number=viStartMaxHits);
 	  
+	  poPlayer = $;
+	  
       if what <> $ AND IsClass(what, &Player)
 	  {
 	     psPlayerName = Send(what,@GetName);
+		 
+		 poPlayer = what;
 		 
 		 Send(self,@SetNPCPlayer);
 		 
