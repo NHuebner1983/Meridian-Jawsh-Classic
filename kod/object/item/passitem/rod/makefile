@@ -7,5 +7,6 @@
 DEPEND = ..\rod.bof
 BOFS = healrod.bof vamprod.bof joltrod.bof \
        spellrod.bof shieldrod.bof damagerod.bof \
+       npctotem.bof \
 
 !include $(KODDIR)\kod.mak

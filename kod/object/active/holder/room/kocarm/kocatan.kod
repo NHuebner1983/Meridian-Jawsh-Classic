@@ -54,7 +54,7 @@ properties:
    pbSnowGroundTexture = TRUE
 
 messages:
-
+   
    CreateStandardExits()
    {
       plExits = $;

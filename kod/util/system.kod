@@ -44,6 +44,21 @@ constants:
 resources:
 
    include system.lkod
+   
+   // Expedition Patch July 2022
+   // Event characters that roam the lands
+   // Accounts are taken over by the server upon logon.
+   // Basic detection by Player Name Exact Match
+   system_player_mob_aquatic    = "Aquatic Researcher"
+   system_player_mob_island     = "Island Native"
+   system_player_mob_graveyard  = "Graveyard Watchman"
+   system_player_mob_castle     = "Castle Guard"
+   system_player_mob_crypt      = "Crypt Keeper"
+   system_player_mob_arch       = "Archaeologist"
+   system_player_mob_ancient    = "Ancient Collector"
+   system_player_mob_undead     = "Undead Researcher"
+   system_player_mob_holy       = "Holy Inquisitor"
+   system_player_mob_unholy     = "Unholy Inquisitor"
 
    system_user_killed = "~B~U~k[###]~n ~B~v%q was just killed by %s%q."
    system_user_killed_by_pker = "~B~U~k[###]~n ~B~v%q has been murdered in cold blood."
@@ -518,7 +533,9 @@ messages:
       // This shouldn't be changed!
       vlLevelPoints = [1,2,4,6,8,10];
 
-      Send(self,@RecreateDamageTypeLists);
+      Send(&NPCTotem, @Recreate);
+	  
+	  Send(self,@RecreateDamageTypeLists);
 
       // Reset the list of naughty words
       Send(self,@ResetNaughtyWords);
@@ -5697,6 +5714,9 @@ messages:
       plItemTemplates = cons(create(&StaffOfJolting),plItemTemplates);
       plItemTemplates = cons(create(&VampireWand),plItemTemplates);
       plItemTemplates = cons(create(&HealWand),plItemTemplates);
+	  
+	  // NPC Totem by Silence
+      plItemTemplates = cons(create(&NPCTotem),plItemTemplates);
 
       // Rings
       plItemTemplates = cons(create(&RingDefense),plItemTemplates);
@@ -5864,6 +5884,9 @@ messages:
       plItemTemplates = cons(create(&RoyalShirt),plItemTemplates);
       plItemTemplates = cons(create(&Shirt),plItemTemplates);
       plItemTemplates = cons(create(&Tanktop),plItemTemplates);
+
+      // Boat Ticket
+      plItemTemplates = cons(create(&BoatTicket),plItemTemplates);
 
       // Ammo
       plItemTemplates = cons(create(&NeruditeArrow),plItemTemplates);

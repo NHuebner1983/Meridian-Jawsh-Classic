@@ -1165,6 +1165,10 @@ properties:
    plServantResources = $
    
    piLastMoved = 0
+   
+   pbRoamingNPCPlayerInitialized = FALSE
+
+   plNPCProfile = $
 
 messages:
 
@@ -1175,6 +1179,13 @@ messages:
       piReward_timestamp = GetTime();
 
       propagate;
+   }
+   
+   ResetNPCPlayerProfile()
+   {
+      plNPCProfile = $;
+	  
+	  return;
    }
    
    JustMoved()
@@ -2392,16 +2403,185 @@ messages:
 
       return;
    }
+   
+   // Check if the logged on user is a Roaming NPC Player
+   // These players are logged on via client and controlled via Server.
+   IsRoamingNPCPlayer()
+   {
+	  return pbRoamingNPCPlayerInitialized 
+	      OR StringEqual(Send(self,@GetName), system_player_mob_aquatic)
+	      OR StringEqual(Send(self,@GetName), system_player_mob_graveyard)
+	      OR StringEqual(Send(self,@GetName), system_player_mob_castle)
+	      OR StringEqual(Send(self,@GetName), system_player_mob_crypt)
+	      OR StringEqual(Send(self,@GetName), system_player_mob_arch)
+	      OR StringEqual(Send(self,@GetName), system_player_mob_ancient)
+	      OR StringEqual(Send(self,@GetName), system_player_mob_holy)
+	      OR StringEqual(Send(self,@GetName), system_player_mob_unholy);
+   }
+   
+   IsInventoryEmpty()
+   {
+	  if (plActive = $ AND plPassive = $) OR (plActive <> $ AND Length(plActive) <= 0) OR (plPassive <> $ AND Length(plPassive) <= 0)
+	  {
+	     return TRUE;
+	  }
+	  
+	  return FALSE;
+   }
+   
+   GetInventoryObjectByClass(class=$)
+   {
+      local oObj;
+	  
+	  if class = $
+	  {
+	     return $;
+	  }
+	  
+	  if plActive <> $ AND Length(plActive)
+	  {
+	     foreach oObj in plActive
+		 {
+		    if IsClass(oObj, class)
+			{
+			   return oObj;
+			}
+		 }
+	  }
+	  
+	  if plPassive <> $ AND Length(plPassive)
+	  {
+	     foreach oObj in plPassive
+		 {
+		    if IsClass(oObj, class)
+			{
+			   return oObj;
+			}
+		 }
+	  }
+
+	  return $;
+   }
+   
+   // Prepare the logged on NPC Player.
+   // One more check is performed just in case someone accidentally calls this.
+   // Because it wipes out skills/spells and does a lot of WEIRD stuff to the player.
+   // Normal players would really be mad if you used this on them.
+   SetupRoamingNPCPlayer()
+   {
+      local oObj, bHasTotem;
+	  
+      if pbRoamingNPCPlayerInitialized OR NOT Send(self, @IsRoamingNPCPlayer)
+	  {
+	     return;
+	  }
+	  
+	  pbRoamingNPCPlayerInitialized = TRUE;
+	  
+	  Debug("Roaming NPC-Player ONLINE",Send(self,@GetName));
+	  
+	  // Leave the name color alone until population returns to normal.
+	  //Send(self,@SetNameColor,#red=130,#green=130,#blue=130);
+	  
+	  // Adjust stats
+	  piMight = 50;
+	  piIntellect = 50;
+	  piStamina = 50;
+	  piAgility = 50;
+	  piMysticism = 50;
+	  piAim = 50;
+	  
+	  // Stat mods
+	  piMightMod = 20;
+	  piIntellectMod = 20;
+	  piStaminaMod = 20;
+	  piAgilityMod = 20;
+	  piMysticismMod = 20;
+	  piAimMod = 20;
+	  
+	  // Hp, Mana, Vigor
+	  piMana = 200;
+	  piVigor = 200;
+      piHealth = 150 * 100; // 150 HP.
+      
+	  // Set HP
+	  Send(self,@NewHealth);
+      
+	  piBase_Max_Health = 150;
+      piMax_health = piBase_max_health;
+	  
+	  // Gain HP
+      Send(self,@GainBaseMaxHealth);
+      	  
+	  // Set XP to Max Health
+	  Send(self, @ResetXPToLevel);
+	  
+	  // Skills
+	  Send(self, @GivePlayerAllSkills, #level=6, #iability=99, #override=TRUE);
+	  
+	  // Spells
+	  Send(self, @GivePlayerAllSpells, #level=6, #iability=99, #override=TRUE);
+	  
+      // Make sure the NPC has the NPC Totem.
+	  // The totem is basically the entire NPC system!
+	  bHasTotem = Send(self,@PossessesA,#class=&NPCTotem);
+
+	  if bHasTotem
+	  {
+	     oObj = Send(self,@FindHaving,#class=&NPCTotem);
+		 
+		 if oObj <> $
+		 {
+		    Send(self,@LeaveHold,#what=oObj);
+		    Send(oObj,@Delete);
+		 }
+	  }
+	  
+	  bHasTotem = Send(self,@PossessesA,#class=&NPCTotem);
+
+	  if NOT bHasTotem
+	  {
+         Send(self,@NewHold,#what=Create(&NPCTotem));
+	  }
+	  else
+	  {
+	     Debug("UNABLE TO REMOVE NPCTOTEM");
+	  }
+	  
+	  // Do not empty the inventory.
+	  // If there are items already, do not add anything.
+	  if (plActive = $ OR Length(plActive) <= 0) AND (plPassive = $ OR Length(plPassive) <= 0)
+	  {
+         Send(self,@NewHold,#what=Create(&Money,#number=35000));
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=35000);
+         Send(self,@AddReagentsForSpells,#iNumCasts=3);
+	  }
+	  
+	  // Make the NPC Player PKable
+	  Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);
+      Send(self,@PlayerIsIntriguing);
+
+      return;
+   }
 
    UserLogonHook()
    {
       local i, oObj, iBonus, iDefaultBonus, iTimespan;
 	  
-	  piLastMoved = GetTime();
-
       SendList(plPassive, 0, @UserLogon);
       SendList(plActive, 0, @UserLogon);
 
+	  if Send(self, @IsRoamingNPCPlayer)
+	  {
+	     pbRoamingNPCPlayerInitialized = FALSE;
+		 
+	     Send(self, @SetupRoamingNPCPlayer);
+	  }
+	  else
+	  {
+	     piLastMoved = GetTime();
+	  }
+	  
       // Restart Unbound Energy, Health and Mana timers
       Send(self,@NewUnboundEnergy);
       Send(self,@NewHealth);
@@ -6960,6 +7140,27 @@ messages:
 	  }
 	  
 	  return $;
+   }
+
+   FindHaving(class=$)
+   "Find the first instance of 'class' that player has in their inventory. "
+   "Returns $ if nothing is found."
+   {
+      local oObj;
+	  
+      oObj = GetListElemByClass(plUsing,class);
+	  
+	  if oObj = $
+	  {
+	     oObj = GetListElemByClass(plPassive,class);
+	  }
+	  
+	  if oObj = $
+	  {
+	     oObj = GetListElemByClass(plActive,class);
+	  }
+
+	  return oObj;
    }
 
    ChooseArmorPosition()
@@ -14705,7 +14906,15 @@ messages:
    SomeoneSaid(what=$,type=$,string=$,parm1=$,parm2=$,
                parm3=$,parm4=$,parm5=$,parm6=$,parm7=$,parm8=$)
    {
-      local oSnoop;
+      local oSnoop, oObj;
+
+	  // Forward someone said to NPC Totem
+	  oObj = Send(self,@FindHaving,#class=&NPCTotem);
+		 
+	  if oObj <> $
+	  {
+	     Send(oObj,@SomeoneSaid,#what=what,#type=type,#string=string);
+	  }
 
       if type = SAY_NORMAL AND IsClass(what,&Player)
       {

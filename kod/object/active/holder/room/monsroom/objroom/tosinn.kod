@@ -26,10 +26,10 @@ resources:
 
    tosinn_music = bar.ogg
 
-   tosinn_no_rooms = "~kPaddock calls out, \"Sorry, we don't have any vacant rooms right now.\""
-   tosinn_locked_basement = "The basement door is locked."
-   tosinn_locked_cabinet = "~kPaddock says, \"Hey, keep out of my pantry!\""
-   tosinn_locked_confused = "~kPaddock mumbles, \"Where do you think you're gonna go?\""
+   tosinn_no_rooms = "~kPaddock calls out, \"Sorry, we don't have any vacant rooms right now. Try the Lover's Tryst or Marion.\""
+   tosinn_locked_basement = "Employees only! You wouldn't want us to run out cheese, now would you?"
+   tosinn_locked_cabinet = "~kPaddock says, \"Hey, keep out of my pantry! No rats allowed.\""
+   tosinn_locked_confused = "~kPaddock mumbles, \"Where do you think you're gonna go? I keep this locked for a reason.\""
 
 classvars:
 
@@ -52,8 +52,8 @@ properties:
 
    prMusic = tosinn_music
 
-   // Every 5 min.
-   piGen_object_time = 300000
+   // Every 2 1/2 min.
+   piGen_object_time = 150000
 
 messages:
 

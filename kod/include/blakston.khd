@@ -3794,3 +3794,13 @@
    // Survival options
    OPT_NATURAL = 1    // Rooms with natural monster spawn only
    OPT_PVP_ON = 2     // Players can fight
+
+   // Expedition Patch (July 2022)
+   NPC_PLAYER_AQUATIC = 1
+   NPC_PLAYER_GRAVEYARD = 2
+   NPC_PLAYER_CASTLE = 3
+   NPC_PLAYER_CRYPT = 4
+   NPC_PLAYER_ARCH = 5
+   NPC_PLAYER_ANCIENT = 6
+   NPC_PLAYER_HOLY = 7
+   NPC_PLAYER_UNHOLY = 8
