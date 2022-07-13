@@ -364,6 +364,9 @@ classvars:
    vrSound_aware = servant_sound_aware
    vrSound_death = servant_sound_death
 
+   // Servants should be walk-through.
+   viMoveOn_type = MOVEON_YES
+
 properties:
 
    vrDesc = servant_desc_rsc
@@ -454,6 +457,9 @@ properties:
    // Color of our name (should match the school)
    piNameColor = 0
    
+   // Servants should be walk-through.
+   pbNoMoveOn = FALSE
+      
 messages:
    
    // Send these values when you use the Create(&Servant, #...) function.
