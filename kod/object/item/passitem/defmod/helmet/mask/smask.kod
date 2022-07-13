@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include smask.lkod
+   
    SquareMask_name_rsc = "manager mask"
    SquareMask_icon_male_rsc = squids.bgf
    SquareMask_icon_female_rsc = squids.bgf

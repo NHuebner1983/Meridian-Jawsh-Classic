@@ -16,6 +16,8 @@ constants:
 
 resources:
    
+   include ogre.lkod
+   
    ogre_name_rsc = "ogre"
    ogre_icon_rsc = ogre.bgf
    ogre_desc_rsc = \

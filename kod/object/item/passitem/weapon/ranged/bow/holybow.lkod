@@ -1,0 +1,9 @@
+   HolyBow_name_rsc = de "Der heilige Bogen"
+   HolyBow_desc_rsc = de \
+      "Dieser Bogen strahlt Kampfgeist aus. "
+      "Wurde vor langer Zeit von Priesterin Xiana selbst in der großen Schlacht gegen Qor verwendet. "
+      "Dieser heilige Bogen wurde von Sha'Lill geweiht. "
+   HolyBow_not_good_enough = de \
+      "Du bist nicht würdig genug diese göttliche Waffe zu benutzen."
+   HolyBow_good_obtained = de \
+      "Deine Seele erfüllt sich mit dem heiligen Licht und stärkt dich mit Mut als du dich auf dem Kampf vorbereitest."

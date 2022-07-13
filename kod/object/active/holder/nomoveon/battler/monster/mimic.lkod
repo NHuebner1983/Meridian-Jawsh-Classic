@@ -1,0 +1,13 @@
+   mimic_koc_name_rsc = de "mimnoc"
+   mimic_name_rsc = de "Das Mimik"
+   mimic_desc_rsc = de \
+   "Dieses Monster sieht aus wie ein normaler Schleim, aber die "
+   "Dinge sind nicht immer wie sie zu sein scheinen."
+   mimic_first_stage = de \
+      "Das Mimik zuckt kurz zusammen als es eine andere Gestalt annimmt."
+   mimic_second_stage = de \
+      "Das Mimik knurrt ein wenig bevor es eine andere Gestalt annimmt."
+   mimic_third_stage = de \
+      "Das Mimik stolpert kurz als es eine andere Gestalt annimmt."
+   mimic_fourth_stage = de \
+      "Das Mimik torkelt bevor es seine endgültige Form annimmt."

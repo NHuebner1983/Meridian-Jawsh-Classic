@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include weapwand.lkod
+   
    weapwand_name_rsc = "apprentice wand"
    weapwand_icon_rsc = wand.bgf
    weapwand_desc_rsc = \

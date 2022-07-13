@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include halfknight.lkod
+   
    halfknight_name_rsc = "Undead Half Knight"
    halfknight_icon_rsc = Hknight.bgf
    halfknight_desc_rsc = \

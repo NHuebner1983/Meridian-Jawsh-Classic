@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include earthdrag.lkod
+   
    earth_dragon_koc_name_rsc = "ko'zorioc"
    earth_dragon_name_rsc = "earth dragon"
    earth_dragon_icon_rsc = earthdrag.bgf

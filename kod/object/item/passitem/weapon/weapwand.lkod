@@ -1,0 +1,5 @@
+   weapwand_name_rsc = de "Stab des Zauberlehrlings"
+   weapwand_desc_rsc = de \
+      "Erschaffen aus dem Holz der Waldschrate, spezialisiert sich "
+	  "dieser Stab, aufgrund seines eingefassten Kristalles, der Zauberschule von %s ."
+	  

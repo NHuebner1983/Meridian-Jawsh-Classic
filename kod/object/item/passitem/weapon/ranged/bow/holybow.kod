@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+    include holybow.lkod
+	
 	HolyBow_name_rsc = "holy bow"
 	HolyBow_desc_rsc = \
 	   "This bow glows with the spirit of battle. "

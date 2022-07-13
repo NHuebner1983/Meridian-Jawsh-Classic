@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include superstonetrollmask.lkod
+   
    SuperStoneTrollMask_name_rsc = "super stone troll mask"
    SuperStoneTrollMask_icon_male_rsc = mmtrl.bgf
    SuperStoneTrollMask_icon_female_rsc = mftrl.bgf

@@ -1,0 +1,5 @@
+   earth_dragon_koc_name_rsc = de "ko'zorioc"
+   earth_dragon_name_rsc = de "Der Erddrache"
+   earth_dragon_desc_rsc = de \
+      "Drachen sind doch eigentlich mystisch! Es ist unfair!"
+   earth_dragon_dead_name_rsc = de "Ein toter Erddrache"

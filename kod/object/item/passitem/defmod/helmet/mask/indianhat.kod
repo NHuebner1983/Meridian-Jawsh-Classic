@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include indianhat.lkod
+
    indianhat_name_rsc = "indian headdress"
    indianhat_icon_male_rsc = indianhat.bgf
    indianhat_icon_female_rsc = indianhatF.bgf

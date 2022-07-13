@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ricemask.lkod
+   
    RiceMask_name_rsc = "rice hat mask"
    RiceMask_icon_male_rsc = ricehat.bgf
    RiceMask_icon_female_rsc = ricehat.bgf

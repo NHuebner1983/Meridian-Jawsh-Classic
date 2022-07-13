@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include frontmask.lkod
+   
    FrontMask_name_rsc = "front man mask"
    FrontMask_icon_male_rsc = frontman.bgf
    FrontMask_icon_female_rsc = frontman.bgf

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include wolfmask.lkod
+
    WolfMask_name_rsc = "wolf mask"
    WolfMask_icon_male_rsc = wolfmask.bgf
    WolfMask_icon_female_rsc = wolfmask.bgf

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include wizardhat.lkod
+   
    wiz_name_rsc = "wizard's hat"
    wiz_icon_male_rsc   = wizardhat.bgf
    wiz_icon_female_rsc = wizardhatF.bgf

@@ -1,0 +1,13 @@
+   QorBow_name_rsc = de "Der Bogen Qors"
+   QorBow_desc_rsc = de \
+      "Der blutbefleckte Handabdruck, der nur von Königin Venya'cyr selbst"
+	  "abstammen kann, stößt einen fauligen Geruch ab. "
+      "Die Wörter ''Ich werde vom Tode wiederauferstehen'' wurden in diesen Bogen eingeritzt."
+   QorBow_not_evil_enough = de \
+      "Du fühlst dich deiner Seele von Königin Venya'cyr beraubt "
+      "als du versuchst diese mächtige Waffe auszurüsten."
+ 
+ QorBow_explodes = de \
+      "Der Bogen Qors schmilzt vor deinen Augen dahin und übrig bleibt nur eine Säurepfütze!"
+   QorBow_evil_obtained = de \
+      "In deinen Adern fließt das Blut von Königin Venya'cyr als du diesen Bogen anlegst!"
