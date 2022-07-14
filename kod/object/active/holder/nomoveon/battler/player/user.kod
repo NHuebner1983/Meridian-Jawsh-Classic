@@ -11203,7 +11203,7 @@ messages:
 	   
 	   if poTarget <> $ AND NOT bAutoAttacking
 	   {
-		   tAutoAttack = CreateTimer(self,@AttackMonster,500);
+		   tAutoAttack = CreateTimer(self,@AttackMonster,2000);
 		   bAutoAttacking = TRUE;
 	   }
 	   
@@ -11248,8 +11248,8 @@ messages:
 		   
 		      if NOT bMonsterAttacked
 		      {
-			      // Probably can't see target
-			   Send(self,@MoveTowards,#oTarget=poTarget);
+			     // Probably can't see target
+			     Send(self,@MoveTowards,#oTarget=poTarget);
 		      }
 		   }
 		   
@@ -11325,7 +11325,7 @@ messages:
 	   }
 	   
 	   // Continue the automatic fighting cycle...
-	   Send(self,@AsMonsterContinue);
+	   Send(self,@AsMonsterContinue,#iInterval=3000);
 	   	   
 	   return;
    }
@@ -11345,7 +11345,7 @@ messages:
 	   	   
 	   bMonsterMode = TRUE;
 	   
-	   Send(self,@AsMonsterContinue);
+	   Send(self,@AsMonsterContinue,#iInterval=3000);
 	   
 	   return;
    }
