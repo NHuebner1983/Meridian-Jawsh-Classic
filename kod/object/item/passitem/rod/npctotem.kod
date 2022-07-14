@@ -110,9 +110,9 @@ resources:
    arch_speech_f = "~kWe asked Tendrath what could possibly be manifesting all of the undead creatures in Brax, and he told us there is an evil queen at the edge of Brax with dark magic. We should avoid picking up any Amulet of Three or Sword of The Hunt equipment, as there is heavy toll to pay for obtaining such powerful weapons.~k"
    arch_speech_g = "~kWe've been recovering bones from some of the ancient buildings in brax and have found that the skeletons with tusks are evolving into daemon skeletons upon their death. We have not seen any kind of transformation with the narthyl worms, but we will keep our eyes open for something abnormal.~k"
    arch_speech_h = "~kOne of our archaeologists recovered a Sword of The Hunt, even though we strictly told them not to pick it up. They seem to be receiving immense amounts of energy upon slaying enemies in the city of Brax. They may be stuck with this godly weapon until they meet death. We are depending on them to protect us while we venture further into the city of Brax.~k"
-   arch_speech_i = "~kWe have found a special room in the city of Brax where giant daemon skeletons are flourishing. The room appears to be like a maze. After we defeated the daemon skeletons, centaur and mimic, we discovered a large glowing globe. After touching the globe we felt a search of mystical energy.~k"
+   arch_speech_i = "~kWe have found a special room in the city of Brax where giant daemon skeletons are flourishing. The room appears to be like a maze. After we defeated the daemon skeletons, centaur and mimic, we discovered a large glowing globe. After touching the globe we felt a surge of mystical energy.~k"
    arch_speech_j = "~kFinally, we found an Amulet of Three. After studying it, we found that it is connected to pure evil. We will give more information to the Undead Researcher, but it would be unwise to pick up this item unless we are evil at heart. It should only be wielded by a strong necromancer of the dark arts.~k"
-   arch_speech_k = "~kWe just need a few more samples of these narthyl worms. They're very odd, we should study them more.~k"
+   arch_speech_k = "~kWe just need a few more samples.~k"
    arch_speech_l = "~kI think we've collected enough blood and bone samples. We should head back to camp soon.~k"
    
    /////////////////////////////////////
@@ -407,6 +407,13 @@ messages:
 			   
 			   // BECOME MONSTER AGAIN
 			   Send(poPlayer,@BecomeMonster);
+			   
+			   if NOT pbIsHunter
+			   {
+			      // EXPEDITION TEAM RECEIVES HELP FROM SHAL'ILLE
+			      oSpell = Send(SYS,@FindSpellByNum,#num=SID_SHAL_SERVANT);
+			      Send(oSpell,@CastSpell,#who=poPlayer,#lTargets=[poPlayer],#iSpellPower=99);
+			   }
 			   
                pbIsResting = FALSE;
 			   ClearTempString();
@@ -733,6 +740,35 @@ messages:
 			];
 		 break;
 	     case NPC_PLAYER_ARCH:
+		    plProfile = [
+			   [NPC_PROFILE_LOGON, arch_logon],
+			   [NPC_PROFILE_SPEECH, [
+			      [arch_speech_a, $, $, 60000, TRUE], 
+				  [$,RID_BRAX,           [24, 37], 5000, FALSE], 
+				  [arch_speech_b, $, $,            60000, TRUE], 
+				  [$,RID_BRAX_BUILDING1, [8,26],   5000, FALSE], 
+				  [arch_speech_c,$,$, 60000, TRUE], 
+				  [arch_speech_d,$,$, 60000, TRUE], 
+				  [arch_speech_e, RID_BRAX,$, 60000, TRUE], 
+				  [$,$,$, 30000, TRUE], 
+				  [$,RID_BRAX_CASTLE1, [13,43],   5000, FALSE], 
+			      [arch_speech_f, $,$, 60000, TRUE], 
+				  [$,RID_BRAX_CASTLE2, [13,49],   5000, FALSE], 
+				  [arch_speech_g, $,$, 60000, TRUE], 
+				  [arch_speech_h,$,$, 60000, TRUE],
+				  [arch_speech_i,$,$, 60000, TRUE], 
+				  [arch_speech_j,$,$, 60000, TRUE], 
+			      [arch_speech_k,$,$, 60000, TRUE], 
+				  [arch_speech_l,$,$, 60000, TRUE] 
+			   ]],
+			   [NPC_EQUIPMENT, [
+			      &NeruditeArmor, 
+				  &KnightShield, 
+				  &Hammer, 
+				  &Gauntlet, 
+				  &DaemonHelm
+			   ]]
+			];
 		 break;
 	     case NPC_PLAYER_CASTLE:
 		 break;
@@ -752,8 +788,8 @@ messages:
 	  // Announce the expedition
 	  Send(self, @AnnounceExpedition);
 	  
-	  // The NPC Player will now become a monster and attack other monsters.
-	  Send(poPlayer, @BecomeMonster);
+	  // Prevent the NPC from being a monster until triggered by another player entering their map.
+	  Send(poPlayer, @StopBeingMonster);
 	  
 	  return;
    }
