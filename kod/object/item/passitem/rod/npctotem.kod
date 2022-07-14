@@ -18,23 +18,13 @@ constants:
    // We will want to keep track of each index in the player, perhaps called plNPCProfile (player.kod).
    // This way they get a fluid story, until it starts over.
    
-   // NPC Logon Message
    NPC_PROFILE_LOGON = 1
-   
-   // NPC Speech Consecutive Order
    NPC_PROFILE_SPEECH = 2
-   
-   // NPC Map Consecutive Order
    NPC_PROFILE_ROAM = 3
-   
-   // NPC Reactions (most likely attacks for now).
    NPC_PROFILE_REACT = 4
-   
-   // NPC Death Operations
    NPC_PROFILE_DEATH = 5
-   
-   // NPC Revive Operations
    NPC_PROFILE_REVIVE = 6
+   NPC_EQUIPMENT = 7
    
    // RIDs where our NPC Players will start
    RID_START_AQUATIC = RID_MARION
@@ -283,8 +273,26 @@ properties:
    
    // Number of monsters the NPC has killed since their reset.
    piMonstersKilled = 0
+   
+   // Our NPC can be resting, we should prevent doing actions while we're resting.
+   pbIsResting = FALSE
+   
+   // Our NPC should prioritize PLAYER targets.
+   pbIsHunter = FALSE
+   
+   // When we're low on health, phase in/out and rest.
+   ptPhaseTimer = $
 
 messages:
+   
+   Constructor()
+   {
+      // This item should always be in a bonded state.
+	  Send(Send(SYS,@FindItemAttByNum,#Num=IA_TRANSCENDANT),@AddToItem,
+           #oItem=self);
+
+      propagate;
+   }
    
    Recreate()
    {
@@ -343,11 +351,101 @@ messages:
 	  return FALSE;
    }
    
+   PhaseInAndRest()
+   {
+      local oSpell;
+	  
+	  ptPhaseTimer = $;
+	  
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_PHASE);
+	  
+	  // STOP BEING MONSTER
+	  // OR WE WILL GET ATTACKED BY MONSTERS WHEN WE PHASE IN.
+	  Send(poPlayer, @StopBeingMonster);
+	  
+      // PHASE IN
+      Send(oSpell,@CastSpell,#who=poPlayer,#lTargets=[poPlayer],#iSpellPower=99);
+
+      // REST
+      Send(poPlayer,@StartResting);
+   
+      return;
+   }
+   
+   TryToRest()
+   {
+      local iPlayerMissingHealth, sMsg, oSpell;
+	  
+      if NOT pbIsHunter
+	  {
+	     iPlayerMissingHealth = Send(poPlayer, @GetMissingHealth);
+		 
+		 if iPlayerMissingHealth > 50
+		 {
+		    if NOT pbIsResting
+			{
+			   oSpell = Send(SYS,@FindSpellByNum,#num=SID_PHASE);
+			   
+			   // PHASE OUT
+			   Send(oSpell,@CastSpell,#who=poPlayer,#lTargets=[poPlayer],#iSpellPower=99);
+			   
+			   ptPhaseTimer = CreateTimer(self, @PhaseInAndRest, 3000);
+			   
+               pbIsResting = TRUE;
+			   ClearTempString();
+			   AppendTempString("I am losing too much health, I need to rest for a moment.");
+			   sMsg = SetString($,GetTempString());
+			   Send(self,@Say,#msg=sMsg);
+			}
+		 }
+		 else
+		 {
+		    if pbIsResting AND iPlayerMissingHealth < 10
+			{
+			   // STOP RESTING
+			   Send(poPlayer,@StopResting);
+			   
+			   // BECOME MONSTER AGAIN
+			   Send(poPlayer,@BecomeMonster);
+			   
+               pbIsResting = FALSE;
+			   ClearTempString();
+			   AppendTempString("I feel much better now.");
+			   sMsg = SetString($,GetTempString());
+			   Send(self,@Say,#msg=sMsg);
+			}
+		 }
+	  }
+	  
+	  return;
+   }
+   
    Next()
    {
       local iShouldFight, iNext, iLast, iSpeech, iSay, iSpeechItem, iRoomTeleport, iRoomTeleportEntryCoords, iTimeWait, sMsg;
 	  
-	  if plProgress = $ AND NOT Send(self,@RoomHasPlayers)
+	  if Send(Send(poPlayer,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
+	  {
+	     // It looks like our NPC bit the dust.
+		 Send(poPlayer,@StopBeingMonster);
+		 
+		 plProgress = $;
+		 
+		 // Let's reset the story and everything, we're in the UW.
+		 Send(self,@SetupNPCPlayerProfile);
+		 
+		 return FALSE;
+	  }
+	  
+	  Send(self,@TryToRest);
+	  
+	  if pbIsResting AND NOT pbIsHunter
+	  {
+	     // We're resting, we are low on health.
+	     return FALSE;
+	  }
+	  
+	  if NOT pbIsHunter AND plProgress = $ AND NOT Send(self,@RoomHasPlayers)
 	  {
 	     // Someone has to be in the starting room with us for the NPC to start their journey.
 	     return FALSE;
@@ -465,8 +563,8 @@ messages:
 		 // We should teleport back to our starting point, we'll start over from the beginning.
 		 plProgress = $;
 	     
-		 // Send the NPC to their starting map
-         Send(self,@TeleportToStartingMap,#NPCID=piNPCPlayer);
+		 // Let's reset the story and everything.
+		 Send(self,@SetupNPCPlayerProfile);
 	  }
 	  
 	  return;
@@ -572,6 +670,34 @@ messages:
       switch(piNPCPlayer)
 	  {
 	     case NPC_PLAYER_ANCIENT:
+		    plProfile = [
+			   [NPC_PROFILE_LOGON, ancient_logon],
+			   [NPC_PROFILE_SPEECH, [
+			      [ancient_speech_a, RID_TRADING_POST, [5, 3],  20000, FALSE], 
+				  [ancient_speech_b, $, $,                      60000, TRUE], 
+				  [$,                RID_KE4, [33,65],          10000, FALSE], 
+				  [ancient_speech_c,$,$, 60000, TRUE], 
+				  [ancient_speech_d,$,$, 60000, TRUE], 
+				  [ancient_speech_e,$,$, 60000, TRUE], 
+			      [ancient_speech_f,$,$, 60000, TRUE], 
+				  [ancient_speech_g,$,$, 60000, TRUE], 
+				  [ancient_speech_h,$,$, 60000, TRUE],
+				  [ancient_speech_i,$,$, 60000, TRUE], 
+				  [ancient_speech_j,$,$, 60000, TRUE], 
+			      [ancient_speech_k,$,$, 60000, TRUE], 
+				  [ancient_speech_l,$,$, 60000, TRUE], 
+				  [ancient_speech_m,$,$, 60000, TRUE], 
+				  [ancient_speech_n,$,$, 60000, TRUE], 
+				  [ancient_speech_o,$,$, 60000, TRUE]
+			   ]],
+			   [NPC_EQUIPMENT, [
+			      &NeruditeArmor, 
+				  &NeruditeShield, 
+				  &NeruditeSword, 
+				  &Gauntlet, 
+				  &DaemonHelm
+			   ]]
+			];
 		 break;
 	     case NPC_PLAYER_AQUATIC:
 		    plProfile = [
@@ -596,6 +722,13 @@ messages:
 				  [aquatic_speech_n,$,$, 60000, TRUE], 
 				  [aquatic_speech_o,$,$, 60000, TRUE], 
 				  [aquatic_speech_p,$,$, 60000, TRUE] 
+			   ]],
+			   [NPC_EQUIPMENT, [
+			      &PlateArmor,
+				  &GoldShield, 
+				  &Scimitar, 
+				  &Gauntlet, 
+				  &DaemonHelm
 			   ]]
 			];
 		 break;
@@ -613,12 +746,35 @@ messages:
 		 break;
 	  }
 	  
+	  // Arm the NPC with their NPC_EQUIPMENT
+	  Send(self,@EquipNPC);
+	  
 	  // Announce the expedition
 	  Send(self, @AnnounceExpedition);
 	  
 	  // The NPC Player will now become a monster and attack other monsters.
 	  Send(poPlayer, @BecomeMonster);
 	  
+	  return;
+   }
+   
+   EquipNPC()
+   {
+      local cItem, lEquipment, oItem;
+	  
+	  if plProfile <> $
+	  {
+	     lEquipment = Nth(Nth(plProfile, 3), 2);
+		 
+	  	 foreach cItem in lEquipment
+		 {
+		    Send(poPlayer, @RemoveFromInventory, #class=cItem);
+			oItem = Create(cItem);
+			Send(poPlayer, @NewHold, #what=oItem);
+			Send(poPlayer, @TryUseItem, #what=oItem);
+		 }
+      }
+	  	  
 	  return;
    }
    

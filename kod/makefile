@@ -37,6 +37,7 @@ all : $(BOFS)
 	IF exist ..\..\Ogre\Meridian59.Ogre.Client\bin\x86\resources\bgfobjects ( robocopy ..\run\localclient\resource\ ..\..\Ogre\Meridian59.Ogre.Client\bin\x86\resources\bgfobjects\ *.bgf /njh /njs /ndl /nc /ns /xf grd* ) ^& IF %ERRORLEVEL% LSS 8 SET ERRORLEVEL = 0
 	IF exist ..\..\Ogre\Meridian59.Ogre.Client\bin\x86\resources\bgftextures ( robocopy ..\run\localclient\resource\ ..\..\Ogre\Meridian59.Ogre.Client\bin\x86\resources\bgftextures\ grd*.bgf /njh /njs /ndl /nc /ns ) ^& IF %ERRORLEVEL% LSS 8 SET ERRORLEVEL = 0
 	IF exist ..\..\Ogre\Meridian59.Ogre.Client\bin\x86\resources\strings ( robocopy ..\run\server\rsc\ ..\..\Ogre\Meridian59.Ogre.Client\bin\x86\resources\strings\ *.rsb /njh /njs /ndl /nc /ns ) ^& IF %ERRORLEVEL% LSS 8 SET ERRORLEVEL = 0
+	IF exist ..\..\Ogre\Resources\strings ( robocopy ..\run\server\rsc\ ..\..\Ogre\Resources\strings\ *.rsb /njh /njs /ndl /nc /ns ) ^& IF %ERRORLEVEL% LSS 8 SET ERRORLEVEL = 0
 
 $(BOFS): $(DEPEND)
 

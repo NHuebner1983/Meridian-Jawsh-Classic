@@ -1322,7 +1322,38 @@ messages:
 
       propagate;
    }
+   
+   RemoveFromInventory(class=$)
+   {
+      local i, oItem;
+	  
+	  foreach i in plActive
+	  {
+	     oItem = First(i);
+		 
+		 if oItem <> $ AND IsClass(oItem, class)
+		 {
+		    Send(oItem,@Delete);
+			Debug("Deleted",oItem,"FromInventory");
+		 }
+	  }
+	  
+	  foreach i in plPassive
+	  {
+	     oItem = i;
+		 
+		 if oItem <> $ AND IsClass(oItem, class)
+		 {
+		    Send(oItem,@Delete);
+			Debug("Deleted",oItem,"FromInventory");
+		 }
+	  }
 
+	  Debug("Anything delete?",class);
+	  
+      return;
+   }
+   
    //// Player flags
 
    SetDMFlag()
