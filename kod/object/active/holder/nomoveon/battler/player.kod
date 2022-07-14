@@ -1170,6 +1170,9 @@ properties:
 
    plNPCProfile = $
    
+   // Number of monsters killed as NPCPlayer
+   piMonstersKilledAsNPC = 0
+   
 messages:
 
    Constructor()
@@ -1190,13 +1193,21 @@ messages:
    
    JustMoved()
    {
-      piLastMoved = GetTime();
+      if pbRoamingNPCPlayerInitialized = $
+	  {
+         piLastMoved = GetTime();
+	  }
 	  
 	  return;
    }
    
    SinceLastMove()
    {
+      if pbRoamingNPCPlayerInitialized = $
+	  {
+	     return 9999;
+	  }
+
       return GetTime() - piLastMoved;
    }
 
@@ -2522,9 +2533,9 @@ messages:
 	  }
 	  
 	  // Make the NPC Player PKable
-	  Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);
-      Send(self,@PlayerIsIntriguing);
-
+	  Send(self,@SetAge,#age=100);
+	  Send(self,@PKillEnable);
+	  
       return;
    }
 
@@ -9245,6 +9256,18 @@ messages:
 
       return;
    }
+   
+   ResetMonstersKilledAsNPC()
+   {
+      piMonstersKilledAsNPC = 0;
+	  
+	  return;
+   }
+   
+   GetMonstersKilledAsNPC()
+   {
+      return piMonstersKilledAsNPC;
+   }
 
    //// Advancement in combat
 
@@ -9254,6 +9277,11 @@ messages:
 
       if victim <> $ AND IsClass(victim, &Monster)
 	  {
+	     if pbRoamingNPCPlayerInitialized
+		 {
+		    piMonstersKilledAsNPC = piMonstersKilledAsNPC + 1;
+		 }
+		 
 	     Send(self,@ReduceAggro,#what=victim);
 	  }
 
