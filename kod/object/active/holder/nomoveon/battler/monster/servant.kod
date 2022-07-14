@@ -681,6 +681,8 @@ messages:
    
    StartServantResourcesTimer()
    {
+      ptServantResources = $;
+	  
       ptServantResources = CreateTimer(self,@UpdateServantResources,1000);
 	  
 	  return;
@@ -688,6 +690,8 @@ messages:
    
    StartBuffTimer()
    {
+      ptBuffs = $;
+	  
       ptBuffs = CreateTimer(self,@ServantBuffs,5000);
 	  
 	  return;
@@ -695,6 +699,8 @@ messages:
 
    StartTalkTimer()
    {
+      ptTalk = $;
+	  
       ptTalk = CreateTimer(self,@ServantTalk,120000);
 	  
 	  return;
@@ -702,6 +708,8 @@ messages:
 
    StartImpTimer()
    {
+      ptImp = $;
+	  
       ptImp = CreateTimer(self,@ServantImps,10000);
 	  
 	  return;
@@ -709,6 +717,8 @@ messages:
    
    StartTauntTimer()
    {
+      ptTaunt = $;
+	  
       ptTaunt = CreateTimer(self,@TauntEnemies,1000);
 	  
 	  return;
@@ -1829,6 +1839,8 @@ messages:
 
    TauntEnemies()
    {
+      ptTaunt = $;
+	  
    	  if NOT Send(self,@MasterCheck)
 	  {
 	     return;
