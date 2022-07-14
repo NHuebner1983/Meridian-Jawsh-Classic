@@ -345,7 +345,7 @@ messages:
    
    Next()
    {
-      local iNext, iLast, iSpeech, iSay, iSpeechItem, iRoomTeleport, iRoomTeleportEntryCoords, iTimeWait, sMsg;
+      local iShouldFight, iNext, iLast, iSpeech, iSay, iSpeechItem, iRoomTeleport, iRoomTeleportEntryCoords, iTimeWait, sMsg;
 	  
 	  if plProgress = $ AND NOT Send(self,@RoomHasPlayers)
 	  {
@@ -434,9 +434,7 @@ messages:
             Send(poPlayer, @MoveTowardsCoords, 
 			   #iRow=Nth(iRoomTeleportEntryCoords, 1), 
 			   #iCol=Nth(iRoomTeleportEntryCoords, 2),
-			   #iFineRow=Nth(iRoomTeleportEntryCoords, 3), 
-			   #iFineCol=Nth(iRoomTeleportEntryCoords, 4),
-               #face_target=TRUE,
+			   #face_target=TRUE,
 			   #face_away=FALSE,
 			   #to_master=FALSE);
 		 }
@@ -447,6 +445,18 @@ messages:
 		 if iRoomTeleport <> $
 		 {
 		    piOnNextTeleportTo = iRoomTeleport;
+		 }
+		 
+		 // Whether or not we should be hunting monsters...
+		 iShouldFight = Nth(iNext, 5);
+		 
+		 if iShouldFight
+		 {
+		    Send(poPlayer,@BecomeMonster);
+		 }
+		 else
+		 {
+		    Send(poPlayer,@StopBeingMonster);
 		 }
 	  }
 	  else
@@ -567,22 +577,25 @@ messages:
 		    plProfile = [
 			   [NPC_PROFILE_LOGON, aquatic_logon],
 			   [NPC_PROFILE_SPEECH, [
-			      [aquatic_speech_a, RID_C4, [29,66,32,24,98],30000], 
-				  [aquatic_speech_b, RID_D4, [7,56,8,29,128], 60000], 
-				  [aquatic_speech_c, RID_E2, [1,24,62,3,140], 60000], 
-				  [aquatic_speech_d, RID_F2, [22,73,13,34,128],60000], 
-				  [aquatic_speech_e,$,$, 60000], 
-			      [aquatic_speech_f,$,$, 60000], 
-				  [aquatic_speech_g,$,$, 60000], 
-				  [aquatic_speech_h,$,$, 60000],
-				  [aquatic_speech_i,$,$, 60000], 
-				  [aquatic_speech_j,$,$, 60000], 
-			      [aquatic_speech_k,$,$, 60000], 
-				  [aquatic_speech_l,$,$, 60000], 
-				  [aquatic_speech_m,$,$, 60000], 
-				  [aquatic_speech_n,$,$, 60000], 
-				  [aquatic_speech_o,$,$, 60000], 
-				  [aquatic_speech_p,$,$, 60000] 
+			      [aquatic_speech_a, RID_C4, [29,66],  20000, FALSE], 
+				  [aquatic_speech_b, $, $,             60000, TRUE], 
+				  [$,                RID_D4, [7,56],   10000, FALSE], 
+				  [aquatic_speech_c, $, $,             60000, TRUE], 
+				  [$,                RID_E2, [3,23],   10000, FALSE], 
+				  [aquatic_speech_d, $, $,             60000, TRUE], 
+				  [$,                RID_F2, [22,73],  10000, FALSE], 
+				  [aquatic_speech_e,$,$, 60000, TRUE], 
+			      [aquatic_speech_f,$,$, 60000, TRUE], 
+				  [aquatic_speech_g,$,$, 60000, TRUE], 
+				  [aquatic_speech_h,$,$, 60000, TRUE],
+				  [aquatic_speech_i,$,$, 60000, TRUE], 
+				  [aquatic_speech_j,$,$, 60000, TRUE], 
+			      [aquatic_speech_k,$,$, 60000, TRUE], 
+				  [aquatic_speech_l,$,$, 60000, TRUE], 
+				  [aquatic_speech_m,$,$, 60000, TRUE], 
+				  [aquatic_speech_n,$,$, 60000, TRUE], 
+				  [aquatic_speech_o,$,$, 60000, TRUE], 
+				  [aquatic_speech_p,$,$, 60000, TRUE] 
 			   ]]
 			];
 		 break;
