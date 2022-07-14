@@ -314,6 +314,10 @@ resources:
    servant_desc_qor = "I am the servant of qor. I will blind your enemies and hide you from the world which seeks you out. If you need help controlling me, say help."
    servant_desc_jala = "I am the servant of jala. I will sing songs to help you survive in battle and flee quickly. If you need help controlling me, say help."
 
+   servant_Icon_riija = riijafol.bgf
+
+   servant_Dead_Icon_riija = riijafolX.bgf
+
    servant_response_heal_me = "~B~b%s heals you for %i health. We have %i remaining while we collect more."
    servant_response_heal_me_empty = "~B~k%s does not have enough health preserved to heal you."
    servant_response_heal_me_full = "~k%s whispers, ''I can't heal you right now. Something tells me you're going to be ok.''"
@@ -332,9 +336,7 @@ classvars:
    
    vrKocName = servant_koc_name_rsc
    vrName = servant_name_rsc
-   vrIcon = servant_icon_rsc
 
-   vrDead_icon = servant_dead_icon_rsc
    vrDead_name = servant_dead_name_rsc
 
    viTreasure_type = TID_NONE
@@ -370,6 +372,8 @@ classvars:
 properties:
 
    vrDesc = servant_desc_rsc
+   vrIcon = servant_icon_rsc
+   vrDead_icon = servant_dead_icon_rsc
 
    piDrawEffectFlag = OF_BOUNCING
    viKarma = 0
@@ -1632,7 +1636,10 @@ messages:
       
       switch(iSpellNum) {
 		case SID_RIIJA_SERVANT:
-		   vrDesc = servant_desc_riija;
+		   vrDesc           = servant_desc_riija;
+         vrIcon           = servant_Icon_riija;
+         vrDead_icon      = servant_Dead_Icon_riija;
+         piDrawEffectFlag = 0;
 		break;
 		case SID_FAREN_SERVANT:
 		   vrDesc = servant_desc_faren;
