@@ -136,22 +136,23 @@ resources:
    /////////////////////////////////////
    // CRYPT NPC [Marion Crypt Story]
    /////////////////////////////////////
-   crypt_logon = "~BThe expedition team has arrived in the Marion Crypt, where mummies and statues are guarding an ancient secret.~B"
+   crypt_logon = "~BThe expedition team has arrived in Marion to investigate ancient statues in the mausoleum.~B"
    crypt_speech_a = "~kExpedition Log: Day one. The old man standing out front of the mausoleum looks like he might die of old age - yet he stands, constantly. What keeps him so strong?~k"
    crypt_speech_b = "~kThis village used to thrive with adventurers. Many have gone down to the depths of the mausoleum and never returned. The waning population has left the economy distraught and without any ability to recover. I'm afraid Marion will become abandoned if this village isn't revived soon. Why did all of those adventurers never return? What's down there?~k"
-   crypt_speech_c = "~kWe found an interesting room with a statue in the middle. After close examination, the statue came to life and attacked us. Our axe wielding warriors made quick work of the cursed statue and a door opened. We're planning to travel deeper - soon, very soon.~k"
-   crypt_speech_d = "~kThis room is gigantic and riddled with puzzles. Statues are lined in every direction. We seem to be finding what appears to be everlasting roses? Are they cursed - or blessed? We'll need to study these roses much more closely to determine its origin.~k"
-   crypt_speech_e = "~kIt has been hours, we are still destroying statues. Every time a statue is destroyed we hear a noise in the distance, as if we are making our way towards a guarded location. What could be beyond the doors to the south?~k"
-   crypt_speech_f = "~kWe're about to break the last statue. Our men are standing by. You shouldn't wander too far, this may be an extraordinary discovery. What if we find a room full of people, trapped? We would be heroes! Or worse, a room full of dead bodies. Where did all of those adventurers go?~k"
-   crypt_speech_g = "~kThe door is open. We're heading to the other side. Something tells me there are powerful creatures beyond this door. If you're coming, don't take too long, the door won't stay open forever. If you're staying here, send help if we're not back in an hour!~k"
-   crypt_speech_h = "~kWhat kind of absurd creatures are these. It's like something attached weapons, shields and armor to them. Did they do that on their own or is something playing with nature in this room?~k"
-   crypt_speech_i = "~kWe're still looking for the lost adventurers. There's no sign of them. We have found several piles of human remains, but it appears as these creatures are globulating from those remains and building stronger versions of themselves. They're made of some kind of muscular golem clay.~k"
-   crypt_speech_j = "~kThese creatures are extremely powerful. Some of the equipment they leave behind has helped us become better prepared to move through this maze. What is at the end of this maze, other than the beginning? Perhaps the lost adventurers will be there? We cannot hear a single noise - it may be too late for them if they were alive.~k"
-   crypt_speech_k = "~kBe careful, jumping down here, there appear to be two of these creatures guarding this small room. You must defeat them to open the next part of the maze.~k"
-   crypt_speech_l = "~kThis looks like an excellent place to set a trap. Look, they aren't crossing the line where the door opened. Are they prevented from crossing magical barriers?~k"
-   crypt_speech_m = "~kThis next room appears to be guarded by three creatures. They are staring at us, but not flinching. You can tell they want nothing more than for you to fall into this pit to be devoured by their unnatural appendages.~k"
-   crypt_speech_n = "~kThis door seems to open once you have defeated the three creatures. A chest is manifesting something we need? I don't understand. Where are all of the adventurers that never returned to Marion?~k"
-   crypt_speech_o = "~kWe should report back to Marion to let them know we could not find the lost adventurers.~k"
+   crypt_speech_c = "~kIf you need help getting past the first door, just ''say pick lock'' and I will help you get in!"
+   crypt_speech_d = "~k~B~rThe door is open, get inside!!~B~r We found an interesting room with a statue in the middle. After close examination, the statue came to life and attacked us. Our axe wielding warriors made quick work of the cursed statue and a door opened. We're planning to travel deeper - soon, very soon.~k"
+   crypt_speech_e = "~kThis room is gigantic and riddled with puzzles. Statues are lined in every direction. We seem to be finding what appears to be everlasting roses? Are they cursed - or blessed? We'll need to study these roses much more closely to determine its origin.~k"
+   crypt_speech_f = "~kIt has been hours, we are still destroying statues. Every time a statue is destroyed we hear a noise in the distance, as if we are making our way towards a guarded location. What could be beyond the doors to the south?~k"
+   crypt_speech_g = "~kWe're about to break the last statue. Our men are standing by. You shouldn't wander too far, this may be an extraordinary discovery. What if we find a room full of people, trapped? We would be heroes! Or worse, a room full of dead bodies. Where did all of those adventurers go?~k"
+   crypt_speech_h = "~k~B~rThe door is open, get inside!!~B~r We're heading to the other side. Something tells me there are powerful creatures beyond this door. If you're coming, don't take too long, the door won't stay open forever. If you're staying here, send help if we're not back in an hour!~k"
+   crypt_speech_i = "~kWhat kind of absurd creatures are these. It's like something attached weapons, shields and armor to them. Did they do that on their own or is something playing with nature in this room?~k"
+   crypt_speech_j = "~kWe're still looking for the lost adventurers. There's no sign of them. We have found several piles of human remains, but it appears as these creatures are globulating from those remains and building stronger versions of themselves. They're made of some kind of muscular golem clay.~k"
+   crypt_speech_k = "~kThese creatures are extremely powerful. Some of the equipment they leave behind has helped us become better prepared to move through this maze. What is at the end of this maze, other than the beginning? Perhaps the lost adventurers will be there? We cannot hear a single noise - it may be too late for them if they were alive.~k"
+   crypt_speech_l = "~kBe careful, jumping down here, there appear to be two of these creatures guarding this small room. You must defeat them to open the next part of the maze.~k"
+   crypt_speech_m = "~kThis looks like an excellent place to set a trap. Look, they aren't crossing the line where the door opened. Are they prevented from crossing magical barriers?~k"
+   crypt_speech_n = "~kThis next room appears to be guarded by three creatures. They are staring at us, but not flinching. You can tell they want nothing more than for you to fall into this pit to be devoured by their unnatural appendages.~k"
+   crypt_speech_o = "~kThis door seems to open once you have defeated the three creatures. A chest is manifesting something we need? I don't understand. Where are all of the adventurers that never returned to Marion?~k"
+   crypt_speech_p = "~kWe should report back to Marion to let them know we could not find the lost adventurers.~k"
    
    /////////////////////////////////////
    // GRAVEYARD NPC [Tos Graveyard Story]
@@ -305,6 +306,8 @@ messages:
    
    NPCPlayerTick()
    {
+      ptNPC = $;
+	  
       // Every 1 seconds we can perform an action.
 	  // TODO: Raise this higher when everything works good.
 	  //       To slow down the experience and let others watch.
@@ -380,7 +383,7 @@ messages:
 	  {
 	     iPlayerMissingHealth = Send(poPlayer, @GetMissingHealth);
 		 
-		 if iPlayerMissingHealth > 50
+		 if iPlayerMissingHealth > 80
 		 {
 		    if NOT pbIsResting
 			{
@@ -431,7 +434,9 @@ messages:
    {
       local iShouldFight, iNext, iLast, iSpeech, iSay, iSpeechItem, iRoomTeleport, iRoomTeleportEntryCoords, iTimeWait, sMsg;
 	  
-	  if Send(Send(poPlayer,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
+	  iShouldFight = TRUE;
+	  
+	  if poPlayer <> $ AND Send(poPlayer,@GetOwner) <> $ AND Send(Send(poPlayer,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
 	  {
 	     // It looks like our NPC bit the dust.
 		 Send(poPlayer,@StopBeingMonster);
@@ -452,10 +457,13 @@ messages:
 	     return FALSE;
 	  }
 	  
-	  if NOT pbIsHunter AND plProgress = $ AND NOT Send(self,@RoomHasPlayers)
+	  if NOT pbIsHunter AND NOT Send(self,@RoomHasPlayers)
 	  {
-	     // Someone has to be in the starting room with us for the NPC to start their journey.
-	     return FALSE;
+	     // A player must be present at each map we zone into.
+		 Send(poPlayer, @StopBeingMonster);
+		 iShouldFight = FALSE;
+		 
+		 return FALSE;
 	  }
 	  
 	  if NOT pbCanGoNext
@@ -528,7 +536,7 @@ messages:
 			   Send(self,@Say,#msg=sMsg);
 			}
 			
-		    Send(self,@Say,#msg=iSay);
+		    Send(self,@Say,#msg=iSay,#type=Nth(iNext, 6));
 		 }
 		 
          // Coordinates to move towards before teleporting
@@ -552,16 +560,19 @@ messages:
 		    piOnNextTeleportTo = iRoomTeleport;
 		 }
 		 
-		 // Whether or not we should be hunting monsters...
-		 iShouldFight = Nth(iNext, 5);
-		 
 		 if iShouldFight
 		 {
-		    Send(poPlayer,@BecomeMonster);
-		 }
-		 else
-		 {
-		    Send(poPlayer,@StopBeingMonster);
+		    // Whether or not we should be hunting monsters...
+		    iShouldFight = Nth(iNext, 5);
+		 
+		    if iShouldFight
+		    {
+		       Send(poPlayer,@BecomeMonster);
+		    }
+		    else
+		    {
+		       Send(poPlayer,@StopBeingMonster);
+		    }
 		 }
 	  }
 	  else
@@ -680,22 +691,22 @@ messages:
 		    plProfile = [
 			   [NPC_PROFILE_LOGON, ancient_logon],
 			   [NPC_PROFILE_SPEECH, [
-			      [ancient_speech_a, RID_TRADING_POST, [5, 3],  20000, FALSE], 
-				  [ancient_speech_b, $, $,                      60000, TRUE], 
-				  [$,                RID_KE4, [33,65],          10000, FALSE], 
-				  [ancient_speech_c,$,$, 60000, TRUE], 
-				  [ancient_speech_d,$,$, 60000, TRUE], 
-				  [ancient_speech_e,$,$, 60000, TRUE], 
-			      [ancient_speech_f,$,$, 60000, TRUE], 
-				  [ancient_speech_g,$,$, 60000, TRUE], 
-				  [ancient_speech_h,$,$, 60000, TRUE],
-				  [ancient_speech_i,$,$, 60000, TRUE], 
-				  [ancient_speech_j,$,$, 60000, TRUE], 
-			      [ancient_speech_k,$,$, 60000, TRUE], 
-				  [ancient_speech_l,$,$, 60000, TRUE], 
-				  [ancient_speech_m,$,$, 60000, TRUE], 
-				  [ancient_speech_n,$,$, 60000, TRUE], 
-				  [ancient_speech_o,$,$, 60000, TRUE]
+			      [ancient_speech_a, RID_TRADING_POST, [5, 3],  20000, FALSE, SAY_YELL], 
+				  [ancient_speech_b, $, $,                      60000, TRUE, SAY_YELL], 
+				  [$,                RID_KE4, [33,65],          10000, FALSE, SAY_YELL], 
+				  [ancient_speech_c,$,$, 60000, TRUE, SAY_YELL], 
+				  [ancient_speech_d,$,$, 60000, TRUE, SAY_YELL], 
+				  [ancient_speech_e,$,$, 60000, TRUE, SAY_YELL], 
+			      [ancient_speech_f,$,$, 60000, TRUE, SAY_YELL], 
+				  [ancient_speech_g,$,$, 60000, TRUE, SAY_YELL], 
+				  [ancient_speech_h,$,$, 60000, TRUE, SAY_YELL],
+				  [ancient_speech_i,$,$, 60000, TRUE, SAY_YELL], 
+				  [ancient_speech_j,$,$, 60000, TRUE, SAY_YELL], 
+			      [ancient_speech_k,$,$, 60000, TRUE, SAY_YELL], 
+				  [ancient_speech_l,$,$, 60000, TRUE, SAY_YELL], 
+				  [ancient_speech_m,$,$, 60000, TRUE, SAY_YELL], 
+				  [ancient_speech_n,$,$, 60000, TRUE, SAY_YELL], 
+				  [ancient_speech_o,$,$, 60000, TRUE, SAY_YELL]
 			   ]],
 			   [NPC_EQUIPMENT, [
 			      &NeruditeArmor, 
@@ -710,25 +721,25 @@ messages:
 		    plProfile = [
 			   [NPC_PROFILE_LOGON, aquatic_logon],
 			   [NPC_PROFILE_SPEECH, [
-			      [aquatic_speech_a, RID_C4, [29,66],  20000, FALSE], 
-				  [aquatic_speech_b, $, $,             60000, TRUE], 
-				  [$,                RID_D4, [7,56],   10000, FALSE], 
-				  [aquatic_speech_c, $, $,             60000, TRUE], 
-				  [$,                RID_E2, [3,23],   10000, FALSE], 
-				  [aquatic_speech_d, $, $,             60000, TRUE], 
-				  [$,                RID_F2, [22,73],  10000, FALSE], 
-				  [aquatic_speech_e,$,$, 60000, TRUE], 
-			      [aquatic_speech_f,$,$, 60000, TRUE], 
-				  [aquatic_speech_g,$,$, 60000, TRUE], 
-				  [aquatic_speech_h,$,$, 60000, TRUE],
-				  [aquatic_speech_i,$,$, 60000, TRUE], 
-				  [aquatic_speech_j,$,$, 60000, TRUE], 
-			      [aquatic_speech_k,$,$, 60000, TRUE], 
-				  [aquatic_speech_l,$,$, 60000, TRUE], 
-				  [aquatic_speech_m,$,$, 60000, TRUE], 
-				  [aquatic_speech_n,$,$, 60000, TRUE], 
-				  [aquatic_speech_o,$,$, 60000, TRUE], 
-				  [aquatic_speech_p,$,$, 60000, TRUE] 
+			      [aquatic_speech_a, RID_C4, [29,66],  20000, FALSE, SAY_YELL], 
+				  [aquatic_speech_b, $, $,             60000, TRUE, SAY_YELL], 
+				  [$,                RID_D4, [7,56],   10000, FALSE, SAY_YELL], 
+				  [aquatic_speech_c, $, $,             60000, TRUE, SAY_YELL], 
+				  [$,                RID_E2, [3,23],   10000, FALSE, SAY_YELL], 
+				  [aquatic_speech_d, $, $,             60000, TRUE, SAY_YELL], 
+				  [$,                RID_F2, [22,73],  10000, FALSE, SAY_YELL], 
+				  [aquatic_speech_e,$,$, 60000, TRUE, SAY_YELL], 
+			      [aquatic_speech_f,$,$, 60000, TRUE, SAY_YELL], 
+				  [aquatic_speech_g,$,$, 60000, TRUE, SAY_YELL], 
+				  [aquatic_speech_h,$,$, 60000, TRUE, SAY_YELL],
+				  [aquatic_speech_i,$,$, 60000, TRUE, SAY_YELL], 
+				  [aquatic_speech_j,$,$, 60000, TRUE, SAY_YELL], 
+			      [aquatic_speech_k,$,$, 60000, TRUE, SAY_YELL], 
+				  [aquatic_speech_l,$,$, 60000, TRUE, SAY_YELL], 
+				  [aquatic_speech_m,$,$, 60000, TRUE, SAY_YELL], 
+				  [aquatic_speech_n,$,$, 60000, TRUE, SAY_YELL], 
+				  [aquatic_speech_o,$,$, 60000, TRUE, SAY_YELL], 
+				  [aquatic_speech_p,$,$, 60000, TRUE, SAY_YELL] 
 			   ]],
 			   [NPC_EQUIPMENT, [
 			      &PlateArmor,
@@ -743,23 +754,23 @@ messages:
 		    plProfile = [
 			   [NPC_PROFILE_LOGON, arch_logon],
 			   [NPC_PROFILE_SPEECH, [
-			      [arch_speech_a, $, $,            60000, TRUE], 
-				  [$,RID_BRAX,           [24, 37], 5000, FALSE], 
-				  [arch_speech_b, $, $,            60000, TRUE], 
-				  [$,RID_BRAX_BUILDING1, [8,26],   5000, FALSE], 
-				  [arch_speech_c,$,$,         60000, TRUE], 
-				  [arch_speech_d,$,$,         60000, TRUE], 
-				  [arch_speech_e, RID_BRAX,$, 60000, TRUE], 
+			      [arch_speech_a, $, $,            60000, TRUE, SAY_YELL], 
+				  [$,RID_BRAX,           [24, 37], 5000, FALSE, SAY_YELL], 
+				  [arch_speech_b, $, $,            60000, TRUE, SAY_YELL], 
+				  [$,RID_BRAX_BUILDING1, [8,26],   5000, FALSE, SAY_YELL], 
+				  [arch_speech_c,$,$,         60000, TRUE, SAY_YELL], 
+				  [arch_speech_d,$,$,         60000, TRUE, SAY_YELL], 
+				  [arch_speech_e, RID_BRAX,$, 60000, TRUE, SAY_YELL], 
 				  [$,$,$, 30000, TRUE], 
-				  [$,RID_BRAX_CASTLE1, [13,43],   5000, FALSE], 
-			      [arch_speech_f, $,$,            60000, TRUE], 
-				  [$,RID_BRAX_CASTLE2, [13,49],   5000, FALSE], 
-				  [arch_speech_g, $,$, 60000, TRUE], 
-				  [arch_speech_h,$,$,  60000, TRUE],
-				  [arch_speech_i,$,$,  60000, TRUE], 
-				  [arch_speech_j,$,$,  60000, TRUE], 
-			      [arch_speech_k,$,$,  60000, TRUE], 
-				  [arch_speech_l,$,$,  60000, TRUE] 
+				  [$,RID_BRAX_CASTLE1, [13,43],   5000, FALSE, SAY_YELL], 
+			      [arch_speech_f, $,$,            60000, TRUE, SAY_YELL], 
+				  [$,RID_BRAX_CASTLE2, [13,49],   5000, FALSE, SAY_YELL], 
+				  [arch_speech_g, $,$, 60000, TRUE, SAY_YELL], 
+				  [arch_speech_h,$,$,  60000, TRUE, SAY_YELL],
+				  [arch_speech_i,$,$,  60000, TRUE, SAY_YELL], 
+				  [arch_speech_j,$,$,  60000, TRUE, SAY_YELL], 
+			      [arch_speech_k,$,$,  60000, TRUE, SAY_YELL], 
+				  [arch_speech_l,$,$,  60000, TRUE, SAY_YELL] 
 			   ]],
 			   [NPC_EQUIPMENT, [
 			      &NeruditeArmor, 
@@ -774,23 +785,23 @@ messages:
 		    plProfile = [
 			   [NPC_PROFILE_LOGON, castle_logon],
 			   [NPC_PROFILE_SPEECH, [
-			      [castle_speech_a, RID_VICTORIA, [4, 44], 20000, FALSE], 
-				  [castle_speech_b,$,$,                    60000, TRUE], 
-				  [castle_speech_c, RID_CASTLE1B, [1,19],  25000, FALSE], 
-				  [castle_speech_d,$,$, 60000, TRUE], 
-				  [castle_speech_e,$,$, 60000, TRUE], 
-				  [$,               RID_VICTORIA, [8,28],  15000, FALSE], 
-			      [castle_speech_f,$,$, 60000, TRUE], 
-				  [castle_speech_g,$,$, 60000, TRUE], 
-				  [$,               RID_CASTLE1D, [13,2],  15000, FALSE], 
-				  [castle_speech_h,$,$, 60000, TRUE], 
-				  [$,               RID_VICTORIA, [7,15],  10000, FALSE], 
-				  [castle_speech_i,$,$, 60000, TRUE], 
-				  [$,               RID_THRONE1, [6,18],  10000, FALSE], 
-				  [castle_speech_j,$,$, 60000, TRUE], 
-			      [castle_speech_k,$,$, 60000, TRUE], 
-				  [castle_speech_l,$,$, 60000, TRUE], 
-				  [castle_speech_m,$,$, 60000, TRUE]
+			      [castle_speech_a, RID_VICTORIA, [4, 44], 20000, FALSE, SAY_YELL], 
+				  [castle_speech_b,$,$,                    60000, TRUE, SAY_YELL], 
+				  [castle_speech_c, RID_CASTLE1B, [1,19],  25000, FALSE, SAY_YELL], 
+				  [castle_speech_d,$,$, 60000, TRUE, SAY_YELL], 
+				  [castle_speech_e,$,$, 60000, TRUE, SAY_YELL], 
+				  [$,               RID_VICTORIA, [8,28],  15000, FALSE, SAY_YELL], 
+			      [castle_speech_f,$,$, 60000, TRUE, SAY_YELL], 
+				  [castle_speech_g,$,$, 60000, TRUE, SAY_YELL], 
+				  [$,               RID_CASTLE1D, [13,2],  15000, FALSE, SAY_YELL], 
+				  [castle_speech_h,$,$, 60000, TRUE, SAY_YELL], 
+				  [$,               RID_VICTORIA, [7,15],  10000, FALSE, SAY_YELL], 
+				  [castle_speech_i,$,$, 60000, TRUE, SAY_YELL], 
+				  [$,               RID_THRONE1, [6,18],  10000, FALSE, SAY_YELL], 
+				  [castle_speech_j,$,$, 60000, TRUE, SAY_YELL], 
+			      [castle_speech_k,$,$, 60000, TRUE, SAY_YELL], 
+				  [castle_speech_l,$,$, 60000, TRUE, SAY_YELL], 
+				  [castle_speech_m,$,$, 60000, TRUE, SAY_YELL]
 			   ]],
 			   [NPC_EQUIPMENT, [
 			      &PlateArmor, 
@@ -802,6 +813,37 @@ messages:
 			];
 		 break;
 	     case NPC_PLAYER_CRYPT:
+		    plProfile = [
+			   [NPC_PROFILE_LOGON, crypt_logon],
+			   [NPC_PROFILE_SPEECH, [
+			      [crypt_speech_a,$,  [78, 38], 20000, FALSE, SAY_YELL], 
+				  [crypt_speech_b, RID_MAR_CRYPT1, [80, 15], 20000, FALSE, SAY_YELL], 
+				  [crypt_speech_c,$,$, 10000, TRUE, SAY_YELL], 
+				  [$,$,$, 60000, TRUE, SAY_YELL], 
+				  [$, RID_MAR_CRYPT2, [38, 6], 30000, FALSE, SAY_YELL], 
+				  [crypt_speech_d,$,$, 30000, TRUE, SAY_YELL], 
+				  [crypt_speech_e,$,$, 30000, TRUE, SAY_YELL], 
+			      [crypt_speech_f,$,$, 30000, TRUE, SAY_YELL], 
+				  [crypt_speech_g,$,$, 30000, TRUE, SAY_YELL], 
+				  [crypt_speech_h,$,$, 30000, TRUE, SAY_YELL], 
+				  [$, RID_MAR_CRYPT3A, [38, 26], 15000, FALSE, SAY_YELL], 
+				  [crypt_speech_i,$,$, 30000, TRUE, SAY_YELL], 
+				  [crypt_speech_j,$,$, 90000, TRUE, SAY_YELL], 
+			      [crypt_speech_k,$,$, 90000, TRUE, SAY_YELL], 
+				  [crypt_speech_l,$,$, 90000, TRUE, SAY_YELL], 
+				  [crypt_speech_m,$,$, 90000, TRUE, SAY_YELL], 
+				  [crypt_speech_n,$,$, 90000, TRUE, SAY_YELL], 
+				  [crypt_speech_o,$,$, 90000, TRUE, SAY_YELL],
+				  [crypt_speech_p,$,$, 90000, TRUE, SAY_YELL]
+			   ]],
+			   [NPC_EQUIPMENT, [
+			      &PlateArmor, 
+				  &KnightShield, 
+				  &MysticSword, 
+				  &Gauntlet, 
+				  &DaemonHelm
+			   ]]
+			];
 		 break;
 	     case NPC_PLAYER_GRAVEYARD:
 		 break;
@@ -909,12 +951,12 @@ messages:
 	  propagate;
    }
    
-   Say(msg=$)
+   Say(msg=$, type=SAY_YELL)
    {
       ClearTempString();
 	  AppendTempString(msg);
 	  
-	  Send(poPlayer,@UserSay,#type=SAY_YELL,#string=GetTempString());
+	  Send(poPlayer,@UserSay,#type=type,#string=GetTempString());
       
 	  return;
    }
