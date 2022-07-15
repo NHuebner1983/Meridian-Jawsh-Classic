@@ -119,17 +119,17 @@ resources:
    // CASTLE NPC [Castle Victoria Story]
    /////////////////////////////////////
    castle_logon = "~BThe expedition team has arrived at Castle Victoria to investigate sightings of a ghost.~B"
-   castle_speech_a = "~kExpedition Log: Day one. We met an interesting person named Drechx. He tried teaching us something called ''Second Wind'', but he determined we weren't hearty enough to learn it.~k"
+   castle_speech_a = "~kExpedition Log: Day one. We met an interesting person named Drechx. He tried teaching us something called ''Second Wind'', but he determined we weren't hearty enough to learn it. We have no idea what he's talking about, we just ate lunch so our team is feeling pretty hearty.~k"
    castle_speech_b = "~kDrechx explained how Castle Victoria is haunted by skeletons and zombies, most likely from the previous caretakers and fallen adventurers.~k"
-   castle_speech_c = "~kThere was mention of a secret room through a door in the floor which leads to a basement. There's a crate that sometimes gives the adventurer something they desire the most. It happens on rare occassions only though.~k"
-   castle_speech_d = "~kDuring our conversation with Drechx, he mentioned a mystical globe upstairs in the castle. When you interact with the globe, it gives you mystical energy. We should study this magical globe more closely.~k"
-   castle_speech_e = "~kIn the left side of the castle there is a secret room where knights once guarded Far'Nohl, master of Castle Victoria, while he was still in his mortal form. Some of these knights wield mystic swords, one of the most powerful swords we have found.~k"
+   castle_speech_c = "~kDuring our conversation with Drechx, he mentioned a mystical globe upstairs in the castle. When you interact with the globe, it gives you mystical energy. We should study this magical globe more closely.~k"
+   castle_speech_d = "~kThe zombies and battered skeletons seem to be casting spells. Maybe the mystical ball upstairs is feeding them magical powers?~k"
+   castle_speech_e = "~kWe should take a sample of the zombie's flesh to see how old it was when it died. It's very strange to find emeralds and sapphires. It's as if the caretakers were killed for reasons other than their wealth.~k"
    castle_speech_f = "~kDrechx warned us against entering the Throne Room. The ghost of Far'Nohl awaits and unleashes fireballs onto its victims. Legend has it, he was struck down by the great powerful Faren and in his return from the dead obtained her powers. He is a deadly foe and we should avoid him at all costs.~k"
    castle_speech_g = "~kWe have discovered that a magical energy protects us inside of the castle where skeletons roam. Castle Victoria is a very popular location to find murderers, so be on the lookout.~k"
-   castle_speech_h = "~kWe should take a sample of the zombie's flesh to see how old it was when it died. It's very strange to find emeralds and sapphires. It's as if the caretakers were killed for reasons other than their wealth.~k"
+   castle_speech_h = "~kIn the left side of the castle there is a secret room where knights once guarded Far'Nohl, master of Castle Victoria, while he was still in his mortal form. Some of these knights wield mystic swords, one of the most powerful swords we have found.~k"
    castle_speech_i = "~kSome of the markings on the skeletal remains give us clues as to how the caretakers died. It would explain why some have been cut and others were bludgeoned. Perhaps they carry the weapon that struck them down.~k"
-   castle_speech_j = "~kThe tusked skeletons are extremely aggressive. Perhaps they were once knights, seeing as they are carrying a knight shield. This castle must have been an amazing place before everyong was slaughtered.~k"
-   castle_speech_k = "~kThe zombies and battered skeletons seem to be casting spells. Maybe the mystical ball upstairs is feeding them magical powers?~k"
+   castle_speech_j = "~kThe tusked skeletons are extremely aggressive. Perhaps they were once knights, seeing as they are carrying a knight shield. This castle must have been an amazing place before everyone was slaughtered.~k"
+   castle_speech_k = "~kThere was mention of a secret room through a door in the floor which leads to a basement. There's a crate that sometimes gives the adventurer something they desire the most. It happens on rare occassions only though. The last expedition team member to travel down there never came back. We heard screams, maybe a monster is lurking down there or maybe it came from that crate!~k"
    castle_speech_l = "~kWe found an interesting item in the basement crate...something called a ''Shrunken Head''. It babbles... a lot! It must be some kind of magically enchanted soul trapped in an ornate object. Thankfully it doesn't bite because its mouth is sewed shut. It's hard to believe it can make so much noise without a mouth. It's definitely enchanted by magic.~k"
    castle_speech_m = "~kI think we're about done here. We should finish collecting samples and make our way back to Drechx before that ghost finds us.~k"
    
@@ -743,23 +743,23 @@ messages:
 		    plProfile = [
 			   [NPC_PROFILE_LOGON, arch_logon],
 			   [NPC_PROFILE_SPEECH, [
-			      [arch_speech_a, $, $, 60000, TRUE], 
+			      [arch_speech_a, $, $,            60000, TRUE], 
 				  [$,RID_BRAX,           [24, 37], 5000, FALSE], 
 				  [arch_speech_b, $, $,            60000, TRUE], 
 				  [$,RID_BRAX_BUILDING1, [8,26],   5000, FALSE], 
-				  [arch_speech_c,$,$, 60000, TRUE], 
-				  [arch_speech_d,$,$, 60000, TRUE], 
+				  [arch_speech_c,$,$,         60000, TRUE], 
+				  [arch_speech_d,$,$,         60000, TRUE], 
 				  [arch_speech_e, RID_BRAX,$, 60000, TRUE], 
 				  [$,$,$, 30000, TRUE], 
 				  [$,RID_BRAX_CASTLE1, [13,43],   5000, FALSE], 
-			      [arch_speech_f, $,$, 60000, TRUE], 
+			      [arch_speech_f, $,$,            60000, TRUE], 
 				  [$,RID_BRAX_CASTLE2, [13,49],   5000, FALSE], 
 				  [arch_speech_g, $,$, 60000, TRUE], 
-				  [arch_speech_h,$,$, 60000, TRUE],
-				  [arch_speech_i,$,$, 60000, TRUE], 
-				  [arch_speech_j,$,$, 60000, TRUE], 
-			      [arch_speech_k,$,$, 60000, TRUE], 
-				  [arch_speech_l,$,$, 60000, TRUE] 
+				  [arch_speech_h,$,$,  60000, TRUE],
+				  [arch_speech_i,$,$,  60000, TRUE], 
+				  [arch_speech_j,$,$,  60000, TRUE], 
+			      [arch_speech_k,$,$,  60000, TRUE], 
+				  [arch_speech_l,$,$,  60000, TRUE] 
 			   ]],
 			   [NPC_EQUIPMENT, [
 			      &NeruditeArmor, 
@@ -771,6 +771,35 @@ messages:
 			];
 		 break;
 	     case NPC_PLAYER_CASTLE:
+		    plProfile = [
+			   [NPC_PROFILE_LOGON, castle_logon],
+			   [NPC_PROFILE_SPEECH, [
+			      [castle_speech_a, RID_VICTORIA, [4, 44], 20000, FALSE], 
+				  [castle_speech_b,$,$,                    60000, TRUE], 
+				  [castle_speech_c, RID_CASTLE1B, [1,19],  25000, FALSE], 
+				  [castle_speech_d,$,$, 60000, TRUE], 
+				  [castle_speech_e,$,$, 60000, TRUE], 
+				  [$,               RID_VICTORIA, [8,28],  15000, FALSE], 
+			      [castle_speech_f,$,$, 60000, TRUE], 
+				  [castle_speech_g,$,$, 60000, TRUE], 
+				  [$,               RID_CASTLE1D, [13,2],  15000, FALSE], 
+				  [castle_speech_h,$,$, 60000, TRUE], 
+				  [$,               RID_VICTORIA, [7,15],  10000, FALSE], 
+				  [castle_speech_i,$,$, 60000, TRUE], 
+				  [$,               RID_THRONE1, [6,18],  10000, FALSE], 
+				  [castle_speech_j,$,$, 60000, TRUE], 
+			      [castle_speech_k,$,$, 60000, TRUE], 
+				  [castle_speech_l,$,$, 60000, TRUE], 
+				  [castle_speech_m,$,$, 60000, TRUE]
+			   ]],
+			   [NPC_EQUIPMENT, [
+			      &PlateArmor, 
+				  &KnightShield, 
+				  &Scimitar, 
+				  &Gauntlet, 
+				  &DaemonHelm
+			   ]]
+			];
 		 break;
 	     case NPC_PLAYER_CRYPT:
 		 break;
