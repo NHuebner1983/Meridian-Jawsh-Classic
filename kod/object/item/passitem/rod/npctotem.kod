@@ -283,6 +283,13 @@ properties:
    
    // When we're low on health, phase in/out and rest.
    ptPhaseTimer = $
+   
+   // When nobody is around, we will StopBeingMonster
+   // When someone shows up, if this is true, we will be monster.
+   pbShouldBeMonster = FALSE
+   
+   // Whether or not we are waiting on players.
+   pbIsDormant = FALSE
 
 messages:
    
@@ -436,6 +443,13 @@ messages:
 	  
 	  iShouldFight = TRUE;
 	  
+	  if pbIsDormant AND Send(self,@RoomHasPlayers) AND pbShouldBeMonster
+	  {
+	     pbIsDormant = FALSE;
+		 
+		 Send(poPlayer,@BecomeMonster);
+	  }
+	  
 	  if poPlayer <> $ AND Send(poPlayer,@GetOwner) <> $ AND Send(Send(poPlayer,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
 	  {
 	     // It looks like our NPC bit the dust.
@@ -461,7 +475,8 @@ messages:
 	  {
 	     // A player must be present at each map we zone into.
 		 Send(poPlayer, @StopBeingMonster);
-		 iShouldFight = FALSE;
+		 
+		 pbIsDormant = TRUE;
 		 
 		 return FALSE;
 	  }
@@ -564,7 +579,7 @@ messages:
 		 {
 		    // Whether or not we should be hunting monsters...
 		    iShouldFight = Nth(iNext, 5);
-		 
+					 
 		    if iShouldFight
 		    {
 		       Send(poPlayer,@BecomeMonster);
@@ -574,6 +589,9 @@ messages:
 		       Send(poPlayer,@StopBeingMonster);
 		    }
 		 }
+		 
+         pbShouldBeMonster = iShouldFight;
+		 
 	  }
 	  else
 	  {
@@ -879,6 +897,10 @@ messages:
 			oItem = Create(cItem);
 			Send(poPlayer, @NewHold, #what=oItem);
 			Send(poPlayer, @TryUseItem, #what=oItem);
+			
+			// Bond their gear so it isn't farmed.
+			Send(Send(SYS,@FindItemAttByNum,#Num=IA_TRANSCENDANT),@AddToItem,
+              #oItem=oItem);
 		 }
       }
 	  	  
