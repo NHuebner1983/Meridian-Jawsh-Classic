@@ -255,6 +255,7 @@ messages:
       if (NOT pbDMs AND IsClass(who,&DM))
          OR (plExclude <> $
              AND FindListElem(plExclude,who) <> 0)
+	     OR (IsClass(who, &Player) AND NOT Send(who,@IsRoamingNPCPlayer))
       {
          return;
       }
@@ -399,7 +400,7 @@ messages:
    "We also make notes of a person's score."
    {
       local i, lowscore, lowest, lNode;
-
+	  
       if who = $ OR score = $
       {
          Debug("Bad info passed to checkforworthiness");
