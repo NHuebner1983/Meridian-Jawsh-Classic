@@ -11154,14 +11154,31 @@ messages:
 	   
 	   foreach i in lActive
 	   {
+	       if IsClass(First(i),&Monster)
+		   {
+		      if IsClass(First(i),&Revenant) OR IsClass(First(i),&Reflection) OR IsClass(First(i),&Servant)
+			  {
+			     // Let's not fight Revenants, Reflections or Servants.
+			     continue;
+			  }
+		   }
+		   
 		   if IsClass(First(i),&Monster) AND Send(First(i),@GetCurrentState) <> 1
 		   {
 			   if First(i) = poTarget
 			   {
 				   // Do not change targets, we're already on the one from before...
-				//Debug("same target",poTarget,Send(poTarget,@GetName));
+				   //Debug("same target",poTarget,Send(poTarget,@GetName));
 				   
 				   return TRUE;
+			   }
+			   
+			   if poOwner <> $ AND IsClass(poOwner, &MonsRoom) AND Send(poOwner,@IsMiniBoss,#what=First(i)) OR Send(poOwner,@IsBoss,#what=First(i))
+			   {
+			      // This target is a mini boss, let's always go after them first.
+				  oNewTarget = First(i);
+				  
+				  break;
 			   }
 			   
 			   iFlags = Send(First(i),@GetObjectFlags,#what=self);
@@ -11241,7 +11258,7 @@ messages:
 	   {
 	       iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
 		   
-		   if iDistance <> $ AND iDistance < 2
+		   if iDistance <> $ AND iDistance < 10
 		   {
 		      // We need to be close enough to attack.
 		      bMonsterAttacked = Send(self,@UserAttack,#what=poTarget);

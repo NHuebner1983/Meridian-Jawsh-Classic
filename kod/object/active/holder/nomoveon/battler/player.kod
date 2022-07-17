@@ -2422,7 +2422,10 @@ messages:
 	      OR StringEqual(Send(self,@GetName), system_player_mob_arch)
 	      OR StringEqual(Send(self,@GetName), system_player_mob_ancient)
 	      OR StringEqual(Send(self,@GetName), system_player_mob_holy)
-	      OR StringEqual(Send(self,@GetName), system_player_mob_unholy);
+	      OR StringEqual(Send(self,@GetName), system_player_mob_unholy)
+	      OR StringEqual(Send(self,@GetName), system_player_mob_survival_a)
+	      OR StringEqual(Send(self,@GetName), system_player_mob_survival_b)
+	      OR StringEqual(Send(self,@GetName), system_player_mob_survival_c);
    }
    
    IsInventoryEmpty()

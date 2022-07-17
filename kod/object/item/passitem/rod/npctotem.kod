@@ -35,6 +35,7 @@ constants:
    RID_START_ANCIENT = RID_JUNGLE_TRADING_POST
    RID_START_HOLY = RID_CRAGGED
    RID_START_UNHOLY = RID_H9
+   RID_START_SURVIVAL = RID_FAMS
 
 resources:
 
@@ -55,7 +56,11 @@ resources:
    npc_totem_sound = woodstaf.ogg
    
    // NPC Response Triggers
-   npc_where_are_you = "where are you?"
+   npc_where_are_you = "where are you?" // NPC will respond with their location.
+   npc_help_me_fight = "help me fight"  // NPC will prevent going to the next step for an extended amount of time.
+
+   // SURVIVAL LOGON
+   survival_logon = "~B~rA survival specialist has arrived to help in public survival mode.~B~r"
    
    /////////////////////////////////////
    // ANCIENT NPC [Wulfgang, Faren & Riija Story]
@@ -384,7 +389,7 @@ messages:
    
    TryToRest()
    {
-      local iPlayerMissingHealth, sMsg, oSpell;
+      local iPlayerMissingHealth, sMsg, oSpell, iRand;
 	  
       if NOT pbIsHunter
 	  {
@@ -420,8 +425,9 @@ messages:
 			   
 			   if NOT pbIsHunter
 			   {
-			      // EXPEDITION TEAM RECEIVES HELP FROM SHAL'ILLE
-			      oSpell = Send(SYS,@FindSpellByNum,#num=SID_SHAL_SERVANT);
+			      // EXPEDITION TEAM RECEIVES HELP FROM A RANDOM SERVANT
+				  iRand = Random(SID_RIIJA_SERVANT, SID_JALA_SERVANT);
+			      oSpell = Send(SYS,@FindSpellByNum,#num=iRand);
 			      Send(oSpell,@CastSpell,#who=poPlayer,#lTargets=[poPlayer],#iSpellPower=99);
 			   }
 			   
@@ -668,6 +674,9 @@ messages:
             case NPC_PLAYER_UNHOLY:
 			   iRID = RID_START_UNHOLY;
 			break;
+            case NPC_PLAYER_SURVIVAL:
+			   iRID = RID_START_SURVIVAL;
+			break;
 		 }
 		 
 		 Send(self,@TeleportToMap,#iRID=iRID);
@@ -869,6 +878,29 @@ messages:
 		 break;
 	     case NPC_PLAYER_UNHOLY:
 		 break;
+		 case NPC_PLAYER_SURVIVAL:
+		    plProfile = [
+			 [NPC_PROFILE_LOGON, survival_logon],
+			 [NPC_PROFILE_SPEECH, [
+			     [$,$,$,8640000,TRUE,SAY_YELL], 
+			     [$,$,$,8640000,TRUE,SAY_YELL]
+			 ]],
+			 [NPC_EQUIPMENT, [
+			     &NeruditeArmor, 
+				 &NeruditeShield, 
+				 &Hammer, 
+				 &Gauntlet, 
+				 &DaemonHelm
+			 ]]
+			];
+			
+			ClearTempString();
+			AppendTempString("start public survival");
+			Send(poPlayer, @UserSaySurvival, #string = GetTempString());
+			ClearTempString();
+			AppendTempString("join public survival");
+			Send(poPlayer, @UserSaySurvival, #string = GetTempString());
+		 break;
 	  }
 	  
 	  // Arm the NPC with their NPC_EQUIPMENT
@@ -897,6 +929,8 @@ messages:
 			oItem = Create(cItem);
 			Send(poPlayer, @NewHold, #what=oItem);
 			Send(poPlayer, @TryUseItem, #what=oItem);
+			Send(oItem,@SetMaxHits,#number=99999);
+			Send(oItem,@SetHits,#number=99999);
 			
 			// Bond their gear so it isn't farmed.
 			Send(Send(SYS,@FindItemAttByNum,#Num=IA_TRANSCENDANT),@AddToItem,
@@ -919,6 +953,9 @@ messages:
       if StringEqual(psPlayerName, system_player_mob_ancient)   { piNPCPlayer = NPC_PLAYER_ANCIENT; }
       if StringEqual(psPlayerName, system_player_mob_holy)      { piNPCPlayer = NPC_PLAYER_HOLY; }
       if StringEqual(psPlayerName, system_player_mob_unholy)    { piNPCPlayer = NPC_PLAYER_UNHOLY; }
+      if StringEqual(psPlayerName, system_player_mob_survival_a){ piNPCPlayer = NPC_PLAYER_SURVIVAL; }
+      if StringEqual(psPlayerName, system_player_mob_survival_b){ piNPCPlayer = NPC_PLAYER_SURVIVAL; }
+      if StringEqual(psPlayerName, system_player_mob_survival_c){ piNPCPlayer = NPC_PLAYER_SURVIVAL; }
 	  
 	  if piNPCPlayer = $
 	  {

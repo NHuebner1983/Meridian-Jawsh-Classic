@@ -57,6 +57,9 @@ resources:
    system_player_mob_ancient    = "Ancient Collector"
    system_player_mob_holy       = "Holy Inquisitor"
    system_player_mob_unholy     = "Unholy Inquisitor"
+   system_player_mob_survival_a = "Survival Specialist"
+   system_player_mob_survival_b = "Survival Expert"
+   system_player_mob_survival_c = "Survivalist"
 
    system_user_killed = "~B~U~k[###]~n ~B~v%q was just killed by %s%q."
    system_user_killed_by_pker = "~B~U~k[###]~n ~B~v%q has been murdered in cold blood."

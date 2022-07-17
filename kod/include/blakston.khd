@@ -478,6 +478,8 @@
    RID_TOS = 50
    RID_TOS_SMITHY = 51
    RID_TOS_INN = 52
+   RID_FAMILIARS = 52
+   RID_FAMS = 52
    RID_TOS_APOTH = 53
    RID_TOS_BANK = 54
    RID_TOS_ABANDONED = 55
@@ -3738,3 +3740,6 @@
    NPC_PLAYER_ANCIENT = 6
    NPC_PLAYER_HOLY = 7
    NPC_PLAYER_UNHOLY = 8
+   
+   // Survival NPC Players (multiple can match the same type).
+   NPC_PLAYER_SURVIVAL = 9
