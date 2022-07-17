@@ -11173,7 +11173,7 @@ messages:
 				   return TRUE;
 			   }
 			   
-			   if poOwner <> $ AND IsClass(poOwner, &MonsRoom) AND Send(poOwner,@IsMiniBoss,#what=First(i)) OR Send(poOwner,@IsBoss,#what=First(i))
+			   if poOwner <> $ AND IsClass(poOwner, &MonsterRoom) AND Send(poOwner,@IsMiniBoss,#what=First(i)) OR Send(poOwner,@IsBoss,#what=First(i))
 			   {
 			      // This target is a mini boss, let's always go after them first.
 				  oNewTarget = First(i);
