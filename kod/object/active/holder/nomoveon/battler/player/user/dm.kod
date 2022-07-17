@@ -2848,7 +2848,7 @@ messages:
 
    GetOneOfEach(type=ITEMTYPE_MISC)
    {
-      local lTemplate, i, iNumber, bIsHelmet, bIsShield, bIsClothes, bIsRobes;
+      local oItem, lTemplate, i, iNumber, bIsHelmet, bIsShield, bIsClothes, bIsRobes;
 
       iNumber = 100;
       if type = ITEMTYPE_MONEY
@@ -2891,6 +2891,7 @@ messages:
          if bIsShield OR bIsHelmet OR bIsClothes OR bIsRobes OR (Send(i,@IsItemType,#type=type)
             AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
          {
+		    // Normal Armor will prevent all of this extra stuff from surfacing.
 		    if NOT bIsShield 
 			   AND NOT bIsHelmet 
 			   AND NOT bIsClothes 
@@ -2902,6 +2903,8 @@ messages:
 				  OR IsClass(i, &FaceMask)
 				  OR IsClass(i, &ShirtBase)
 				  OR IsClass(i, &DiscipleRobe)
+				  OR IsClass(i, &LightDiscipleRobe)
+				  OR IsClass(i, &TankTop)
 				  OR IsClass(i, &Pants)
 			   {
 			      continue;
@@ -2926,7 +2929,7 @@ messages:
 
 		    if bIsClothes
 			{
-			   if NOT IsClass(i, &Pants) OR NOT IsClass(i, &Shirt)
+			   if NOT IsClass(i, &Pants) AND NOT IsClass(i, &Shirt) AND NOT IsClass(i,&RoyalShirt) AND NOT IsClass(i,&TankTop)
 			   {
 			      continue;
 			   }
@@ -2934,7 +2937,7 @@ messages:
 
 		    if bIsRobes
 			{
-			   if NOT IsClass(i, &DiscipleRobe)
+			   if NOT IsClass(i, &DiscipleRobe) AND NOT IsClass(i, &LightDiscipleRobe)
 			   {
 			      continue;
 			   }
@@ -2948,6 +2951,14 @@ messages:
                Send(self,@NewHold,#what=Create(GetClass(i),#school=6,#number=1,#oDMCreator=self));
 			   
 			   break;
+			}
+			
+			if IsClass(i,&Tanktop)
+			{
+			   // Create an exotic tanktop (undershirt) - Female Bra.
+			   oItem = Create(GetClass(i),#number=iNumber,#oDMCreator=self);
+			   Send(oItem, @Exotic);
+               Send(self,@NewHold,#what=oItem);
 			}
 
             Send(self,@NewHold,#what=Create(GetClass(i),#number=iNumber,
