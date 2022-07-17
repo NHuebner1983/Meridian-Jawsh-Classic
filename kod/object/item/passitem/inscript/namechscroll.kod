@@ -20,15 +20,16 @@ resources:
 
    include namechscroll.lkod
 
-   deedpoll_name_rsc = "deed poll"
+   deedpoll_name_rsc = "change of name scroll"
    deedpoll_icon_rsc = scr02.bgf
    deedpoll_desc_rsc = \
       "This is an official document of the Office of the Justicar.\n"
-      "The Royal Justicar's office is responsible for organizing legal "
-      "name changes.  Fill out your requested name and return this scroll "
-      "to Caramo in the Office of the Justicar in North Barloque, and if "
-      "your proposed name is valid, it shall be yours.\n"
-      "\n"
+      "\n\n"
+	  "ENTER YOUR NEW NAME, EXACTLY AS YOU WANT IT TO APPEAR.\n"
+	  "THERE ARE NO REFUNDS OR DO OVERS."
+	  "\n\n"
+	  "\nFEE: 1,000,000 Shillings"
+	  "\n\n"
       "    =[C]=   Caramo, Assistant to the Royal Justicar"
    deedpoll_cant_drop_rsc = \
       "You find yourself unable to get rid of the deed poll."
@@ -43,6 +44,8 @@ classvars:
 
    viWeight = 2
 
+   viValue_average = 0
+   
 properties:
 
    ptDestroy = $

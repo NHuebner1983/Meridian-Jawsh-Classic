@@ -303,13 +303,13 @@ resources:
    bq_clerk_trigger_change = "change"
    bq_clerk_trigger_name = "name"
    bq_clerk_change_name = \
-      "Yes, I can change your legal name by deed poll.  Simply fill out your "
+      "Yes, I can change your legal name in Meridian.  Simply fill out your "
       "new name on this scroll and return it. If it is available and not "
       "obscene, it shall be yours.  I must warn you, there is a fee of %i "
       "shillings for providing this service, which will be deducted from "
       "your bank account."
    bq_clerk_cant_hold = \
-      "I can change your legal name by deed poll, but you have no room in "
+      "I can change your legal name in Meridian, but you have no room in "
       "your inventory to hold the scroll you would need to fill out."
    bq_clerk_warning_cost = \
       "~BI must warn you again before I complete this process, that you "
@@ -388,6 +388,10 @@ properties:
    // The amount of time murderers must wait after their last kill
    // before they can be pardoned.
    piMurderPardonDelay = 3600 * 24 * 7
+   
+   plOffer_items = $
+   plOffer_who = $
+   
 messages:
 
    Recreate()
@@ -421,16 +425,37 @@ messages:
 
       return;
    }
+   
+   AcceptOffer()
+   {
+      local i,oHolder,lTake_items;
+	  
+	  foreach i in plOffer_items
+      {
+	     if i <> $ AND IsClass(i, &NameChangeScroll)
+		 {
+		    // Let's perform the name change.
+			Send(self,@TryChangePlayerName,#who=poOffer_who,#oItem=i);
+			
+			break;
+		 }
+      }
+
+      Send(self,@OfferCanceled);
+
+      return TRUE;
+   }
 
    SetForSale()
    {
       if (piJusticar_State = STATE_NO_ELECTIONS)
       {
-         plFor_sale = $;
+         plFor_sale = [ [ Create(&NameChangeScroll) ],
+                        $,$,$];
       }
       else
       {
-         plFor_sale = [ [ Create(&BallotItem) ],
+         plFor_sale = [ [ Create(&BallotItem), Create(&NameChangeScroll) ],
                         $,$,$];
       }
 
@@ -451,7 +476,9 @@ messages:
 
       return TRUE;
    }
-
+   
+   // This seems to do nothing now.
+   // No worries - we fixed it in ACCEPT OFFER   
    GotWantedItem(obj=$,who=$)
    {
       if IsClass(obj,&NameChangeScroll)
@@ -494,7 +521,7 @@ messages:
    "is, name will be changed."
    {
       local i, iAmount, oBank;
-
+	  
       if who = $
          OR oItem = $
       {
@@ -502,31 +529,6 @@ messages:
       }
 
       iAmount = Send(SETTINGS_OBJECT,@GetNameChangeCost);
-
-      // No existing list, add player and warn.
-      if plNameChangeWarn = $
-      {
-         plNameChangeWarn = [who];
-         Send(self,@SayToOne,#message_rsc=bq_clerk_warning_cost,#target=who,
-               #parm1=iAmount);
-
-         return;
-      }
-
-      foreach i in plNameChangeWarn
-      {
-         if i <> who
-         {
-            continue;
-         }
-         // Check if name is valid.
-         if NOT Send(SYS,@ValidateUserName,#oUser=who,
-                     #sName=Send(oItem,@GetInscription))
-         {
-            Send(self,@SayToOne,#target=who,#message_rsc=bq_clerk_bad_name);
-
-            return;
-         }
 
          // Get player's bank account.
          oBank = Send(SYS,@FindBankByNum,#num=BID_TOS);
@@ -554,12 +556,42 @@ messages:
 
             return;
          }
-      }
+
+
+     // NAME CHANGE WARNINGS ARE TURNED OFF
+	 // THE SCROLL HAS A HUGE WARNING IN IT
+
+      // No existing list, add player and warn.
+//      if plNameChangeWarn = $
+//      {
+//         plNameChangeWarn = [who];
+//         Send(self,@SayToOne,#message_rsc=bq_clerk_warning_cost,#target=who,
+//               #parm1=iAmount);
+//
+//         return;
+//      }
+
+//      foreach i in plNameChangeWarn
+//      {
+//         if i <> who
+//         {
+//            continue;
+//         }
+         // Check if name is valid.
+//         if NOT Send(SYS,@ValidateUserName,#oUser=who,
+//                     #sName=Send(oItem,@GetInscription))
+//         {
+//            Send(self,@SayToOne,#target=who,#message_rsc=bq_clerk_bad_name);
+
+//            return;
+//         }
+
+//      }
 
       // Player wasn't in list, add them.
-      plNameChangeWarn = Cons(who,plNameChangeWarn);
-      Send(self,@SayToOne,#message_rsc=bq_clerk_warning_cost,#target=who,
-            #parm1=iAmount);
+//      plNameChangeWarn = Cons(who,plNameChangeWarn);
+//      Send(self,@SayToOne,#message_rsc=bq_clerk_warning_cost,#target=who,
+//            #parm1=iAmount);
 
       return;
    }
@@ -1931,5 +1963,15 @@ messages:
       propagate;
    }
 
+   ReqOffer(what = $, item_list = $)
+   "Someone offered us something, figure out if we want it, etc. "
+   "Return TRUE if the offer should go through, meaning that the monster will "
+   "offer the value of the items in return."
+   {
+      poOffer_who = what;
+	  plOffer_items = item_list;
+	  
+	  propagate;
+   }
 end
 ////////////////////////////////////////////////////////////////////////////////
