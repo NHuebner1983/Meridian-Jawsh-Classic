@@ -1,0 +1,341 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+PrizeTicket is Ticket
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   // TODO: German translation from Tyrant
+   //include maskticket.lkod
+
+   prize_ticket_name_rsc = "Prize Ticket"
+   prize_ticket_icon_rsc = scr06.bgf
+   prize_ticket_desc_rsc = "This ticket can be redeemed for a ''%s''."
+   string_color_blue = "blue"
+   string_color_black = "black"
+   string_color_red = "red"
+   string_color_green = "green"
+   string_color_purple = "purple"
+   string_color_gold = "gold"
+   string_color_yellow = "yellow"
+   string_color_orange = "orange"
+   string_color_white = "white"
+   string_color_pink = "pink"
+   
+classvars:
+
+   vrName = prize_ticket_name_rsc
+   vrIcon = prize_ticket_icon_rsc
+   vrDesc = prize_ticket_desc_rsc
+
+   viBulk = 1
+   viWeight = 1
+   viValue_average = 3500000
+   
+properties:
+
+   pbIn_use = FALSE
+
+   psColor = $
+   piColor = $
+   psLibStringName = $
+   psObjectName = $
+   poObject = $
+   psAttributeName = $
+   
+   // Random colorized list.
+   plColors = $
+   
+   // List of weapons
+   plWeapons = $
+   
+   // List of armor
+   plArmors = $
+   
+   // List of helmets
+   plHelmets = $
+   
+   // List of Masks
+   plMasks = $
+   
+   // List of Gods Gifts
+   plGodGifts = $
+   
+messages:
+   
+   Constructor(model=$,color=$,object_name=$,attribute_name=$)
+   {
+      local iDestination;
+	  
+	  Send(self, @SetLists);
+	  
+	  if model = $ AND color = $ AND object_name = $
+	  {
+	     Send(self,@RandomizePrize);
+		 
+		 propagate;
+	  }
+	  
+      if model <> $
+	  {
+	     // Use the model.
+	     psColor = Send(model, @GetColorName);
+		 psLibStringName = Send(model, @GetLibStringName);
+	  }
+	  else
+	  {
+	     // 
+	     if color <> $
+	     {
+	        psColor = color;
+	     }
+	  
+	     if object_name <> $
+	     {
+	        psLibStringName = object_name;
+	     }
+	  }
+      
+	  if psLibStringName <> $
+	  {
+         Send(self,@SetObject);
+	  }
+
+	  propagate;
+   }
+   
+   SetLists()
+   {
+      local i, lTemplate;
+	  
+	  plMasks = [];
+	  plGodGifts = [];
+	  plWeapons = [];
+	  plArmors = [];
+	  plHelmets = [];
+	  
+	  // Lookup the item by string.
+	  // This is how the NewHold will get created and attributes applied to it.
+      lTemplate = Send(SYS,@GetItemTemplates);
+
+      foreach i in lTemplate
+      {
+         if IsClass(i, &FaceMask)
+		 {
+		    // Mask
+			plMasks = AppendListElem(i, plMasks);
+		 }
+		 
+         if IsClass(i, &Necklace) AND NOT IsClass(i, &JalaNecklace) AND NOT IsClass(i, &ShadowAmulet)
+		 {
+		    // Gods Gift
+			plGodGifts = AppendListElem(i, plGodGifts);
+		 }
+		 
+		 if IsClass(i, &Weapon) 
+		    AND NOT IsClass(i,&HolyBow) 
+			AND NOT IsClass(i,&QorBow) 
+			AND NOT IsClass(i,&PracticeBow)
+			AND NOT IsClass(i,&WeaponWand)
+			AND NOT IsClass(i,&TestSword)
+			AND NOT IsClass(i,&ShortSword)
+		 {
+		    // Weapon
+		 }
+	  }
+	  
+      return;
+   }
+   
+   RandomizePrize()
+   {
+      plColors = [
+	     string_color_blue, 
+	     string_color_black, 
+	     string_color_red, 
+	     string_color_green, 
+	     string_color_purple, 
+	     string_color_gold, 
+	     string_color_yellow, 
+	     string_color_orange, 
+	     string_color_white, 
+	     string_color_pink
+	  ];
+	  
+	  psColor = Nth(plColors, Random(1, Length(plColors)));
+	  
+	  return;
+   }
+   
+   SetObject()
+   {
+      local i, lTemplate;
+	  
+	  poObject = $;
+	  
+      if psLibStringName <> $
+	  {
+	     // Lookup the item by string.
+		 // This is how the NewHold will get created and attributes applied to it.
+         lTemplate = Send(SYS,@GetItemTemplates);
+
+         foreach i in lTemplate
+         {
+            if StringContain(psLibStringName,Send(i,@GetTrueName))
+			{
+			   poObject = i;
+			   
+			   return;
+			}
+         }		 
+	  }
+	  
+	  if poObject <> $
+	  {
+	     // Unable to locate this item.
+		 Debug("PRIZE TICKET Failed Finding",psLibStringName);
+		 
+		 return;
+	  }
+	  
+	  Send(self,@SetObjectName);
+	  
+	  return;
+   }
+   
+   SetObjectName()
+   {
+      psObjectName = $;
+	  
+	  ClearTempString();
+	  
+	  if psColor <> $
+	  {
+	     // black, red, etc...
+	     AppendTempString(psColor);
+	     AppendTempString(" ");
+	  }
+	  
+	  if psAttributeName <> $
+	  {
+	     // hold, blind, etc...
+	     AppendTempString(psAttributeName);
+	     AppendTempString(" ");
+	  }
+	  
+	  // scimitar, diamond pendant, etc...
+	  AppendTempString(psLibStringName);
+	  
+	  // "black hold scimitar", "red feathered choker", "green spirit helmet", etc...
+	  psObjectName = SetString($,GetTempString());
+	  
+      return;
+   }
+   
+   SetObjectColor()
+   {
+      piColor = $;
+	  
+      if StringEqual(psColor, "blue")
+	  {
+	     piColor = 22;
+	  }
+
+      if StringEqual(psColor, "black")
+	  {
+	     piColor = 44;
+	  }
+
+      if StringEqual(psColor, "red")
+	  {
+	     piColor = 73;
+	  }
+
+      if StringEqual(psColor, "green")
+	  {
+	     piColor = 16;
+	  }
+
+      if StringEqual(psColor, "purple")
+	  {
+	     piColor = 24;
+	  }
+
+      if StringEqual(psColor, "gold")
+	  {
+	     piColor = 57;
+	  }
+
+      if StringEqual(psColor, "yellow")
+	  {
+	     piColor = 25;
+	  }
+
+      if StringEqual(psColor, "orange")
+	  {
+	     piColor = 81;
+	  }
+
+      if StringEqual(psColor, "white")
+	  {
+	     piColor = 48;
+	  }
+	  
+      if StringEqual(psColor, "pink")
+	  {
+	     piColor = 68;
+	  }
+
+	  return;
+   }
+   
+   GetColorName()
+   {
+      return psColor;
+   }
+   
+   GetColorNum()
+   {
+      return piColor;
+   }
+   
+   GetObjectName()
+   {
+      return psObjectName;
+   }
+   
+   GetObject()
+   {
+      return poObject;
+   }
+   
+   GetLibStringName()
+   {
+      return psLibStringName;
+   }
+   
+   CanBeStoredInVault()
+   {
+      return TRUE;
+   }
+
+   DoBaseDesc()
+   {
+      AddPacket(4,vrDesc, 4,psObjectName);
+	  
+      return;
+   }
+   
+end
+////////////////////////////////////////////////////////////////////////////////
