@@ -306,8 +306,7 @@ messages:
                             [&DeathSpider, 3],
                             [&DragonFly, 3],
                             [&Avar, 3],
-                            [&AvarShaman, 3],
-                            [&DuskRat, 3],
+                            [&DuskRat, 6],
                             [&EvilEnt, 3],
                             [&Iceperson, 3]];
 
@@ -335,8 +334,7 @@ messages:
                             [&DeathSpider, 3],
                             [&DragonFly, 3],
                             [&Avar, 3],
-                            [&AvarShaman, 3],
-                            [&DuskRat, 3],
+                            [&DuskRat, 6],
                             [&EvilEnt, 3],
                             [&Iceperson, 3],
                             [&MolluskMonster, 3],
@@ -367,16 +365,14 @@ messages:
                     [&DeathSpider, 3],
                     [&DragonFly, 3],
                     [&Avar, 3],
-                    [&AvarShaman, 3],
-                    [&DuskRat, 3],
+                    [&DuskRat, 6],
                     [&EvilEnt, 3],
                     [&Iceperson, 3],
                     [&MolluskMonster, 3],
                     [&NarthylWorm, 3],
                     [&DaemonSkeleton, 3],
                     [&AvarChieftain, 3],
-                    [&GiantRatSoldier, 3],
-                    [&StoneTroll, 3]];
+                    [&GiantRatSoldier, 6]];
 
       plBosses = [&EarthElementalChampion,
                   &FireElementalChampion,
@@ -391,6 +387,7 @@ messages:
 
       plMinibosses = [&GroundWormQueen,
                       &OrcPitBoss,
+					  &GiantDaemonSkeleton,
                       &DragonFlyQueen,
                       &Shadowbeast,
                       &SpiderQueen,
@@ -413,9 +410,10 @@ messages:
                         [&DaemonMask,40],
                         [&FeyMask,50],
                         [&XeoMask,60],
-                        [&KriipaMask,70],
-                        [&StoneTrollMask,80],
-                        [&CowMask,90],
+                        [&FarenCharm,100],
+                        [&RiijaCharm,100],
+                        [&ShalilleCharm,100],
+                        [&QorCharm,100],
                         [&KraananCharm,100]];
 
       Send(self,@RecalcLightAndWeather);

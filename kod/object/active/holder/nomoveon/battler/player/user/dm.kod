@@ -89,7 +89,6 @@ resources:
    
    // Item color commands for targetted item   
    dm_color_command="color"
-   dm_get_robes_command = "get robes"
    
    dm_get_spells_command = "get spells"
    dm_get_skills_command = "get skills"
@@ -128,6 +127,10 @@ resources:
    dm_get_misc_command = "get misc"
    dm_get_weapons_command = "get weapons"
    dm_get_armor_command = "get armor"
+   dm_get_helmets_command = "get helmets"
+   dm_get_shields_command = "get shields"
+   dm_get_clothes_command = "get clothes"
+   dm_get_robes_command = "get robes"
    dm_get_food_command = "get food"
    dm_get_reagents_command = "get reagents"
    dm_get_gems_command = "get gems"
@@ -141,6 +144,7 @@ resources:
    dm_get_potions_command = "get potions"
    dm_get_scrolls_command = "get scrolls"
    dm_get_masks_command = "get masks"
+   
    dm_hidden_command = "hidden"
    dm_blank_command = "blank"
 
@@ -2762,6 +2766,22 @@ messages:
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_ARMOR);
       }
+      else if StringEqual(string,dm_get_helmets_command)
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_HELMET);
+      }
+      else if StringEqual(string,dm_get_shields_command)
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_SHIELD);
+      }
+      else if StringEqual(string,dm_get_clothes_command)
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_CLOTHES);
+      }
+      else if StringEqual(string,dm_get_robes_command)
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_ROBES);
+      }
       else if StringEqual(string,dm_get_food_command)
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_FOOD);
@@ -2828,20 +2848,119 @@ messages:
 
    GetOneOfEach(type=ITEMTYPE_MISC)
    {
-      local lTemplate, i, iNumber;
+      local oItem, lTemplate, i, iNumber, bIsHelmet, bIsShield, bIsClothes, bIsRobes;
 
       iNumber = 100;
       if type = ITEMTYPE_MONEY
       {
-         iNumber = 250000;
+         iNumber = 10000000;
       }
+	  
+	  bIsHelmet = FALSE;
+	  bIsShield = FALSE;
+	  bIsClothes = FALSE;
+	  bIsRobes = FALSE;
+	  
+	  if type = ITEMTYPE_HELMET
+	  {
+	     bIsHelmet = TRUE;
+		 type = ITEMTYPE_ARMOR;
+	  }
+
+	  if type = ITEMTYPE_SHIELD
+	  {
+	     bIsShield = TRUE;
+		 type = ITEMTYPE_ARMOR;
+	  }
+	  
+	  if type = ITEMTYPE_CLOTHES
+	  {
+	     bIsClothes = TRUE;
+		 type = ITEMTYPE_ARMOR;
+	  }
+	  
+	  if type = ITEMTYPE_ROBES
+	  {
+	     bIsRobes = TRUE;
+		 type = ITEMTYPE_ARMOR;
+	  }
 
       lTemplate = Send(SYS,@GetItemTemplates);
       foreach i in lTemplate
       {
-         if Send(i,@IsItemType,#type=type)
-            AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
+         if bIsShield OR bIsHelmet OR bIsClothes OR bIsRobes OR (Send(i,@IsItemType,#type=type)
+            AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
          {
+		    // Normal Armor will prevent all of this extra stuff from surfacing.
+		    if NOT bIsShield 
+			   AND NOT bIsHelmet 
+			   AND NOT bIsClothes 
+			   AND NOT bIsRobes 
+			   AND type = ITEMTYPE_ARMOR
+			{
+			   if IsClass(i, &Helmet) 
+			      OR IsClass(i, &Shield) 
+				  OR IsClass(i, &FaceMask)
+				  OR IsClass(i, &ShirtBase)
+				  OR IsClass(i, &DiscipleRobe)
+				  OR IsClass(i, &LightDiscipleRobe)
+				  OR IsClass(i, &TankTop)
+				  OR IsClass(i, &Pants)
+			   {
+			      continue;
+			   }
+			}
+			
+            if bIsHelmet
+			{
+			   if NOT IsClass(i, &Helmet)
+			   {
+			      continue;
+			   }
+			}
+
+		    if bIsShield
+			{
+			   if NOT IsClass(i, &Shield)
+			   {
+			      continue;
+			   }
+			}
+
+		    if bIsClothes
+			{
+			   if NOT IsClass(i, &Pants) AND NOT IsClass(i, &Shirt) AND NOT IsClass(i,&RoyalShirt) AND NOT IsClass(i,&TankTop)
+			   {
+			      continue;
+			   }
+			}
+
+		    if bIsRobes
+			{
+			   if NOT IsClass(i, &DiscipleRobe) AND NOT IsClass(i, &LightDiscipleRobe)
+			   {
+			      continue;
+			   }
+			   			   
+			   // Create all schools!
+               Send(self,@NewHold,#what=Create(GetClass(i),#school=1,#number=1,#oDMCreator=self));
+               Send(self,@NewHold,#what=Create(GetClass(i),#school=2,#number=1,#oDMCreator=self));
+               Send(self,@NewHold,#what=Create(GetClass(i),#school=3,#number=1,#oDMCreator=self));
+               Send(self,@NewHold,#what=Create(GetClass(i),#school=4,#number=1,#oDMCreator=self));
+               Send(self,@NewHold,#what=Create(GetClass(i),#school=5,#number=1,#oDMCreator=self));
+               Send(self,@NewHold,#what=Create(GetClass(i),#school=6,#number=1,#oDMCreator=self));
+			   
+			   break;
+			}
+			
+			if IsClass(i,&Tanktop)
+			{
+			   // Create an exotic tanktop (undershirt) - Female Bra.
+			   oItem = Create(GetClass(i),#number=iNumber,#oDMCreator=self);
+			   Send(oItem, @Exotic);
+               Send(self,@NewHold,#what=oItem);
+			}
+
             Send(self,@NewHold,#what=Create(GetClass(i),#number=iNumber,
                                           #oDMCreator=self));
          }

@@ -110,10 +110,13 @@ messages:
    {
       // Doesn't matter what the second color is, this shield only has
       //  a single translation.
-      Send(self,@SetPaletteTranslation,
-           #translation=Send(SYS,@EncodeTwoColorXLAT,#color1=viColor,
-                             #color2=viColor));
-
+	  if viColor <> $
+	  {
+         Send(self,@SetPaletteTranslation,
+              #translation=Send(SYS,@EncodeTwoColorXLAT,#color1=viColor,
+                                #color2=viColor));
+      }
+	  
       Send(self,@ResetRankLossCount);
 
       propagate;

@@ -11154,14 +11154,31 @@ messages:
 	   
 	   foreach i in lActive
 	   {
+	       if IsClass(First(i),&Monster)
+		   {
+		      if IsClass(First(i),&Revenant) OR IsClass(First(i),&Reflection) OR IsClass(First(i),&Servant)
+			  {
+			     // Let's not fight Revenants, Reflections or Servants.
+			     continue;
+			  }
+		   }
+		   
 		   if IsClass(First(i),&Monster) AND Send(First(i),@GetCurrentState) <> 1
 		   {
 			   if First(i) = poTarget
 			   {
 				   // Do not change targets, we're already on the one from before...
-				//Debug("same target",poTarget,Send(poTarget,@GetName));
+				   //Debug("same target",poTarget,Send(poTarget,@GetName));
 				   
 				   return TRUE;
+			   }
+			   
+			   if poOwner <> $ AND IsClass(poOwner, &MonsterRoom) AND Send(poOwner,@IsMiniBoss,#what=First(i)) OR Send(poOwner,@IsBoss,#what=First(i))
+			   {
+			      // This target is a mini boss, let's always go after them first.
+				  oNewTarget = First(i);
+				  
+				  break;
 			   }
 			   
 			   iFlags = Send(First(i),@GetObjectFlags,#what=self);
@@ -11203,7 +11220,7 @@ messages:
 	   
 	   if poTarget <> $ AND NOT bAutoAttacking
 	   {
-		   tAutoAttack = CreateTimer(self,@AttackMonster,500);
+		   tAutoAttack = CreateTimer(self,@AttackMonster,2000);
 		   bAutoAttacking = TRUE;
 	   }
 	   
@@ -11241,15 +11258,15 @@ messages:
 	   {
 	       iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
 		   
-		   if iDistance <> $ AND iDistance < 2
+		   if iDistance <> $ AND iDistance < 10
 		   {
 		      // We need to be close enough to attack.
 		      bMonsterAttacked = Send(self,@UserAttack,#what=poTarget);
 		   
 		      if NOT bMonsterAttacked
 		      {
-			      // Probably can't see target
-			   Send(self,@MoveTowards,#oTarget=poTarget);
+			     // Probably can't see target
+			     Send(self,@MoveTowards,#oTarget=poTarget);
 		      }
 		   }
 		   
@@ -11325,7 +11342,7 @@ messages:
 	   }
 	   
 	   // Continue the automatic fighting cycle...
-	   Send(self,@AsMonsterContinue);
+	   Send(self,@AsMonsterContinue,#iInterval=3000);
 	   	   
 	   return;
    }
@@ -11345,7 +11362,7 @@ messages:
 	   	   
 	   bMonsterMode = TRUE;
 	   
-	   Send(self,@AsMonsterContinue);
+	   Send(self,@AsMonsterContinue,#iInterval=3000);
 	   
 	   return;
    }

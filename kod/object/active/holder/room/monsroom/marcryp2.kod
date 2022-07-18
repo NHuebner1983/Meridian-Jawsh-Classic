@@ -65,7 +65,7 @@ properties:
 
    piInit_count_min = 1
    piInit_count_max = 3
-   piMonster_count_max = 25
+   piMonster_count_max = 40
 
    // What locations do we want to spawn states at?  Each element is a
    //  [row, col, direction] triplet.
@@ -184,8 +184,11 @@ messages:
 
    SomethingKilled(what = $,victim = $)
    {
-      if IsClass(victim,&LivingStatue)
-         AND Send(self,@FindHoldingActive,#class=&LivingStatue,#sequence=2) = $
+      // All statues must be removed for DM/normal players.
+	  // Roaming NPCPlayers trigger the door to open on first kill.
+      if (IsClass(what, &Player) AND Send(what, @IsRoamingNPCPlayer))
+	     OR (IsClass(victim,&LivingStatue)
+             AND Send(self,@FindHoldingActive,#class=&LivingStatue,#sequence=2) = $)
       {
          Send(self,@OpenSecondaryDoorDown);
       }

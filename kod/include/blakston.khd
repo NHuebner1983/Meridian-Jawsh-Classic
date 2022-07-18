@@ -478,6 +478,8 @@
    RID_TOS = 50
    RID_TOS_SMITHY = 51
    RID_TOS_INN = 52
+   RID_FAMILIARS = 52
+   RID_FAMS = 52
    RID_TOS_APOTH = 53
    RID_TOS_BANK = 54
    RID_TOS_ABANDONED = 55
@@ -1865,6 +1867,10 @@
    ITEMTYPE_MISC =     0
    ITEMTYPE_WEAPON =   0x000001
    ITEMTYPE_ARMOR =    0x000002
+   ITEMTYPE_HELMET =   0x000021
+   ITEMTYPE_SHIELD =   0x000022
+   ITEMTYPE_CLOTHES =  0x000023
+   ITEMTYPE_ROBES   =  0x000024
    ITEMTYPE_FOOD =     0x000004
    ITEMTYPE_REAGENT =  0x000008
    ITEMTYPE_GEM =      0x000010
@@ -2740,11 +2746,18 @@
    FACTION_DUKE        = 1
    FACTION_PRINCESS    = 2
    FACTION_REBEL       = 3
+   
    // Normal max is the standard factions.
    FACTION_NORMAL_MAX  = 3
+   
    // Necromancer faction currently only used for necro shield handling.
    FACTION_NECROMANCER = 4
-   FACTION_MAX         = 4
+   
+   // Shal'ille's Army (SoTH holders vs. AO3 holders)
+   FACTION_HOLY        = 5
+   
+   // Max number of factions
+   FACTION_MAX         = 5
 
    PARLIAMENT_SIZE = 5
 
@@ -3738,3 +3751,6 @@
    NPC_PLAYER_ANCIENT = 6
    NPC_PLAYER_HOLY = 7
    NPC_PLAYER_UNHOLY = 8
+   
+   // Survival NPC Players (multiple can match the same type).
+   NPC_PLAYER_SURVIVAL = 9

@@ -396,6 +396,7 @@ properties:
    plWantedItems = $
    // List of items offered to the player by buyer.
    plOffer_items = $
+   poOffer_who = $
    // List of items offered to the player by seller.
    // [item list, skill list, spell list, conditional items (?)]
    plFor_sale = $
@@ -3045,6 +3046,8 @@ messages:
    "offer the value of the items in return."
    {
       local i,j, lArgList, iValueOffered, oQuestNode, bIsBuyer, bWarnAboutUnwantedItems;
+	  
+	  poOffer_who = what;
 
       if item_list = $
       {
@@ -3244,6 +3247,8 @@ messages:
    "We have been given an item on our wanted list. This is either a banker"
    "type, or a quest completion of some kind or an intrigue token."
    {
+      Debug("GotWantedMonster",obj,who);
+	  
       // Handle the kludgy banker interface immediately.
       if (piAttributes & MOB_BANKER) AND IsClass(obj,&Money)
       {

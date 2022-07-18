@@ -87,6 +87,16 @@ messages:
 
       propagate;
    }
+   
+   IsBoss()
+   {
+      return FALSE;
+   }
+   
+   IsMiniBoss()
+   {
+      return FALSE;
+   }
 
    GetMonsterList()
    {

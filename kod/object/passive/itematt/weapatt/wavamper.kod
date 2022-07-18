@@ -34,7 +34,7 @@ resources:
    Vamper_fail_use = "You are not ready to use %s%s."
    Vamper_fail_use_karma = \
       "You are not unholy enough to wield this despotic thing."
-   vamper_worked = "%s%s shudders as %s life is sucked away!"
+   vamper_worked = "%s%s shudders as their life is sucked away!"
    vamper_worked_target = \
       "%s%s seems enervated as the metal of %s weapon touches your flesh!"
    vamper_info_desc = "10%% chance to gain up to 8 health on hit\n"
@@ -81,11 +81,9 @@ messages:
          Send(wielder,@GainHealth,
                #amount=Bound(damage,piMinHealthGain,piMaxHealthGain));
          Send(wielder,@MsgSendUser,#message_rsc=vamper_worked,
-               #parm1=send(target,@GetCapDef),#parm2=Send(target,@GetName),
-               #parm3=send(target,@GetHisHer));
+               #parm1=send(target,@GetCapDef),#parm2=Send(target,@GetName));
          Send(target,@MsgSendUser,#message_rsc=vamper_worked_target,
-               #parm1=Send(wielder,@GetCapDef),#parm2=Send(wielder,@GetName),
-               #parm3=Send(wielder,@GetHisHer));
+               #parm1=Send(wielder,@GetCapDef),#parm2=Send(wielder,@GetName));
       }
 
       return damage;

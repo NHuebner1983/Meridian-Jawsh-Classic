@@ -218,6 +218,7 @@ messages:
       iFlags = piItem_flags & ITEM_PALETTE_MASK;
       if iFlags <> 0
       {
+	     Debug("Flags",iFlags,Send(self,@GetName));
          AddPacket(1,ANIMATE_TRANSLATION, 1,iFlags);
       }
 

@@ -75,6 +75,9 @@ properties:
    prInsignia_female = disciplerobe_riija_female
    piDefense_bonus = 5
    pbImmortalColor = TRUE
+   
+   // We'll set the color of the robe here instead of the robebase.kod.
+   pbColorSet = FALSE
 
 messages:
 
@@ -86,9 +89,60 @@ messages:
       }
 
       Send(self,@SetSchool,#school=school);
-      Send(self,@SetXLATTranslation,#translation=viXLAT_no_knowledge);
+	  
+	  // Instead of showing a blue kraanan robe, we'll show the lvl 5 of the robe
+	  // So its recognizable easier by the user who picks it up.
+	  Send(self,@SetRobeColorAsMaster);
 
       propagate;
+   }
+   
+   SetRobeColorAsMaster()
+   {
+      if piSchool = SS_JALA
+	  {
+         Send(self,@SetPaletteTranslation,
+            #translation=Send(SYS,@EncodeTwoColorXLAT,#color1=viXLAT_jala_master,
+                              #color2=XLAT_TO_SKIN1));
+	     pbColorSet = TRUE;
+	  }
+	  else if piSchool = SS_FAREN
+	  {
+         Send(self,@SetPaletteTranslation,
+            #translation=Send(SYS,@EncodeTwoColorXLAT,#color1=viXLAT_faren_master,
+                              #color2=XLAT_TO_SKIN1));
+	     pbColorSet = TRUE;
+	  }
+	  else if piSchool = SS_KRAANAN
+	  {
+         Send(self,@SetPaletteTranslation,
+            #translation=Send(SYS,@EncodeTwoColorXLAT,#color1=viXLAT_kraanan_master,
+                              #color2=XLAT_TO_SKIN1));
+	     pbColorSet = TRUE;
+	  }
+	  else if piSchool = SS_SHALILLE
+	  {
+         Send(self,@SetPaletteTranslation,
+            #translation=Send(SYS,@EncodeTwoColorXLAT,#color1=viXLAT_shalille_master,
+                              #color2=XLAT_TO_SKIN1));
+	     pbColorSet = TRUE;
+	  }
+	  else if piSchool = SS_QOR
+	  {
+         Send(self,@SetPaletteTranslation,
+            #translation=Send(SYS,@EncodeTwoColorXLAT,#color1=viXLAT_qor_master,
+                              #color2=XLAT_TO_SKIN1));
+	     pbColorSet = TRUE;
+	  }
+	  else if piSchool = SS_RIIJA
+	  {
+         Send(self,@SetPaletteTranslation,
+            #translation=Send(SYS,@EncodeTwoColorXLAT,#color1=viXLAT_riija_master,
+                              #color2=XLAT_TO_SKIN1));
+	     pbColorSet = TRUE;
+	  }
+	  
+	  return;
    }
 
    GetBaseSpellModifier(oSpell=$)
