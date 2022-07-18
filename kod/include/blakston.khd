@@ -2746,11 +2746,18 @@
    FACTION_DUKE        = 1
    FACTION_PRINCESS    = 2
    FACTION_REBEL       = 3
+   
    // Normal max is the standard factions.
    FACTION_NORMAL_MAX  = 3
+   
    // Necromancer faction currently only used for necro shield handling.
    FACTION_NECROMANCER = 4
-   FACTION_MAX         = 4
+   
+   // Shal'ille's Army (SoTH holders vs. AO3 holders)
+   FACTION_HOLY        = 5
+   
+   // Max number of factions
+   FACTION_MAX         = 5
 
    PARLIAMENT_SIZE = 5
 

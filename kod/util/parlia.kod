@@ -44,17 +44,23 @@ resources:
    parliament_Duke_name = "Duke Akardius"
    parliament_Princess_name = "Princess Kateriina"
    parliament_Rebel_name = "Jonas D'Accor"
+   parliament_Necro_name = "Queen Venya'Cyr"
+   parliament_Holy_name = "Shal'ille"
 
    // Not used currently
    parliament_nodukeprice_down = "~IPerhaps if you served %s, you would obtain better prices."
    parliament_nodukedam_down = "~IIf you served %s, you might get shown tricks to help you do more damage."
    parliament_noprinhit_down = "~IIf you followed Princess Kateriina, you might get shown tricks to help you hit more often."
    parliament_noprinlearn_down = "~IPerhaps if you followed Princess Kateriina, she would show you how to learn faster."
+   parliament_nonecrolearn_down = "~IPerhaps if you followed Queen Venya'Cyr, she would improve your abilities in dark magic."
+   parliament_noholylearn_down = "~IPerhaps if you followed Shal'ille, she would improve your abilities in holy magic."
 
    neutral_faction_preface="Currently at the Court, the unfactioned %s."
    duke_faction_preface="I've heard that the Duke and his servants now %s."
    princess_faction_preface="Have you heard that lately Princess Kateriina and her followers %s?"
    rebel_faction_preface="The rumors about Jonas say his rebels %s"
+   necro_faction_preface="The rumors about Queen Venya'Cyr say her necromancers %s"
+   holy_faction_preface="The rumors about Shal'ille say her followers %s"
 
    strongly_in_suffix="wield unsurpassable influence with the Meridian Council"
    in_power_suffix="show considerable influence in the decisions of the Meridian Council"
@@ -106,6 +112,8 @@ properties:
    piPrincessPower = 0
    piDukePower = 0
    piRebelPower = 0
+   piNecroPower = 0
+   piHolyPower = 0
 
    piTotalPowerPoints = 0
 
@@ -131,6 +139,8 @@ properties:
    piNumberOfDuke = 0
    piNumberOfRebel = 0
    piNumberOfNeutral = 0
+   piNumberOfNecro = 0
+   piNumberOfHoly = 0
 
 messages:
 
@@ -159,7 +169,7 @@ messages:
       Send(who,@ReceiveNestedMail,#from=parliament_name,
            #dest_list=[who],#nest_list=[4,parliament_info_mail,
            4,piNumberOfPrincess,4,piNumberOfDuke,4,piNumberOfRebel,4,piNumberOfNeutral,4,piNumberOfIntriguers,
-           4,piPrincessPower,4,piDukePower,4,piRebelPower,4,piNeutralPower]);
+           4,piPrincessPower,4,piDukePower,4,piRebelPower,4,piNecroPower,4,piHolyPower,4,piNeutralPower]);
            
       return;
    }
@@ -207,7 +217,7 @@ messages:
          Send(self,@DeleteLieges);
       }
       
-      i = FACTION_NORMAL_MAX;
+      i = FACTION_MAX;
       while i > FACTION_NEUTRAL
       {
          plLieges=Cons(Create(Send(self,@FactionLiegeClass,#num=i)),plLieges);
@@ -241,7 +251,7 @@ messages:
    {
       local i;
       
-      i = FACTION_NORMAL_MAX;
+      i = FACTION_MAX;
       while i >= FACTION_NEUTRAL
       {
          plFactions=Cons([i,$],plFactions);
@@ -440,7 +450,7 @@ messages:
       change = FALSE;
       fact = FACTION_NEUTRAL;
       
-      while fact <= FACTION_NORMAL_MAX
+      while fact <= FACTION_MAX
       {
          count = 0;
          power = 0;
@@ -620,6 +630,16 @@ messages:
          piRebelPower = amount;
       }
       
+      if faction = FACTION_NECROMANCER
+      {
+         piNecroPower = amount;
+      }
+
+      if faction = FACTION_HOLY
+      {
+         piHolyPower = amount;
+      }
+
       return;
    }
 
@@ -645,6 +665,16 @@ messages:
          return piRebelPower;
       }
       
+      if faction = FACTION_NECROMANCER
+      {
+         return piNecroPower;
+      }
+
+      if faction = FACTION_HOLY
+      {
+         return piHolyPower;
+      }
+
       return 0;
    }
 
@@ -670,6 +700,16 @@ messages:
          return Send(self,@FigurePowerFromCount,#count=piRebelPower);
       }
       
+      if faction = FACTION_NECROMANCER
+      {
+         return Send(self,@FigurePowerFromCount,#count=piNecroPower);
+      }
+
+      if faction = FACTION_HOLY
+      {
+         return Send(self,@FigurePowerFromCount,#count=piHolyPower);
+      }
+
       return 0;
    }
 
@@ -724,7 +764,7 @@ messages:
       }
       else
       {
-         rnd = Random(FACTION_NEUTRAL, FACTION_NORMAL_MAX);
+         rnd = Random(FACTION_NEUTRAL, FACTION_MAX);
       }
 
       iRumor = random(1,100);
@@ -824,6 +864,16 @@ messages:
          return parliament_Rebel_name;
       }
 
+      if faction = FACTION_NECROMANCER
+      {
+         return parliament_Necro_name;
+      }
+
+      if faction = FACTION_HOLY
+      {
+         return parliament_Holy_name;
+      }
+
       return $;
    }
 
@@ -838,14 +888,14 @@ messages:
       
       iFact = faction;
 
-      if iFact <= 0 OR iFact > FACTION_NORMAL_MAX
+      if iFact <= 0 OR iFact > FACTION_MAX
       {
          iFact = Send(mob,@GetFaction);
       }
 
       if iFact = FACTION_NEUTRAL
       {
-         iFact = Random((FACTION_NEUTRAL + 1),FACTION_NORMAL_MAX);
+         iFact = Random((FACTION_NEUTRAL + 1),FACTION_MAX);
       }
       
       if IsClass(mob,&Factions)
@@ -939,6 +989,16 @@ messages:
                piNumberOfRebel = piNumberOfRebel + 1;
             }
 
+            if iFaction = FACTION_NECROMANCER
+            {
+               piNumberOfNecro = piNumberOfNecro + 1;
+            }
+
+            if iFaction = FACTION_HOLY
+            {
+               piNumberOfHoly = piNumberOfHoly + 1;
+            }
+
             if iFaction = FACTION_NEUTRAL
             {
                piNumberOfNeutral = piNumberOfNeutral + 1;
@@ -966,6 +1026,16 @@ messages:
          return piNumberOfRebel;
       }
 
+      if faction = FACTION_NECROMANCER
+      {
+         return piNumberOfNecro;
+      }
+
+      if faction = FACTION_HOLY
+      {
+         return piNumberOfHoly;
+      }
+
       if faction = FACTION_NEUTRAL
       {
          return piNumberOfNeutral;
@@ -991,6 +1061,16 @@ messages:
       if faction = FACTION_REBEL
       {
          return parliament_Rebel_name;
+      }
+
+      if faction = FACTION_NECROMANCER
+      {
+         return parliament_Necro_name;
+      }
+
+      if faction = FACTION_HOLY
+      {
+         return parliament_Holy_name;
       }
 
       Debug("GetFactionLiege called with a bad faction.");
@@ -1105,6 +1185,8 @@ messages:
    
          if (iFaction <> FACTION_NEUTRAL)
             AND ((iFaction = FACTION_REBEL)
+			     OR (iFaction = FACTION_NECROMANCER)
+				 OR (iFaction = FACTION_HOLY)
                  OR ((iFaction = FACTION_DUKE)
                      AND ((iSchool <> SS_QOR) AND (iSchool <> SS_RIIJA) AND (iSchool <> SS_KRAANAN)))
                  OR ((iFaction = FACTION_PRINCESS)

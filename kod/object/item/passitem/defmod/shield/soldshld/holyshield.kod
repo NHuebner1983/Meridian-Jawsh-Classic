@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-NecromancerShield is SoldierShield
+HolyShield is SoldierShield
 
 // Currently uses Duke shield resources/stat changes. Change this if
 // we ever allow players to access this shield.
@@ -21,21 +21,21 @@ constants:
 
 resources:
 
-   include necshield.lkod
+   include holyshield.lkod
 
-   necshield_name_rsc = "shield of the Necromancer's army"
+   holyshield_name_rsc = "shield of Shal'ille's army"
 
-   necshield_desc_rsc = \
-      "This shield identifies you as an elite soldier of Queen Venya'cyr army."
+   holyshield_desc_rsc = \
+      "This shield identifies you as an elite soldier of Shal'ille's army."
 
-   necshield_ArmyName = "the undead army"
+   holyshield_ArmyName = "the holy army"
 
-   necshield_emblem_over = gshnecov.bgf
-   necshield_emblem_drop = gshnec.bgf
-   necshield_emblem_back = gshnecbk.bgf
+   holyshield_emblem_over = gshshov.bgf
+   holyshield_emblem_drop = gshsh.bgf
+   holyshield_emblem_back = gshshbk.bgf
 
-   necshield_welcome_mail = "Subject: You are now an elite soldier.\n"
-      "Welcome to the undead army.  Your ambition suits you very well.\n\n"
+   holyshield_welcome_mail = "Subject: You are now an elite soldier of light..\n"
+      "Welcome to the holy army.  Your ambition suits you very well.\n\n"
       "There are some rules imposed by those that think themselves above us.  It suits "
       "our purpose to follow these rules for now.\n\n"
       "SOLDIER SHIELD: Your shield shows you as part of my army.  If you lose this "
@@ -56,49 +56,53 @@ resources:
       "ghost to escape combat will also meet with my displeasure.\n\n"
       "ABILITIES: In return for your loyal service, I will give you power!  I will teach "
       "you how to increase your natural mysticism, intellect and strength in combat.  I will also show "
-      "you ways to tap into the evil aspects of magic to boost all your spells.  These "
+      "you ways to tap into the holy aspects of magic to boost all your spells.  These "
       "powers grow as you gain my attention and ranks within the army.\n\n"
       "THE COUNCILORS: The councilors whom we must convince do not wish you soldiers to "
       "interfere with the tokens.  For now, do as they say, for we must gain their trust "
       "if they are to declare me the true ruler I am.  Let one of my followers that is "
       "not a soldier take the token and convince the councilor of our might and our "
-      "right.  Your job for now is to hunt down the followers of the holy army of Shal'ille.  Only soldiers of the undead "
-      "can strike down the holy soldiers of Shal'ille's army.\n\n"
+      "right.  Your job for now is to hunt down the undead army of Queen Venya'Cyr.  Only soldiers of light "
+      "can strike down the unholy soldiers of the Necromancers.\n\n"
       "LOYALTY: Do not bother yourself with tax errands while you are a soldier.  Defeat "
       "our enemies in combat and you will demonstrate all the loyalty I need.\n\n"
-      "We will rid the land of good.  You have given your support wisely.\n\n"
-      "Queen Venya'Cyr, Necromancer Supreme"
+      "We will rid the land of evil.  You have given your support wisely.\n\n"
+      "Shal'ille, Holy Priestess of Meridian"
 classvars:
 
-   vrName = necshield_name_rsc
-   vrDesc = necshield_desc_rsc
+   vrName = holyshield_name_rsc
+   vrDesc = holyshield_desc_rsc
 
-   prShield_emblem_held = necshield_emblem_over
-   prShield_emblem_drop = necshield_emblem_drop
-   prShield_emblem_back = necshield_emblem_back
+   prShield_emblem_held = holyshield_emblem_over
+   prShield_emblem_drop = holyshield_emblem_drop
+   prShield_emblem_back = holyshield_emblem_back
 
-   viFaction = FACTION_NECROMANCER
-   viColor = XLAT_REDTOBLACK
+   viFaction = FACTION_HOLY
+   viColor = $
 
    // Stuff for rank
-   vrArmyName = necshield_ArmyName
+   vrArmyName = holyshield_ArmyName
 
-   vrWelcomeMessage = necshield_welcome_mail
-
+   vrWelcomeMessage = holyshield_welcome_mail
+   
 properties:
 
    piStaminaChange = 0
    piAgilityChange = 0
+   piItem_flags = 132
 
 messages:
 
    Constructor()
    {
-      Send(self,@SetPaletteTranslation,#translation=viColor);
-
       propagate;
    }
 
+   Constructed()
+   {
+	  propagate;
+   }
+   
    RemoveStats()
    {
       if poOwner <> $
@@ -112,6 +116,11 @@ messages:
       }
 
       return;
+   }
+   
+   GetFaction()
+   {
+      return viFaction;
    }
 
    UpdateRankPowers()
@@ -156,11 +165,6 @@ messages:
       }
 
       return;
-   }
-
-   GetFaction()
-   {
-      return viFaction;
    }
 
    GetBaseSpellModifier(oSpell=$)

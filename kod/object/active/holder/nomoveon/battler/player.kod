@@ -327,6 +327,8 @@ resources:
    player_faction_duke = "A staunch servant of Duke Akardius.\n"
    player_faction_princess = "Firmly loyal to Princess Kateriina.\n"
    player_faction_rebel = "A freedom fighter supporting Jonas.\n"
+   player_faction_holy = "Soldier of the Holy Army\n"
+   player_faction_necro = "Soldier of the Undead Army\n"
    player_faction_neutral = \
       "Not a court vassal, yet affected by the Meridian Council."
    player_not_intriguing = "Not yet concerned with affairs at the Royal Court."
@@ -1329,9 +1331,19 @@ messages:
 	  
 	  foreach i in plActive
 	  {
-	     oItem = First(i);
+	     if IsList(i)
+		 {
+	        oItem = First(i);
+		 }
+		 else
+		 {
+		    if i <> $
+			{
+			   oItem = i;
+			}
+		 }
 		 
-		 if oItem <> $ AND IsClass(oItem, class)
+		 if oItem <> $ AND IsObject(oItem) AND IsClass(oItem, class)
 		 {
 		    Send(oItem,@Delete);
 			Debug("Deleted",oItem,"FromInventory");
@@ -2229,6 +2241,14 @@ messages:
       else if (i = FACTION_REBEL)
       {
          AddPacket(4,player_faction_rebel);
+      }
+      else if (i = FACTION_NECROMANCER)
+      {
+         AddPacket(4,player_faction_necro);
+      }
+      else if (i = FACTION_HOLY)
+      {
+         AddPacket(4,player_faction_holy);
       }
       else
       {
@@ -4376,6 +4396,16 @@ messages:
 		 {
 		    iSpace += 1;
 		 }
+
+		 if IsClass(i, &HunterSword)
+		 {
+		    iSpace += 1;
+		 }
+
+		 if IsClass(i, &SoldierShield)
+		 {
+		    iSpace += 1;
+		 }
       }
 
       if iSpace < Send(what,@GetItemUseAmount)
@@ -4406,7 +4436,10 @@ messages:
          }
          else
          {
-            Send(self,@MsgSendUser,#message_rsc=player_use_full);
+		    if NOT IsClass(what, &NecromancerAmulet)
+			{
+               Send(self,@MsgSendUser,#message_rsc=player_use_full);
+			}
          }
 
          return FALSE;
@@ -4418,7 +4451,7 @@ messages:
    TryUseItem(what = $)
    {
       local i,iSpace,iUse_type;
-
+	  
       if Send(self,@IsInCannotInteractMode)
       {
          Send(self,@MsgSendUser,#message_rsc=phased_out_cant_use);
@@ -4480,7 +4513,7 @@ messages:
 
       if NOT Send(what,@ReqUse,#what=self)
       {
-         return FALSE;
+	     return FALSE;
       }
 
       // make sure nothing in room disallows
@@ -4495,7 +4528,7 @@ messages:
       {
          if i = what
          {
-            Send(self,@MsgSendUser,#message_rsc=player_using_already);
+		    Send(self,@MsgSendUser,#message_rsc=player_using_already);
 
             return FALSE;
          }
@@ -13491,7 +13524,7 @@ messages:
       local oSoldierShield;
 
       if faction < FACTION_NEUTRAL
-         OR faction > FACTION_NORMAL_MAX
+         OR faction > FACTION_MAX
       {
          return FALSE;
       }
