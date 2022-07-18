@@ -5417,6 +5417,12 @@ messages:
       
 	  // Servant monster
 	  plMonsterTemplates = cons(create(&Servant),plMonsterTemplates);
+	  plMonsterTemplates = cons(create(&ServantKran),plMonsterTemplates);
+	  plMonsterTemplates = cons(create(&ServantQor),plMonsterTemplates);
+	  plMonsterTemplates = cons(create(&ServantJala),plMonsterTemplates);
+	  plMonsterTemplates = cons(create(&ServantShal),plMonsterTemplates);
+	  plMonsterTemplates = cons(create(&ServantRiija),plMonsterTemplates);
+	  plMonsterTemplates = cons(create(&ServantFaren),plMonsterTemplates);
 
       return;
    }

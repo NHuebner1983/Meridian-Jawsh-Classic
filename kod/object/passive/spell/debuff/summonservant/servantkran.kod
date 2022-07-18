@@ -32,6 +32,7 @@ classvars:
    viSpell_num = SID_KRAN_SERVANT
    viSchool = SS_KRAANAN
    viSpell_level = 1
+   vrServantType = &ServantKran
    
    vrSucceed_wav = servant_kran_sound
 
