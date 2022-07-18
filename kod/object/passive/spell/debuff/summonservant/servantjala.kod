@@ -31,7 +31,7 @@ classvars:
 
    viSpell_num = SID_JALA_SERVANT
    viSchool = SS_JALA
-   viSpell_level = 1
+   vrServantType = &ServantJala
    
    vrSucceed_wav = servant_jala_sound
 

@@ -32,6 +32,7 @@ classvars:
    viSpell_num = SID_FAREN_SERVANT
    viSchool = SS_FAREN
    viSpell_level = 1
+   vrServantType = &ServantFaren
    
    vrSucceed_wav = servant_faren_sound
 
