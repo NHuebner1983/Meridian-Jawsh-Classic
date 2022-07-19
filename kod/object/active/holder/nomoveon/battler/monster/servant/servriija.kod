@@ -1,0 +1,51 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+ServRiija is Servant
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   serv_riija_icon_rsc = riijafol.bgf
+   serv_riija_dead_icon_rsc = riijafolX.bgf
+
+classvars:
+
+properties:
+
+   vrIcon = serv_riija_icon_rsc
+   vrDead_icon = serv_riija_dead_icon_rsc
+
+   poAura = LIGHT_RIIJA
+   piNameColor = 0xB300B3
+
+   piDrawEffectFlag = 0
+
+messages:
+
+   Constructor(iSpellPower=75)
+   {
+      local iResistance, iNegativeResistance;
+	  
+      iResistance = Bound(iSpellPower, 1, 90);
+	  iNegativeResistance = Bound(-iSpellPower, -90, -1);
+
+      Send(self, @SetRiijaSpells);
+      Send(self, @ShockResistance, #amount=iResistance);
+      Send(self, @WeapResistance, #amount=iNegativeResistance);
+	  
+	  propagate;
+   }
+   
+end
+////////////////////////////////////////////////////////////////////////////////

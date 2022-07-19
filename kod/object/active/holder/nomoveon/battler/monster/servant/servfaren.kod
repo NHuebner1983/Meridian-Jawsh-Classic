@@ -1,0 +1,51 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+ServFaren is Servant
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   serv_faren_icon_rsc = faerie-g.bgf
+   serv_faren_dead_icon_rsc = faerieXG.bgf
+
+classvars:
+
+properties:
+
+   vrIcon = serv_faren_icon_rsc
+   vrDead_icon = serv_faren_dead_icon_rsc
+   
+   poAura = LIGHT_FAREN
+   piNameColor = 0xFF0000
+
+messages:
+
+   Constructor(iSpellPower=75)
+   {
+      local iResistance, iNegativeResistance;
+	  
+	  Debug("Faren Constructor",iSpellPower);
+	  
+      iResistance = Bound(iSpellPower, 1, 90);
+	  iNegativeResistance = Bound(-iSpellPower, -90, -1);
+   
+      Send(self, @SetFarenSpells);
+      Send(self, @NatureResistance, #amount=iResistance);
+      Send(self, @WeapResistance, #amount=iNegativeResistance);
+	  
+	  propagate;
+   }
+   
+end
+////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,51 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+ServQor is Servant
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   serv_qor_icon_rsc = faerie-g.bgf
+   serv_qor_dead_icon_rsc = faerieXG.bgf
+
+classvars:
+
+properties:
+
+   vrIcon = serv_qor_icon_rsc
+   vrDead_icon = serv_qor_dead_icon_rsc
+
+   poAura = LIGHT_QOR
+   piDrawfx = DRAWFX_BLACK
+   piNameColor = 0
+
+messages:
+
+   Constructor(iSpellPower=75)
+   {
+      local iResistance, iNegativeResistance;
+	  
+      iResistance = Bound(iSpellPower, 1, 90);
+	  iNegativeResistance = Bound(-iSpellPower, -90, -1);
+
+      Send(self, @SetQorSpells);
+      Send(self, @HolyResistance, #amount=iNegativeResistance);
+      Send(self, @UnholyResistance, #amount=iResistance);
+      Send(self, @WeapResistance, #amount=iNegativeResistance);
+	  
+	  propagate;
+   }
+   
+end
+////////////////////////////////////////////////////////////////////////////////
