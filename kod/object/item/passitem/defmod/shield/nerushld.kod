@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include nerushld.lkod
+   
    neruditeshield_name_rsc = "nerudite shield"
    neruditeshield_icon_rsc = nerushld.bgf
    neruditeshield_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include cmask.lkod
+   
    CircleMask_name_rsc = "worker mask"
    CircleMask_icon_male_rsc = squidc.bgf
    CircleMask_icon_female_rsc = squidc.bgf

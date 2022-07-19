@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mimic.lkod
+   
    mimic_koc_name_rsc = "mimnoc"
    mimic_name_rsc = "mimic"
    mimic_icon_rsc = amoeba.bgf

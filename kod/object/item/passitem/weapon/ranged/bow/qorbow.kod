@@ -26,6 +26,8 @@ constants:
    
 resources:
 
+    include qorbow.lkod
+	
 	QorBow_name_rsc = "qor bow"
 	QorBow_desc_rsc = \
 	   "A foul stinch emits from a bloody handprint which can "

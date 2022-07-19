@@ -1,0 +1,6 @@
+   ogre_name_rsc = de "Der Oger"
+   ogre_desc_rsc = de \
+      "Dieses riesige Geschöpf treibt die Angst in die Herzen jedermanns "
+      "die zufällig auf ihn stoßen. Die Oger sind bekannt dafür, eher gewalttätig "
+      "als freundlich zu sein.  "
+   ogre_dead_name_rsc = de "ein toter Oger"

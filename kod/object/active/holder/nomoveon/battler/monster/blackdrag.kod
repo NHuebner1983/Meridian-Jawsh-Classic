@@ -16,6 +16,9 @@ constants:
 
 resources:
 
+   include blackdrag.lkod
+   
+   
    BlackDragon_name_rsc = "black dragon"
    BlackDragon_icon_rsc = blckdrag.bgf
    BlackDragon_desc_rsc = \

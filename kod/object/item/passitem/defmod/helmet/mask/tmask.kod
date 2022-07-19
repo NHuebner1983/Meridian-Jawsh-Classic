@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tmask.lkod
+   
    TriangleMask_name_rsc = "soldier mask"
    TriangleMask_icon_male_rsc = squidt.bgf
    TriangleMask_icon_female_rsc = squidt.bgf

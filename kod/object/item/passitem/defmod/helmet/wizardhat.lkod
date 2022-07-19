@@ -1,0 +1,6 @@
+   wiz_name_rsc = de "Der Zauberhut"
+   wiz_desc_rsc = de \
+      "Geflochten aus dem Netz der Spinnenkönigin wurde diesem Hut "
+  	  "die Zauberkraft von %s eingearbeitet. Auch wenn man sich "
+      "beim Tragen dieses Hutes wohl fühlt, so sollte man keiner offenen "
+	  "Flamme zu Nahe treten.

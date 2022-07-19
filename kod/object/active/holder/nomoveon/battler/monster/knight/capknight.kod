@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include capknight.lkod
+
    capknight_name_rsc = "Undead Captain"
    capknight_icon_rsc = Cknight.bgf
    capknight_desc_rsc = \
