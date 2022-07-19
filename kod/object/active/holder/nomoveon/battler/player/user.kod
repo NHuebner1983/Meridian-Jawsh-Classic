@@ -11018,8 +11018,8 @@ messages:
 	  //Debug(Send(self,@GetName),"moving towards object",Send(oTarget,@GetName));
 	  
       return Send(self, @MoveTowardsCoords,
-                   #iRow=Send(oTarget,@GetRow),
-                   #iCol=Send(oTarget,@GetCol),
+                   #iRow=Send(oTarget,@GetRow) - 1,
+                   #iCol=Send(oTarget,@GetCol) - 1,
                    #iFineRow=Send(oTarget,@GetFineRow),
                    #iFineCol=Send(oTarget,@GetFineCol),
                    #face_target=TRUE);

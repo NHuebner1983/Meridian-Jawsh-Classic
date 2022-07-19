@@ -68,6 +68,7 @@ resources:
       "our enemies in combat and you will demonstrate all the loyalty I need.\n\n"
       "We will rid the land of evil.  You have given your support wisely.\n\n"
       "Shal'ille, Holy Priestess of Meridian"
+	  
 classvars:
 
    vrName = holyshield_name_rsc
