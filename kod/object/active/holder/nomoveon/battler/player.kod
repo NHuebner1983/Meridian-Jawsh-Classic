@@ -7151,7 +7151,12 @@ messages:
    "Find the first instance of 'class' that player has equipped. "
    "Returns $ if nothing is found."
    {
-      return GetListElemByClass(plUsing,class);
+      if IsList(plUsing)
+	  {
+         return GetListElemByClass(plUsing,class);
+	  }
+	  
+	  return $;
    }
 
    FindHaving(class=$)

@@ -13,6 +13,7 @@ Servant is Monster
 constants:
 
    include blakston.khd
+   include protocol.khd
    
    // Distance from master before we abandon the fight
    RETREAT_DISTANCE = 100
@@ -465,7 +466,7 @@ messages:
    // Send these values when you use the Create(&Servant, #...) function.
    Constructor(who = $, oSpell = $, iSpellNum = $, iSpellPower = $)
    {
-      local iStats, iResistance, iNegativeResistance;
+      local iStats;
 	  
 	  if who = $ OR NOT IsClass(who, &Player)
 	  {
@@ -496,68 +497,12 @@ messages:
  	  piPlayerDamage = Bound(piSpellPower / 4, 1, 25) * 100;
 	  piMonsterDamage = Bound(piSpellPower / 4, 1, 25) * 100;
 	  
-	  // Resistances based on spell power.
-      iResistance = Bound(iSpellPower, 1, 90);
-	  iNegativeResistance = Bound(-iSpellPower, -90, -1);
-	  
 	  // Stats based on spell power.
 	  iStats = Bound(iSpellPower / 2, 1, 50);
 	  
 	  // Aim & Agility are the main stats for the servant.
 	  piAim = iStats;
 	  piAgility = iStats;
-	  
-      switch(iSpellNum) {
-		case SID_RIIJA_SERVANT:
-		   Send(self, @SetRiijaSpells);
-		   Send(self, @ShockResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_RIIJA;
-		   piNameColor = 0xB300B3;
-		break;
-		case SID_FAREN_SERVANT:
-		   Send(self, @SetFarenSpells);
-		   Send(self, @NatureResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_FAREN;
-		   piNameColor = 0xFF0000;
-		break;
-		case SID_KRAN_SERVANT:
-		   Send(self, @SetKranSpells);
-		   Send(self, @HolyResistance, #amount=iResistance);
-		   Send(self, @UnholyResistance, #amount=iResistance);
-		   Send(self, @NatureResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iResistance);
-		   poAura = LIGHT_KRAANAN;
-		   piNameColor = 0x0078FF;
-		break;
-		case SID_SHAL_SERVANT:
-		   Send(self, @SetShalSpells);
-		   Send(self, @UnholyResistance, #amount=iNegativeResistance);
-		   Send(self, @HolyResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_SHALILLE;
-		   piNameColor = 0xFFFFFF;
-		break;
-		case SID_QOR_SERVANT:
-		   Send(self, @SetQorSpells);
-		   Send(self, @HolyResistance, #amount=iNegativeResistance);
-		   Send(self, @UnholyResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_QOR;
-		   piDrawfx = DRAWFX_BLACK;
-		   piNameColor = 0;
-		break;
-		case SID_JALA_SERVANT:
-		   Send(self, @SetJalaSpells);
-		   Send(self, @HolyResistance, #amount=iResistance);
-		   Send(self, @UnholyResistance, #amount=iResistance);
-		   Send(self, @NatureResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_JALA;
-		   piNameColor = 0x00FF00;
-		break;
-	  }
       
 	  // Prepare player's servant resources
 	  // feed me, heal me, mystify me
