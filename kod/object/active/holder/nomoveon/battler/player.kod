@@ -9496,21 +9496,21 @@ messages:
          // 25// XP for any other group member kill.
          // 25// XP for monsters at the same level as the player.
          // 10// XP for monsters 1-4HP lower than the player.
-         if monster_level > iMaxHealth
+         if monster_level >= iMaxHealth
          {
+            // Add any item XP bonuses here. Have to get the kill, and
+            // either take damage or dodge to gain bonus XP.
+            foreach i in plUsing
+            {
+               iItemBonus = iItemBonus + Send(i,@GetItemXPBonus);
+            }
+
             if killing_blow
                AND ((piFlags & PFLAG_TOOK_DAMAGE)
                   OR (piFlags & PFLAG_DODGED))
             {
-               // Player took damage and landed killing blow
+			   // Gain extra XP for the killing blow.
                iXP = monster_level;
-
-               // Add any item XP bonuses here. Have to get the kill, and
-               // either take damage or dodge to gain bonus XP.
-               foreach i in plUsing
-               {
-                  iItemBonus = iItemBonus + Send(i,@GetItemXPBonus);
-               }
             }
             else
             {
@@ -9679,12 +9679,10 @@ messages:
          // either reached the max, or a multiple of 100.
          if piTraining_points > 999
          {
-            if piInform
-            {
-               Send(self,@MsgSendUser,#message_rsc=player_reached_maxtraining,
-                  #parm1=piTraining_points);
-               piInform = FALSE;
-            }
+		    // Always notify the user they are over max TP.
+            Send(self,@MsgSendUser,#message_rsc=player_reached_maxtraining,
+               #parm1=piTraining_points);
+            piInform = FALSE;
          }
          else if piTraining_points % 100 = 0
                AND piTraining_points <> 0

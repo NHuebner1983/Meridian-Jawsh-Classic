@@ -68,6 +68,7 @@ resources:
       "our enemies in combat and you will demonstrate all the loyalty I need.\n\n"
       "We will rid the land of good.  You have given your support wisely.\n\n"
       "Queen Venya'Cyr, Necromancer Supreme"
+	  
 classvars:
 
    vrName = necshield_name_rsc
