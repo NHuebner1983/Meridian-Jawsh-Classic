@@ -76,7 +76,11 @@ resources:
    system_user_killed_token = "~B~U~k[###]~n ~B~v%q lost a token to %s%q."
    system_user_killed_arena = \
       "~B~U~k[###]~n ~B~v%q was bested in combat by %s%q."
-   system_user_killed_shield = "~B~U~k[###]~n ~B~v%q was bested by faction rival %s%q."
+   system_user_killed_shield_duke = "~B~U~k[###]~n ~B~v%q was killed in the name of Duke Akardius by faction rival %s%q."
+   system_user_killed_shield_rebel = "~B~U~k[###]~n ~B~v%q was killed in the name of Jonas D'Accor by faction rival %s%q."
+   system_user_killed_shield_princess = "~B~U~k[###]~n ~B~v%q was killed in the name of Princess Kateriina by faction rival %s%q."
+   system_user_killed_shield_unholy = "~B~U~k[###]~n ~B~v%q was defiled in the name of Queen Venya'Cyr by faction rival %s%q."
+   system_user_killed_shield_holy = "~B~U~k[###]~n ~B~v%q was smited in the name of Shal'ille by faction rival %s%q."
    system_user_killed_guild = \
       "~B~U~k[###]~n ~B~v%q of %s%q has been slaughtered by %s%q of %s%q in guild combat."
       
@@ -1847,7 +1851,14 @@ messages:
             if oSoldierShield <> $
                AND Send(oSoldierShield,@IsEnemyAttack,#what=killer)
             {
-               rMessage = system_user_killed_shield;
+			   // All of the factions supported.
+			   // New factions must be added here!
+			   if Send(killer, @FindUsing,#class=&DukeShield) { rMessage = system_user_killed_shield_duke; }
+			   if Send(killer, @FindUsing,#class=&PrincessShield) { rMessage = system_user_killed_shield_princess; }
+			   if Send(killer, @FindUsing,#class=&RebelShield) { rMessage = system_user_killed_shield_rebel; }
+			   if Send(killer, @FindUsing,#class=&HolyShield) { rMessage = system_user_killed_shield_holy; }
+			   if Send(killer, @FindUsing,#class=&NecromancerShield) { rMessage = system_user_killed_shield_unholy; }
+
                // Parameters set by default
             }
 

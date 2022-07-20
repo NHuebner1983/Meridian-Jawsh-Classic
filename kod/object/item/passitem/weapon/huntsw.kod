@@ -157,6 +157,11 @@ messages:
       propagate;
    }
 
+   GetBaseSpellModifier(oSpell=$)
+   {
+      return 0;
+   }
+   
    // If the SOTH does not have an owner, let's remove it from the system.
    Reset()
    {

@@ -568,7 +568,7 @@ messages:
 
    GetBaseSpellModifier(oSpell=$)
    {
-      return 20;
+      return 0;
    }
    
    AdjustColor()

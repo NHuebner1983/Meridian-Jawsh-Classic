@@ -14,7 +14,11 @@ system_user_killed_bridge_faith = de \
 system_user_killed_token = de "~B~U~k[###]~n ~B~v%q hat ein Artefakt an %s%q verloren."
 system_user_killed_arena = de \
       "~B~U~k[###]~n ~B~v%q wurde von %s%q im Kampf in der Arena des Todes besiegt."
-system_user_killed_shield = de "~B~U~k[###]~n ~B~v%q wurde vom Fraktionsrivalen %s%q besiegt."
+system_user_killed_shield_duke = de "~B~U~k[###]~n ~B~v%q was killed in the name of Duke Akardius by faction rival %s%q."
+system_user_killed_shield_rebel = de "~B~U~k[###]~n ~B~v%q was killed in the name of Jonas D'Accor by faction rival %s%q."
+system_user_killed_shield_princess = de "~B~U~k[###]~n ~B~v%q was killed in the name of Princess Kateriina by faction rival %s%q."
+system_user_killed_shield_unholy = de "~B~U~k[###]~n ~B~v%q was smited in the name of Shal'ille by faction rival %s%q."
+system_user_killed_shield_holy = de "~B~U~k[###]~n ~B~v%q was defiled in the name of Queen Venya'Cyr by faction rival %s%q."
 system_user_killed_guild = de \
    "~B~U~k[###]~n ~B~v%q (%s%q) wurde von %s%q (%s%q) im Gildenkampf niedergestreckt."
 guildwar_kill_title1 = de " has slaughtered "
