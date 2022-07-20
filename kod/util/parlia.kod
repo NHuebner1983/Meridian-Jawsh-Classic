@@ -199,7 +199,7 @@ messages:
       // Delete the old faction lieges
       if plLieges<>$
       { 
-         foreach i in plLieges { Send(i,@Delete); }
+         foreach i in plLieges { if i <> $ { Send(i,@Delete); } }
       }
       
       plLieges=$;
@@ -217,7 +217,7 @@ messages:
          Send(self,@DeleteLieges);
       }
       
-      i = FACTION_MAX;
+      i = FACTION_NORMAL_MAX;
       while i > FACTION_NEUTRAL
       {
          plLieges=Cons(Create(Send(self,@FactionLiegeClass,#num=i)),plLieges);

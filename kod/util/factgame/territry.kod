@@ -912,7 +912,12 @@ messages:
       }
 
       iCount = faction + 1;
-      iFactionTotal = Nth(plFlagCounts,iCount);
+	  
+	  if iCount <= Length(plFlagCounts)
+	  {
+         iFactionTotal = Nth(plFlagCounts,iCount);
+	  }
+	  
       if iFlagTotal = 0
       {
          return 0;
