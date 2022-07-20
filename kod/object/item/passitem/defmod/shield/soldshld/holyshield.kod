@@ -109,6 +109,13 @@ messages:
 	  propagate;
    }
    
+   GetResistanceModifiers()
+   {
+      return [ [ ATCK_WEAP_ALL, 10],
+               [-ATCK_SPELL_UNHOLY,-25]
+             ];
+   }
+   
    RemoveStats()
    {
       if poOwner <> $
