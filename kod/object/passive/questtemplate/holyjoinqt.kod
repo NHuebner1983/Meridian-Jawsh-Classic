@@ -1,0 +1,176 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+/////////////////////////////////////////////////////////////////////////////////
+HolyJoinQuest is QuestTemplate
+// QST_ID_HOLY_JOIN = xx
+// Quest nodes xxx, xxx
+// QNT_ID_HOLY_JOIN_ONE, QNT_ID_HOLY_JOIN_TWO
+
+// QuestTemplate is
+// [ quest template index
+//   quest template object
+//   number of players,
+//   type of quest,
+//   eligible player restrictions,
+//   quest nodes,
+//   max number active,
+//   currently active quests,
+//   percent chance of scheduling (on timer firing)
+//   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+   
+   // TODO: Tyrant translations
+   //include holyjoinqt.lkod
+
+   // Quest description.
+   holyjoin_icon_rsc = shalliege.bgf
+   holyjoin_name_rsc = "holy army join faction quest"
+   holyjoin_desc_rsc = \
+      "Before Shal'ille will let you join her ranks, she must be convinced "
+      "you are not a mainland traitor. Bring her an item, and you will gain her trust."
+
+   holyjoin_deliver_rsc = \
+      "Before Shal'ille will let you join her ranks, she must be convinced "
+      "you are not a mainland traitor. Bring her %s%s, and you will gain her trust."
+
+   holyjoin_completed = \
+      "You have earnt the trust of Shal'ille, and are now a member "
+      "of her faction."
+
+   // Quest resources.
+   holy_join2_assign = \
+      "You wish to join the fight against evil? Prove your worthiness by bringing "
+      "me %INDEF_CARGO%CARGO."
+   holy_join2_success = \
+      "Excellent work!  This will prove to be useful in battle.  "
+      "Consider yourself one of the Holy Army."
+   holy_join2_failure = \
+      "Subject: Your lack of punctuality.\n"
+      "Your lack of actions probably confirms my fears that you were a traitor "
+      "from the mainland.  Do not bother me again with your "
+      "false desires to fight for what is right and just."
+
+classvars:
+
+   vrIcon = holyjoin_icon_rsc
+   vrName = holyjoin_name_rsc
+   vrDesc = holyjoin_desc_rsc
+
+   vrNodeTwo = holyjoin_deliver_rsc
+
+   vrCompleted = holyjoin_completed
+
+   // The QST_ID constant for this quest.
+   viQuestID = QST_ID_HOLY_JOIN
+
+   viIcon_Animation_start = 1
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_INTRIGUING | Q_PLAYER_FACTION_NEUTRAL \
+                      | Q_PLAYER_NOTTRIED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 30
+   piSchedulePct = 100
+   piTimeLimit = 3600 // 1 hour.
+
+messages:
+
+   Constructor()
+   {
+      // Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_HOLY_JOIN_ONE, QNT_ID_HOLY_JOIN_TWO];
+
+      // Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_HOLY_JOIN_TWO, vrNodeTwo] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      // Template #199 is 1st Koc Join node, say "join" to Jonas
+      // QNT_ID_HOLY_JOIN_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[duke_join1_trigger],
+               #quest_node_index=QNT_ID_HOLY_JOIN_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_HOLY_JOIN_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                        #iJob=MOB_ROLE_ROYALTY,#cNPC_class=&HolyLiege));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_HOLY_JOIN_ONE");
+      }
+
+      // Template # 200 is 2nd Koc Join node, bring an item to Jonas
+      // QNT_ID_HOLY_JOIN_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#NPC_modifier=QN_NPCMOD_SAME,
+               #questnode_type=QN_TYPE_ITEMFINDCLASS,\
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &Hammer, 1 ],\
+                            [ QN_PRIZETYPE_ITEMCLASS, &PlateArmor, 1 ],\
+                            [ QN_PRIZETYPE_ITEMCLASS, &MysticSword, 1 ],\
+                            [ QN_PRIZETYPE_ITEMCLASS, &DaemonHelm, 1 ],\
+                            [ QN_PRIZETYPE_ITEMCLASS, &Gauntlet, 1 ],\
+                            [ QN_PRIZETYPE_ITEMCLASS, &Helmet, 1 ],\
+                            [ QN_PRIZETYPE_ITEMCLASS, &InkyCap, 1 ] ],\
+               #prizelist=[ [ QN_PRIZETYPE_FACTION, QN_PRIZE_FACTION_HOLY ] ],
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_HOLY_JOIN_TWO)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_HOLY_JOIN_TWO,
+               #new_hint=holy_join2_assign);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_HOLY_JOIN_TWO,
+               #new_hint=holy_join2_success);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_HOLY_JOIN_TWO,
+               #new_hint=holy_join2_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_HOLY_JOIN_TWO");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oCargo;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      // Quest node QNT_ID_HOLY_JOIN_TWO dialog needs
+      // cargo indef article and name.
+      if index = QNT_ID_HOLY_JOIN_TWO
+      {
+         oCargo = Send(oQuestNode,@GetCargo);
+         AddPacket(4,Send(oCargo,@GetIndef), 4,Send(oCargo,@GetName));
+      }
+
+      return;
+   }
+
+end
+/////////////////////////////////////////////////////////////////////////////////

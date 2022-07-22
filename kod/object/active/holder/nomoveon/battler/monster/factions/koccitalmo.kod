@@ -1,0 +1,257 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+KocLiege is Factions
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   // TODO: Tyrant translate
+   //include koc.lkod
+
+   KocLiege_name_rsc = "Cital ko'Manca"
+   KocLiege_icon_rsc = kcguardG.bgf
+   KocLiege_desc_rsc = \
+      "As the one of the highest ranking officers in the Ko'catan Army, Cital "
+      "ko'Manca is serious and crisp in his duties. In peacetime these duties "
+      "include supervising the main gatehouse during daylight against actions "
+      "by enemies unknown. Cital ko'Manca is extraordinarily young to have "
+      "achieved such a high rank, but he is well respected for his fairness "
+      "and his adherence to military law."
+   
+   KocLiege_token_delivered_rsc = \
+      "Returning this token will show the counselors my power is not to be "
+      "ignored. %s"
+   KocLiege_koc_delivered_rsc = \
+      "You are very loyal to my cause.  I thank you."
+   KocLiege_neutral_delivered_rsc = \
+      "Do you also oppose the tyranny of the current pretenders to the "
+      "Throne?  Join me."
+   KocLiege_other_delivered_rsc = \
+      "Does the yoke of your current liege restrict you so much that you "
+      "bring me such gifts?  Join us in our quest for a strong crown."
+   KocLiege_toopowered_rsc = \
+      "Currently I cannot bring another into my ranks for fear they will "
+      "swell beyond my control."
+
+   KocLiege_already_have_spell = \
+      "I believe you already have knowledge of the %s spell."
+   KocLiege_no_murderer = \
+      "I am a servant of the Law, and as such my conscience "
+      "will not allow me to help you.  Please be on your way."
+
+   KocLiege_thanks = \
+      "A less understanding officer might see this offer as a bribe, which is "
+      "very serious in Ko'catan.  Bribing a gate officer is a capital "
+      "offense.  But I know that all you really wanted to do is make is a "
+      "generous donation to the Kici'ca widows and orphans.  I'll see that "
+      "this `es there, and you'll be on your way."
+	  
+   KocLiege_not_bullied = \
+      "You think you can just threaten me? I should have you thrown in jail!"
+   
+   KocLiege_bullied = \
+      "You think you can just threaten me? Is that a servant of magical arts? "
+      "I am no match for you and your servant. "
+	  "You may pass, but keep an eye on that servant. Many corrupt wizards seek them out to do their bidding. "
+      "And take your pathetic servant with you, it's stinking up my guard post. "
+
+   KocLiege_bullied_said = "threaten"
+
+classvars:
+
+   viQuestID = QST_ID_KOC_SERVICE
+   viGender = GENDER_MALE
+   viFaction = FACTION_KOC
+   viKarma = 0
+   viAttributes = \
+      MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE \
+      | MOB_NOMOVE
+   viOccupation = MOB_ROLE_ROYALTY
+
+   viHomeroom = RID_KOC_GUARDTOWER_EAST
+   viMyRow = 12
+   viMyCol = 36
+   viMyAngle = ANGLE_WEST
+   viMyFR = 8
+   viMyFC = 24
+
+properties:
+
+   vrName = KocLiege_name_rsc
+   vrIcon = KocLiege_icon_rsc
+   vrDesc = KocLiege_desc_rsc
+
+   plBribes = $
+   pbThreatened = FALSE
+
+messages:
+
+   AllowContrabandToPass(What=$)
+   {
+      local bThreatened;
+	  
+	  bThreatened = pbThreatened;
+	  
+	  if bThreatened
+	  {
+	     pbThreatened = FALSE;
+		 
+	     return TRUE;
+	  }
+	  
+	  return FALSE;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $)
+   {
+      if StringEqual(string, KocLiege_bullied_said)
+	  {
+         if what <> $ and IsClass(what, &Player)
+	     {
+	        if Send(what, @GetServant) <> $
+		    {
+			   pbThreatened = TRUE;
+			   Post(self,@SayToOne,#target=what,#message_rsc=KocLiege_bullied);
+			}
+			else
+			{
+			   Post(self,@SayToOne,#target=what,#message_rsc=KocLiege_not_bullied);
+			}
+		 }
+	  }
+	  
+	  propagate;
+   }
+
+   AffectMood(why=$,what=$)
+   {
+      if why = MOODMOD_FACTION_CHANGE
+      {
+         if what = viFaction
+         {
+            Send(self,@SetMood,#new_mood=piMood+25);
+         }
+		 else
+		 {
+		    if what = FACTION_NEUTRAL
+			{
+               Send(self,@SetMood,#new_mood=piMood+15);
+			}
+			else
+			{
+			   Send(self,@SetMood,#new_mood=piMood-25);
+			}
+		 }
+      }
+
+      return;
+   }
+
+   Constructor()
+   {
+      plWantedItems=[&Token];
+
+      propagate;
+   }
+
+   CheckWhyWanted(obj=$,who=$)
+   {
+      local temp_rsc;
+
+      if isClass(obj,&Token) and Send(SYS,@GetTokenGame) <> $ and 
+         Send(Send(SYS,@GetTokenGame),@IsTokenReal,#obj=obj)
+      {
+         if Send(who,@GetFaction) = viFaction
+         {
+            temp_rsc=KocLiege_koc_delivered_rsc;
+         }
+
+         if Send(who,@GetFaction) = FACTION_NEUTRAL
+         {
+            temp_rsc=KocLiege_neutral_delivered_rsc;
+         }
+
+         if Send(who,@GetFaction) <> FACTION_NEUTRAL
+		    AND Send(who,@GetFaction) <> viFaction
+         {
+            temp_rsc=KocLiege_other_delivered_rsc;
+         }
+
+         if (Send(Send(SYS,@GetParliament),@GetPower,
+                  #faction=viFaction) > FACTION_STRONGLY_IN)
+            AND Send(who,@GetFaction) <> viFaction
+         {
+            temp_rsc=KocLiege_toopowered_rsc;
+         }
+
+         Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                  #string=KocLiege_token_delivered_rsc,#parm1=temp_rsc);
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+  
+   GotWantedItem(obj=$,who=$)
+   {
+      if obj <> $ AND IsClass(obj, &Money) AND Send(self,@CheckForBribe,#obj=obj,#who=who)
+      {
+         return;
+      }
+
+      propagate;
+
+   }
+
+   CheckForBribe(who=$,obj=0)
+   {
+      local oMoney, oBank, amount;
+
+      if who <> $ AND Send(who, @FindUsing, #class=&KocShield)
+      {
+         Post(self,@SayToOne,#target=who,#message_rsc=KocLiege_thanks);
+
+         return TRUE;
+      }
+
+      if NOT IsClass(obj,&Money)
+      {
+         return FALSE;
+      }
+
+      amount = Send(obj,@GetNumber);
+
+      if amount <= 0
+      {
+         return FALSE;
+      }
+
+      oMoney = Send(who,@GetMoneyObject);
+
+      if oMoney = $
+      {
+         return FALSE;
+      }
+
+      if Send(oMoney,@GetValue) < amount
+      {
+        return FALSE;
+      }
+
+      return TRUE;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

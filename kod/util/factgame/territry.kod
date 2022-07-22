@@ -552,7 +552,7 @@ messages:
       while iFaction <= FACTION_NORMAL_MAX
       {
          iFaction = iFaction + 1;
-         if Nth(lFlagCounts, iFaction) <> Nth(plFlagCounts, iFaction)
+         if iFaction <= Length(lFlagCounts) AND Nth(lFlagCounts, iFaction) <> Nth(plFlagCounts, iFaction)
          {
             iFaction = 4;
             if (Send(SYS,@GetParliament) <> $)
@@ -603,7 +603,7 @@ messages:
          while iFaction <= FACTION_NORMAL_MAX
          {
             ++iFaction;
-            if Nth(lFlagCounts,iFaction) > (Length(lRIDs) - 2)
+            if iFaction <= Length(lFlagCounts) AND Nth(lFlagCounts,iFaction) > (Length(lRIDs) - 2)
             {
                oRoom = Send(SYS,@FindRoomByNum,#num=First(lRIDs));
                oFlagpole = Send(oRoom,@FindHoldingActive,#class=&FlagPole);

@@ -22,13 +22,14 @@ resources:
 
    parl_councilor_report= "%s%s is suspected to be a %s believer in %s."
    parl_factioned_nSelf = "the foolishness of factions"
-   parl_factioned_neutral = "Shal'ille's guidance instead of our ideas"
+   parl_factioned_neutral = "misguided separatists instead of our ideas"
    parl_factioned_duke = "the trivial causes of the Duke"
-   parl_factioned_Dself = "our causes"
    parl_factioned_princess = "the misguided hopes of Princess Kateriina"
-   parl_factioned_Pself = "our desires"
    parl_factioned_rebel = "the harmful rebellion of Jonas"
+   parl_factioned_Dself = "our causes"
+   parl_factioned_Pself = "our desires"
    parl_factioned_Rself = "our fight for freedom"
+   parl_factioned_Gself = "our needs"
 
    parl_strength_weak = "weak"
    parl_strength_strong = "strong"
@@ -48,9 +49,7 @@ resources:
       "Our spy network indicates that all the tokens are safely "
       "in the presence of their Councilor."
    parl_token_location = \
-      "I heard a rumor that %s%s had teleported away from its Councilor "
-      "again, and was seen near %s. Hopefully someone is even now on their "
-      "way to return it, but maybe some fiendish monster has picked it up!"
+      "The %s%s was last seen near %s."
    imposter_token = \
       "Now why are you carrying around imitation council tokens?  You "
       "should complain about having gotten one of those."

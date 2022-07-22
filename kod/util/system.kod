@@ -81,6 +81,7 @@ resources:
    system_user_killed_shield_princess = "~B~U~k[###]~n ~B~v%q was killed in the name of Princess Kateriina by faction rival %s%q."
    system_user_killed_shield_unholy = "~B~U~k[###]~n ~B~v%q was defiled in the name of Queen Venya'Cyr by faction rival %s%q."
    system_user_killed_shield_holy = "~B~U~k[###]~n ~B~v%q was smited in the name of Shal'ille by faction rival %s%q."
+   system_user_killed_shield_island = "~B~U~k[###]~n ~B~v%q was hunted down in the name of Cital ko'Manca by faction rival %s%q."
    system_user_killed_guild = \
       "~B~U~k[###]~n ~B~v%q of %s%q has been slaughtered by %s%q of %s%q in guild combat."
       
@@ -1858,6 +1859,7 @@ messages:
 			   if Send(killer, @FindUsing,#class=&RebelShield) { rMessage = system_user_killed_shield_rebel; }
 			   if Send(killer, @FindUsing,#class=&HolyShield) { rMessage = system_user_killed_shield_holy; }
 			   if Send(killer, @FindUsing,#class=&NecromancerShield) { rMessage = system_user_killed_shield_unholy; }
+			   if Send(killer, @FindUsing,#class=&KocShield) { rMessage = system_user_killed_shield_island; }
 
                // Parameters set by default
             }
@@ -4422,7 +4424,7 @@ messages:
       }
 
       if NOT StringConsistsOf(sName, 
-          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_ '!@$^&*()+=:[]{};/?|<>ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõöøùúûüışÿ")
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_ '!@$^&*()+=:[]{};/?|<>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")
       {
          Debug("Got char name with illegal characters for user ", oUser);
 
