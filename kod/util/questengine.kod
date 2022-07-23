@@ -306,7 +306,6 @@ messages:
       {
          foreach oQuest in Nth(iQT,QT_ACTIVE_QUESTS)
          {
-            Debug("Deleting Quest",GetClass(oQuest));
             Send(oQuest,@Cancel,#bRecreate=TRUE);
          }
       }
@@ -1269,11 +1268,6 @@ messages:
       // NPC's must be listeners and receivers and not quest prohibited
       foreach oNPC in new_NPC_list
       {
-         if oNPC <> $
-         {
-            Debug("oNPC", oNPC, GetClass(oNPC));
-         }
-
          if oNPC = $ 
             OR (((Send(oNPC,@GetAttributes) & (MOB_RECEIVE | MOB_LISTEN)) = 0)
             OR (Send(oNPC,@GetAttributes) & MOB_NOQUEST))
