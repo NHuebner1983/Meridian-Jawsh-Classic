@@ -436,7 +436,25 @@
 
    // Used by exits to indicate that the exit only leads to a locked door,
    //  not to a valid room.
+
+   // And a side note from another developer, who cares if the constants get messy as long as they work :)
    ROOM_LOCKED_DOOR = -1
+
+   // NPC Rooms
+   RID_PRINCESS = 852
+   RID_DUKE = 952
+   RID_JONAS = 371
+   RID_QOR = 802
+   RID_SHALILLE = 48
+   RID_KOC = 2013
+
+   // Flags guaranteed to have a faction soldier.
+   RID_PRINCESS_POLE = 593
+   RID_DUKE_POLE = 586
+   RID_JONAS_POLE = 568
+   RID_QOR_POLE = 598
+   RID_SHALILLE_POLE = 534
+   RID_KOC_POLE = 2115
 
    RID_DEFAULT = 1
 
@@ -808,7 +826,7 @@
    RID_BAZMANS_ROOM = 855
    RID_CASTLE2E = 856
    RID_FORGOTTEN_TOO = 857 // Moved from 42
-
+   
    RID_GODROOM = 901
    RID_UNIVERSITY = 902
    RID_GALLERY = 903

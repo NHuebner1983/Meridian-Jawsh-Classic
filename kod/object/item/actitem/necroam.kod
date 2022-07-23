@@ -253,6 +253,25 @@ messages:
 
    NewOwner(what = $)
    {
+      // AO3 will now immediately be worn when received.
+      if IsClass(what, &Battler)
+      {
+         pbWarned = TRUE;
+
+         if pbIn_Use = $ OR pbIn_use = FALSE
+         {
+            Post(what, @UserUseItem, #what=self);
+            
+            if what <> $
+               AND IsClass(what,&User)
+            {
+               Post(self,@HoldingDamageTrigger);
+            }
+            
+            propagate;
+         }
+      }
+
       pbWarned = FALSE;
 
       if ptHoldingDamage <> $

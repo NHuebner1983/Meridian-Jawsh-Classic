@@ -81,7 +81,7 @@ properties:
 
    piNumPlayers = 1
    piPlayerRestrict = Q_PLAYER_INTRIGUING | Q_PLAYER_FACTION_NEUTRAL \
-                      | Q_PLAYER_NOTTRIED_RECENTLY
+                      | Q_PLAYER_NOTTRIED_RECENTLY | Q_PLAYER_KARMA_GOOD | Q_PLAYER_LAWFUL
    plSpecialRestrict = $
    piMaxPlayers = 30
    piSchedulePct = 100
