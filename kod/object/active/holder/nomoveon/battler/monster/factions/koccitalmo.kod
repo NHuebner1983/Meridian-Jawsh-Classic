@@ -17,7 +17,7 @@ constants:
 resources:
 
    // TODO: Tyrant translate
-   //include koc.lkod
+   include koccitalmo.lkod
 
    KocLiege_name_rsc = "Cital ko'Manca"
    KocLiege_icon_rsc = kcguardG.bgf

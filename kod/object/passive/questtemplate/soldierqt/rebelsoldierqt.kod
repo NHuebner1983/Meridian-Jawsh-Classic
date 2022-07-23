@@ -34,7 +34,7 @@ resources:
 
    // Quest description.
    rebelsoldier_icon_rsc = flagjinv.bgf
-   rebelsoldier_name_rsc = "rebel soldier shield quest"
+   rebelsoldier_name_rsc = "Rebel soldier shield quest"
    rebelsoldier_desc_rsc = \
      "Jonas D'Accor will allow you to join the Rebel army, but first "
       "you must prove your loyalty by slaying his enemies."

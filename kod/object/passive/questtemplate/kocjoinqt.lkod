@@ -1,0 +1,22 @@
+kocjoin_name_rsc = de "Ko'catan join faction quest"
+kocjoin_desc_rsc = de \
+   "Before Cital ko'Manca will let you join his ranks, he must be convinced "
+   "you are not a mainland traitor. Bring him an item, and you will gain his trust."
+kocjoin_deliver_rsc = de \
+   "Before Cital ko'Manca will let you join his ranks, he must be convinced "
+   "you are not a mainland traitor. Bring him %s%s, and you will gain his trust."
+kocjoin_completed = de \
+   "You have earnt the trust of Cital ko'Manca, and are now a member "
+   "of his faction."
+koc_join2_assign = de \
+   "You wish to join the fight for Ko'catan?  I cannot trust you, for "
+   "you may be a traitor from the mainland.  Prove your value by bringing "
+   "me %INDEF_CARGO%CARGO."
+koc_join2_success = de \
+   "Excellent work!  This will prove to be useful in battle.  "
+   "Consider yourself one of the Ko'catan heroes of the island."
+koc_join2_failure = de \
+   "Subject: Your lack of punctuality.\n"
+   "Your lack of actions probably confirms my fears that you were a traitor "
+   "from the mainland.  Do not bother me again with your "
+   "false desires to fight for the island of Ko'Catan."

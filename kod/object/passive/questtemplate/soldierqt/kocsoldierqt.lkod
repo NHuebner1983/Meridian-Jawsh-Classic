@@ -1,0 +1,22 @@
+kocsoldier_name_rsc = de "ko'catan soldier shield quest"
+kocsoldier_desc_rsc = de \
+   "Cital ko'Manca will allow you to join the Ko'catan army, but first "
+   "you must prove your loyalty by slaying his enemies."
+kocsoldier_completed_rsc = de \
+   "You have proven your worth, and are now a soldier in the Ko'catan army."
+koc_faction_soldier_assign_1 = de \
+   "I have faith in you.  Go dispatch %INDEF_MONSTER%MONSTER somewhere "
+   "on the island, return to report on your battle, and then we will talk "
+   "about your future as a soldier."
+koc_faction_soldier_assign_2 = de \
+   "Yes, I have heard stories of your fight.  Now go conquer "
+   "%INDEF_MONSTER%MONSTER and you shall join us as an equal "
+   "when you are done."
+koc_faction_soldier_success = de \
+   "I knew you were a fit soldier.  Now you properly join us in "
+   "our fight against the mainlanders!"
+koc_faction_soldier_failure = de \
+   "I am disappointed in you.  I expected better out of a loyal "
+   "supporter.  Should you be willing to fight against those that "
+   "oppose Ko'catan, you know where to find me."
+

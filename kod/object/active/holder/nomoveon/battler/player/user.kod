@@ -10176,15 +10176,15 @@ messages:
          if iQID = QST_ID_PRINCESS_SERVICE
             OR iQID = QST_ID_DUKE_SERVICE
             OR iQID = QST_ID_REBEL_SERVICE
-            OR iQID = QST_ID_HOLY_SERVICE
-            OR iQID = QST_ID_UNHOLY_SERVICE
             OR iQID = QST_ID_KOC_SERVICE
             OR iQID = QST_ID_PRINCESS_SOLDIER
             OR iQID = QST_ID_DUKE_SOLDIER
             OR iQID = QST_ID_REBEL_SOLDIER
-            OR iQID = QST_ID_HOLY_SOLDIER
-            OR iQID = QST_ID_UNHOLY_SOLDIER
             OR iQID = QST_ID_KOC_SOLDIER
+            // OR iQID = QST_ID_HOLY_SERVICE
+            // OR iQID = QST_ID_UNHOLY_SERVICE
+            // OR iQID = QST_ID_HOLY_SOLDIER
+            // OR iQID = QST_ID_UNHOLY_SOLDIER
          {
             // Post this, because it will edit the plActiveQuests list.
             Post(Nth(i,2),@DeadlineExpired);

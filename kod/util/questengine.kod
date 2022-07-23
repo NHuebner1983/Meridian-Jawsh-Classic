@@ -306,6 +306,7 @@ messages:
       {
          foreach oQuest in Nth(iQT,QT_ACTIVE_QUESTS)
          {
+            Debug("Deleting Quest",GetClass(oQuest));
             Send(oQuest,@Cancel,#bRecreate=TRUE);
          }
       }
@@ -417,19 +418,6 @@ messages:
       // will ask the QuestTemplates in plQuestTemplates for their quest node
       // data. Frequently called quests go first.
 
-      // QST_ID_PRINCESS_SERVICE
-      Create(&PrincessLoyaltyQuest);
-      // QST_ID_DUKE_SERVICE
-      Create(&DukeLoyaltyQuest);
-      // QST_ID_REBEL_SERVICE
-      Create(&RebelLoyaltyQuest);
-      // QST_ID_HOLY_SERVICE
-      Create(&HolyLoyaltyQuest);
-      // QST_ID_UNHOLY_SERVICE
-      Create(&UnholyLoyaltyQuest);
-      // QST_ID_KOC_SERVICE
-      Create(&KocLoyaltyQuest);
-
       // QST_ID_PRINCESS_JOIN
       Create(&PrincessJoinQuest);
       // QST_ID_DUKE_JOIN
@@ -455,6 +443,19 @@ messages:
       Create(&UnholySoldierQuest);
       // QST_ID_KOC_SOLDIER
       Create(&KocSoldierQuest);
+
+      // QST_ID_PRINCESS_SERVICE
+      Create(&PrincessLoyaltyQuest);
+      // QST_ID_DUKE_SERVICE
+      Create(&DukeLoyaltyQuest);
+      // QST_ID_REBEL_SERVICE
+      Create(&RebelLoyaltyQuest);
+      // QST_ID_HOLY_SERVICE
+      Create(&HolyLoyaltyQuest);
+      // QST_ID_UNHOLY_SERVICE
+      Create(&UnholyLoyaltyQuest);
+      // QST_ID_KOC_SERVICE
+      Create(&KocLoyaltyQuest);
 
       // QST_ID_SHALILLE_DISCIPLE
       Create(&ShalDiscQuest);
@@ -595,25 +596,25 @@ messages:
       Create(&IdentifyWandQuest);
 
       // QST_ID_MURDER_PRINCESS_1
-      Create(&CessMurderOneQuest);
+      //Create(&CessMurderOneQuest);
       // QST_ID_MURDER_PRINCESS_2
-      Create(&CessMurderTwoQuest);
+      //Create(&CessMurderTwoQuest);
       // QST_ID_MURDER_PRINCESS_3
-      Create(&CessMurderThreeQuest);
+      //Create(&CessMurderThreeQuest);
 
       // QST_ID_MURDER_DUKE_1
-      Create(&DukeMurderOneQuest);
+      //Create(&DukeMurderOneQuest);
       // QST_ID_MURDER_DUKE_2
-      Create(&DukeMurderTwoQuest);
+      //Create(&DukeMurderTwoQuest);
       // QST_ID_MURDER_DUKE_3
-      Create(&DukeMurderThreeQuest);
+      //Create(&DukeMurderThreeQuest);
 
       // QST_ID_MURDER_JONAS_1
-      Create(&JonasMurderOneQuest);
+      //Create(&JonasMurderOneQuest);
       // QST_ID_MURDER_JONAS_2
-      Create(&JonasMurderTwoQuest);
+      //Create(&JonasMurderTwoQuest);
       // QST_ID_MURDER_JONAS_3
-      Create(&JonasMurderThreeQuest);
+      //Create(&JonasMurderThreeQuest);
 
       // QST_ID_MURDER_HOLY_1
       //Create(&HolyMurderOneQuest);
@@ -662,12 +663,12 @@ messages:
       //}
       // New scheduling code here:
 
-      Send(self,@SetQuestMaxActive,#index=QST_ID_PRINCESS_SERVICE,#new_max=39);
-      Send(self,@SetQuestMaxActive,#index=QST_ID_DUKE_SERVICE,#new_max=39);
-      Send(self,@SetQuestMaxActive,#index=QST_ID_REBEL_SERVICE,#new_max=39);
-      Send(self,@SetQuestMaxActive,#index=QST_ID_HOLY_SERVICE,#new_max=39);
-      Send(self,@SetQuestMaxActive,#index=QST_ID_UNHOLY_SERVICE,#new_max=39);
-      Send(self,@SetQuestMaxActive,#index=QST_ID_KOC_SERVICE,#new_max=39);
+      Send(self,@SetQuestMaxActive,#index=QST_ID_PRINCESS_SERVICE,#new_max=30);
+      Send(self,@SetQuestMaxActive,#index=QST_ID_DUKE_SERVICE,#new_max=30);
+      Send(self,@SetQuestMaxActive,#index=QST_ID_REBEL_SERVICE,#new_max=30);
+      //Send(self,@SetQuestMaxActive,#index=QST_ID_HOLY_SERVICE,#new_max=30);
+      //Send(self,@SetQuestMaxActive,#index=QST_ID_UNHOLY_SERVICE,#new_max=30);
+      Send(self,@SetQuestMaxActive,#index=QST_ID_KOC_SERVICE,#new_max=30);
 
       return;
    }
@@ -760,23 +761,23 @@ messages:
          Send(self,@ScheduleQuest,#index=QST_ID_REBEL_SERVICE,#override=TRUE);
       }
 
-      i = 0;
-      iMax = Nth(Send(self,@GetQuestTemplate,#index=QST_ID_HOLY_SERVICE),
-               QT_MAX_NUM_ACTIVE);
-      while i < iMax
-      {
-         i = i + 1;
-         Send(self,@ScheduleQuest,#index=QST_ID_HOLY_SERVICE,#override=TRUE);
-      }
+      // i = 0;
+      // iMax = Nth(Send(self,@GetQuestTemplate,#index=QST_ID_HOLY_SERVICE),
+      //          QT_MAX_NUM_ACTIVE);
+      // while i < iMax
+      // {
+      //    i = i + 1;
+      //    Send(self,@ScheduleQuest,#index=QST_ID_HOLY_SERVICE,#override=TRUE);
+      // }
 
-      i = 0;
-      iMax = Nth(Send(self,@GetQuestTemplate,#index=QST_ID_UNHOLY_SERVICE),
-               QT_MAX_NUM_ACTIVE);
-      while i < iMax
-      {
-         i = i + 1;
-         Send(self,@ScheduleQuest,#index=QST_ID_UNHOLY_SERVICE,#override=TRUE);
-      }
+      // i = 0;
+      // iMax = Nth(Send(self,@GetQuestTemplate,#index=QST_ID_UNHOLY_SERVICE),
+      //          QT_MAX_NUM_ACTIVE);
+      // while i < iMax
+      // {
+      //    i = i + 1;
+      //    Send(self,@ScheduleQuest,#index=QST_ID_UNHOLY_SERVICE,#override=TRUE);
+      // }
 
       i = 0;
       iMax = Nth(Send(self,@GetQuestTemplate,#index=QST_ID_KOC_SERVICE),
@@ -1268,11 +1269,16 @@ messages:
       // NPC's must be listeners and receivers and not quest prohibited
       foreach oNPC in new_NPC_list
       {
-         if (((Send(oNPC,@GetAttributes) & (MOB_RECEIVE | MOB_LISTEN)) = 0)
+         if oNPC <> $
+         {
+            Debug("oNPC", oNPC, GetClass(oNPC));
+         }
+
+         if oNPC = $ 
+            OR (((Send(oNPC,@GetAttributes) & (MOB_RECEIVE | MOB_LISTEN)) = 0)
             OR (Send(oNPC,@GetAttributes) & MOB_NOQUEST))
          {
-            Debug("SetQuestNodeNPCList #",index);
-            Debug("Invalid NPC - ignored",oNPC);
+            Debug("Quest: NPC Not Qualified (index",index,") (oNPC",oNPC," - ",GetClass(oNPC),")");
             new_NPC_list = DelListElem(new_NPC_list, oNPC);
          }
       }

@@ -31,7 +31,7 @@ constants:
 resources:
    
    // TODO: Tyrant translate
-   //include unholyloyaltyqt.lkod
+   include unholyloyaltyqt.lkod
 
    // Quest description.
    unholyloyalty_icon_rsc = kcguardG.bgf

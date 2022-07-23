@@ -32,11 +32,11 @@ constants:
 resources:
    
    // TODO: Tyrant translations
-   //include holyjoinqt.lkod
+   include holyjoinqt.lkod
 
    // Quest description.
    holyjoin_icon_rsc = shalliege.bgf
-   holyjoin_name_rsc = "holy army join faction quest"
+   holyjoin_name_rsc = "Holy army join faction quest"
    holyjoin_desc_rsc = \
       "Before Shal'ille will let you join her ranks, she must be convinced "
       "you are not a mainland traitor. Bring her an item, and you will gain her trust."

@@ -32,11 +32,11 @@ constants:
 resources:
 
    // TODO: Tyrant translations
-   //include kocjoinqt.lkod
+   include kocjoinqt.lkod
 
    // Quest description.
    kocjoin_icon_rsc = kcguardG.bgf
-   kocjoin_name_rsc = "ko'catan join faction quest"
+   kocjoin_name_rsc = "Ko'catan join faction quest"
    kocjoin_desc_rsc = \
       "Before Cital ko'Manca will let you join his ranks, he must be convinced "
       "you are not a mainland traitor. Bring him an item, and you will gain his trust."

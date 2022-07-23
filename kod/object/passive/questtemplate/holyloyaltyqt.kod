@@ -31,11 +31,11 @@ constants:
 resources:
    
    // TODO: Tyrant translate
-   //include holyloyaltyqt.lkod
+   include holyloyaltyqt.lkod
 
    // Quest description.
    holyloyalty_icon_rsc = kcguardG.bgf
-   holyloyalty_name_rsc = "ko'catan loyalty quest"
+   holyloyalty_name_rsc = "holy army loyalty quest"
    holyloyalty_desc_rsc = \
       "Shal'ille's warriors need equipment, and she has requested that "
       "you help the cause by bringing her some."

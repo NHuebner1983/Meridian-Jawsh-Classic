@@ -1417,6 +1417,8 @@ messages:
          return;
       }
 
+      Debug("Quest Prize", iPrizeType);
+      
       if (iPrizeType = QN_PRIZETYPE_FACTION)
       {
          foreach oQuester in recipients
@@ -1444,6 +1446,15 @@ messages:
                Post(oQuester,@ResignFaction);
                Post(oQuester,@JoinFaction,#new_faction=FACTION_REBEL);
             }
+            else if iPrizeFaction = QN_PRIZE_FACTION_KOC
+            {
+               Post(oQuester,@ResignFaction);
+               Post(oQuester,@JoinFaction,#new_faction=FACTION_KOC);
+            }
+            else if iPrizeFaction = QN_PRIZE_FACTION_NEUTRAL
+            {
+               Post(oQuester,@ResignLoyaltyFailed);
+            }
             else if iPrizeFaction = QN_PRIZE_FACTION_HOLY
             {
                Post(oQuester,@ResignFaction);
@@ -1453,15 +1464,6 @@ messages:
             {
                Post(oQuester,@ResignFaction);
                Post(oQuester,@JoinFaction,#new_faction=FACTION_NECROMANCER);
-            }
-            else if iPrizeFaction = QN_PRIZE_FACTION_KOC
-            {
-               Post(oQuester,@ResignFaction);
-               Post(oQuester,@JoinFaction,#new_faction=FACTION_KOC);
-            }
-            else if iPrizeFaction = QN_PRIZE_FACTION_NEUTRAL
-            {
-               Post(oQuester,@ResignLoyaltyFailed);
             }
          }
 

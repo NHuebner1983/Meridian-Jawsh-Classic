@@ -31,11 +31,11 @@ constants:
 resources:
    
    // TODO: Tyrant translate
-   //include holysoldierqt.lkod
+   include holysoldierqt.lkod
 
    // Quest description.
    holysoldier_icon_rsc = flaghinv.bgf
-   holysoldier_name_rsc = "holy soldier shield quest"
+   holysoldier_name_rsc = "Holy soldier shield quest"
    holysoldier_desc_rsc = \
      "Shal'ille will allow you to join the Holy Army, but first "
       "you must prove your loyalty by slaying her enemies."

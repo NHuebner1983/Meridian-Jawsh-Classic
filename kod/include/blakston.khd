@@ -3484,33 +3484,32 @@
    QNT_ID_REBEL_SOLDIER_TWO      = 215
    QNT_ID_REBEL_SOLDIER_THREE    = 216
 
-   QNT_ID_ABSTAIN_PVP_ONE        = 217
-   QNT_ID_ABSTAIN_PVP_TWO        = 218
+   QNT_ID_KOC_JOIN_ONE           = 217
+   QNT_ID_KOC_JOIN_TWO           = 218
+   QNT_ID_KOC_LOYALTY_ONE        = 219
+   QNT_ID_KOC_LOYALTY_TWO        = 220
+   QNT_ID_KOC_SOLDIER_ONE        = 221
+   QNT_ID_KOC_SOLDIER_TWO        = 222
+   QNT_ID_KOC_SOLDIER_THREE      = 223
 
-   QNT_ID_HOLY_JOIN_ONE          = 219
-   QNT_ID_HOLY_JOIN_TWO          = 220
-   QNT_ID_HOLY_LOYALTY_ONE       = 221
-   QNT_ID_HOLY_LOYALTY_TWO       = 222
-   QNT_ID_HOLY_SOLDIER_ONE       = 223
-   QNT_ID_HOLY_SOLDIER_TWO       = 224
-   QNT_ID_HOLY_SOLDIER_THREE     = 225
+   QNT_ID_HOLY_JOIN_ONE          = 224
+   QNT_ID_HOLY_JOIN_TWO          = 225
+   QNT_ID_HOLY_LOYALTY_ONE       = 226
+   QNT_ID_HOLY_LOYALTY_TWO       = 227
+   QNT_ID_HOLY_SOLDIER_ONE       = 228
+   QNT_ID_HOLY_SOLDIER_TWO       = 229
+   QNT_ID_HOLY_SOLDIER_THREE     = 230
 
-   QNT_ID_UNHOLY_JOIN_ONE        = 226
-   QNT_ID_UNHOLY_JOIN_TWO        = 227
-   QNT_ID_UNHOLY_LOYALTY_ONE     = 228
-   QNT_ID_UNHOLY_LOYALTY_TWO     = 229
-   QNT_ID_UNHOLY_SOLDIER_ONE     = 230
-   QNT_ID_UNHOLY_SOLDIER_TWO     = 231
-   QNT_ID_UNHOLY_SOLDIER_THREE   = 232
+   QNT_ID_UNHOLY_JOIN_ONE        = 231
+   QNT_ID_UNHOLY_JOIN_TWO        = 232
+   QNT_ID_UNHOLY_LOYALTY_ONE     = 233
+   QNT_ID_UNHOLY_LOYALTY_TWO     = 234
+   QNT_ID_UNHOLY_SOLDIER_ONE     = 235
+   QNT_ID_UNHOLY_SOLDIER_TWO     = 236
+   QNT_ID_UNHOLY_SOLDIER_THREE   = 237
 
-   QNT_ID_KOC_JOIN_ONE           = 233
-   QNT_ID_KOC_JOIN_TWO           = 234
-   QNT_ID_KOC_LOYALTY_ONE        = 235
-   QNT_ID_KOC_LOYALTY_TWO        = 236
-   QNT_ID_KOC_SOLDIER_ONE        = 237
-   QNT_ID_KOC_SOLDIER_TWO        = 238
-   QNT_ID_KOC_SOLDIER_THREE      = 239
-
+   QNT_ID_ABSTAIN_PVP_ONE        = 238
+   QNT_ID_ABSTAIN_PVP_TWO        = 239
 
    // Quest misc constants
 
@@ -3540,14 +3539,14 @@
    Q_PLAYER_FACTION_NEUTRAL   = 0x20         // Only players aligned w/neither are considered
    Q_PLAYER_FACTION_PRINCESS  = 0x30         // Only players aligned w/princess are considered
    Q_PLAYER_FACTION_REBEL     = 0x40         // Only players aligned w/rebels are considered
-   Q_PLAYER_FACTION_HOLY      = 0x40         // Only players aligned w/holy are considered
-   Q_PLAYER_FACTION_UNHOLY    = 0x50         // Only players aligned w/unholy are considered
-   Q_PLAYER_FACTION_KOC       = 0x60         // Only players aligned w/koc are considered
+   Q_PLAYER_FACTION_HOLY      = 0x50         // Only players aligned w/holy are considered
+   Q_PLAYER_FACTION_UNHOLY    = 0x60         // Only players aligned w/unholy are considered
    Q_PLAYER_FACTION_SAME      = 0x70         // Only players w/same alignment as first node's npc are considered
    Q_PLAYER_FACTION_DIFFERENT = 0x80         // Only players w/different alignment than first node's npc are considered
    Q_PLAYER_FACTION_IN        = 0x90         // NYI - Only players w/alignment in power are considered
-   Q_PLAYER_FACTION_OUT       = 0xF0         // NYI - Only players w/alignment out of power are considered
-   Q_PLAYER_FACTION_MASK      = 0x3F
+   Q_PLAYER_FACTION_OUT       = 0x0A         // NYI - Only players w/alignment out of power are considered
+   Q_PLAYER_FACTION_KOC       = 0x0B         // Only players aligned w/koc are considered
+   Q_PLAYER_FACTION_MASK      = 0xF0
 
    Q_PLAYER_NEWBIE            = 0x0100      // uses PFLAG_PKILL_ENABLE
    Q_PLAYER_NOTNEWBIE         = 0x0200      // uses PFLAG_PKILL_ENABLE
@@ -3588,9 +3587,9 @@
    Q_R2_DOES_NOT_HAVE_ITEM       = 10  // [Q_R2_, itemclass]
    Q_R2_NECRO_GUILD_ACTIVE       = 11  // [Q_R2_, boolean]            (is necromancer guild active?)
 
-   QUEST_HISTORY_MASK           = 0x0FFFFFF           // bits used in player quest history compound to indicate quest index
-   QUEST_HISTORY_SUCCESS           = 0x1000000
-   QUEST_HISTORY_FAILURE           = 0x2000000
+   QUEST_HISTORY_MASK            = 0x0FFFFFF           // bits used in player quest history compound to indicate quest index
+   QUEST_HISTORY_SUCCESS         = 0x1000000
+   QUEST_HISTORY_FAILURE         = 0x2000000
 
    // Quest node types
    QN_TYPE_MESSAGE            = 0x01         // Deliver a message I give you
@@ -3664,7 +3663,7 @@
 //   QN_PRIZE_BOON_KARMA    = 0xA     // Not implemented
 
    // Quest node prize boon types
-   QN_PRIZE_FACTION_UPDATE       = 0x0    // reset the faction timer (i.e. after loyalty is proven)
+   QN_PRIZE_FACTION_UPDATE     = 0x0    // reset the faction timer (i.e. after loyalty is proven)
    QN_PRIZE_FACTION_DUKE       = 0x1    // join the duke's faction
    QN_PRIZE_FACTION_PRINCESS   = 0x2    // join the princess' faction
    QN_PRIZE_FACTION_REBEL      = 0x3    // join the rebel faction

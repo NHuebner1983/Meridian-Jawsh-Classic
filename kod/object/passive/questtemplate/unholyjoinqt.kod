@@ -32,11 +32,11 @@ constants:
 resources:
    
    // TODO: Tyrant translations
-   //include unholyjoinqt.lkod
+   include unholyjoinqt.lkod
 
    // Quest description.
    unholyjoin_icon_rsc = licha.bgf
-   unholyjoin_name_rsc = "necro army join faction quest"
+   unholyjoin_name_rsc = "Necro army join faction quest"
    unholyjoin_desc_rsc = \
       "Before Queen Venya'Cyr will let you join her ranks, she must be convinced "
       "you are not one of Shal'ille's infiltrators. Bring her an item, and you will gain her trust."

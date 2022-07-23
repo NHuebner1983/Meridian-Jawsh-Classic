@@ -1,0 +1,20 @@
+unholysoldier_name_rsc = de "necro soldier shield quest"
+unholysoldier_desc_rsc = de \
+   "Queen Venya'Cyr will allow you to join the Unholy Army, but first "
+   "you must prove your loyalty by slaying her enemies."
+unholysoldier_completed_rsc = de \
+   "You have proven your worth, and are now a soldier in the Unholy Army."
+unholy_faction_soldier_assign_1 = de \
+   "I am in need of allies.  Please, prove your loyalty by dissolving "
+   "%INDEF_MONSTER%MONSTER.  You should find one in the forests near Lady Phoenix. "
+   "Come back and let me know you are done."
+unholy_faction_soldier_assign_2 = de \
+   "I am glad to see you have returned.  Please fight "
+   "%INDEF_MONSTER%MONSTER.  Tell me when you are done and you will "
+   "be made a soldier."
+unholy_faction_soldier_success = de \
+   "It is good that we can count you as an ally.  Take this as "
+   "a symbol of your commitment."
+unholy_faction_soldier_failure = de \
+   "You are not ready to join my prized collection of Necromancers. "
+   "Return when you are worthy."

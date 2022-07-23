@@ -5,6 +5,7 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\soldierqt.bof
-BOFS = cesssoldierqt.bof dukesoldierqt.bof rebelsoldierqt.bof unholysoldierqt.bof holysoldierqt.bof kocsoldierqt.bof
+BOFS = cesssoldierqt.bof dukesoldierqt.bof rebelsoldierqt.bof \
+       kocsoldierqt.bof unholysoldierqt.bof holysoldierqt.bof
 
 !include $(KODDIR)\kod.mak
