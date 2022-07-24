@@ -41,8 +41,6 @@ resources:
       "Gazing into the portal, you see an expensive inn in a bustling city."
    portal_raza = \
       "Through the portal, you see the rustic charm of the Raza Inn."
-   portal_DR = \
-      "Through the portal, you see...darkness..and a red sky.."
    zap_to_corpse = \
       "Entering the portal you wander about the netherworld, but find "
       "yourself drawn out..."
@@ -67,6 +65,8 @@ classvars:
 
    viTerrain_type = TERRAIN_MYSTICAL | TERRAIN_LAVA
 
+   vbAccessibleForFollowers = FALSE
+
 properties:
 
    ptMaintenance = $
@@ -89,7 +89,6 @@ properties:
    poPortal3 = $
    poPortal4 = $
    poPortal5 = $
-   poPortalDR = $
 
    plCorpses = $
 
@@ -106,6 +105,7 @@ messages:
    Constructor()
    {
       ptMaintenance = CreateTimer(self,@MaintenanceTimer,MAINTENANCE_DELAY);
+      Create(&CorpseNode,#node_num=NODE_CORPSENODE);
 
       propagate;
    }
@@ -124,6 +124,15 @@ messages:
 
    Delete()
    {
+      local oNode;
+
+      oNode = Send(SYS,@FindNodeByNum,#num=NODE_CORPSENODE);
+      if oNode <> $
+      {
+         // Even if the node is not in the room, we must delete it to be sure
+         //  it's not in the system list.
+         Send(oNode,@Delete);
+      }
 
       if ptMaintenance <> $
       {
@@ -353,7 +362,7 @@ messages:
       if oRoom = $
       {
          Send(who,@AdminGoToSafety);
-         Send(who,@GainHealthNormal,#amount=100);
+         Send(who,@GainHealth,#amount=100);
          Send(who,@MsgSendUser,#message_rsc=zap_to_home);
       }
       else
@@ -409,10 +418,14 @@ messages:
          }
       }
 
-      poPortalDR = Create(&DeathRealmEntrance,#desc=portal_DR,#dest_room_num=RID_DTEMPLE,
-                        #dest_col=8,#dest_row=17,#fine_row=15,#fine_col=32);
-      Send(self,@NewHold,#what=poPortalDR,#new_row=16,#new_col=16,
-            #fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
+      oNode = Send(SYS,@FindNodeByNum,#num=NODE_CORPSENODE);
+      if oNode = $
+      {
+         Debug("Uworld node gone from system!");
+         oNode = Create(&CorpseNode,#node_num=NODE_CORPSENODE);
+      }
+
+      Send(oNode,@NodeAppear,#where=self,#row=16,#col=16,#fine_row=32,#fine_col=32);
 
       if ptMaintenance <> $
       {
@@ -434,9 +447,9 @@ messages:
 
       foreach i in plActive
       {
-         if IsClass(First(i),&DeathRealmEntrance)
+         if IsClass(First(i),&CorpseNode)
          {
-            Send(First(i),@PortalDisappear);
+            Send(First(i),@NodeDisappear);
          }
       }
 
