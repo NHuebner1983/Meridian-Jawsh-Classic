@@ -37,7 +37,7 @@ classvars:
    viAttributes = 0
    viDefault_behavior = AI_FIGHT_NEWBIESAFE | AI_MOVE_REGROUP
 
-   viColorTranslate1 = XLAT_TO_ORANGE     // Shirt
+   viColorTranslate1 = XLAT_TO_GREEN     // Shirt
    viColorTranslate2 = XLAT_TO_GREEN   // Pants
    vcShieldClass = &KocShield
 
@@ -49,8 +49,8 @@ properties:
    piBaseDifficulty = 2
 
    //Here so they can be set
-   viLevel = 50         // piBaseLevel
-   viDifficulty = 2     // piBaseDifficulty
+   viLevel = 150         // piBaseLevel
+   viDifficulty = 6     // piBaseDifficulty
 
    vrSound_aware = KocTroop_sound_aware
 

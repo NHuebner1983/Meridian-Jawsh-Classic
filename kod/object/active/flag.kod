@@ -642,7 +642,7 @@ messages:
    SendOverlays()
    {
       if (piFaction <= FACTION_NEUTRAL)
-         OR (piFaction > FACTION_REBEL)
+         OR (piFaction > FACTION_KOC)
       {
          // Flagpole is bare for Neutral or invalid faction values.
          propagate;

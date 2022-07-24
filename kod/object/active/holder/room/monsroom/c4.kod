@@ -31,8 +31,8 @@ classvars:
 
    viTerrain_type = TERRAIN_FOREST
 
-   viFlag_row = 40
-   viFlag_col = 41
+   viFlag_row = 31
+   viFlag_col = 22
 
    viWeatherZone = WEATHER_ZONE_MARION
 
@@ -46,6 +46,9 @@ properties:
    piOutside_factor = 8
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   viFlag_row = 32
+   viFlag_col = 21
 
    pbSnowGroundTexture = TRUE
 

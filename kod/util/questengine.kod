@@ -1272,7 +1272,7 @@ messages:
             OR (((Send(oNPC,@GetAttributes) & (MOB_RECEIVE | MOB_LISTEN)) = 0)
             OR (Send(oNPC,@GetAttributes) & MOB_NOQUEST))
          {
-            Debug("Quest: NPC Not Qualified (index",index,") (oNPC",oNPC," - ",GetClass(oNPC),")");
+            //Debug("Quest: NPC Not Qualified (index",index,") (oNPC",oNPC," - ",GetClass(oNPC),")");
             new_NPC_list = DelListElem(new_NPC_list, oNPC);
          }
       }

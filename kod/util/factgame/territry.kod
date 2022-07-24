@@ -26,6 +26,9 @@ resources:
    TerritoryGame_duke = "Duke Akardius"
    TerritoryGame_princess = "Princess Kateriina"
    TerritoryGame_rebel = "the rebel Jonas"
+   TerritoryGame_holy = "the Holy Army of Shal'ille"
+   TerritoryGame_unholy = "the Necromancers"
+   TerritoryGame_koc = "the Warriors of Ko'catan"
    TerritoryGame_unfactioned = "the unfactioned"
 
    territorygame_comma = ", "
@@ -57,13 +60,21 @@ properties:
    plCorNothRIDs = $
    plBarloqueRIDs = $
    plRazaRIDs = $
+   plHolyRIDs = $
+   plUnholyRIDs = $
+   plKocRIDs = $
    plFlagRIDs = $
    plFlagCounts = $
+      
    piGameMode = GAME_FULL
    ptGenerateFlagItems = $
    piDukeFlagItemCount = 0
    piPrincessFlagItemCount = 0
    piRebelFlagItemCount = 0
+
+   piHolyFlagItemCount = 0
+   piUnholyFlagItemCount = 0
+   piKocFlagItemCount = 0
 
    // Time in minutes.
    piFlagItemGenTime = 60
@@ -133,13 +144,18 @@ messages:
    {
       local i;
 
+      plFlagCounts = [0,0,0,0,0,0,0];
+
       plTosRIDs = [ RID_TOS, RID_H6, RID_I6, RID_H5 ];
-      plMarionRIDs = [ RID_MARION, RID_C4, RID_C5 ];
+      plMarionRIDs = [ RID_MARION, RID_C5 ];
       plJasperRIDs = [ RID_JASWEST, RID_F8, RID_E7, RID_D7 ];
       plCorNothRIDs =  [ RID_CORNOTH, RID_G4, RID_G5 ];
       plBarloqueRIDs =  [ RID_BAR_NORTH, RID_I3, RID_H3, RID_J3 ];
       plRazaRIDs = [ RID_RAZA, RID_RAZA_FOREST, RID_FAROL_WEST ];
-      plFlagRIDs = [ RID_E2, RID_F2, RID_F3, RID_H3, RID_I3, RID_J3, RID_C4,
+      plHolyRIDs = [ RID_C4 ];
+      plUnholyRIDs = [ RID_I8 ];
+      plKocRIDs = [ RID_KA5 ];
+      plFlagRIDs = [ RID_C4, RID_I8, RID_KA5, RID_E2, RID_F2, RID_F3, RID_H3, RID_I3, RID_J3,
                      RID_D4, RID_E4, RID_F4, RID_G4, RID_H4, RID_C5, RID_D5,
                      RID_G5, RID_H5, RID_B6, RID_C6, RID_D6E6, RID_F6,
                      RID_G6, RID_H6, RID_I6, RID_C7, RID_D7, RID_E7, RID_F7,
@@ -159,8 +175,6 @@ messages:
       }
 
       Send(self,@ClearAllFlags);
-
-      plFlagCounts = [0, 0, 0, 0];
 
       if piGameMode = GAME_FULL
       {
@@ -242,7 +256,7 @@ messages:
       // placing the other flags yet.  So we do this in two passes:
       // 1) Create and place all flags
       // 2) Set flags' factions
-      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs, plRazaRIDs]
+      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs, plRazaRIDs, plHolyRIDs, plUnholyRIDs, plKocRIDs]
       {
          foreach iRID in lRIDs
          {
@@ -250,7 +264,7 @@ messages:
          }
       }
 
-      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs, plRazaRIDs]
+      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs, plRazaRIDs, plHolyRIDs, plUnholyRIDs, plKocRIDs]
       {
          foreach iRID in lRIDs
          {
@@ -271,6 +285,21 @@ messages:
             if (lRIDs = plCorNothRIDs) OR (lRIDs = plBarloqueRIDs)
             {
                Send(oFlag,@SetFaction,#faction=FACTION_PRINCESS);
+            }
+
+            if (lRIDs = plHolyRIDs)
+            {
+               Send(oFlag,@SetFaction,#faction=FACTION_HOLY);
+            }
+
+            if (lRIDs = plUnholyRIDs)
+            {
+               Send(oFlag,@SetFaction,#faction=FACTION_NECROMANCER);
+            }
+
+            if (lRIDs = plKocRIDs)
+            {
+               Send(oFlag,@SetFaction,#faction=FACTION_KOC);
             }
 
             if (lRIDs = plJasperRIDs) OR (lRIDs = plRazaRIDs)
@@ -326,6 +355,39 @@ messages:
          if iLocation
          {
             Send(oFlag,@SetFaction,#faction=FACTION_DUKE);
+            if iLocation = 1
+            {
+               // town flag
+               Send(oFlag,@SetClaimable,#claimable=FALSE);
+            }
+         }
+
+         iLocation = FindListElem(plHolyRIDs,iRID);
+         if iLocation
+         {
+            Send(oFlag,@SetFaction,#faction=FACTION_HOLY);
+            if iLocation = 1
+            {
+               // town flag
+               Send(oFlag,@SetClaimable,#claimable=FALSE);
+            }
+         }
+
+         iLocation = FindListElem(plUnholyRIDs,iRID);
+         if iLocation
+         {
+            Send(oFlag,@SetFaction,#faction=FACTION_NECROMANCER);
+            if iLocation = 1
+            {
+               // town flag
+               Send(oFlag,@SetClaimable,#claimable=FALSE);
+            }
+         }
+
+         iLocation = FindListElem(plKocRIDs,iRID);
+         if iLocation
+         {
+            Send(oFlag,@SetFaction,#faction=FACTION_KOC);
             if iLocation = 1
             {
                // town flag
@@ -534,7 +596,7 @@ messages:
       Send(self,@RecalcTownFlags);
 
       // next, count all flags and update counters.
-      lFlagCounts = [0, 0, 0, 0];
+      lFlagCounts = [0,0,0,0,0,0,0];
 
       foreach iRID in plFlagRIDs
       {
@@ -543,6 +605,12 @@ messages:
          if oFlagpole <> $
          {
             iFaction = Send(oFlagpole,@GetFaction) + 1;
+
+            if iFaction > Length(lFlagCounts)
+            {
+               continue;
+            }
+
             SetNth(lFlagCounts, iFaction, (Nth(lFlagCounts, iFaction)+1));
          }
       }
@@ -554,7 +622,7 @@ messages:
          iFaction = iFaction + 1;
          if iFaction <= Length(lFlagCounts) AND Nth(lFlagCounts, iFaction) <> Nth(plFlagCounts, iFaction)
          {
-            iFaction = 4;
+            iFaction = 7;
             if (Send(SYS,@GetParliament) <> $)
             {
                Send(Send(SYS,@GetParliament),@RedoPower);
@@ -571,7 +639,7 @@ messages:
    {
       if plFlagCounts = $
       {
-         return [0,0,0,0];
+         return [0,0,0,0,0,0,0];
       }
 
       return plFlagCounts;
@@ -581,9 +649,9 @@ messages:
    {
       local lRIDs, iRID, oRoom, oFlagpole, lFlagCounts, iFaction;
 
-      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs, plRazaRIDs]
+      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs, plRazaRIDs] // , plHolyRIDs, plUnholyRIDs, plKocRIDs
       {
-         lFlagCounts = [0, 0, 0, 0];
+         lFlagCounts = [0,0,0,0,0,0,0];
          foreach iRID in lRIDs
          {
             oRoom = Send(SYS,@FindRoomByNum,#num=iRID);
@@ -596,6 +664,12 @@ messages:
                return;
             }
             iFaction = Send(oFlagpole,@GetFaction) + 1;
+
+            if iFaction > Length(lFlagCounts)
+            {
+               continue;
+            }
+
             SetNth(lFlagCounts, iFaction, (Nth(lFlagCounts, iFaction)+1));
          }
 
@@ -603,7 +677,7 @@ messages:
          while iFaction <= FACTION_NORMAL_MAX
          {
             ++iFaction;
-            if iFaction <= Length(lFlagCounts) AND Nth(lFlagCounts,iFaction) > (Length(lRIDs) - 2)
+            if Length(lRIDs) > 0 AND iFaction <= Length(lFlagCounts) AND Nth(lFlagCounts,iFaction) > (Length(lRIDs) - 2)
             {
                oRoom = Send(SYS,@FindRoomByNum,#num=First(lRIDs));
                oFlagpole = Send(oRoom,@FindHoldingActive,#class=&FlagPole);
@@ -625,6 +699,11 @@ messages:
    SendBonusTownMessage(faction=$,town=$)
    {
       local i, iNumRsc, oSession;
+
+      if town = $ OR Length(town) <= 0
+      {
+         return;
+      }
 
       AddPacket(1,BP_MESSAGE, 4,TerritoryGame_bonus_territory);
 
@@ -721,11 +800,26 @@ messages:
          Send(Create(&PrincessFlag),@TeleportHome);
       }
 
-      if (FACTION_NORMAL_MAX > FACTION_PRINCESS) and
-            ((Nth(plFlagCounts, (FACTION_REBEL+1)) + piRebelFlagItemCount) < iMaxFlagItems)
+      if (Nth(plFlagCounts, (FACTION_REBEL+1)) + piRebelFlagItemCount) < iMaxFlagItems
       {
          Send(Create(&RebelFlag),@TeleportHome);
       }
+
+      // if (Nth(plFlagCounts, (FACTION_HOLY+1)) + piHolyFlagItemCount) < iMaxFlagItems
+      // {
+      //    Send(Create(&HolyFlag),@TeleportHome);
+      // }
+
+      // if (Nth(plFlagCounts, (FACTION_NECROMANCER+1)) + piUnholyFlagItemCount) < iMaxFlagItems
+      // {
+      //    Send(Create(&UnholyFlag),@TeleportHome);
+      // }
+
+      // if (FACTION_NORMAL_MAX > FACTION_NECROMANCER) and
+      //       ((Nth(plFlagCounts, (FACTION_KOC+1)) + piKocFlagItemCount) < iMaxFlagItems)
+      // {
+      //    Send(Create(&KocFlag),@TeleportHome);
+      // }
 
       return;
    }
@@ -747,6 +841,21 @@ messages:
          ++piRebelFlagItemCount;
       }
 
+      if IsClass(flag,&HolyFlag)
+      {
+         ++piHolyFlagItemCount;
+      }
+
+      if IsClass(flag,&UnholyFlag)
+      {
+         ++piUnholyFlagItemCount;
+      }
+
+      if IsClass(flag,&KocFlag)
+      {
+         ++piKocFlagItemCount;
+      }
+
       return;
    }
 
@@ -764,6 +873,18 @@ messages:
       {
          --piRebelFlagItemCount;
       }
+      else if IsClass(flag,&HolyFlag)
+      {
+         --piHolyFlagItemCount;
+      }
+      else if IsClass(flag,&UnholyFlag)
+      {
+         --piUnholyFlagItemCount;
+      }
+      else if IsClass(flag,&KocFlag)
+      {
+         --piKocFlagItemCount;
+      }
 
       return;
    }
@@ -773,6 +894,9 @@ messages:
       piDukeFlagItemCount = 0;
       piPrincessFlagItemCount = 0;
       piRebelFlagItemCount = 0;
+      piHolyFlagItemCount = 0;
+      piUnholyFlagItemCount = 0;
+      piKocFlagItemCount = 0;
       Send(&FactionFlag,@RecountFlagItemsReply);
 
       return;
@@ -796,6 +920,21 @@ messages:
       }
 
       if (faction = FACTION_REBEL) AND (FindListElem(plJasperRIDs,RID) <> 0)
+      {
+         return TRUE;
+      }
+
+      if (faction = FACTION_HOLY) AND (FindListElem(plHolyRIDs,RID) <> 0)
+      {
+         return TRUE;
+      }
+
+      if (faction = FACTION_NECROMANCER) AND (FindListElem(plUnholyRIDs,RID) <> 0)
+      {
+         return TRUE;
+      }
+
+      if (faction = FACTION_KOC) AND (FindListElem(plKocRIDs,RID) <> 0)
       {
          return TRUE;
       }
@@ -825,8 +964,8 @@ messages:
 
    UpdateFlagsPartialGame()
    {
-      local iPrincesspower, iDukePower, iNeutralPower, iTotalPower,
-            iPrincessFlags, iDukeFlags, iNeutralFlags, iTotalFlags,
+      local iPrincesspower, iDukePower, iHolyPower, iUnholyPower, iKocPower, iNeutralPower, iTotalPower,
+            iPrincessFlags, iDukeFlags, iHolyFlags, iUnholyFlags, iKocFlags, iNeutralFlags, iTotalFlags,
             lRIDs, iRID, oRoom, oFlag;
 
       if piGameMode <> GAME_PART
@@ -837,6 +976,9 @@ messages:
       // first, figure out how many flags each gets
       iPrincesspower = Send(Send(SYS,@GetParliament),@GetPower,#faction=FACTION_PRINCESS);
       iDukePower = Send(Send(SYS,@GetParliament),@GetPower,#faction=FACTION_DUKE);
+      iHolyPower = Send(Send(SYS,@GetParliament),@GetPower,#faction=FACTION_HOLY);
+      iUnholyPower = Send(Send(SYS,@GetParliament),@GetPower,#faction=FACTION_NECROMANCER);
+      iKocPower = Send(Send(SYS,@GetParliament),@GetPower,#faction=FACTION_KOC);
       iNeutralPower = Send(Send(SYS,@GetParliament),@GetPower,#faction=FACTION_NEUTRAL);
       iTotalPower = iPrincesspower + iDukePower + iNeutralPower;
       iTotalFlags = Length(plTosRIDs) + Length(plMarionRIDs) + Length(plJasperRIDs)
@@ -844,12 +986,15 @@ messages:
                     + Length(plRazaRIDs) - 6;
       iPrincessFlags = ((iPrincesspower * iTotalFlags) / iTotalPower);
       iDukeFlags = ((iDukePower * iTotalFlags) / iTotalPower);
+      iHolyFlags = ((iHolyPower * iTotalFlags) / iTotalPower);
+      iUnholyFlags = ((iUnholyPower * iTotalFlags) / iTotalPower);
+      iKocFlags = ((iKocPower * iTotalFlags) / iTotalPower);
       iNeutralFlags = (iTotalFlags - iPrincessFlags - iDukeFlags);
 
       // Next, distribute the flags accordingly
 
       //  First, clear all to neutral
-      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs, plRazaRIDs]
+      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs, plRazaRIDs] // , plHolyRIDs, plUnholyRIDs, plKocRIDs
       {
          foreach iRID in lRIDs
          {
@@ -861,7 +1006,7 @@ messages:
       }
 
       //  Then place duke flags
-      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs, plRazaRIDs]
+      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs, plRazaRIDs] // , plHolyRIDs, plUnholyRIDs, plKocRIDs
       {
          foreach iRID in lRIDs
          {
@@ -877,7 +1022,7 @@ messages:
       }
 
       //  And finally princess flags
-      foreach lRIDs in [plBarloqueRIDs, plCorNothRIDs, plJasperRIDs, plMarionRIDs, plTosRIDs, plRazaRIDs]
+      foreach lRIDs in [plBarloqueRIDs, plCorNothRIDs, plJasperRIDs, plMarionRIDs, plTosRIDs, plRazaRIDs] // , plHolyRIDs, plUnholyRIDs, plKocRIDs
       {
          foreach iRID in lRIDs
          {

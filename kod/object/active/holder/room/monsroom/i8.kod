@@ -33,6 +33,9 @@ classvars:
 
    viTerrain_type = TERRAIN_MOUNTAIN
 
+   viFlag_row = 28
+   viFlag_col = 37
+
    viWeatherZone = WEATHER_ZONE_CV
    viWeatherMask = WEATHER_MASK_MOUNTAINS
 

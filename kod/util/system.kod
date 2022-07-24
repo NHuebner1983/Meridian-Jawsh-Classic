@@ -637,6 +637,7 @@ messages:
       Send(SETTINGS_OBJECT,@Recreate);
       Send(REALTIME_OBJECT,@Recreate);
       Send(EVENTENGINE_OBJECT,@Recreate);
+      Send(&TerritoryGame, @Recreate);
 
       if piRecreate_State <> RECREATE_NOT
       {
