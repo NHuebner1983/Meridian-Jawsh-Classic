@@ -923,7 +923,7 @@ messages:
 
       if piFaction = FACTION_DUKE
       {
-         if Random(0,8) = 1
+         if Random(0,3) = 1
          {
             oTroop = &DukeMage;
          }
@@ -934,7 +934,7 @@ messages:
       }
       else if piFaction = FACTION_PRINCESS
       {
-         if Random(0,8) = 1
+         if Random(0,3) = 1
          {
             oTroop = &PrincessMage;
          }
@@ -945,7 +945,7 @@ messages:
       }
       else if piFaction = FACTION_HOLY
       {
-         if Random(0,8) = 1
+         if Random(0,3) = 1
          {
             oTroop = &HolyMage;
          }
@@ -956,7 +956,7 @@ messages:
       }
       else if piFaction = FACTION_NECROMANCER
       {
-         if Random(0,8) = 1
+         if Random(0,3) = 1
          {
             oTroop = &UnholyMage;
          }
@@ -967,7 +967,7 @@ messages:
       }
       else if piFaction = FACTION_KOC
       {
-         if Random(0,8) = 1
+         if Random(0,3) = 1
          {
             oTroop = &KocMage;
          }
@@ -978,7 +978,14 @@ messages:
       }
       else if piFaction = FACTION_REBEL
       {
-         oTroop = &RebelTroop;
+         if Random(0,3) = 1
+         {
+            oTroop = &JonasMage;
+         }
+         else
+         {
+            oTroop = &RebelTroop;
+         }
       }
 
       if oTroop = $

@@ -60,9 +60,9 @@ messages:
    {
       plMonsters = [ [&SpiderBaby, 60], [&Ent, 40] ];
 
-      plGenerators = [ [38, 14], [26, 33], [6, 50], [15, 51], [19, 45],
+      plGenerators = [  [26, 33], [6, 50], [15, 51], [19, 45],
             [24, 45], [16, 36], [20, 25], [23, 25], [29, 24],
-            [29, 17], [33, 20], [41, 27], [36, 42], [39, 40] ];
+            [29, 17], [41, 27], [36, 42] ];
       propagate;
    }
 
@@ -149,10 +149,6 @@ messages:
           #new_row=32,#new_col=22);
       Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
           #new_row=29,#new_col=22);
-      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
-          #new_row=32,#new_col=26);
-      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
-          #new_row=34,#new_col=20);
       Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
           #new_row=23,#new_col=21);
       Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),

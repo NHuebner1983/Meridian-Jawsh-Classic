@@ -10163,7 +10163,22 @@ messages:
    ResignFaction()
    "Cancel any active loyalty or faction quests."
    {
-      local i, iQID;
+      local i, iQID, oSoth, oAo3;
+
+      // AO3 / Soth holders need to lose their AO3 & Soth!
+      if Send(self, @PossessesA, #class=&HunterSword)
+      {
+         oSoth = Send(self, @FindHolding, #class=&HunterSword);
+         Send(self,@UnuseItem,#what=oSoth);
+         Send(oSoth, @OwnerKilled);
+      }
+
+      if Send(self, @PossessesA, #class=&NecromancerAmulet)
+      {
+         oAo3 = Send(self, @FindHolding, #class=&NecromancerAmulet);
+         Send(self,@UnuseItem,#what=oAo3);
+         Send(oAo3, @OwnerKilled);
+      }
 
       if plActiveQuests = $
       {
@@ -10181,10 +10196,10 @@ messages:
             OR iQID = QST_ID_DUKE_SOLDIER
             OR iQID = QST_ID_REBEL_SOLDIER
             OR iQID = QST_ID_KOC_SOLDIER
-            // OR iQID = QST_ID_HOLY_SERVICE
-            // OR iQID = QST_ID_UNHOLY_SERVICE
-            // OR iQID = QST_ID_HOLY_SOLDIER
-            // OR iQID = QST_ID_UNHOLY_SOLDIER
+            OR iQID = QST_ID_HOLY_SERVICE
+            OR iQID = QST_ID_UNHOLY_SERVICE
+            OR iQID = QST_ID_HOLY_SOLDIER
+            OR iQID = QST_ID_UNHOLY_SOLDIER
          {
             // Post this, because it will edit the plActiveQuests list.
             Post(Nth(i,2),@DeadlineExpired);

@@ -13952,7 +13952,22 @@ messages:
 
    ResignFaction(bNoTimer=FALSE)
    {
-      local numMembers, oParliament, oQuestEngine, oQuest, oFlagPole;
+      local numMembers, oParliament, oQuestEngine, oQuest, oFlagPole, oSoth, oAo3;
+
+      // AO3 / Soth holders need to lose their AO3 & Soth!
+      if Send(self, @PossessesA, #class=&HunterSword)
+      {
+         oSoth = Send(self, @FindHolding, #class=&HunterSword);
+         Send(self,@UnuseItem,#what=oSoth);
+         Send(oSoth, @Delete);
+      }
+
+      if Send(self, @PossessesA, #class=&NecromancerAmulet)
+      {
+         oAo3 = Send(self, @FindHolding, #class=&NecromancerAmulet);
+         Send(self,@UnuseItem,#what=oAo3);
+         Send(oAo3, @Delete);
+      }
 
       if poOwner <> $
       {

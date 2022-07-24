@@ -91,8 +91,13 @@ messages:
 
    SetForSale()
    {
-      local iRoom, lDestinations;
+     local iRoom, lDestinations;
 	  
+     if poOwner = $
+     {
+        return;
+     }
+     
 	  // We only accept boat tickets.
 	  plWantedItems = [&BoatTicket];
 	  

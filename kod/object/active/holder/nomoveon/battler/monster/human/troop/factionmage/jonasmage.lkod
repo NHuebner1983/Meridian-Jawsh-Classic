@@ -1,0 +1,4 @@
+jonasmage_name_rsc = de "Ein Magier der Armee des Herzogs"
+jonasmage_desc_rsc = de \
+   "Dieser Magier trägt mit Stolz die Farben des Herzogs."
+jonasmage_dead_name_rsc = de "Ein toter Magier"

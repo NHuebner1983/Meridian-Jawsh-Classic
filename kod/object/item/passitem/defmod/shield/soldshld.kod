@@ -281,7 +281,36 @@ messages:
    LostFaction()
    "Does cleanup when the player loses faction."
    {
+      Send(self,@RemoveAccessories);
       Post(self,@Delete);
+
+      return;
+   }
+
+   RemoveAccessories()
+   {
+      local oObj;
+
+      switch(viFaction) {
+         case FACTION_HOLY:
+            if poOwner <> $ AND IsClass(poOwner, &Battler)
+            {
+               oObj = Send(poOwner, @FindUsing, #class=&HunterSword);
+               Send(oObj, @Delete);
+               Debug("Removed SOTH from owner.");
+            }
+         break;
+         case FACTION_NECROMANCER:
+            if poOwner <> $ AND IsClass(poOwner, &Battler)
+            {
+               oObj = Send(poOwner, @FindUsing, #class=&NecromancerAmulet);
+               Send(oObj, @Delete);
+               Debug("Removed AO3 from owner.");
+            }
+         break;
+      }
+
+      Debug("Accessories removed");
 
       return;
    }
