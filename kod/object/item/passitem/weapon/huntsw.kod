@@ -704,6 +704,7 @@ messages:
             }
 
             Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_lose_sword);
+            Send(poOwner,@ResignFaction);
             Send(Send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
 
             return;
@@ -784,8 +785,8 @@ messages:
       }
       else
       {
-	     // Lose the Holy Shield.
-		 Send(self,@LoseHolySoldier);
+	      // Lose the Holy Shield.
+		   Send(self,@LoseHolySoldier);
 		 
          // Instead of deleting the sword, we put it back in circulation.
          //Post(self,@Delete);
@@ -826,11 +827,11 @@ messages:
    Delete()
    {
       if poOwner = $
-	  {
-	     return;
-	  }
+	   {
+	      return;
+	   }
 	  
-	  Send(self,@LoseHolySoldier);
+	   Send(self,@LoseHolySoldier);
       Send(self,@NewOwner,#what=$);
 
       if pbCounted

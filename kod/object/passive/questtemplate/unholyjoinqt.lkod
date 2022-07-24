@@ -1,0 +1,21 @@
+   unholyjoin_name_rsc = de "Necro army join faction quest"
+   unholyjoin_desc_rsc = de \
+      "Before Queen Venya'Cyr will let you join her ranks, she must be convinced "
+      "you are not one of Shal'ille's infiltrators. Bring her an item, and you will gain her trust."
+   unholyjoin_deliver_rsc = de \
+      "Before Queen Venya'Cyr will let you join her ranks, she must be convinced "
+      "you are not affiliated with Shal'ille. Bring her %s%s, and you will gain her trust."
+   unholyjoin_completed = de \
+      "You have earnt the trust of Queen Venya'Cyr, and are now a minion "
+      "of necromancer army."
+   unholy_join2_assign = de \
+      "You wish to join the fight against our holy enemies?  Prove you're not a worm and bring "
+      "me %INDEF_CARGO%CARGO."
+   unholy_join2_success = de \
+      "Excellent work!  This will prove to be useful in battle.  "
+      "Consider yourself one of the Necromancers."
+   unholy_join2_failure = de \
+      "Subject: Your lack of evilness.\n"
+      "Your lack of actions probably confirms my fears that you are just another one of "
+      "Shal'ille's holy inquisitors. Be gone, and take your "
+      "insolence with you."

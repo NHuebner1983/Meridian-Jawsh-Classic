@@ -327,8 +327,9 @@ resources:
    player_faction_duke = "A staunch servant of Duke Akardius.\n"
    player_faction_princess = "Firmly loyal to Princess Kateriina.\n"
    player_faction_rebel = "A freedom fighter supporting Jonas.\n"
-   player_faction_holy = "Soldier of the Holy Army\n"
-   player_faction_necro = "Soldier of the Undead Army\n"
+   player_faction_holy = "A true believer of Shal'ille.\n"
+   player_faction_necro = "An undead soul of the Necromancers.\n"
+   player_faction_island = "A warrior of the Ko'catan Army.\n"
    player_faction_neutral = \
       "Not a court vassal, yet affected by the Meridian Council."
    player_not_intriguing = "Not yet concerned with affairs at the Royal Court."
@@ -2249,6 +2250,10 @@ messages:
       else if (i = FACTION_HOLY)
       {
          AddPacket(4,player_faction_holy);
+      }
+      else if (i = FACTION_KOC)
+      {
+         AddPacket(4,player_faction_island);
       }
       else
       {
@@ -13683,6 +13688,42 @@ messages:
                Send(self,@ClearOneQuestHistory,#index=QST_ID_REBEL_SERVICE);
             }
          }
+
+         if piFaction = FACTION_HOLY
+         {
+            Send(Send(SYS,@GetQuestEngine),@ScheduleQuest,
+                  #index=QST_ID_HOLY_SERVICE,#override=TRUE);
+            iHistory = first(Send(self,@GetQuestHistory,
+                  #index=QST_ID_HOLY_SERVICE)) & (~QUEST_HISTORY_MASK);
+            if ( iHistory & QUEST_HISTORY_SUCCESS ) <> 0
+            {
+               Send(self,@ClearOneQuestHistory,#index=QST_ID_HOLY_SERVICE);
+            }
+         }
+
+         if piFaction = FACTION_NECROMANCER
+         {
+            Send(Send(SYS,@GetQuestEngine),@ScheduleQuest,
+                  #index=QST_ID_UNHOLY_SERVICE,#override=TRUE);
+            iHistory = first(Send(self,@GetQuestHistory,
+                  #index=QST_ID_UNHOLY_SERVICE)) & (~QUEST_HISTORY_MASK);
+            if ( iHistory & QUEST_HISTORY_SUCCESS ) <> 0
+            {
+               Send(self,@ClearOneQuestHistory,#index=QST_ID_UNHOLY_SERVICE);
+            }
+         }
+
+         if piFaction = FACTION_KOC
+         {
+            Send(Send(SYS,@GetQuestEngine),@ScheduleQuest,
+                  #index=QST_ID_KOC_SERVICE,#override=TRUE);
+            iHistory = first(Send(self,@GetQuestHistory,
+                  #index=QST_ID_KOC_SERVICE)) & (~QUEST_HISTORY_MASK);
+            if ( iHistory & QUEST_HISTORY_SUCCESS ) <> 0
+            {
+               Send(self,@ClearOneQuestHistory,#index=QST_ID_KOC_SERVICE);
+            }
+         }
       }
 
       if renew AND Send(SYS,@GetParliament) <> $
@@ -13796,7 +13837,7 @@ messages:
       }
 
       if new_faction <= FACTION_NEUTRAL
-         OR new_faction > FACTION_NORMAL_MAX
+         OR new_faction > FACTION_MAX
       {
          return FALSE;
       }
@@ -13842,6 +13883,39 @@ messages:
          Post(self,@DrawOffense);
       }
 
+      if piFaction = FACTION_HOLY
+      {
+         Send(oQuestEngine,@SetQuestMaxActive,#index = QST_ID_HOLY_SERVICE,
+               #new_max = (1+Nth(Send(oQuestEngine,@GetQuestTemplate,
+                                      #index=QST_ID_HOLY_SERVICE),
+                                      QT_MAX_NUM_ACTIVE)));
+         Send(oQuestEngine,@ScheduleQuest,
+               #index=QST_ID_HOLY_SERVICE,#override=TRUE);
+         Post(self,@DrawOffense);
+      }
+
+      if piFaction = FACTION_NECROMANCER
+      {
+         Send(oQuestEngine,@SetQuestMaxActive,#index = QST_ID_UNHOLY_SERVICE,
+               #new_max = (1+Nth(Send(oQuestEngine,@GetQuestTemplate,
+                                      #index=QST_ID_UNHOLY_SERVICE),
+                                      QT_MAX_NUM_ACTIVE)));
+         Send(oQuestEngine,@ScheduleQuest,
+               #index=QST_ID_UNHOLY_SERVICE,#override=TRUE);
+         Post(self,@DrawOffense);
+      }
+
+      if piFaction = FACTION_KOC
+      {
+         Send(oQuestEngine,@SetQuestMaxActive,#index = QST_ID_KOC_SERVICE,
+               #new_max = (1+Nth(Send(oQuestEngine,@GetQuestTemplate,
+                                      #index=QST_ID_KOC_SERVICE),
+                                      QT_MAX_NUM_ACTIVE)));
+         Send(oQuestEngine,@ScheduleQuest,
+               #index=QST_ID_KOC_SERVICE,#override=TRUE);
+         Post(self,@DrawOffense);
+      }
+
       piFactionTimeUpdated = GetTime();
       piFactionServiceUpdate = 0;
       oParliament = Send(SYS,@GetParliament);
@@ -13878,7 +13952,22 @@ messages:
 
    ResignFaction(bNoTimer=FALSE)
    {
-      local numMembers, oParliament, oQuestEngine, oQuest, oFlagPole;
+      local numMembers, oParliament, oQuestEngine, oQuest, oFlagPole, oSoth, oAo3;
+
+      // AO3 / Soth holders need to lose their AO3 & Soth!
+      if Send(self, @PossessesA, #class=&HunterSword)
+      {
+         oSoth = Send(self, @FindHolding, #class=&HunterSword);
+         Send(self,@UnuseItem,#what=oSoth);
+         Send(oSoth, @Delete);
+      }
+
+      if Send(self, @PossessesA, #class=&NecromancerAmulet)
+      {
+         oAo3 = Send(self, @FindHolding, #class=&NecromancerAmulet);
+         Send(self,@UnuseItem,#what=oAo3);
+         Send(oAo3, @Delete);
+      }
 
       if poOwner <> $
       {
@@ -13953,6 +14042,57 @@ messages:
          else
          {
             Debug("ResignFaction miscounted number of Rebel faction members!");
+         }
+         Post(self,@DrawOffense);
+      }
+
+      if piFaction = FACTION_HOLY
+      {
+         oQuest = Send(oQuestEngine,@GetQuestTemplate,
+                       #index=QST_ID_HOLY_SERVICE);
+         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
+         if numMembers > 0
+         {
+            Send(oQuestEngine,@SetQuestMaxActive,#index=QST_ID_HOLY_SERVICE,
+                 #new_max=(numMembers-1));
+         }
+         else
+         {
+            Debug("ResignFaction miscounted number of Holy faction members!");
+         }
+         Post(self,@DrawOffense);
+      }
+
+      if piFaction = FACTION_NECROMANCER
+      {
+         oQuest = Send(oQuestEngine,@GetQuestTemplate,
+                       #index=QST_ID_UNHOLY_SERVICE);
+         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
+         if numMembers > 0
+         {
+            Send(oQuestEngine,@SetQuestMaxActive,#index=QST_ID_UNHOLY_SERVICE,
+                 #new_max=(numMembers-1));
+         }
+         else
+         {
+            Debug("ResignFaction miscounted number of Unholy faction members!");
+         }
+         Post(self,@DrawOffense);
+      }
+
+      if piFaction = FACTION_KOC
+      {
+         oQuest = Send(oQuestEngine,@GetQuestTemplate,
+                       #index=QST_ID_KOC_SERVICE);
+         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
+         if numMembers > 0
+         {
+            Send(oQuestEngine,@SetQuestMaxActive,#index=QST_ID_KOC_SERVICE,
+                 #new_max=(numMembers-1));
+         }
+         else
+         {
+            Debug("ResignFaction miscounted number of Ko'catan faction members!");
          }
          Post(self,@DrawOffense);
       }

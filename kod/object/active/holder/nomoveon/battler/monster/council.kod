@@ -31,6 +31,12 @@ resources:
       "I will look with more favor on the Princess Kateriina's ideas."
    con_rebel_delivered_rsc = \
       "I will look upon rebellion as a sign of good change."
+   con_holy_delivered_rsc = \
+      "I will pray to Shal'ille as a sign of good change."
+   con_unholy_delivered_rsc = \
+      "I will praise evil in the name of Queen Venya'Cyr."
+   con_koc_delivered_rsc = \
+      "I spread horrible rumors throughout the mainland in the name of Cital ko'Manca."
    con_neutral_delivered_rsc = \
       "I shall endeavor to be as impartial at the court as ye."
 
@@ -86,16 +92,22 @@ messages:
          spec_rsc=Send(self,@CheckSpecialDeliverer,#who=who);
 
          if Send(who,@GetFaction)=FACTION_DUKE
-         { fact_rsc=Con_duke_delivered_rsc;}
+         { fact_rsc=con_duke_delivered_rsc;}
          if Send(who,@GetFaction)=FACTION_NEUTRAL
-         { fact_rsc=Con_neutral_delivered_rsc;}
+         { fact_rsc=con_neutral_delivered_rsc;}
          if Send(who,@GetFaction)=FACTION_PRINCESS
-         { fact_rsc=Con_princess_delivered_rsc;}
+         { fact_rsc=con_princess_delivered_rsc;}
          if Send(who,@GetFaction)=FACTION_REBEL
-         { fact_rsc=Con_rebel_delivered_rsc;}
+         { fact_rsc=con_rebel_delivered_rsc;}
+         if Send(who,@GetFaction)=FACTION_HOLY
+         { fact_rsc=con_holy_delivered_rsc;}
+         if Send(who,@GetFaction)=FACTION_NECROMANCER
+         { fact_rsc=con_unholy_delivered_rsc;}
+         if Send(who,@GetFaction)=FACTION_KOC
+         { fact_rsc=con_koc_delivered_rsc;}
 
          Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-               #string=Con_token_delivered_rsc,
+               #string=con_token_delivered_rsc,
                #parm1=fact_rsc,#parm2=spec_rsc);
 
          return TRUE;

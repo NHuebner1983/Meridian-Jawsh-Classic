@@ -1,0 +1,47 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+HolyFlag is FactionFlag
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include holyflag.lkod
+
+   HolyFlag_icon_rsc = flaghinv.bgf
+   HolyFlag_name_rsc = "holy army flag"
+   HolyFlag_desc_rsc = \
+      "This flag bears the colors of the holy army of Shal'ille."
+
+classvars:
+
+   vrName = HolyFlag_name_rsc
+   vrDesc = HolyFlag_desc_rsc
+   vrIcon = HolyFlag_icon_rsc
+
+   viFaction = FACTION_HOLY
+
+properties:
+
+messages:
+
+   TeleportHome()
+   {
+      Send(Send(SYS,@FindRoomByNum,#num=RID_TEMPLE),
+            @NewHold,#what=self,#new_row=7,#new_col=11);
+
+      return;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

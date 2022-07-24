@@ -1,0 +1,31 @@
+HolyLiege_name_rsc = de "Shal'ille"
+HolyLiege_desc_rsc = de \
+   "The ageless goddess Shal'ille stands firm in the moonlit sky. "
+   "Her unblinking gaze into the stars warms her while bathing "
+   "in holy water that has been blessed for centuries. "
+   "She glances at you with a smile. It's as if she sees "
+   "the good in your soul and wishes you to become a disciple."
+   "For a brief moment she makes a mystical motion with her hands "
+   "which indicate she is frequently sending powerful blessings to "
+   "her followers. You shouldn't be here too long as being in her "
+   "presence imprints your soul with what only feels like pure love. "
+   "You feel spending too much time around her may hinder your ability "
+   "to make poor decisions and take away the very balance which makes you "
+   "human."
+HolyLiege_token_delivered_rsc = de \
+   "Returning this token will show the counselors my power is not to be "
+   "ignored. %s"
+HolyLiege_shally_delivered_rsc = de \
+   "You are very loyal to my cause.  I bless you."
+HolyLiege_neutral_delivered_rsc = de \
+   "Do you also oppose the evil reign of occupiers in our holy "
+   "land?  Join me."
+HolyLiege_other_delivered_rsc = de \
+   "I see that you wish to change loyalty?"
+   "With this token, you are worthy to join us in our quest to rid this land of evil."
+HolyLiege_toopowered_rsc = de \
+   "Currently I cannot bring another into my ranks for fear they will "
+   "swell beyond my control."
+HolyLiege_no_murderer = de \
+   "I am a servant of peace, and as such my conscience "
+   "will not allow me to help you.  Your soul is damned."

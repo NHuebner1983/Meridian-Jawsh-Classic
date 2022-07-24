@@ -253,6 +253,25 @@ messages:
 
    NewOwner(what = $)
    {
+      // AO3 will now immediately be worn when received.
+      if IsClass(what, &Battler)
+      {
+         pbWarned = TRUE;
+
+         if pbIn_Use = $ OR pbIn_use = FALSE
+         {
+            Post(what, @UserUseItem, #what=self);
+            
+            if what <> $
+               AND IsClass(what,&User)
+            {
+               Post(self,@HoldingDamageTrigger);
+            }
+            
+            propagate;
+         }
+      }
+
       pbWarned = FALSE;
 
       if ptHoldingDamage <> $
@@ -891,7 +910,8 @@ messages:
          }
 
          oGuild = Send(poOwner,@GetGuild);
-         if oGuild <> $
+
+         if oGuild <> $ AND what <> $
             AND IsClass(oGuild,&NecromancerGuild)
          {
             Send(oGuild,@MemberKilled,#victim=poOwner,#killer=what);
@@ -899,7 +919,7 @@ messages:
 
          // Instead of deleting the amulet, we put it back in circulation.
          // Post(self,@Delete);
-		 Send(self, @LoseUndeadSoldier);
+		   Send(self, @LoseUndeadSoldier);
          Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
       }
 

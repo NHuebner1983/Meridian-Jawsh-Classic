@@ -1,0 +1,143 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+UnholyLiege is Factions
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   // TODO: Tyrant Translate
+   include queenven.lkod
+
+   UnholyLiege_name_rsc = "Queen Venya'Cyr"
+   UnholyLiege_icon_rsc = licha.bgf
+   UnholyLiege_desc_rsc = \
+      "Through some dark pact made ages ago, Queen Venya'cyr's ghastly corpse "
+      "has been kept alive by dark magicks.  Sheer power emanates forcibly "
+      "from her eyes, an intense gaze which strikes fear into your heart.  "
+      "The centuries have apparently taken their toll on her physical form, "
+      "however, as her skin is a mess of rotting flesh writhing with worms.  "
+   
+   UnholyLiege_token_delivered_rsc = \
+      "Returning this token will show the counselors my power is not to be "
+      "ignored. %s"
+   UnholyLiege_unholy_delivered_rsc = \
+      "You are very loyal to my cause.  I thank you."
+   UnholyLiege_neutral_delivered_rsc = \
+      "Do you also oppose the tyranny of the current pretenders to the "
+      "Throne?  Join me and reign."
+   UnholyLiege_other_delivered_rsc = \
+      "Does your current liege no longer respect you? "
+      "Join us in our quest to take over these lands."
+   UnholyLiege_toopowered_rsc = \
+      "Currently I cannot bring another into my ranks for fear they will "
+      "swell beyond my control."
+
+classvars:
+
+   viQuestID = QST_ID_UNHOLY_SERVICE
+   viGender = GENDER_FEMALE
+   viFaction = FACTION_NECROMANCER
+   viKarma = 0
+   viAttributes = \
+      MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE \
+      | MOB_NOMOVE
+   viOccupation = MOB_ROLE_ROYALTY
+
+   viHomeroom = RID_TEMPLE_QOR
+   viMyRow = 10
+   viMyCol = 27
+   viMyAngle = ANGLE_WEST
+   viMyFR = 55
+   viMyFC = 10
+
+properties:
+
+   vrName = UnholyLiege_name_rsc
+   vrIcon = UnholyLiege_icon_rsc
+   vrDesc = UnholyLiege_desc_rsc
+
+messages:
+
+   AffectMood(why=$,what=$)
+   {
+      if why = MOODMOD_FACTION_CHANGE
+      {
+         if what = viFaction
+         {
+            Send(self,@SetMood,#new_mood=piMood+25);
+         }
+		 else
+		 {
+		    if what = FACTION_NEUTRAL
+			{
+               Send(self,@SetMood,#new_mood=piMood+15);
+			}
+			else
+			{
+			   Send(self,@SetMood,#new_mood=piMood-25);
+			}
+		 }
+      }
+
+      return;
+   }
+
+   Constructor()
+   {
+      plWantedItems=[&Token];
+
+      propagate;
+   }
+
+   CheckWhyWanted(obj=$,who=$)
+   {
+      local temp_rsc;
+
+      if isClass(obj,&Token) and Send(SYS,@GetTokenGame) <> $ and 
+         Send(Send(SYS,@GetTokenGame),@IsTokenReal,#obj=obj)
+      {
+         if Send(who,@GetFaction) = viFaction
+         {
+            temp_rsc=UnholyLiege_unholy_delivered_rsc;
+         }
+
+         if Send(who,@GetFaction) = FACTION_NEUTRAL
+         {
+            temp_rsc=UnholyLiege_neutral_delivered_rsc;
+         }
+
+         if Send(who,@GetFaction) <> FACTION_NEUTRAL
+		    AND Send(who,@GetFaction) <> viFaction
+         {
+            temp_rsc=UnholyLiege_other_delivered_rsc;
+         }
+
+         if (Send(Send(SYS,@GetParliament),@GetPower,
+                  #faction=viFaction) > FACTION_STRONGLY_IN)
+            AND Send(who,@GetFaction) <> viFaction
+         {
+            temp_rsc=UnholyLiege_toopowered_rsc;
+         }
+
+         Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                  #string=UnholyLiege_token_delivered_rsc,#parm1=temp_rsc);
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

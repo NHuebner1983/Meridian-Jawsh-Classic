@@ -1,0 +1,21 @@
+holyjoin_name_rsc = de "Holy army join faction quest"
+holyjoin_desc_rsc = de \
+   "Before Shal'ille will let you join her ranks, she must be convinced "
+   "you are not a mainland traitor. Bring her an item, and you will gain her trust."
+holyjoin_deliver_rsc = de \
+   "Before Shal'ille will let you join her ranks, she must be convinced "
+   "you are not a mainland traitor. Bring her %s%s, and you will gain her trust."
+holyjoin_completed = de \
+   "You have earnt the trust of Shal'ille, and are now a member "
+   "of her faction."
+holy_join2_assign = de \
+   "You wish to join the fight against evil? Prove your worthiness by bringing "
+   "me %INDEF_CARGO%CARGO."
+holy_join2_success = de \
+   "Excellent work!  This will prove to be useful in battle.  "
+   "Consider yourself one of the Holy Army."
+holy_join2_failure = de \
+   "Subject: Your lack of punctuality.\n"
+   "Your lack of actions probably confirms my fears that you were a traitor "
+   "from the mainland.  Do not bother me again with your "
+   "false desires to fight for what is right and just."

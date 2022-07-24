@@ -436,7 +436,25 @@
 
    // Used by exits to indicate that the exit only leads to a locked door,
    //  not to a valid room.
+
+   // And a side note from another developer, who cares if the constants get messy as long as they work :)
    ROOM_LOCKED_DOOR = -1
+
+   // NPC Rooms
+   RID_PRINCESS = 852
+   RID_DUKE = 952
+   RID_JONAS = 371
+   RID_QOR = 802
+   RID_SHALILLE = 48
+   RID_KOC = 2013
+
+   // Flags guaranteed to have a faction soldier.
+   RID_PRINCESS_POLE = 593
+   RID_DUKE_POLE = 586
+   RID_JONAS_POLE = 568
+   RID_QOR_POLE = 598
+   RID_SHALILLE_POLE = 534
+   RID_KOC_POLE = 2115
 
    RID_DEFAULT = 1
 
@@ -808,7 +826,7 @@
    RID_BAZMANS_ROOM = 855
    RID_CASTLE2E = 856
    RID_FORGOTTEN_TOO = 857 // Moved from 42
-
+   
    RID_GODROOM = 901
    RID_UNIVERSITY = 902
    RID_GALLERY = 903
@@ -1958,7 +1976,10 @@
    INSIG_DUKE = 7
    INSIG_SHALILLE = 8
    INSIG_REBEL = 9
-   INSIG_NONE = 10
+   INSIG_HOLY = 10
+   INSIG_UNHOLY = 11
+   INSIG_KOC = 12
+   INSIG_NONE = 13
 
    // Weapons
 
@@ -2746,18 +2767,12 @@
    FACTION_DUKE        = 1
    FACTION_PRINCESS    = 2
    FACTION_REBEL       = 3
-   
-   // Normal max is the standard factions.
-   FACTION_NORMAL_MAX  = 3
-   
-   // Necromancer faction currently only used for necro shield handling.
    FACTION_NECROMANCER = 4
-   
-   // Shal'ille's Army (SoTH holders vs. AO3 holders)
    FACTION_HOLY        = 5
+   FACTION_KOC         = 6
    
-   // Max number of factions
-   FACTION_MAX         = 5
+   FACTION_MAX         = 6
+   FACTION_NORMAL_MAX  = 6
 
    PARLIAMENT_SIZE = 5
 
@@ -3194,6 +3209,15 @@
    QST_ID_PRINCESS_SOLDIER       = 73
    QST_ID_REBEL_SOLDIER          = 74
    QST_ID_ABSTAIN_PVP            = 75
+   QST_ID_KOC_SERVICE            = 76
+   QST_ID_KOC_JOIN               = 77
+   QST_ID_KOC_SOLDIER            = 78
+   QST_ID_HOLY_SERVICE           = 79
+   QST_ID_HOLY_JOIN              = 80
+   QST_ID_HOLY_SOLDIER           = 81
+   QST_ID_UNHOLY_SERVICE         = 82
+   QST_ID_UNHOLY_JOIN            = 83
+   QST_ID_UNHOLY_SOLDIER         = 84
 
    // Quest Node Template IDs. Each quest has multple Quest Nodes.
    QNT_ID_DUKE_JOIN_ONE          = 1
@@ -3478,8 +3502,32 @@
    QNT_ID_REBEL_SOLDIER_TWO      = 215
    QNT_ID_REBEL_SOLDIER_THREE    = 216
 
-   QNT_ID_ABSTAIN_PVP_ONE        = 217
-   QNT_ID_ABSTAIN_PVP_TWO        = 218
+   QNT_ID_KOC_JOIN_ONE           = 217
+   QNT_ID_KOC_JOIN_TWO           = 218
+   QNT_ID_KOC_LOYALTY_ONE        = 219
+   QNT_ID_KOC_LOYALTY_TWO        = 220
+   QNT_ID_KOC_SOLDIER_ONE        = 221
+   QNT_ID_KOC_SOLDIER_TWO        = 222
+   QNT_ID_KOC_SOLDIER_THREE      = 223
+
+   QNT_ID_HOLY_JOIN_ONE          = 224
+   QNT_ID_HOLY_JOIN_TWO          = 225
+   QNT_ID_HOLY_LOYALTY_ONE       = 226
+   QNT_ID_HOLY_LOYALTY_TWO       = 227
+   QNT_ID_HOLY_SOLDIER_ONE       = 228
+   QNT_ID_HOLY_SOLDIER_TWO       = 229
+   QNT_ID_HOLY_SOLDIER_THREE     = 230
+
+   QNT_ID_UNHOLY_JOIN_ONE        = 231
+   QNT_ID_UNHOLY_JOIN_TWO        = 232
+   QNT_ID_UNHOLY_LOYALTY_ONE     = 233
+   QNT_ID_UNHOLY_LOYALTY_TWO     = 234
+   QNT_ID_UNHOLY_SOLDIER_ONE     = 235
+   QNT_ID_UNHOLY_SOLDIER_TWO     = 236
+   QNT_ID_UNHOLY_SOLDIER_THREE   = 237
+
+   QNT_ID_ABSTAIN_PVP_ONE        = 238
+   QNT_ID_ABSTAIN_PVP_TWO        = 239
 
    // Quest misc constants
 
@@ -3509,10 +3557,13 @@
    Q_PLAYER_FACTION_NEUTRAL   = 0x20         // Only players aligned w/neither are considered
    Q_PLAYER_FACTION_PRINCESS  = 0x30         // Only players aligned w/princess are considered
    Q_PLAYER_FACTION_REBEL     = 0x40         // Only players aligned w/rebels are considered
-   Q_PLAYER_FACTION_SAME      = 0x50         // Only players w/same alignment as first node's npc are considered
-   Q_PLAYER_FACTION_DIFFERENT = 0x60         // Only players w/different alignment than first node's npc are considered
-   Q_PLAYER_FACTION_IN        = 0x70         // NYI - Only players w/alignment in power are considered
-   Q_PLAYER_FACTION_OUT       = 0x80         // NYI - Only players w/alignment out of power are considered
+   Q_PLAYER_FACTION_HOLY      = 0x50         // Only players aligned w/holy are considered
+   Q_PLAYER_FACTION_UNHOLY    = 0x60         // Only players aligned w/unholy are considered
+   Q_PLAYER_FACTION_SAME      = 0x70         // Only players w/same alignment as first node's npc are considered
+   Q_PLAYER_FACTION_DIFFERENT = 0x80         // Only players w/different alignment than first node's npc are considered
+   Q_PLAYER_FACTION_IN        = 0x90         // NYI - Only players w/alignment in power are considered
+   Q_PLAYER_FACTION_OUT       = 0x0A         // NYI - Only players w/alignment out of power are considered
+   Q_PLAYER_FACTION_KOC       = 0x0B         // Only players aligned w/koc are considered
    Q_PLAYER_FACTION_MASK      = 0xF0
 
    Q_PLAYER_NEWBIE            = 0x0100      // uses PFLAG_PKILL_ENABLE
@@ -3554,9 +3605,9 @@
    Q_R2_DOES_NOT_HAVE_ITEM       = 10  // [Q_R2_, itemclass]
    Q_R2_NECRO_GUILD_ACTIVE       = 11  // [Q_R2_, boolean]            (is necromancer guild active?)
 
-   QUEST_HISTORY_MASK           = 0x0FFFFFF           // bits used in player quest history compound to indicate quest index
-   QUEST_HISTORY_SUCCESS           = 0x1000000
-   QUEST_HISTORY_FAILURE           = 0x2000000
+   QUEST_HISTORY_MASK            = 0x0FFFFFF           // bits used in player quest history compound to indicate quest index
+   QUEST_HISTORY_SUCCESS         = 0x1000000
+   QUEST_HISTORY_FAILURE         = 0x2000000
 
    // Quest node types
    QN_TYPE_MESSAGE            = 0x01         // Deliver a message I give you
@@ -3630,11 +3681,14 @@
 //   QN_PRIZE_BOON_KARMA    = 0xA     // Not implemented
 
    // Quest node prize boon types
-   QN_PRIZE_FACTION_UPDATE       = 0x0    // reset the faction timer (i.e. after loyalty is proven)
+   QN_PRIZE_FACTION_UPDATE     = 0x0    // reset the faction timer (i.e. after loyalty is proven)
    QN_PRIZE_FACTION_DUKE       = 0x1    // join the duke's faction
    QN_PRIZE_FACTION_PRINCESS   = 0x2    // join the princess' faction
    QN_PRIZE_FACTION_REBEL      = 0x3    // join the rebel faction
-   QN_PRIZE_FACTION_NEUTRAL    = 0x4    // mainly for use as a penalty
+   QN_PRIZE_FACTION_HOLY       = 0x4    // join the holy faction
+   QN_PRIZE_FACTION_UNHOLY     = 0x5    // join the unholy faction
+   QN_PRIZE_FACTION_KOC        = 0x6    // join the koc faction
+   QN_PRIZE_FACTION_NEUTRAL    = 0x7    // mainly for use as a penalty
 
    // Quest node NPC selection modifiers
    QN_NPCMOD_NONE          = 0x0      // Choose any NPC in the list

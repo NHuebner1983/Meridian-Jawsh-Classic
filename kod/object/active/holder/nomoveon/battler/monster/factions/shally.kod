@@ -1,0 +1,153 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+HolyLiege is Factions
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include shally.lkod
+
+   HolyLiege_name_rsc = "Shal'ille"
+   HolyLiege_icon_rsc = shalliege.bgf
+   HolyLiege_desc_rsc = \
+    "The ageless goddess Shal'ille stands firm in the moonlit sky. "
+    "Her unblinking gaze into the stars warms her while bathing "
+	 "in holy water that has been blessed for centuries. "
+	 "She glances at you with a smile. It's as if she sees "
+	 "the good in your soul and wishes you to become a disciple. "
+    "For a brief moment she makes a mystical motion with her hands "
+	 "which indicates she is frequently sending powerful blessings to "
+	 "her followers. \n\nYou shouldn't stand too close, as being in her "
+	 "presence imprints your soul with what only feels like pure love. "
+	 "Spending too much time around her may take away your ability "
+	 "to make poor decisions."
+   
+   HolyLiege_token_delivered_rsc = \
+      "Returning this token will show the counselors my power is not to be "
+      "ignored. %s"
+   HolyLiege_shally_delivered_rsc = \
+      "You are very loyal to my cause.  I bless you."
+   HolyLiege_neutral_delivered_rsc = \
+      "Do you also oppose the evil reign of occupiers in our holy "
+      "land?  Join me."
+   HolyLiege_other_delivered_rsc = \
+      "I see that you wish to change loyalty?"
+      "With this token, you are worthy to join us in our quest to rid this land of evil."
+   HolyLiege_toopowered_rsc = \
+      "Currently I cannot bring another into my ranks for fear they will "
+      "swell beyond my control."
+
+   HolyLiege_no_murderer = \
+      "I am a servant of peace, and as such my conscience "
+      "will not allow me to help you.  Your soul is damned."
+
+classvars:
+
+   viQuestID = QST_ID_HOLY_SERVICE
+   viGender = GENDER_FEMALE
+   viFaction = FACTION_HOLY
+   viKarma = 0
+   viAttributes = \
+      MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE \
+      | MOB_NOMOVE
+   viOccupation = MOB_ROLE_ROYALTY
+
+   viHomeroom = RID_TEMPLE_SHALILLE
+   
+   viMyRow = 9
+   viMyCol = 12
+   viMyAngle = ANGLE_SOUTH
+   viMyFR = 19
+   viMyFC = 0
+
+properties:
+
+   vrName = HolyLiege_name_rsc
+   vrIcon = HolyLiege_icon_rsc
+   vrDesc = HolyLiege_desc_rsc
+
+messages:
+
+   AffectMood(why=$,what=$)
+   {
+      if why = MOODMOD_FACTION_CHANGE
+      {
+         if what = viFaction
+         {
+            Send(self,@SetMood,#new_mood=piMood+25);
+         }
+		 else
+		 {
+		    if what = FACTION_NEUTRAL
+			{
+               Send(self,@SetMood,#new_mood=piMood+15);
+			}
+			else
+			{
+			   Send(self,@SetMood,#new_mood=piMood-25);
+			}
+		 }
+      }
+
+      return;
+   }
+
+   Constructor()
+   {
+      plWantedItems=[&Token];
+
+      propagate;
+   }
+
+   CheckWhyWanted(obj=$,who=$)
+   {
+      local temp_rsc;
+
+      if isClass(obj,&Token) and Send(SYS,@GetTokenGame) <> $ and 
+         Send(Send(SYS,@GetTokenGame),@IsTokenReal,#obj=obj)
+      {
+         if Send(who,@GetFaction) = viFaction
+         {
+            temp_rsc=HolyLiege_shally_delivered_rsc;
+         }
+
+         if Send(who,@GetFaction) = FACTION_NEUTRAL
+         {
+            temp_rsc=HolyLiege_neutral_delivered_rsc;
+         }
+
+         if Send(who,@GetFaction) <> FACTION_NEUTRAL
+		    AND Send(who,@GetFaction) <> viFaction
+         {
+            temp_rsc=HolyLiege_other_delivered_rsc;
+         }
+
+         if (Send(Send(SYS,@GetParliament),@GetPower,
+                  #faction=viFaction) > FACTION_STRONGLY_IN)
+            AND Send(who,@GetFaction) <> viFaction
+         {
+            temp_rsc=HolyLiege_toopowered_rsc;
+         }
+
+         Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                  #string=HolyLiege_token_delivered_rsc,#parm1=temp_rsc);
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////
