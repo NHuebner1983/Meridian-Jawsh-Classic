@@ -255,8 +255,13 @@ messages:
       if (NOT pbDMs AND IsClass(who,&DM))
          OR (plExclude <> $
              AND FindListElem(plExclude,who) <> 0)
-	     OR (IsClass(who, &Player) AND NOT Send(who,@IsRoamingNPCPlayer))
       {
+         return;
+      }
+
+      if (IsClass(who, &Player) AND Send(who,@IsRoamingNPCPlayer))
+      {
+         // No NPCs.
          return;
       }
 

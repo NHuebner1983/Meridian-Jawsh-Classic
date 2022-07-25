@@ -2504,11 +2504,13 @@ messages:
    SetupRoamingNPCPlayer()
    {
       local oObj, bHasTotem;
-	  
+	   
+      Send(Send(SYS,@GetLore),@ExcludePlayer,#who=self);
+
       if pbRoamingNPCPlayerInitialized OR NOT Send(self, @IsRoamingNPCPlayer)
-	  {
-	     return;
-	  }
+	   {
+	      return;
+	   }
 	  
 	  pbRoamingNPCPlayerInitialized = TRUE;
 	  
@@ -2608,7 +2610,7 @@ messages:
 	  if Send(self, @IsRoamingNPCPlayer)
 	  {
 	     pbRoamingNPCPlayerInitialized = FALSE;
-		 
+		  Send(Send(SYS,@GetLore),@ExcludePlayer,#who=self);
 	     Send(self, @SetupRoamingNPCPlayer);
 	  }
 	  else
@@ -8516,8 +8518,11 @@ messages:
       iOldValue = Nth(plSchools,school);
       SetNth(plSchools,school,(iOldValue+change));
 
-      oLore = Send(SYS,@GetLore);
-      Send(oLore,@PlayerAdvanced,#who=self,#school = school);
+      if NOT Send(self, @IsRoamingNPCPlayer)
+      {
+         oLore = Send(SYS,@GetLore);
+         Send(oLore,@PlayerAdvanced,#who=self,#school = school);
+      }
 
       return TRUE;
    }
@@ -8557,8 +8562,11 @@ messages:
       if informlore OR lOldList = $
       { 
          // Assume that something has changed
-         oLore = Send(SYS,@GetLore);
-         Send(oLore,@PlayerAdvanced,#who=self,#school = iSchool);
+         if NOT Send(self, @IsRoamingNPCPlayer)
+         {
+            oLore = Send(SYS,@GetLore);
+            Send(oLore,@PlayerAdvanced,#who=self,#school = iSchool);
+         }
          
          return;
       }
