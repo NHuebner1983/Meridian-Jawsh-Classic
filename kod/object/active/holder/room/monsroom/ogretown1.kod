@@ -44,8 +44,8 @@ classvars:
 
    vrName = room_name_ogretown1
 
-   viTeleport_row = 53
-   viTeleport_col = 47
+   viTeleport_row = 55
+   viTeleport_col = 27
 
    viTerrain_Type = TERRAIN_LAKE | TERRAIN_WATERFALL | TERRAIN_CAVES
 
