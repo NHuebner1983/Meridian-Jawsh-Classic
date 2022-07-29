@@ -5208,11 +5208,15 @@ void D3DRenderFloorExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom_s
                }
             }
 
-            //if (pDib->width == BITMAP_WIDTH * 2)
-            if(0)
+            // To Kimrse's from Silence: Why would we force all floors to be 64x64?
+            // You're literally removing high quality drawings from the game.
+            // Not all floors are repeating patterns!
+            // Shame on you! :)
+            // This should fix it - hopefully.
+            if (pDib->width != pDib->height && pDib->width > 64 && pDib->height > 64)
             {
-               pST[count].s *= inv128;
-               pST[count].t *= inv128;
+               pST[count].s *= (1.0f / (pDib->width * PETER_FUDGE));
+               pST[count].t *= (1.0f / (pDib->height * PETER_FUDGE));
             }
             else
             {

@@ -130,7 +130,7 @@ grid_bitmap_type LoadGridBitmap(ID gridnum)
       SafeFree(grid);
       return NULL;
    }
-
+   
    grid->idnum = gridnum;
 
    return grid;

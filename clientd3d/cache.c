@@ -26,16 +26,16 @@
  } Cache;
 
  // Largest amount of memory to use
- #define GEN_MEMORY (12*1024*1024)
- #define MAX_MEMORY (20*1024*1024)
+ #define GEN_MEMORY (300*1024*1024)
+ #define MAX_MEMORY (500*1024*1024)
 
  // Space to leave in memory for OS, client code, etc. depending on OS
  #define FREEMEM_WINNT   8000000
  #define FREEMEM_WIN95   8000000
  #define FREEMEM_UNKNOWN FREEMEM_WIN95
 
- #define OBJECT_CACHE_MIN_SIZE  6000000
- #define GRID_CACHE_MIN_SIZE    4000000
+ #define OBJECT_CACHE_MIN_SIZE  9000000
+ #define GRID_CACHE_MIN_SIZE    9000000
 
  static Cache grid_cache;
  static Cache object_cache;
