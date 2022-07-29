@@ -943,8 +943,9 @@
    RID_MAR_CRYPT2 = 2601
    RID_MAR_CRYPT3A = 2602
 
-   // Ogre Caves
+   // Ogre Town & Caves
    RID_OGRE_CAVE1 = 2603
+   RID_OGRE_TOWN1 = 2604
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia
