@@ -919,9 +919,10 @@
    RID_ORC_CAVE_END = 2599
 
    // Marion Crypt Dungeon 2600-2700
-   RID_MAR_CRYPT1 = 2600
-   RID_MAR_CRYPT2 = 2601
+   RID_MAR_CRYPT1  = 2600
+   RID_MAR_CRYPT2  = 2601
    RID_MAR_CRYPT3A = 2602
+   RID_MAR_CRYPT4  = 2603
 
    //Death Realm
    RID_DH4             = 3000

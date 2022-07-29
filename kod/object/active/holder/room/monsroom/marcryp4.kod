@@ -1,0 +1,67 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+MarionCrypt4 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   name_mar_crypt4 = "The Laboratory of the Mad Brothers" 
+   room_mar_crypt4 = marcrypt4.roo
+
+   mar_crypt4_music = castle2.ogg
+
+classvars:
+
+   vrName = name_mar_crypt4
+
+   viTeleport_row = 10
+   viTeleport_col = 10
+
+   viTerrain_type = TERRAIN_NECROPOLIS | TERRAIN_CAVES
+
+properties:
+
+   piBaseLight = LIGHT_VERY_DARK
+   prRoom = room_mar_crypt4
+   piRoom_num = RID_MAR_CRYPT4
+
+   prMusic = mar_crypt4_music
+
+   piOutside_factor = OUTDOORS_NONE
+
+messages:
+
+   Constructed()
+   {
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 25, 6, RID_MAR_CRYPT3a, 34, 27,
+                       ROTATE_135, DISTANCE_NORMAL ],plExits);
+      plExits = Cons([ 25, 7, RID_MAR_CRYPT3a, 34, 27,
+                       ROTATE_135, DISTANCE_NORMAL ],plExits);
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      return;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////
