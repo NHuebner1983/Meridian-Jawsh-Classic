@@ -598,8 +598,8 @@ messages:
       Send(self,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS,#value=pbAllowWalkThroughWalls);
       Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_THROUGH_WALLS,#value=pbAllowAttackThroughWalls);
       
-	  // Disabled flags
-	  Send(self,@SetBehaviorFlag,#flag=AI_MOVE_RANDOM,#value=FALSE);
+	   // Disabled flags
+	   Send(self,@SetBehaviorFlag,#flag=AI_MOVE_RANDOM,#value=FALSE);
       Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_HYPERAGGRESSIVE,#value=FALSE);
 	  
       return;
@@ -1390,7 +1390,7 @@ messages:
 	  
 	  if Send(self,@MasterCheck) AND what = poMaster
 	  {
-	     iMasterDistance = Send(self,@SquaredDistanceTo,#what=poMaster);
+	    iMasterDistance = Send(self,@SquaredDistanceTo,#what=poMaster);
 		 iServantState = Send(self,@GetState);
 		 
 		 switch (iServantState)

@@ -55,12 +55,13 @@ resources:
 
    dragonfly_charmed = \
       "The dragonfly scarfs down the %s and looks at you with "
-      "obvious adoration."
+      "obvious adoration. She follows you hoping for another delicious treat."
    dragonfly_notcharmed = \
       "The dragonfly scarfs down the %s, sniffs your hand, and looks at "
-      "you expectantly."
+      "you expectantly. She is not impressed by your choice of food."
+
    DragonFlyQueen_unwanted_give = \
-      "~k%s%s cocks its head quizzically and sniffs your hand.~n~k"
+      "~k%s%s cocks its head quizzically and sniffs your hand. She is not impressed by your choice of food.~n~k"
    
    DragonFlyQueen_spit = loogy.bgf
 
@@ -389,9 +390,21 @@ messages:
       if poMaster <> $
       {
          Send(self,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
-         Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_AGGRESSIVE,#value=FALSE);
          Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE);
          Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS);
+         Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_SWITCHALOT,#value=TRUE);
+         Send(self,@SetBehaviorFlag,#flag=AI_MOVE_REGROUP,#value=TRUE);
+         Send(self,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS,#value=TRUE);
+         Send(self,@SetBehaviorFlag,#flag=AI_MOVE_RANDOM,#value=FALSE);
+      }
+      else
+      {
+         Send(self,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER);
+         Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE,#value=TRUE);
+         Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS,#value=TRUE);
+         Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_SWITCHALOT);
+         Send(self,@SetBehaviorFlag,#flag=AI_MOVE_REGROUP);
+         Send(self,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS);
       }
 
       return;

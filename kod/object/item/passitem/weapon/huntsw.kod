@@ -141,7 +141,7 @@ properties:
    piKarmaWorthyThreshold = -30
 
    piAttack_type = ATCK_WEAP_SLASH
-   piAttack_Spell = ATCK_SPELL_HUNTERSWORD
+   piAttack_Spell = ATCK_SPELL_HOLY
 
    pbCounted = FALSE
    pbCheapDeath = FALSE

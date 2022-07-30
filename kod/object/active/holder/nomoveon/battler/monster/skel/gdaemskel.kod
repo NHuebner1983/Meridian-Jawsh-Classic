@@ -94,7 +94,7 @@ messages:
                         [-ATCK_SPELL_SHOCK, 70 ],
                         [-ATCK_SPELL_FIRE, 70 ],
                         [-ATCK_SPELL_COLD, -10 ],
-                        [-ATCK_SPELL_HOLY, -20 ],
+                        [-ATCK_SPELL_HOLY, -80 ],
                         [ATCK_WEAP_BLUDGEON, -20 ]
                       ];
 
