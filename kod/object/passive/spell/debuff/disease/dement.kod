@@ -77,6 +77,11 @@ messages:
    {
       local iIntellectChange;
 
+      if oTarget = $
+      {
+         return FALSE;
+      }
+
       iIntellectChange = Send(self,@GetAmount,#iSpellPower=iSpellPower);
 
       if iDuration = $

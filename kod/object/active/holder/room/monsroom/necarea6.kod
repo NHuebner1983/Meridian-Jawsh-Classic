@@ -40,9 +40,9 @@ constants:
    DOOR_HEIGHT_CEILING = 504
 
    // Gates one and two stay open for 30 seconds.
-   DOOR_CLOSE_TIMER = 360000
-   // Gate three stays open for 60 seconds.
-   DOOR_CLOSE_TIMER_LAST = 360000
+   DOOR_CLOSE_TIMER = 30000
+   // Gate three stays open for 30 seconds
+   DOOR_CLOSE_TIMER_LAST = 30000
 
    // Special blink coords for area 2 and 3.
    BLINK2_ROW = 17
@@ -73,6 +73,15 @@ resources:
       "will come to your lands no matter how much you fight.  Die, and join "
       "us instead!~k~I\""
 
+   Necropolis6_hurry_gate = \
+      "~kA ghostly voice whispers, \"~r~IHurry through the gate! You only have a moment before it closes!~k~I\""
+
+   Necropolis6_watch_out = \
+      "~kA ghostly voice whispers, \"~r~IThe mimic is a powerful creature. I cannot help you. Get through the gate quickly and prepare yourself.~k~I\""
+
+   Necropolis6_hurry_leave = \
+      "~kA ghostly voice whispers, \"~r~IPlease take part of my mana, it's all I can give you for avenging me. I have stored what mystical energy I have left in a mana node. You can find it in the corner as you leave this room.~k~I\""
+
 classvars:
 
    vrName = room_name_Necropolis6
@@ -91,7 +100,7 @@ properties:
    piOutside_factor = 0
 
    piGen_time = 25000
-   piGen_percent = 80
+   piGen_percent = 100
 
    piInit_count_min = 7
    piInit_count_max = 9
@@ -113,7 +122,7 @@ properties:
    ptGateThree = $
 
     // Spawns this % of the time.
-   piNecroSpawnRate = 50
+   piNecroSpawnRate = 100
 
 messages:
 
@@ -619,6 +628,9 @@ messages:
          // Make skeletons in area two.
          Send(self,@CreateSkeletons,#bArea=AREA_2);
          ptGateOne = CreateTimer(self,@CloseGateOne,DOOR_CLOSE_TIMER);
+         
+         // Hurry, the gate is open.
+         Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#string=Necropolis6_hurry_gate,#what=self);
       }
       else if (iNum = GATE_2)
       {
@@ -629,6 +641,11 @@ messages:
          // Make skeletons in area three.
          Send(self,@CreateSkeletons,#bArea=AREA_3);
          ptGateTwo = CreateTimer(self,@CloseGateTwo,DOOR_CLOSE_TIMER);
+         
+         Send(self,@CloseGateOne, #timer=ptGateTwo);
+
+         // Hurry, the gate is open.
+         Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#string=Necropolis6_watch_out,#what=self);
       }
       else if (iNum = GATE_3)
       {
@@ -637,6 +654,13 @@ messages:
             return;
          }
          ptGateThree = CreateTimer(self,@CloseGateThree,DOOR_CLOSE_TIMER_LAST);
+
+         Send(self,@CloseGateTwo, #timer=ptGateTwo);
+         
+         Send(self,@CreateSkeletons,#bArea=AREA_1);
+
+         // Hurry, the gate is open.
+         Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#string=Necropolis6_hurry_leave,#what=self);
       }
 
       Send(self,@SomethingWaveRoom,#wave_rsc=Necropolis6_open_sound);
@@ -657,6 +681,8 @@ messages:
 
       Send(self,@LowerGate,#iNum=GATE_1);
 
+      Send(self,@CreateSkeletons,#bArea=AREA_1);
+
       return;
    }
 
@@ -670,6 +696,9 @@ messages:
       ptGateTwo = $;
 
       Send(self,@LowerGate,#iNum=GATE_2);
+
+      Send(self,@CreateSkeletons,#bArea=AREA_1);
+      Send(self,@CreateSkeletons,#bArea=AREA_2);
 
       return;
    }
