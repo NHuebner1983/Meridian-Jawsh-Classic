@@ -47,8 +47,8 @@ classvars:
    viSkill_num = SKID_SECOND_WIND
    viSchool = SKS_FENCING
    viSkill_Level = 4
-   viChance_to_Increase = 50
-   viMeditate_ratio = 50
+   viChance_to_Increase = 80
+   viMeditate_ratio = 300
 
    viSkillExertion = 0
    vbCheck_exertion = FALSE
@@ -117,7 +117,7 @@ messages:
       iStamina = Send(self,@GetRequisiteStat,#who=who);
       iWaitTime = ((100-iStamina) * Send(who,@GetSkillAbility,#Skill_num=viSkill_num)/100) + iStamina;
       // 5 to 10 minutes wait time before you can leap into the action again.
-      iWaitTime = (600 - (iWaitTime*3)) * 1; // * 1000
+      iWaitTime = (600 - (iWaitTime*3)) * 300; // * 1000
 
       return iWaitTime;
    }

@@ -87,7 +87,7 @@ constants:
    BASE_NEED = 105
 
    // If vigor gets this low, see if second wind skill kicks in.
-   SECONDWIND_THRESHOLD = 60
+   SECONDWIND_THRESHOLD = 72
    
    // How steep is the curve for learning new levels of spells?
    //  A higher number means a greater slope (less points at low levels)

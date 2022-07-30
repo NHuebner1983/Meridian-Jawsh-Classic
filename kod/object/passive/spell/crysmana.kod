@@ -65,8 +65,8 @@ classvars:
    viSpellExertion = 30
 
    // This spell is very slow and difficult to work, so it should improve well.
-   viChance_To_Increase = 60
-   viMeditate_ratio = 100
+   viChance_To_Increase = 80
+   viMeditate_ratio = 300
 
    vrSucceed_wav = Surge_sound
    viFlash = FLASH_GOOD

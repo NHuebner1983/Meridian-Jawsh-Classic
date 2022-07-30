@@ -55,7 +55,7 @@ classvars:
    viMana = 15
    viChance_To_Increase = 30
    viMeditate_ratio = 300
-   viSpellExertion = 80
+   viSpellExertion = 70
 
    vrSucceed_wav = summon_servant_class_sound
 
@@ -77,23 +77,6 @@ messages:
       return;
    }
 
-   CanPayCosts(who = $)
-   {
-      if Send(who,@GetVigor) < viSpellExertion
-      {
-	     Post(who,@MsgSendUser,#message_rsc=summon_servant_low_vigor);
-	     return FALSE;
-      }
-	  
-      if Send(who,@GetMana) < viMana
-      {
-	     Post(who,@MsgSendUser,#message_rsc=summon_servant_low_mana);
-	     return FALSE;
-      }
-	  
-	  return TRUE;
-   }
-   
    CanForget()
    {
       return FALSE;

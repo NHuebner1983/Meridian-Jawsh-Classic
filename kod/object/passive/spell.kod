@@ -794,8 +794,8 @@ messages:
    CanPayCosts(who=$,lTargets=$,iSpellPower=0,bItemCast=FALSE,bFreeCast=FALSE)
    {
       local i, each_obj, oRoom, iRand, oSpell, oTarget;
-	  
-	  poCaster = who;
+	   
+      poCaster = who;
 
       if lTargets <> $
          AND Length(lTargets) = 1
