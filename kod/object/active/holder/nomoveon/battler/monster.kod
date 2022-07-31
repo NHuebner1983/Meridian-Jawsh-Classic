@@ -1283,23 +1283,18 @@ messages:
          {
             case STATE_ATTACK:
                iActionDistance = 100;
-               Debug(GetClass(self),"STATE_ATTACK");
             break;
             case STATE_CHASE:
                iActionDistance = 100;
-               Debug(GetClass(self),"STATE_CHASE");
             break; 
             case STATE_MOVE: 
                iActionDistance = 100;
-               Debug(GetClass(self),"STATE_MOVE");
             break;
             case STATE_LIMBO:
                iActionDistance = 20;
-               Debug(GetClass(self),"STATE_LIMBO");
             break;
             case STATE_WAIT:
                iActionDistance = 20;
-               Debug(GetClass(self),"STATE_WAIT");
             break;
          }
 
@@ -1957,7 +1952,6 @@ messages:
       if (poMaster <> $
          AND (poTarget = $ OR poTarget = poMaster))
       {
-         Debug(Send(self,@GetName),"will follow master");
          lBehavior = Cons(AI_MOVE_FOLLOW_MASTER,lBehavior);
       }
 

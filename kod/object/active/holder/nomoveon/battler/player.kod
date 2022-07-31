@@ -1347,7 +1347,7 @@ messages:
 		 if oItem <> $ AND IsObject(oItem) AND IsClass(oItem, class)
 		 {
 		    Send(oItem,@Delete);
-			Debug("Deleted",oItem,"FromInventory");
+			//Debug("Deleted",oItem,"FromInventory");
 		 }
 	  }
 	  
@@ -1358,11 +1358,11 @@ messages:
 		 if oItem <> $ AND IsClass(oItem, class)
 		 {
 		    Send(oItem,@Delete);
-			Debug("Deleted",oItem,"FromInventory");
+			//Debug("Deleted",oItem,"FromInventory");
 		 }
 	  }
 
-	  Debug("Anything delete?",class);
+	  //Debug("Anything delete?",class);
 	  
       return;
    }
@@ -5362,6 +5362,7 @@ messages:
 
       // Check attack time.
       if NOT Send(self,@IsOkayAttackTime)
+         AND NOT Send(self,@HasBecomeMonster)
       {
          return FALSE;
       }
@@ -5390,6 +5391,7 @@ messages:
 
       // Deny attack if no line of sight
       if NOT Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
+         AND NOT Send(self,@HasBecomeMonster)
       {
          Send(self,@MsgSendUser,#message_rsc=player_attack_not_in_view);
 
@@ -5409,6 +5411,7 @@ messages:
 
       if NOT Send(self,@TargetWithinSightAndRange,#oTarget=what,#iRange=iRange,
                   #use_weapon=use_weapon,#stroke_obj=stroke_obj)
+         AND NOT Send(self,@HasBecomeMonster)
       {
          return FALSE;
       }

@@ -567,7 +567,9 @@ properties:
 	bAutoAttacking = FALSE
 	bMonsterHuntReady = FALSE
 	iMonsterTimers = 0
-	
+	ptEraseTarget = $
+   poIgnoreLastTarget = $
+
 messages:
 
    Constructor(name = $,icon = $)
@@ -3985,7 +3987,8 @@ messages:
       // 2. Do not allow any moves if player is marked as not allowed to move or 
       //    if destination is outside of the map.
       //
-      if (piFlags & PFLAG_NO_MOVE) OR NOT (iRflags & LIR_SECTOR_INSIDE)
+      if ((piFlags & PFLAG_NO_MOVE) OR NOT (iRflags & LIR_SECTOR_INSIDE))
+         AND NOT Send(self, @HasBecomeMonster)
       {
          // Reset position
          Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
@@ -4228,6 +4231,8 @@ messages:
       //
       // 9. Process the move
       //
+      //Debug(Send(self,@GetName),"moving to",new_row,new_col);
+
       Send(poOwner,@SomethingMoved,#what=self,
             #new_row=new_row,#new_col=new_col,
             #fine_row=fine_row,#fine_col=fine_col,
@@ -11021,7 +11026,7 @@ messages:
    // Monster movements copied from Monster KOD 
    // to be able to control players in an AI-Like state.
    MoveTowards(oTarget = $, face_target=TRUE, face_away=FALSE,
-               to_master=FALSE)
+               to_master=FALSE, row_offset=1, col_offset=-1)
    {
 	  if NOT pbLogged_On
 	  {
@@ -11039,8 +11044,8 @@ messages:
 	  //Debug(Send(self,@GetName),"moving towards object",Send(oTarget,@GetName));
 	  
       return Send(self, @MoveTowardsCoords,
-                   #iRow=Send(oTarget,@GetRow) - 1,
-                   #iCol=Send(oTarget,@GetCol) - 1,
+                   #iRow=Send(oTarget,@GetRow) + row_offset,
+                   #iCol=Send(oTarget,@GetCol) + col_offset,
                    #iFineRow=Send(oTarget,@GetFineRow),
                    #iFineCol=Send(oTarget,@GetFineCol),
                    #face_target=TRUE);
@@ -11148,10 +11153,28 @@ messages:
 
       return;
    }
+   
+   SetTarget(oTarget=$)
+   {
+      poTarget = oTarget;
+
+      return oTarget;
+   }
+
+   IgnoreTarget()
+   {
+      poIgnoreLastTarget = poTarget;
+
+      Send(self, @SetTarget, #oTarget=$);
+
+      ptEraseTarget = $;
+
+      return;
+   }
 
    FindNextMonster()
    {
-	   local lActive, i, iFlags, oNewTarget, iClosest, iDistance;
+	   local lActive, i, iFlags, iIndex, oNewTarget, iClosest, iDistance, iSkipRandom;
 	   
 	   if NOT pbLogged_On
 	   {
@@ -11172,10 +11195,18 @@ messages:
 	   }
 	   
 	   iClosest = 1000000;
-	   
+	   iIndex = 0;
+
 	   foreach i in lActive
 	   {
-	       if IsClass(First(i),&Monster)
+         iIndex = iIndex + 1;
+
+         // if iSkipRandom <> $ AND iSkipRandom > iIndex
+         // {
+         //    continue;
+         // }
+
+	      if IsClass(First(i),&Monster)
 		   {
 		      if IsClass(First(i),&Revenant) OR IsClass(First(i),&Reflection) OR IsClass(First(i),&Servant)
 			  {
@@ -11186,14 +11217,29 @@ messages:
 		   
 		   if IsClass(First(i),&Monster) AND Send(First(i),@GetCurrentState) <> 1
 		   {
+
+			   // if First(i) = poTarget AND (poIgnoreLastTarget = $ OR First(i) <> poIgnoreLastTarget)
+			   // {
+				//    // Do not change targets, we're already on the one from before...
+            //    // We'll set a 10 second timer to get rid of this target
+            //    if ptEraseTarget = $
+            //    {
+            //       Debug("Waiting 5 seconds, then ignoring this target...");
+            //       ptEraseTarget = CreateTimer(self, @IgnoreTarget, 5000);
+            //    }
+
+				//    Debug("same target",poTarget,Send(poTarget,@GetName));
+				   
+				//    return TRUE;
+			   // }
+			   
 			   if First(i) = poTarget
 			   {
-				   // Do not change targets, we're already on the one from before...
 				   //Debug("same target",poTarget,Send(poTarget,@GetName));
 				   
 				   return TRUE;
 			   }
-			   
+
 			   if poOwner <> $ AND IsClass(poOwner, &MonsterRoom) AND Send(poOwner,@IsMiniBoss,#what=First(i)) OR Send(poOwner,@IsBoss,#what=First(i))
 			   {
 			      // This target is a mini boss, let's always go after them first.
@@ -11215,6 +11261,15 @@ messages:
 				   }
 			   }
 		   }
+
+         // if oNewTarget = poTarget
+         //    OR (poIgnoreLastTarget <> $ AND oNewTarget = poIgnoreLastTarget)
+         // {
+         //    // We're trying to pick the same target or one we need to ignore, let's find a different one.
+         //    iSkipRandom = Random(iIndex, Length(lActive));
+         //    oNewTarget = $;
+         //    Debug("Continuing to a different target", iIndex, Length(lActive),iSkipRAndom);
+         // }
 	   }
 	   
 	   if oNewTarget <> $
@@ -11241,7 +11296,7 @@ messages:
 	   
 	   if poTarget <> $ AND NOT bAutoAttacking
 	   {
-		   tAutoAttack = CreateTimer(self,@AttackMonster,2000);
+		   tAutoAttack = CreateTimer(self,@AttackMonster,1200);
 		   bAutoAttacking = TRUE;
 	   }
 	   
@@ -11279,30 +11334,34 @@ messages:
 	   {
 	       iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
 		   
-		   if iDistance <> $ AND iDistance < 10
+		   if iDistance <> $ AND iDistance < 20
 		   {
 		      // We need to be close enough to attack.
-		      bMonsterAttacked = Send(self,@UserAttack,#what=poTarget);
+		      bMonsterAttacked = Send(self,@UserAttack,#type=STROKE_NORMAL,#what=poTarget);
 		   
 		      if NOT bMonsterAttacked
 		      {
 			     // Probably can't see target
-			     Send(self,@MoveTowards,#oTarget=poTarget);
+              // Try some different angles...
+              Send(self,@MoveTowards, #oTarget=poTarget, #face_target=TRUE, 
+                 #face_away=FALSE,#to_master=FALSE, 
+                 #row_offset=Random(-1,1), 
+                 #col_offset=Random(-1,1));
 		      }
 		   }
 		   
 		   bAutoAttacking = TRUE;
-		   
-		   tAutoAttack = CreateTimer(self,@AttackMonster,500);
-		   
+
+         // Let's keep kickin' ass.
+         tAutoAttack = CreateTimer(self,@AttackMonster,1200);
 	   }
-	   else
-	   {
-		   bAutoAttacking = FALSE;
-		   tAutoAttack = $;
-	   }
-	   	   
-	   return;	   
+      else
+      {
+         // No monsters to attack, let's hang out for a few seconds...
+         tAutoAttack = CreateTimer(self,@AttackMonster,3000);
+      }
+
+	   return;
    }
    
    
@@ -11356,14 +11415,10 @@ messages:
 			   Send(self,@MoveTowards,#oTarget=poTarget);
 			   Send(self,@SendMonsterAttacks);
 		   }
-		   else
-		   {
-//			   Debug("no targets as monster");
-		   }
 	   }
 	   
 	   // Continue the automatic fighting cycle...
-	   Send(self,@AsMonsterContinue,#iInterval=3000);
+	   Send(self,@AsMonsterContinue,#iInterval=1000);
 	   	   
 	   return;
    }
@@ -11379,15 +11434,20 @@ messages:
 
 	   Send(self,@StopBeingMonster);
 	   
-	   Debug(Send(self,@GetName),"Became monster");
+	   Debug("Became monster",Send(self,@GetName));
 	   	   
 	   bMonsterMode = TRUE;
 	   
-	   Send(self,@AsMonsterContinue,#iInterval=3000);
+	   Send(self,@AsMonsterContinue,#iInterval=1000);
 	   
 	   return;
    }
    
+   HasBecomeMonster()
+   {
+      return bMonsterMode;
+   }
+
    StopBeingMonster()
    {
 	   if NOT bMonsterMode
@@ -11405,7 +11465,7 @@ messages:
 
 	   tAutoAttack = $;
 	   
-	   Debug("Stop being monster");
+	   Debug("Stopped being monster",Send(self,@GetName));
 
 	   return;
    }
