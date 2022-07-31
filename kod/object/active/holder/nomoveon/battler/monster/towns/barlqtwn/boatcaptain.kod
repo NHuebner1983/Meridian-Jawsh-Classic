@@ -152,20 +152,20 @@ messages:
       local oRoom;
 	  
       if who <> $ AND obj <> $ AND IsClass(obj,&BoatTicket)
-	  {
-	     // Rescue them to the destination of the Boat Ticket.
+      {
+         // Rescue them to the destination of the Boat Ticket.
          oRoom = Send(SYS,@FindRoomByNum,#num=Send(obj,@GetDestination));
 
          if oRoom <> $
          {
             Send(oRoom, @Teleport, #what=who);
-			Send(who, @AdminGotoBlink);
-			Send(who,@MsgSendUser,#message_rsc=captain_got_wanted_rsc);
+            Send(who, @AdminGotoBlink);
+            Send(who,@MsgSendUser,#message_rsc=captain_got_wanted_rsc);
          }
-		 
-	     return TRUE;
-	  }
-	  
+
+         return TRUE;
+      }
+
 	  propagate;
    }
 

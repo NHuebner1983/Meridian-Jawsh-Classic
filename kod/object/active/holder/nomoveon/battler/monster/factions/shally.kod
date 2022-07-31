@@ -87,17 +87,17 @@ messages:
          {
             Send(self,@SetMood,#new_mood=piMood+25);
          }
-		 else
-		 {
-		    if what = FACTION_NEUTRAL
-			{
+         else
+         {
+            if what = FACTION_NEUTRAL
+            {
                Send(self,@SetMood,#new_mood=piMood+15);
-			}
-			else
-			{
-			   Send(self,@SetMood,#new_mood=piMood-25);
-			}
-		 }
+            }
+            else
+            {
+               Send(self,@SetMood,#new_mood=piMood-25);
+            }
+         }
       }
 
       return;
@@ -114,7 +114,7 @@ messages:
    {
       local temp_rsc;
 
-      if isClass(obj,&Token) and Send(SYS,@GetTokenGame) <> $ and 
+      if IsClass(obj,&Token) and Send(SYS,@GetTokenGame) <> $ and 
          Send(Send(SYS,@GetTokenGame),@IsTokenReal,#obj=obj)
       {
          if Send(who,@GetFaction) = viFaction
