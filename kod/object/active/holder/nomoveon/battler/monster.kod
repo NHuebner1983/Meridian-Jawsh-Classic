@@ -1099,6 +1099,11 @@ messages:
 
    EnterStateAttack(target = $, actnow=TRUE)
    {
+      if actnow AND target <> $ AND IsClass(target, &Player)
+      {
+         Send(target, @AddAggro, #what=self, #force=TRUE);
+      }
+
       Send(self,@SetState,#bit=STATE_ATTACK);
       Send(self,@ClearBehavior);
 	  
@@ -1146,6 +1151,11 @@ messages:
       else
       {
          ptBehavior = CreateTimer(self,@ChaseTimer,Send(self,@GetMoveTime));
+      }
+
+      if actnow AND target <> $ AND IsClass(target, &Player)
+      {
+         Send(target, @AddAggro, #what=self, #force=TRUE);
       }
 
       return;

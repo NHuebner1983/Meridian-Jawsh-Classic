@@ -15001,7 +15001,7 @@ messages:
 	  return piMonsterChasers;
    }
    
-   AddAggro(what=$)
+   AddAggro(what=$, force=FALSE)
    {
       if Length(plAggro) >= 39
 	  {
@@ -15015,7 +15015,8 @@ messages:
 	        plAggro = [];
 	     }
 		 
-		 if NOT FindListElem(plAggro, what)
+		 if NOT FindListElem(plAggro, what) 
+          AND (force OR (NOT force AND Length(plAggro) < MAX_AGGRO))
 		 {
             plAggro = AppendListElem(what, plAggro);
 		 }
@@ -15027,24 +15028,24 @@ messages:
    ReduceAggro(what=$)
    {
       if Length(plAggro) >= 39
-	  {
-	     plAggro = [];
-		 
-		 return 0;
-	  }
+      {
+         plAggro = [];
+
+         return 0;
+      }
 	  
       if what <> $ AND IsClass(what, &Monster) AND NOT IsClass(what, &Servant)
-	  {
+      {
          if plAggro = $
-	     {
-	        plAggro = [];
-	     }
-		 
-	     if FindListElem(plAggro, what)
-		 {
-		    plAggro = DelListElem(plAggro, what);
-		 }
-	  }
+         {
+            plAggro = [];
+         }
+
+         if FindListElem(plAggro, what)
+         {
+            plAggro = DelListElem(plAggro, what);
+         }
+	}
 	  
       return Length(plAggro);
    }
@@ -15065,6 +15066,28 @@ messages:
       return iCount;
    }
    
+   RecalibrateAggro()
+   "Iterates through the player's aggro to see if the mobs still exist and are on this map. Removes ones that aren't."
+   {
+      local oMob;
+
+      if plAggro <> $ AND Length(plAggro)
+      {
+         foreach oMob in plAggro
+         {
+            if oMob = $
+               OR Send(oMob,@GetMaster) <> $       // This mob is a flec / illusion / servant
+               OR Send(oMob,@GetOwner) <> poOwner  // This mob is on a different map
+               OR Send(oMob,@GetState) = 1         // This mob is dead
+            {
+               Send(self,@ReduceAggro,#what=oMob);
+            }
+         }   
+      }
+
+      return;
+   }
+
    HasAggro(what=$)
    {
       local bHasAggro;

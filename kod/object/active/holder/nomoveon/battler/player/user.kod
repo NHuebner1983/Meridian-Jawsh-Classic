@@ -820,6 +820,8 @@ messages:
    {
       local i, sGuild, oBRoom, oHRoom;
 
+      Send(self, @ResetMonsterChasers);
+      
       poSession = session_id;
       pbLogged_on = TRUE;
 
@@ -8107,6 +8109,8 @@ messages:
    {
       if (what = self)
       {
+         Send(self, @ResetMonsterChasers);
+
          // Phase our evil twin back in, if we have one.
          if (poEvilTwin <> $)
          {
