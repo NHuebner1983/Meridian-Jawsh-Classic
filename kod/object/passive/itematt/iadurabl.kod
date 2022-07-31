@@ -42,7 +42,8 @@ resources:
    durable_dm = "durable"
    itematt_durable_desc = \
       "  The craftsmanship of this %s is admirable, obviously the result of "
-      "hundreds of hours of work by expert hands."
+      "hundreds of hours of work by expert hands. You should carefully maintain "
+      "this item with a skillful mender. You wouldn't want to break such a unique item."
 
 classvars:
 

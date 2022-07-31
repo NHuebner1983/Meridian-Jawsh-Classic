@@ -38,7 +38,7 @@ resources:
  
    corpsepointer_no_loot = \
       "You reach for %s%s, but you can't get past %s picking over "
-      "the loot of the kill."
+      "the loot of the kill. If you wait a moment, they may lose interest."
 
 classvars:
 
