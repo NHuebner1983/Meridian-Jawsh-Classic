@@ -55,9 +55,10 @@ messages:
 
 			if iLoopProtect > 100
 			{
+				Debug("Event Loot Loop Protection exceeded, did not pick a monster for the next loot.");
 				break;
 			}
-			
+
 			foreach i in lMonsters
 			{
 				oMonster = First(i);
