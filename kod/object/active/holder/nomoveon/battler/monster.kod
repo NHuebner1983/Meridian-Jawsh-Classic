@@ -1135,7 +1135,10 @@ messages:
 	     bPlaySound = (NOT IsClass(poTarget, &Servant));
 	  }
 	  
-      if poTarget <> target AND vrSound_aware <> $ AND bPlaySound
+      if poTarget <> target AND vrSound_aware <> $ AND bPlaySound 
+         AND NOT IsClass(self, &Servant) AND NOT IsClass(self, &Reflection)
+         AND NOT IsClass(target, &Servant) AND NOT IsClass(target, &Reflection)
+         AND NOT IsClass(poTarget, &Servant) AND NOT IsClass(poTarget, &Reflection)
       {
          Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=vrSound_aware,
               #flags=SOUND_RANDOM_PITCH);
