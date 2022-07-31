@@ -813,7 +813,7 @@ messages:
 		          return;
 			   }
 			   
-               Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+               Send(oSpell,@CastSpell,#who=poMaster,#lTargets=[poMaster],#iSpellPower=iBuffPower);
             }			   
 		 }
 	  }
@@ -1058,7 +1058,7 @@ messages:
 	     [3, SID_ENFEEBLE, 60],
 	     [3, SID_VAMPIRIC_DRAIN, 50],
 	     [3, SID_POISON_FOG, 5],
-		 [4, SID_SPLASH_OF_ACID, 50],
+		  [4, SID_SPLASH_OF_ACID, 50],
 	     [4, SID_HOLD, 5],
 	     [5, SID_BLIND, 5]
 	  ];
@@ -1081,10 +1081,10 @@ messages:
 	  plCasts = $;
 	  
       plBuffs = [
-	     [1, SID_INVIGORATE, 100, ENCHANT_REMOVE_SERVANT_DELETED],
-	     [3, SID_WOLFPACK, 100, ENCHANT_REMOVE_SERVANT_DELETED],
-	     [3, SID_RESTORATE, 100, ENCHANT_REMOVE_SERVANT_DELETED],
-	     [5, SID_REJUVENATE, 100, ENCHANT_REMOVE_SERVANT_DELETED]
+	     [1, SID_INVIGORATE, 100, $],
+	     [3, SID_WOLFPACK, 100, $],
+	     [3, SID_RESTORATE, 100, $],
+	     [5, SID_REJUVENATE, 100, $]
 	  ];
 
       return;
