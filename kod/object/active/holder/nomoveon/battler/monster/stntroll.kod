@@ -86,6 +86,7 @@ messages:
    Constructed()
    {
       plResistances = [ [-ATCK_SPELL_HOLY, 80 ],
+                        [-ATCK_SPELL_UNHOLY, -80 ],
                         [-ATCK_SPELL_ACID, 80 ],
                         [ATCK_WEAP_NERUDITE, -80 ],
                         [ATCK_WEAP_NONMAGIC, 80 ]

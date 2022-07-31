@@ -51,6 +51,7 @@ messages:
                         [-ATCK_SPELL_SHOCK, -5],
                         [-ATCK_SPELL_ACID, 10 ],
                         [-ATCK_SPELL_FIRE, -5 ],
+                        [-ATCK_SPELL_FIRE, -99 ],
                         [ATCK_WEAP_SLASH, 60 ],
                         [ATCK_WEAP_NERUDITE, 35 ],
                         [ATCK_WEAP_PIERCE, 75 ],
