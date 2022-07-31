@@ -533,6 +533,11 @@ messages:
    
    KarmaCheck(who=$)
    {
+      if IsClass(self, &SummonServant)
+      {
+         return TRUE;
+      }
+
       if Send(who,@PlayerIsImmortal)
          OR IsClass(who,&EscapedConvict)
       {
