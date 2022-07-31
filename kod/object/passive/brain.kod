@@ -166,14 +166,14 @@ messages:
 	  
 	  if what <> $ AND IsClass(what, &Player) AND NOT IsClass(mob, &Reflection) AND NOT IsClass(mob, &Servant)
 	  {
-        Debug(Send(mob,@GetName),"detected",Send(what,@GetName));
+        //Debug(Send(mob,@GetName),"detected",Send(what,@GetName));
         
         Send(what,@RecalibrateAggro);
 
 	     if Send(what,@GetAggroCount) >= MAX_AGGRO AND NOT Send(what,@HasAggro,#what=mob)
 		  {
 		    // Ignore the user, they are already being aggro'd by too many things.
-         Debug("But the player has too much aggro.");
+         //Debug("But the player has too much aggro.");
 			return;
 		 }
 	  }
@@ -189,7 +189,7 @@ messages:
       {
          if Send(mob,@GetOwner) <> $
          {
-            Debug(Send(mob,@GetName),"is moving");
+            //Debug(Send(mob,@GetName),"is moving");
             Send(mob,@EnterStateMove,#actnow=FALSE);
          }
 
@@ -200,7 +200,7 @@ messages:
       if state & STATE_WAIT
          AND (ignoreWait = FALSE)
       {
-            Debug(Send(mob,@GetName),"is waiting");
+            //Debug(Send(mob,@GetName),"is waiting");
          return;
       }
 
@@ -208,7 +208,7 @@ messages:
       // us in general, do nothing.
       if NOT Send(self,@AttemptTargetSwitch,#what=what,#event=TS_MOVE,#mob=mob)
       {
-            Debug(Send(mob,@GetName),"could not switch targets");
+            //Debug(Send(mob,@GetName),"could not switch targets");
          return;
       }
 
@@ -232,12 +232,12 @@ messages:
          if Send(mob,@CanReachLocation,#row=new_row,#col=new_col,
                   #fine_row=fine_row,#fine_col=fine_col)
          {
-		      Debug("AttackNow232",GetClass(mob),GetClass(what));
+		      //Debug("AttackNow232",GetClass(mob),GetClass(what));
             Send(mob,@EnterStateAttack,#actnow=True);   // Used to be post.
 
             return;
          } else {
-           Debug(Send(mob,@GetName),"is too far, chasing now");
+           //Debug(Send(mob,@GetName),"is too far, chasing now");
          }
 
          Send(mob,@EnterStateChase,#target=what,#actnow=True); // Used to be post.
