@@ -52,7 +52,7 @@ classvars:
    viSpell_num = SID_WOLFPACK
    viSchool = SS_JALA
    viSpell_level = 4
-   viBaseRange = 8
+   viBaseRange = 8 * FINENESS
 
    viMana = 4
    viManaDrain = 2
