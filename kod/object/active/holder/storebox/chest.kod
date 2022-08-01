@@ -29,7 +29,7 @@ classvars:
    vrIcon = chest_icon_rsc
    vrDesc = chest_desc_rsc
 
-   viBulk_hold_max = 60000000
+   viBulk_hold_max = 999999999
    viWeight_hold_max = $
 
 properties:
