@@ -895,8 +895,13 @@ messages:
 			];
 			
 			ClearTempString();
+			AppendTempString("join public survival");
+			Send(poPlayer, @UserSaySurvival, #string = GetTempString());
+
+			ClearTempString();
 			AppendTempString("start public survival");
 			Send(poPlayer, @UserSaySurvival, #string = GetTempString());
+
 			ClearTempString();
 			AppendTempString("join public survival");
 			Send(poPlayer, @UserSaySurvival, #string = GetTempString());

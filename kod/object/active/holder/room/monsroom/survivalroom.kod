@@ -30,11 +30,11 @@ constants:
    GOAL_MINIBOSSES = 3
    GOAL_KILL_FRIENDLY = 4
 
-   // 3 minutes to begin public survivals
-   PB_START_TIME = 180000
+   // 15 seconds to begin public survivals
+   PB_START_TIME = 15000
    
-   // 1 minute to begin other survivals
-   DEFLT_START_TIME = 30000
+   // 15 seconds to begin other survivals
+   DEFLT_START_TIME = 15000
    
    // Report goals every 1 minute
    REPORT_TIME = 60000
@@ -93,6 +93,8 @@ resources:
       "You must wait at least %i seconds after the creation of a Survival "
       "Arena before you may exit."
    survivalroom_user_say_leave = "leave survival"
+   survivalroom_public_waves_until_lockout = "~IPublic survival complete wave %i. In %i waves you will not be able to join. To join, visit an inn and type say join public survival.~I"
+
    round_begin_wav = gong.ogg
 
 classvars:
@@ -159,7 +161,7 @@ properties:
    piHasBegun = FALSE
 
    // Last level that players can join the public/guild arenas
-   piLastJoinLevel = 6
+   piLastJoinLevel = 50
 
    // Boolean for resource restoration on level completion.
    pbRestoreResources = TRUE
@@ -424,6 +426,27 @@ messages:
       propagate;
    }
 
+   AnnounceRemainingWavesToJoinPublicSurvival()
+   "This will announce to the server how many waves are left until players can join."
+   {
+      local iRemaining;
+
+      iRemaining = 0;
+
+      if piPublic
+      {
+         iRemaining = Bound(piLastJoinLevel - piLevel, 0, piLastJoinLevel - 1);
+      }
+
+      if iRemaining > 0
+      {
+         // Players have this many waves until they can't join.
+         Send(&Player,@MsgSendUser,#message_rsc=survivalroom_public_waves_until_lockout,#parm1=piLevel,#parm2=iRemaining);
+      }
+
+      return;
+   }
+
    InitiateNextLevel(timer=$)
    {
       local i, n, p;
@@ -475,6 +498,8 @@ messages:
             Send(First(i),@MsgSendUser,#message_rsc=begin_level,#parm1=piLevel);
          }
       }
+
+      Send(self,@AnnounceRemainingWavesToJoinPublicSurvival);
 
       plLevelGoals = $;
       plExtraLifeGoals = $;
@@ -1719,16 +1744,17 @@ messages:
 
       if StringEqual(string,survivalroom_user_say_leave)
       {
-         // Check if the room was just created.
-         if (GetTime() < piCreationTime + viCreationLeaveDelaySec)
-         {
-            Send(what,@MsgSendUser,#message_rsc=survivalroom_cant_leave_yet,
-                  #parm1=viCreationLeaveDelaySec);
-         }
-         else
-         {
+         // // Check if the room was just created.
+         // if (GetTime() < piCreationTime + viCreationLeaveDelaySec)
+         // {
+         //    Send(what,@MsgSendUser,#message_rsc=survivalroom_cant_leave_yet,
+         //          #parm1=viCreationLeaveDelaySec);
+         // }
+         // else
+         // {
+            // LEAVE AS FAST AS WE WANT!
             Post(self,@BootUser,#who=what);
-         }
+         // }
 
          return;
       }

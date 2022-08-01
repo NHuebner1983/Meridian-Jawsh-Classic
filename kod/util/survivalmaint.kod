@@ -20,7 +20,7 @@ resources:
 
    public_survival_started = \
       "%s has started a public co-op survival arena. It will begin in "
-      "three minutes."
+      "15 seconds."
    public_ended = \
       "The public co-op survival arena has ended at level %i."
 
@@ -53,7 +53,7 @@ properties:
    piWallBlitzTime = 300000
 
    // Default last join level
-   piLastJoinLevel = 6
+   piLastJoinLevel = 50
 
    // Do we restore resources on level completion?
    pbRestoreResources = TRUE
@@ -108,6 +108,8 @@ messages:
 
    Recreate()
    {
+      piLastJoinLevel = 50;
+
       return;
    }
 
