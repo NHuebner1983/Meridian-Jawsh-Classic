@@ -852,7 +852,7 @@ messages:
    
    UserSay(string=$,type=$)
    {
-      local i;
+      local i, iInt, sString;
 
       if type <> SAY_DM
       {
@@ -924,6 +924,27 @@ messages:
 
       if StringContain(string, dm_give_tp)
       {
+         StringSubstitute(string, dm_give_tp, "");
+
+         // Give amount specified by command
+         iInt = StringToNumber(string);
+
+         if iInt > 0
+         {
+            Debug(Send(self,@GetName),"gave out",iInt,"training points to everyone online");
+            foreach i in Send(SYS, @GetUsersLoggedOn)
+            {
+               Send(i, @AddTrainingPoints, #points=iInt, #report=TRUE, #bCap=FALSE);
+            }
+
+            ClearTempString();
+            AppendTempString("Out of the goodness of their hearts, the gods have given you some training points!");
+            Send(SYS,@AdminSystemMessage,
+               #string=GetTempString(),
+               #bSound=TRUE,
+               #bPrefix=FALSE);
+         }
+
          return;
       }
 
