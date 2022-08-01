@@ -3991,6 +3991,7 @@ messages:
       //
       if ((piFlags & PFLAG_NO_MOVE) OR NOT (iRflags & LIR_SECTOR_INSIDE))
          AND NOT Send(self, @HasBecomeMonster)
+         AND NOT IsClass(self,&DM)
       {
          // Reset position
          Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
@@ -8190,7 +8191,7 @@ messages:
 
       if pbLogged_on
       {
-         if bMonsterMode OR (what <> self OR cause <> CAUSE_USER_INPUT)
+         if IsClass(what,&DM) OR bMonsterMode OR (what <> self OR cause <> CAUSE_USER_INPUT)
          {
             AddPacket(1,BP_MOVE, 4,what,
                       2,new_row*FINENESS+fine_row, 2,new_col*FINENESS+fine_col,
