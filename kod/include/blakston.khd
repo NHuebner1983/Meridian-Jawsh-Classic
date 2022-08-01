@@ -2056,6 +2056,12 @@
    // For hunter swords
    ATCK_SPELL_HUNTERSWORD= 0x0100
 
+   // Jala
+   ATCK_SPELL_SOUND = 0x0200
+
+   // Riija
+   ATCK_SPELL_ILLUSIONARY = 0x0400
+
    // These are the ATTACK types sent by client.
    STROKE_NORMAL = 1
    STROKE_PUNCH = 2
@@ -2073,6 +2079,8 @@
    STROKE_ACID_TOUCH = 25
    STROKE_UNHOLY_TOUCH = 26
    STROKE_DELVIERANCE = 27
+   STROKE_ILLUSIONARY_TOUCH = 28
+   STROKE_HARMONIC_TOUCH = 29
 
    // Unique skill constants
    // Don't create any lower than 400 - conflict with spells (1-399).
@@ -2112,15 +2120,6 @@
 
    // Unique spell constants
 
-   // Spells end at 200, start new ones at 201
-   // Don't go past 400.
-   SID_RIIJA_SERVANT = 201
-   SID_KRAN_SERVANT = 202
-   SID_SHAL_SERVANT = 203
-   SID_FAREN_SERVANT = 204
-   SID_QOR_SERVANT = 205
-   SID_JALA_SERVANT = 206
-   
    // Maximum number of pets our servant can have
    MAX_SERVANT_MINIONS = 2
 
@@ -2312,8 +2311,41 @@
    SID_UNHOLY_TOUCH = 188
    SID_TRANSFERENCE = 189
    
+   // Boons
+   SID_AGILITY_BOON = 190
+   SID_AIM_BOON =     191
+   SID_STAMINA_BOON = 192
+   SID_STRENGTH_BOON = 193
+   SID_MYSTICISM_BOON = 194
+   SID_INTELLECT_BOON = 195
+   SID_MANA_BOON =    196
+   SID_HP_BOON =      197
+   SID_VIGOR_BOON =      198
+   SID_WOLFPACK = 199
+   
+   // Vault Loadout
    SID_VAULT_LOADOUT = 200
    
+   // Spells end at 200, start new ones at 201
+   // Don't go past 400.
+   SID_RIIJA_SERVANT = 201
+   SID_KRAN_SERVANT = 202
+   SID_SHAL_SERVANT = 203
+   SID_FAREN_SERVANT = 204
+   SID_QOR_SERVANT = 205
+   SID_JALA_SERVANT = 206
+   
+   // New Jala Spells
+   SID_HARMONIC_TOUCH = 207
+   SID_BLAST_OF_HARMONY = 208
+   SID_HARMONIC_STORM = 209
+   SIR_TRUE_SIGHT = 210
+
+   // New Riija Spells
+   SID_ILLUSIONARY_TOUCH = 211
+   SID_ILLUSIONARY_BLAST = 212
+   SID_RESIST_SOUND = 213
+
    // Depreciated spell IDs
    SID_LIGHTNING = 1                   // use SID_LIGHTNING_BOLT
    SID_NIGHTVISION = 4                 // use SID_NIGHT_VISION
@@ -2334,17 +2366,6 @@
    SID_BRAMBLEWALL = 141               // use SID_BRAMBLE_WALL
    SID_GLOW_WEAPON = 153               // use SID_GLOW
 
-   // Boons
-   SID_AGILITY_BOON = 190
-   SID_AIM_BOON =     191
-   SID_STAMINA_BOON = 192
-   SID_STRENGTH_BOON = 193
-   SID_MYSTICISM_BOON = 194
-   SID_INTELLECT_BOON = 195
-   SID_MANA_BOON =    196
-   SID_HP_BOON =      197
-   SID_VIGOR_BOON =      198
-   SID_WOLFPACK = 199
    // No sids above 400 to keep spell IDs unique from skill IDs!
 
    // Stats
