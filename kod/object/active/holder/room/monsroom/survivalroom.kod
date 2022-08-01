@@ -1459,7 +1459,7 @@ messages:
 
    CountdownToBoot(who=$)
    {
-      plCrashProtection = Cons([who,CreateTimer(self,@CountdownBootUser,300000)],
+      plCrashProtection = Cons([who,CreateTimer(self,@CountdownBootUser,900000)],
                                plCrashProtection);
 
       if plParticipants <> $
