@@ -852,7 +852,7 @@ messages:
    
    UserSay(string=$,type=$)
    {
-      local i, iInt, sString;
+      local i, iInt, sString, oObject, rResource, lList;
 
       if type <> SAY_DM
       {
@@ -950,6 +950,19 @@ messages:
 
       if StringContain(string, dm_event_loot)
       {
+         StringSubstitute(string, dm_event_loot, "");
+
+         // Give amount specified by command
+         iInt = StringToNumber(string);
+
+         if iInt > 0
+         {
+            Debug(Send(self,@GetName),"created event loot with",iInt,"items from RID_GODROOM chest");
+            oObject = Create(&EventLoot);
+            Send(oObject, @SetLoot, #who=self, #count=iInt);
+            Send(oObject, @Delete);
+         }
+
          return;
       }
 
