@@ -50,7 +50,7 @@ messages:
    Constructor()
    {
       // Seriously? There's nothing the jala mage can do.
-      plSpellBook = [];
+      plSpellBook = [[SID_CRYSTALIZE_MANA,0,0]];
 
       propagate;
    }
