@@ -605,6 +605,11 @@ messages:
             parm14=$,parm15=$)
    "parm1 should be an active event object."
    {
+      if plActiveEvents = $ OR Length(plActiveEvents) <= 0
+      {
+         return;
+      }
+
       if parm1 <> $
       {
          Send(parm1,@EndEvent,

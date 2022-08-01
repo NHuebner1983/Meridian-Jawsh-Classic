@@ -18,8 +18,8 @@ resources:
 
    include invasion.lkod
 
-   invasion_start_msg = "Invasion Started."
-   invasion_end_msg = "Invasion Ended."
+   invasion_start_msg = "Invasion Started in %s!"
+   invasion_end_msg = "Invasion Ended in %s, good job!"
 
 classvars:
 
@@ -28,15 +28,64 @@ classvars:
 
 properties:
 
+   piUpdateTimer = $
+   pbEventEnded = FALSE
+   piActiveRoom = $
+   poActiveRoom = $
+
 messages:
 
-   Constructor()
+   Constructor(who=$)
+   {
+      if who = $ OR NOT IsClass(who, &User)
+      {
+         piActiveRoom = RID_TOS;
+         poActiveRoom = Send(SYS, @FindRoomByNum, #num=piActiveRoom);
+         
+         propagate;
+      }
+
+      
+      poActiveRoom = Send(who, @GetOwner);
+      piActiveRoom = Send(poActiveRoom, @GetRoomNum);
+
+      Send(self,@StartEvent);
+
+      piUpdateTimer = CreateTimer(self, @Update, 5000);
+
+      propagate;
+   }
+
+   Constructed()
    {
       propagate;
    }
 
    Delete()
    {
+      pbEventEnded = TRUE;
+
+      propagate;
+   }
+
+   Update()
+   {
+      if NOT pbEventEnded
+      {
+         Debug(GetClass(self),"is running");
+         piUpdateTimer = CreateTimer(self, @Update, 5000);
+      }
+      else
+      {
+         if IsTimer(piUpdateTimer)
+         {
+            DeleteTimer(piUpdateTimer);
+            piUpdateTimer = $;
+         }
+
+         Debug(GetClass(self),"has ended - updates stopped");
+      }
+
       propagate;
    }
 
@@ -47,6 +96,8 @@ messages:
 
    EndEvent()
    {
+      pbEventEnded = TRUE;
+
       propagate;
    }
 

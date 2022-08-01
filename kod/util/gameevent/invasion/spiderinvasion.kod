@@ -17,19 +17,19 @@ constants:
 resources:
 
    SpiderInvasion_start_msg = \
-      "~B~k[Event]~n ~B~v Baby Spiders have started to hatch in Tos."
+      "~B~k[Event]~n ~B~v Baby Spiders have started to hatch in %%s."
 
    SpiderInvasion_end_msg = \
-      "~B~k[Event]~n ~B~v Spiders have been driven away from Tos."
+      "~B~k[Event]~n ~B~v Spiders have been driven away from %%s."
 
    SpiderInvasion_phase2_msg = \
-      "~B~k[Event]~n ~B~v Spiders are taking over Tos."
+      "~B~k[Event]~n ~B~v Spiders are taking over %s."
 
    SpiderInvasion_phase3_msg = \
-      "~B~k[Event]~n ~B~v Black Spiders are taking over Tos."
+      "~B~k[Event]~n ~B~v Black Spiders are taking over %s."
 
    SpiderInvasion_finalphase_msg = \
-      "~B~k[Event]~n ~B~v You have upset the Mother Spider."
+      "~B~k[Event]~n ~B~v You have upset the Mother Spider. She begins to nest in %s."
 
 classvars:
 
@@ -48,38 +48,15 @@ properties:
    piSpiders = 50
    piBlackSpiders = 50
    piMotherSpiders = 10
-   piActiveRoom = RID_TOS
+   piActiveRoom = $
    piPhase = 0
 
 messages:
 
-   Constructor()
+   Constructor(who=$)
    {
-      plEventRooms = [ RID_TOS, RID_BAR_NORTH ];
-      if piActiveRoom = RID_TOS
-      {
-         plSpawnRects = [ [[54,5],[61,13]], [[49,11],[62,27]],
-                          [[54,29],[59,40]], [[14,16],[49,21]] ];
-      }
-      else
-      {
-         if piActiveRoom = RID_BAR_NORTH
-         {
-            plSpawnRects = [ [[54,5],[61,13]], [[49,11],[62,27]],
-                             [[54,29],[59,40]], [[14,16],[49,21]] ];
-         }
-      }
-
       propagate;
    }
-
-   MonsterKilled(dead_monster=$,killing_player=$,corpse=$)
-   {
-      Send(self,@Update);
-	  
-      return;
-   }
-
 
    // OPTIONAL, DO NOT CALL DIRECTLY!  The engine will call this after it ends
    // your event
@@ -153,6 +130,8 @@ messages:
             // EndEvent in this class, which handles your end of event cleanup
             Send(self,@NotifyEngineEndEvent);
          }
+
+         Send(self,@EndEvent);
       }
 
       propagate;
@@ -168,10 +147,7 @@ messages:
 
       while (i > 0)
       {
-         lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-               @NewHold,#what=Create(&SpiderBaby),
-               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(&SpiderBaby),#bStack=TRUE);
          i = i - 1;
       }
 
@@ -187,17 +163,14 @@ messages:
       if vbAnnounce
       {
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
-               #string=SpiderInvasion_phase2_msg);
+               #string=SpiderInvasion_phase2_msg,#parm1=Send(piActiveRoom,@GetName));
       }
 
       i = piBabySpiders;
 
       while (i > 0)
       {
-         lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-               @NewHold,#what=Create(&SpiderBaby),
-               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(&SpiderBaby),#bStack=TRUE);
          i = i - 1;
       }
 
@@ -205,10 +178,7 @@ messages:
 
       while (i > 0)
       {
-         lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-               @NewHold,#what=Create(&Spider),
-               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(&Spider),#bStack=TRUE);
          i = i - 1;
       }
 
@@ -224,17 +194,14 @@ messages:
       if vbAnnounce
       {
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
-               #string=SpiderInvasion_phase3_msg);
+               #string=SpiderInvasion_phase3_msg,#parm1=Send(piActiveRoom,@GetName));
       }
 
       i = piBabySpiders;
 
       while (i > 0)
       {
-         lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-               @NewHold,#what=Create(&SpiderBaby),
-               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(&SpiderBaby),#bStack=TRUE);
          i = i - 1;
       }
 
@@ -242,10 +209,7 @@ messages:
 
       while (i > 0)
       {
-         lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-               @NewHold,#what=Create(&Spider),
-               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(&Spider),#bStack=TRUE);
          i = i - 1;
       }
 
@@ -253,10 +217,7 @@ messages:
       
       while (i > 0)
       {
-         lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-               @NewHold,#what=Create(&DeathSpider),
-               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(&DeathSpider),#bStack=TRUE);
          i = i - 1;
       }
 
@@ -272,16 +233,14 @@ messages:
       if vbAnnounce
       {
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
-               #string=SpiderInvasion_finalphase_msg);
+               #string=SpiderInvasion_finalphase_msg,#parm1=Send(piActiveRoom,@GetName));
       }
 
       i = piMotherSpiders;
       
       while (i > 0)
       {
-		  oKing = Create(&SpiderQueen);
-		  Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-				@NewHold,#what=oKing,#new_row=(51+i),#new_col=(18+i));
+		   Send(poActiveRoom,@GenerateMonster,#oMonster=Create(&SpiderQueen),#bStack=TRUE);
          i = i - 1;
       }
 

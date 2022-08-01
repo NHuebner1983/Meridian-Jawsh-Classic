@@ -19,19 +19,19 @@ resources:
    include orcinvasion.lkod
 
    OrcInvasion_start_msg = \
-      "~B~k[Event]~n ~B~v The reign of the Pit Boss has begun."
+      "~B~k[Event]~n ~B~v The reign of the Pit Boss has begun in %%s."
 
    OrcInvasion_end_msg = \
-      "~B~k[Event]~n ~B~v The reign of the Pit Boss has ended."
+      "~B~k[Event]~n ~B~v The reign of the Pit Boss has ended in %%s."
 
    OrcInvasion_phase2_msg = \
-      "~B~k[Event]~n ~B~v A wave of cave orcs appear."
+      "~B~k[Event]~n ~B~v A wave of cave orcs appear in %s."
 
    OrcInvasion_phase3_msg = \
-      "~B~k[Event]~n ~B~v A wave of orc wizards appear."
+      "~B~k[Event]~n ~B~v A wave of orc wizards appear in %s."
 
    OrcInvasion_finalphase_msg = \
-      "~B~k[Event]~n ~B~v You have angered the Pit Boss."
+      "~B~k[Event]~n ~B~v You have angered the Pit Boss in %s."
 
 classvars:
 
@@ -55,23 +55,8 @@ properties:
 
 messages:
 
-   Constructor()
+   Constructor(who=$)
    {
-      plEventRooms = [ RID_TOS, RID_BAR_NORTH ];
-      if piActiveRoom = RID_TOS
-      {
-         plSpawnRects = [ [[54,5],[61,13]], [[49,11],[62,27]],
-                          [[54,29],[59,40]], [[14,16],[49,21]] ];
-      }
-      else
-      {
-         if piActiveRoom = RID_BAR_NORTH
-         {
-            plSpawnRects = [ [[54,5],[61,13]], [[49,11],[62,27]],
-                             [[54,29],[59,40]], [[14,16],[49,21]] ];
-         }
-      }
-
       propagate;
    }
 
@@ -181,7 +166,7 @@ messages:
       if vbAnnounce
       {
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
-               #string=OrcInvasion_phase2_msg);
+               #string=OrcInvasion_phase2_msg,#parm1=Send(poActiveRoom,@GetName));
       }
 
       i = piOrcs;
@@ -218,7 +203,7 @@ messages:
       if vbAnnounce
       {
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
-               #string=OrcInvasion_phase3_msg);
+               #string=OrcInvasion_phase3_msg,#parm1=Send(poActiveRoom,@GetName));
       }
 
       i = piOrcs;
@@ -266,7 +251,7 @@ messages:
       if vbAnnounce
       {
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
-               #string=OrcInvasion_finalphase_msg);
+               #string=OrcInvasion_finalphase_msg,#parm1=Send(poActiveRoom,@GetName));
       }
 
       i = piOrcPitBosses;
