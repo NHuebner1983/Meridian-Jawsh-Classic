@@ -29,7 +29,8 @@ constants:
    AUTOLOOT_CANNOT_GET = 4
 
    // Number of ms to lose one boosted health or mana point.
-   BOOST_DECAY_TIME = 30000 
+   // Monsters get special boost decay time!
+   BOOST_DECAY_TIME = 60000
 
 resources:
 

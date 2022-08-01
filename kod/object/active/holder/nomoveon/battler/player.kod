@@ -63,7 +63,7 @@ constants:
    REST_TIME = 2500          
 
    // Number of ms to lose one boosted health or mana point.
-   BOOST_DECAY_TIME = 30000 
+   BOOST_DECAY_TIME = 1000 
 
    // Currently: 10 improves every 15-22 minutes.
    ADVANCE_TIMER_MIN =   900000
@@ -1168,7 +1168,8 @@ properties:
    plServantResources = $
    
    piLastMoved = 0
-   
+   piLastAttack = 0
+
    pbRoamingNPCPlayerInitialized = FALSE
 
    plNPCProfile = $
@@ -1207,12 +1208,18 @@ messages:
    SinceLastMove()
    {
       if pbRoamingNPCPlayerInitialized = $
-	  {
-	     return 9999;
-	  }
+      {
+         return 9999;
+      }
 
       return GetTime() - piLastMoved;
    }
+
+   SinceLastAttack()
+   {
+      return GetTime() - piLastAttack;
+   }
+
 
    Delete()
    {
@@ -4752,6 +4759,8 @@ messages:
       // Default location to check is where we are.
       oRoom = poOwner;
 
+      piLastAttack = GetTime();
+
       if victim <> $ AND IsClass(victim, &Monster) AND Send(victim, @IsMinion)
 	  {
 	     // Do not attack your own minions.
@@ -8024,9 +8033,24 @@ messages:
       return piMax_Mana - piMana;
    }
    
+   GetMaxMana()
+   {
+      return piMax_Mana;
+   }
+
+   GetMana()
+   {
+      return piMana;
+   }
+
    GetMissingVigor()
    {
       return viMax_vigor - piVigor;
+   }
+
+   GetMaxVigor()
+   {
+      return viMax_vigor;
    }
 
    SetHealth(amount=$)

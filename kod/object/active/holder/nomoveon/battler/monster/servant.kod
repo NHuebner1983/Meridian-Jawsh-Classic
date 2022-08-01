@@ -329,6 +329,8 @@ resources:
    servant_talk_max_feed_me = "~k%s whispers, ''Our food reserves are full again. If you need additional vigor, just ~rsay feed me~r.''~k"
    servant_talk_max_mystify_me = "~k%s whispers, ''Our mana reserves are full again. If you need additional mana, just ~rsay mystify me~r.''~k"
    
+   servant_tougher = "~B~IYour servant suddenly feels a little tougher!~B~I"
+
 classvars:
    
    vrKocName = servant_koc_name_rsc
@@ -466,14 +468,12 @@ messages:
    // Send these values when you use the Create(&Servant, #...) function.
    Constructor(who = $, oSpell = $, iSpellNum = $, iSpellPower = $)
    {
-      local iStats;
-	  
-	  if who = $ OR NOT IsClass(who, &Player)
-	  {
-	     // Only a player can have a servant.
-		 
-	     propagate;
-	  }
+
+      if who = $ OR NOT IsClass(who, &Player)
+      {
+         // Only a player can have a servant.
+         propagate;
+      }
 	  
 	  // Set our master
 	  poMaster = who;
@@ -484,36 +484,9 @@ messages:
 	  // The spell power from their summon cast.
 	  piSpellPower = iSpellPower;
 	  
-	  Send(self,@SetSpellsLevel);
-	  
-	  // The spell we used to summon the servant
-	  piSpellNum = iSpellNum;
-	  
-	  // The spell school
-	  piSpellSchool = Send(poSpell,@GetSchool);
-	  
-	  // Set damage this servant can do to players & monsters based on spell power.
-	  // They are the same, but I made two versions in case we want to balance PVP and PVE.
- 	  piPlayerDamage = Bound(piSpellPower / 4, 1, 25) * 100;
-	  piMonsterDamage = Bound(piSpellPower / 4, 1, 25) * 100;
-	  
-	  // Stats based on spell power.
-	  iStats = Bound(iSpellPower / 2, 1, 50);
-	  
-	  // Aim & Agility are the main stats for the servant.
-	  piAim = iStats;
-	  piAgility = iStats;
-      
-	  // Prepare player's servant resources
-	  // feed me, heal me, mystify me
-	  Send(poMaster,@PrepareServantResources);
-	  
-	  // Set their name and description
-	  Send(self,@PrepareServantNameAndDesc);
+     // The recreate heavy work - made this way so upon imping the spell, we can increase the piSpellPower and call this.
+     Send(self,@RecalibrateServant, #iSpellNum=iSpellNum, #iSpellPower=iSpellPower);
 
-	  // Set the plSpellBook attack spells our monster can use
-	  Send(self,@SetServantSpellBook);
-	 
 	  // Start all of the servant's timers.
 	  Send(self,@CreateServantTimers);
 	 	  
@@ -525,6 +498,43 @@ messages:
 	  Send(self,@PrepareServantNameAndDesc);
 	  
 	  propagate;
+   }
+
+   RecalibrateServant(iSpellNum=$, iSpellPower=0)
+   {
+      local iStats;
+
+      Send(self,@SetSpellsLevel);
+
+      // The spell we used to summon the servant
+      piSpellNum = iSpellNum;
+
+      // The spell school
+      piSpellSchool = Send(poSpell,@GetSchool);
+
+      // Set damage this servant can do to players & monsters based on spell power.
+      // They are the same, but I made two versions in case we want to balance PVP and PVE.
+      piPlayerDamage = Bound(iSpellPower / 4, 1, 25) * 100;
+      piMonsterDamage = Bound(iSpellPower / 4, 1, 25) * 100;
+
+      // Stats based on spell power.
+      iStats = Bound(iSpellPower / 2, 1, 50);
+
+      // Aim & Agility are the main stats for the servant.
+      piAim = iStats;
+      piAgility = iStats;
+
+      // Prepare player's servant resources
+      // feed me, heal me, mystify me
+      Send(poMaster,@PrepareServantResources);
+
+      // Set their name and description
+      Send(self,@PrepareServantNameAndDesc);
+
+      // Set the plSpellBook attack spells our monster can use
+      Send(self,@SetServantSpellBook);
+
+      return;
    }
    
    SetSpellsLevel()
@@ -633,7 +643,7 @@ messages:
    
    StartBuffTimer()
    {
-      ptBuffs = CreateTimer(self,@ServantBuffs,5000);
+      ptBuffs = CreateTimer(self,@ServantBuffs,3000);
 	  
 	  return;
    }
@@ -647,14 +657,14 @@ messages:
 
    StartImpTimer()
    {
-      ptImp = CreateTimer(self,@ServantImps,10000);
+      ptImp = CreateTimer(self,@ServantImps,1000);
 	  
 	  return;
    }
    
    StartTauntTimer()
    {
-      ptTaunt = CreateTimer(self,@TauntEnemies,1000);
+      ptTaunt = CreateTimer(self,@TauntEnemies,2000);
 	  
 	  return;
    }
@@ -719,7 +729,7 @@ messages:
    
    ServantBuffs()
    {
-      local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions, iChance, iHealth, iHealAmount, iMaxHealth;
+      local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions, iChance, iHealth, iHealAmount, iMaxHealth, iMissing;
 	  
 	  if NOT Send(self,@MasterCheck)
 	  {
@@ -779,10 +789,10 @@ messages:
 		 
 		 if iSpellRemove <> $ AND iSpellRemove = ENCHANT_REMOVE_SERVANT_DELETED
 		 {
-		    if plRemoveEnchants = $
-			{
-			   plRemoveEnchants = [];
-			}
+         if plRemoveEnchants = $
+         {
+            plRemoveEnchants = [];
+         }
 			
 		    plRemoveEnchants = AppendListElem(iSpellNum, plRemoveEnchants);
 		 }
@@ -791,31 +801,99 @@ messages:
 		 
 		 if iSpellRandom >= iRandom
 		 {
-		    iBuffPower = Send(poMaster, @GetSpellAbility, #spell_num=iSpellNum);
-			
-			if iBuffPower = 0
-			{
-			   iBuffPower = Random(piSpellPower / 2, piSpellPower - 1) + 1;
-			}
-			
-			oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
-			
-		    // We will do this buff/heal/whatever on master!
-            if (oSpell <> $)
-			   AND (NOT Send(poMaster,@IsEnchanted,#what=oSpell))
-			   AND (NOT Send(poOwner,@IsEnchanted,#what=oSpell))
+            iBuffPower = Send(poMaster, @GetSpellAbility, #spell_num=iSpellNum);
+            
+            if iBuffPower = 0
             {
-			   // Prevent servants from having too many reflections/minions.
-		       lMinions = Send(self,@GetControlledMinions);
-			
-		       if iSpellNum = SID_REFLECTION AND lMinions <> $ AND Length(lMinions) >= MAX_SERVANT_MINIONS
-		       {
-		          return;
-			   }
-			   
+               iBuffPower = Random(piSpellPower / 2, piSpellPower - 1) + 1;
+            }
+            
+            oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
+            
+            if (oSpell <> $)
+               AND (NOT Send(poMaster,@IsEnchanted,#what=oSpell))
+               AND (NOT Send(poOwner,@IsEnchanted,#what=oSpell))
+            {
+               if iSpellNum = SID_MINOR_HEAL
+                  OR iSpellNum = SID_MAJOR_HEAL
+                  OR iSpellNum = SID_BREATH_OF_LIFE
+                  OR iSpellNum = SID_HOSPICE
+               {
+                  // Only heal if the player needs mana.
+                  iMissing = Send(poMaster, @GetMissingHealth);
+
+                  if iMissing < 20
+                  {
+                     return;
+                  }
+
+                  Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+
+                  return;                  
+               }
+
+               if iSpellNum = SID_MYSTIC_TOUCH
+               {
+                  // Only MT if the player needs mana.
+                  iMissing = Send(poMaster, @GetMissingMana);
+
+                  if iMissing < 10
+                  {
+                     return;
+                  }
+
+                  iMissing = Send(poMaster, @GetMana);
+
+                  if iMissing > 75
+                  {
+                     // We cannot mystic touch past this point.
+                     return;
+                  }
+
+                  Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+                  
+                  // Restore servant's mana so mystic touch is less annoying.
+                  Send(self,@NewMaxMana,#amount=200);
+
+                  return;                  
+               }
+
+               if iSpellNum = SID_RELAY
+               {
+                  // Only relay if the player needs vigor
+                  iMissing = Send(poMaster, @GetVigor);
+
+                  if iMissing >= 135
+                  {
+                     // We cannot relay past this point.
+                     return;
+                  }
+
+                  Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+
+                  return;
+               }
+
+               // Prevent servants from having too many reflections/minions.
+               lMinions = Send(self,@GetControlledMinions);
+
+               if iSpellNum = SID_REFLECTION AND lMinions <> $ AND Length(lMinions) >= MAX_SERVANT_MINIONS
+               {
+                  return;
+               }
+               else
+               {
+                  if iSpellNum = SID_REFLECTION
+                  {
+                     Send(oSpell,@CastSpell,#who=self,#lTargets=[self],#iSpellPower=iBuffPower);
+
+                     return;
+                  }
+               }
+            
                Send(oSpell,@CastSpell,#who=poMaster,#lTargets=[poMaster],#iSpellPower=iBuffPower);
             }			   
-		 }
+         }
 	  }
 	  
       return;
@@ -881,18 +959,18 @@ messages:
    ServantTalk()
    {
       local iRandomPart, iRandomPiece, chosen_resource, tmp_rsc;
-	  
-	  if NOT Send(self,@MasterCheck)
-	  {
-	     return;
-	  }
-	  
+
+      if NOT Send(self,@MasterCheck)
+      {
+         return;
+      }
+
       Send(self,@StartTalkTimer);
-	  
-	  if NOT pbAllowTalk
-	  {
-	     return;
-	  }
+
+      if NOT pbAllowTalk
+      {
+         return;
+      }
 
 	  iRandomPart = Random(0, Length(plTalk));
 	  iRandomPiece = Random(0, Length(Nth(plTalk, iRandomPart)));
@@ -905,31 +983,55 @@ messages:
 
    ServantImps()
    {
-      local iRandom, iInitialChance, increase_chance;
+      local iRandom, iInitialChance, increase_chance, iLastAttack, iRandomCap;
 
-	  if NOT Send(self,@MasterCheck)
-	  {
-	     return;
-	  }
+      iRandomCap = 500;
 
-      Send(self,@StartImpTimer);
-	  
-      iInitialChance = Send(poSpell,@GetInitialChance,#who=poMaster);
-      iRandom = random(1,500);
-	  
-      if iRandom > iInitialChance
+      if NOT Send(self,@MasterCheck)
       {
          return;
       }
-	  	  
-      iRandom = random(0,500);
 
-      if iRandom < 10
-      {      
+      Send(self,@StartImpTimer);
+	   
+      iLastAttack = Send(poMaster, @SinceLastAttack);
+
+      if iLastAttack <= 10
+      {
+         iRandomCap = 300;
+      }
+
+      if iRandomCap >= 500
+      {
+         // Harder to imp while sitting still.
+         iInitialChance = Send(poSpell,@GetInitialChance,#who=poMaster);
+         iRandom = random(1,iRandomCap);
+      
+         if iRandom > iInitialChance
+         {
+            return;
+         }
+      }
+	  	  
+      iRandom = random(0,iRandomCap);
+
+      if iRandom < 5
+      {
          Send(poMaster,@ChangeSpellAbility,#spell_num=piSpellNum,#amount=1,#report=TRUE);
 
          // Since we advanced, reset our school cast improvement bonus.
          Send(poMaster,@ResetSchoolCast,#school=piSpellSchool);
+
+         // The spell power from their summon cast.
+         piSpellPower = Bound(piSpellPower + 1, 1, 99);
+         
+         // The recreate heavy work - made this way so upon imping the spell, we can increase the piSpellPower and call this.
+         Send(self,@RecalibrateServant, #iSpellNum=piSpellNum, #iSpellPower=piSpellPower);
+
+         if piSpellPower < 99
+         {
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_tougher);
+         }
       }
 	  
       return;
@@ -970,7 +1072,7 @@ messages:
 	  
       plBuffs = [
 	     [1, SID_LIGHT, 100, $],
-	     [1, SID_MYSTIC_TOUCH, 2, $],
+	     [1, SID_MYSTIC_TOUCH, 60, $],
 	     [2, SID_RESIST_COLD, 100, $],
 	     [2, SID_RESIST_FIRE, 100, $],
 	     [3, SID_RESIST_SHOCK, 100, $]
@@ -982,17 +1084,17 @@ messages:
    SetRiijaSpells()
    {
       plCasts = [
-	     [2, SID_FORGET, 2],
-	     [3, SID_ILLUSIONARY_WOUNDS, 50],
-		 [3, SID_VERTIGO, 10],
-		 [3, SID_DEMENT, 5],
-	     [4, SID_APPARITION, 20],
-	     [5, SID_EVIL_TWIN, 20]
+         [2, SID_FORGET, 2],
+         [3, SID_ILLUSIONARY_WOUNDS, 50],
+         [3, SID_VERTIGO, 10],
+         [3, SID_DEMENT, 5],
+         [4, SID_APPARITION, 20],
+         [5, SID_EVIL_TWIN, 20]
 	  ];
 
       plBuffs = [
-	     [1, SID_SHADOW_FORM, 100, $],
-		 [3, SID_REFLECTION, 100, $]
+         [1, SID_SHADOW_FORM, 100, $],
+         [3, SID_REFLECTION, 100, $]
 	  ];
 	  
       return;
@@ -1008,19 +1110,20 @@ messages:
       plCasts = $;
 
       plBuffs = [
-	     [2, SID_BLESS, 100, $],
-	     [2, SID_HASTE, 100, $],
-		 [2, SID_SUPER_STRENGTH, 100, $],
-		 [3, SID_MARTYRS_BATTLEGROUND, 100, $],
-		 [3, SID_NIGHT_VISION, 100, $],
-		 [3, SID_MAGIC_SHIELD, 100, $],
-		 [3, SID_DETECT_INVISIBLE, 50, $],
-		 [3, SID_FREE_ACTION, 50, $],
-		 [4, SID_DEFLECT, 50, $],
-		 [4, SID_EAGLE_EYES, 50, $],
-		 [5, SID_KILLING_FIELDS, 100, $],
-		 [5, SID_ARMOR_OF_GORT, 50, $],
-		 [5, SID_RESIST_MAGIC, 50, $]
+         [2, SID_BLESS, 100, $],
+         [2, SID_HASTE, 100, $],
+         [2, SID_RELAY, 60, $],
+         [2, SID_SUPER_STRENGTH, 100, $],
+         [3, SID_MARTYRS_BATTLEGROUND, 100, $],
+         [3, SID_NIGHT_VISION, 100, $],
+         [3, SID_MAGIC_SHIELD, 100, $],
+         [3, SID_DETECT_INVISIBLE, 70, $],
+         [3, SID_FREE_ACTION, 70, $],
+         [4, SID_DEFLECT, 70, $],
+         [4, SID_EAGLE_EYES, 70, $],
+         [5, SID_KILLING_FIELDS, 100, $],
+         [5, SID_ARMOR_OF_GORT, 60, $],
+         [5, SID_RESIST_MAGIC, 30, $]
 	  ];
 	  
       return;
@@ -1036,17 +1139,18 @@ messages:
 	  ];
      
 	  plBuffs = [
-	     [1, SID_MINOR_HEAL, 20, $],
+	     [1, SID_MINOR_HEAL, 50, $],
 	     [1, SID_DETECT_EVIL, 100, $],
+	     [1, SID_REMOVE_CURSE, 100, $],
 	     [2, SID_CURE_POISON, 100, $],
-	     [2, SID_REMOVE_CURSE, 100, $],
 	     [2, SID_RESIST_ACID, 100, $],
 	     [3, SID_CURE_DISEASE, 100, $],
 	     [3, SID_HOLY_RESOLVE, 100, $],
-	     [3, SID_HOSPICE, 3, $],
+        [3, SID_BREATH_OF_LIFE, 30, $],
+	     [3, SID_HOSPICE, 5, $],
 	     [4, SID_FORCES_OF_LIGHT, 90, $],
 	     [4, SID_PURIFY, 10, $],
-	     [5, SID_MAJOR_HEAL, 2, $]
+	     [5, SID_MAJOR_HEAL, 5, $]
 	  ];
 
       return;

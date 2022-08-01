@@ -225,7 +225,7 @@ messages:
                               #spell_num=SID_CRYSTALIZE_MANA) * 2);
 
       // 30% of original timer, was 1000
-	  return iWaitTime * 300;
+	  return iWaitTime * 10;
    }
 
    SuccessChance(who=$)
