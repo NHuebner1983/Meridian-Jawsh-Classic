@@ -402,9 +402,13 @@ messages:
       if NOT pbSurfaced
       {
          if use_weapon = $
-            OR NOT (IsClass(use_weapon,&Hammer)
-               OR IsClass(use_weapon,&SpiritualHammer)
-               OR IsClass(use_weapon,&Mace))
+            OR NOT (
+                  IsClass(use_weapon,&Hammer)
+                  OR IsClass(use_weapon,&SpiritualHammer)
+                  OR IsClass(use_weapon,&Mace)
+                  OR IsClass(who, &DM)
+                  OR (IsClass(who, &Player) AND Send(who, @IsRoamingNPCPlayer))
+               )
          {
             Send(who,@MsgSendUser,#message_rsc=groundworm_cannot_hit);
 
