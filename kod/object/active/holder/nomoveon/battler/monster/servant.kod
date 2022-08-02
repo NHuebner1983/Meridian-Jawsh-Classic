@@ -1139,18 +1139,18 @@ messages:
 	  ];
      
 	  plBuffs = [
-	     [1, SID_MINOR_HEAL, 50, $],
+	     [1, SID_MINOR_HEAL, 5, $],
 	     [1, SID_DETECT_EVIL, 100, $],
 	     [1, SID_REMOVE_CURSE, 100, $],
 	     [2, SID_CURE_POISON, 100, $],
 	     [2, SID_RESIST_ACID, 100, $],
 	     [3, SID_CURE_DISEASE, 100, $],
 	     [3, SID_HOLY_RESOLVE, 100, $],
-        [3, SID_BREATH_OF_LIFE, 30, $],
+        [3, SID_BREATH_OF_LIFE, 5, $],
 	     [3, SID_HOSPICE, 5, $],
 	     [4, SID_FORCES_OF_LIGHT, 90, $],
-	     [4, SID_PURIFY, 10, $],
-	     [5, SID_MAJOR_HEAL, 5, $]
+	     [4, SID_PURIFY, 3, $],
+	     [5, SID_MAJOR_HEAL, 1, $]
 	  ];
 
       return;
