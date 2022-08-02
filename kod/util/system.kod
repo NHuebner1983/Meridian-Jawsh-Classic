@@ -611,6 +611,48 @@ messages:
       return;
    }
 
+   CompareLists(lListA=$,lListB=$)
+   "Single dimension list compare. Could upgrade to multi-dimension comparison..."
+   {
+      local bMatch, aItem, bItem, aIndex, bIndex;
+
+      if lListA = $ OR lListB = $ OR NOT IsList(lListA) OR NOT IsList(lListB)
+      {
+         return FALSE;
+      }
+
+      bMatch = TRUE;
+      aIndex = 0;
+
+      foreach aItem in lListA
+      {
+         aIndex = aIndex + 1;
+         bIndex = 0;
+
+         foreach bItem in lListB
+         {
+            bIndex = bIndex + 1;
+            
+            if aIndex <> bIndex
+            {
+               continue;
+            }
+
+            bMatch = (bItem = aItem);
+            
+            break;
+         }
+
+         if NOT bMatch
+         {
+            // The lists do not match.
+            break;
+         }
+      }
+
+      return bMatch;
+   }
+
    ResetRecreateAll()
    {
       piRecreate_State = RECREATE_NOT;
