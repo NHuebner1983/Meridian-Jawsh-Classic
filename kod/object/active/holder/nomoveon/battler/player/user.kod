@@ -569,6 +569,25 @@ properties:
 	iMonsterTimers = 0
 	ptEraseTarget = $
    poIgnoreLastTarget = $
+   
+   // Prevent the client from unnecessary updates.
+   piLastDrawnHealth = 0
+   piLastDrawnVigor = 0
+   piLastDrawnMana = 0
+   piLastDrawnMight = 0
+   piLastDrawnIntellect = 0
+   piLastDrawnStamina = 0
+   piLastDrawnAim = 0
+   piLastDrawnAgility = 0
+   piLastDrawnKarma = 0
+   piLastDrawnTrainingPoints = 0
+   piLastDrawnCapacity = 0
+   piLastDrawnBulk = 0
+   piLastDrawnMysticism = 0
+   piLastDrawnOffense = 0
+   piLastDrawnDefense = 0
+   piLastDrawnArmor = 0
+   plLastDrawnResistance = $
 
 messages:
 
@@ -8234,7 +8253,7 @@ messages:
       if pbLogged_on
       {
          // Need to set new angle of object somewhere
-         if bMonsterMode OR (what <> self or cause <> CAUSE_USER_INPUT)
+         if IsClass(self,&DM) OR bMonsterMode OR (what <> self or cause <> CAUSE_USER_INPUT)
          {
             AddPacket(1,BP_TURN,4,what,2,new_angle);
             SendPacket(poSession);
@@ -8606,7 +8625,10 @@ messages:
          else
          {
             // in the room
-            Send(self,@ToCliObject,#what=what);
+            if what <> self
+            {
+               Send(self,@ToCliObject,#what=what);
+            }
          }
 
          Send(what,@SendMoveAnimation);
@@ -8684,11 +8706,12 @@ messages:
 
    DrawHealth()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnHealth <> Send(self,@GetHealth)
       {
          AddPacket(1,BP_STAT,1,1);
          Send(self,@SendStatHealth);
          SendPacket(poSession);
+         piLastDrawnHealth = Send(self,@GetHealth);
       }
       
       return;
@@ -8704,11 +8727,12 @@ messages:
 
    DrawMana()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnMana <> Send(self,@GetMana)
       {
          AddPacket(1,BP_STAT,1,1);
          Send(self,@SendStatMana);
          SendPacket(poSession);
+         piLastDrawnMana = Send(self,@GetMana);
       }
 
       return;
@@ -8724,11 +8748,12 @@ messages:
 
    DrawMight()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnMight <> Send(self,@GetMight)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatMight);
          SendPacket(poSession);
+         piLastDrawnMight = Send(self,@GetMight);
       }
 
       return;
@@ -8744,11 +8769,12 @@ messages:
 
    DrawIntellect()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnIntellect <> Send(self,@GetIntellect)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatIntellect);
          SendPacket(poSession);
+         piLastDrawnIntellect = Send(self,@GetIntellect);
       }
 
       return;
@@ -8765,11 +8791,12 @@ messages:
 
    DrawAgility()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnAgility <> Send(self,@GetAgility)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatAgility);
          SendPacket(poSession);
+         piLastDrawnAgility = Send(self,@GetAgility);
       }
 
       return;
@@ -8785,11 +8812,12 @@ messages:
 
    DrawStamina()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnStamina <> Send(self,@GetStamina)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatStamina);
          SendPacket(poSession);
+         piLastDrawnStamina = Send(self,@GetStamina);
       }
 
       return;
@@ -8805,11 +8833,12 @@ messages:
 
    DrawMysticism()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnMysticism <> Send(self,@GetMysticism)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatMysticism);
          SendPacket(poSession);
+         piLastDrawnMysticism = Send(self,@GetMysticism);
       }
 
       return;
@@ -8826,11 +8855,12 @@ messages:
 
    DrawAim()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnAim <> Send(self,@GetAim)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatAim);
          SendPacket(poSession);
+         piLastDrawnAim = Send(self,@GetAim);
       }
 
       return;
@@ -8846,11 +8876,12 @@ messages:
 
    DrawKarma()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnKarma <> (piKarma/100)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatKarma);
          SendPacket(poSession);
+         piLastDrawnKarma = (piKarma/100);
       }
 
       return;
@@ -8872,11 +8903,12 @@ messages:
 
    DrawTraining()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnTrainingPoints <> Send(self,@GetTrainingPoints)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatTraining);
          SendPacket(poSession);
+         piLastDrawnTrainingPoints = Send(self,@GetTrainingPoints);
       }
 
       return;
@@ -8896,11 +8928,12 @@ messages:
 
    DrawCapacity()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnCapacity <> (Send(self,@GetWeightHold) + Send(self,@GetWeightMax))
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatCapacity);
          SendPacket(poSession);
+         piLastDrawnCapacity = (Send(self,@GetWeightHold) + Send(self,@GetWeightMax));
       }
 
       return;
@@ -8921,11 +8954,12 @@ messages:
    
    DrawBulk()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnBulk <> (Send(self,@GetBulkHold) + Send(self,@GetBulkMax))
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatBulk);
          SendPacket(poSession);
+         piLastDrawnBulk = (Send(self,@GetBulkHold) + Send(self,@GetBulkMax));
       }
 
       return;
@@ -8945,11 +8979,12 @@ messages:
 
    DrawOffense()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnOffense <> Send(self,@GetOffense)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatOffense);
          SendPacket(poSession);
+         piLastDrawnOffense = Send(self,@GetOffense);
       }
 
       return;
@@ -8969,11 +9004,12 @@ messages:
 
    DrawDefense()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnDefense <> Send(self,@GetDefense)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatDefense);
          SendPacket(poSession);
+         piLastDrawnDefense = Send(self,@GetDefense);
       }
 
       return;
@@ -8993,11 +9029,12 @@ messages:
    
    DrawArmor()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnArmor <> Send(self,@SumDamageReduction)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatArmor);
          SendPacket(poSession);
+         piLastDrawnArmor = Send(self,@SumDamageReduction);
       }
 
       return;
@@ -9209,7 +9246,7 @@ messages:
    {
       local i, lResists;
 
-      if pbLogged_on
+      if pbLogged_on AND (plLastDrawnResistance = $ OR Send(SYS,@CompareLists,#lListA=plLastDrawnResistance,#lListB=Send(self,@GetCurrentResistances)))
       {
          lResists = Send(self,@GetCurrentResistances);
          for (i = 1; i < 14; ++i)
@@ -9218,6 +9255,8 @@ messages:
             Send(self,@SendStatResistances,#num=i,#lCurrentResistances=lResists);
             SendPacket(poSession);
          }
+
+         plLastDrawnResistance = lResists;
       }
 
       return;
@@ -9277,11 +9316,12 @@ messages:
 
    DrawVigor()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnVigor <> Send(self,@GetVigor)
       {
          AddPacket(1,BP_STAT, 1,1);
          Send(self,@SendStatVigor);
          SendPacket(poSession);
+         piLastDrawnVigor = Send(self,@GetVigor);
       }
 
       return;
