@@ -588,6 +588,7 @@ properties:
    piLastDrawnDefense = 0
    piLastDrawnArmor = 0
    plLastDrawnResistance = $
+   pbLightingSent = FALSE
 
 messages:
 
@@ -3178,7 +3179,7 @@ messages:
 
       // Send the lighting information.
       Send(what,@SendLightingInformation);
-
+      
       if show_type = SHOW_LOOK
       {
          Send(what,@SendLookAnimation);
@@ -3980,6 +3981,8 @@ messages:
          iDx, iDy, iMoveLength, iMaxMoveRun, 
          iQflags, iRflags, iHeightF, iHeightFWD, iHeightC, iServerID;
 
+      piLastMoved = GetTime();
+
       //
       // 1.1 Get current position values
       //
@@ -4009,8 +4012,8 @@ messages:
       //    if destination is outside of the map.
       //
       if ((piFlags & PFLAG_NO_MOVE) OR NOT (iRflags & LIR_SECTOR_INSIDE))
-         AND NOT Send(self, @HasBecomeMonster)
-         AND NOT IsClass(self,&DM)
+         AND NOT bMonsterMode
+         AND NOT IsClass(self, &DM)
       {
          // Reset position
          Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
@@ -4188,10 +4191,11 @@ messages:
             AND iRoomNum <= RID_GUILDH_MAX)
          OR iRoomNum = RID_I9
       {
-         if NOT Send(poOwner,@IsMoveOK,
-                  #old_row=iRow,#old_col=iCol,#old_fine_row=iFineRow,
-                  #old_fine_col=iFineCol,#new_row=new_row,#new_col=new_col,
-                  #new_fine_row=fine_row,#new_fine_col=fine_col,#who=self)
+         if NOT IsClass(self, &DM) 
+            AND NOT Send(poOwner,@IsMoveOK,
+                     #old_row=iRow,#old_col=iCol,#old_fine_row=iFineRow,
+                     #old_fine_col=iFineCol,#new_row=new_row,#new_col=new_col,
+                     #new_fine_row=fine_row,#new_fine_col=fine_col,#who=self)
          {
             // Rooms now handle logging, for customized debug messages.
             // Reset position
@@ -6391,7 +6395,7 @@ messages:
       }
 
       Send(self,@TryUseItem,#what=what);
-
+      
       return;
    }
 
@@ -8197,16 +8201,9 @@ messages:
    }
 
    SomethingMoved(what=$, new_row=$, new_col=$, fine_row = $, fine_col = $,
-                  cause = $, speed = 0)
+                  cause = $, speed = 0, force = FALSE)
    {
       local iRow,iCol,lPos,iSpeed;
-
-      iSpeed = speed;
-
-      if IsClass(what, &DM) AND iSpeed < 50
-      {
-         iSpeed = 50;
-      }
 
       if IsClass(what,&DM)
          AND Send(what,@IsDMStealthed)
@@ -8217,11 +8214,11 @@ messages:
 
       if pbLogged_on
       {
-         if IsClass(self,&DM) OR bMonsterMode OR (what <> self OR cause <> CAUSE_USER_INPUT)
+         if force OR ((IsClass(self,&DM) OR bMonsterMode) AND cause <> CAUSE_USER_INPUT) OR (what <> self OR cause <> CAUSE_USER_INPUT)
          {
             AddPacket(1,BP_MOVE, 4,what,
                       2,new_row*FINENESS+fine_row, 2,new_col*FINENESS+fine_col,
-                      1,iSpeed);
+                      1,speed);
             SendPacket(poSession);
 
             propagate;
@@ -8595,7 +8592,7 @@ messages:
       propagate;
    }
 
-   SomethingChanged(what = $)
+   SomethingChanged(what = $, force = FALSE)
    {
       local rName, rIcon;
 
@@ -8624,11 +8621,7 @@ messages:
          }
          else
          {
-            // in the room
-            if what <> self
-            {
-               Send(self,@ToCliObject,#what=what);
-            }
+            Send(self,@ToCliObject,#what=what);
          }
 
          Send(what,@SendMoveAnimation);

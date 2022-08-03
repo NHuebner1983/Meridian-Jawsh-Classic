@@ -415,7 +415,12 @@ messages:
    SomethingChanged(what = $)
    "Override from Holder, optimised for Room."
    {
-      SendList(plActive,1,@SomethingChanged,#what=what);
+      local iMove;
+
+      if (what <> $ AND (NOT IsClass(what, &Player) OR (IsClass(what, &Player) AND Send(what,@SinceLastMove) > 1)))
+      {
+         SendList(plActive,1,@SomethingChanged,#what=what);
+      }
 
       return;
    }

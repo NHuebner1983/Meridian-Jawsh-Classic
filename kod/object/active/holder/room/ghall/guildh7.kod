@@ -415,9 +415,15 @@ messages:
       Send(self,@NewHold,#what=Create(&WoodenBox),
             #new_row=13,#new_col=37,#fine_row=48,#fine_col=0,
             #new_angle=ANGLE_SOUTH);
+
       Send(self,@NewHold,#what=Create(&WoodenBox),
-            #new_row=14,#new_col=37,#fine_row=48,#fine_col=48,
+            #new_row=14,#new_col=36,#fine_row=48,#fine_col=48,
             #new_angle=ANGLE_WEST);
+
+      Send(self,@NewHold,#what=Create(&WoodenBox),
+            #new_row=14,#new_col=37,#fine_row=48,#fine_col=0,
+            #new_angle=ANGLE_SOUTH);
+
 
       propagate;
    }

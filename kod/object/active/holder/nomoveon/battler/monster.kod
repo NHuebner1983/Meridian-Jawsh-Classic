@@ -5291,7 +5291,7 @@ messages:
    "If a monster has a special cast animation, call this."
    {
       piAnimation = ANIM_ATTACK;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = ANIM_NONE;
 
       return;
@@ -7040,7 +7040,7 @@ messages:
 
       if poOwner <> $
       {
-         Post(poOwner,@SomethingChanged,#what=self);
+         Post(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;

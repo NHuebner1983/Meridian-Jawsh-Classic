@@ -478,7 +478,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       Post(self,@DrawOffense);
@@ -898,6 +898,7 @@ messages:
       {
          Debug("Moving forward",(Nth(Send(self,@GetPos),1)+1),(Nth(Send(self,@GetPos),2)+1));
          Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)+1),#new_col=(Nth(Send(self,@GetPos),2)+1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
+         Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)+1), #new_col=(Nth(Send(self,@GetPos),2)+1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
          return;
       }
 
@@ -905,6 +906,7 @@ messages:
       {
          Debug("Moving back",(Nth(Send(self,@GetPos),1)-1),(Nth(Send(self,@GetPos),2)-1));
          Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)-1),#new_col=(Nth(Send(self,@GetPos),2)-1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
+         Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)-1), #new_col=(Nth(Send(self,@GetPos),2)-1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
          return;
       }
 
@@ -912,6 +914,7 @@ messages:
       {
          Debug("Moving left",(Nth(Send(self,@GetPos),1)+1),(Nth(Send(self,@GetPos),2)-1));
          Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)+1),#new_col=(Nth(Send(self,@GetPos),2)-1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
+         Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)+1), #new_col=(Nth(Send(self,@GetPos),2)-1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
          return;
       }
 
@@ -919,6 +922,7 @@ messages:
       {
          Debug("Moving right",(Nth(Send(self,@GetPos),1)-1),(Nth(Send(self,@GetPos),2)+1));
          Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)-1),#new_col=(Nth(Send(self,@GetPos),2)+1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
+         Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)-1), #new_col=(Nth(Send(self,@GetPos),2)+1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
          return;
       }
 
@@ -1612,7 +1616,7 @@ messages:
                Send(self,@MsgSendUser,#message_rsc=dm_mortal);
             }
 
-            Send(poOwner,@SomethingChanged,#what=self);
+            Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
             return;
          }
@@ -1632,7 +1636,7 @@ messages:
                Send(self,@MsgSendUser,#message_rsc=dm_immortal);
             }
 
-            Send(poOwner,@SomethingChanged,#what=self);
+            Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
             return;
          }
@@ -2136,7 +2140,7 @@ messages:
       }
 
       // Do this so that our name changes properly.
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
       return;
    }
@@ -2741,7 +2745,7 @@ messages:
 
          if poOwner <> $ AND alldone
          {
-            Send(poOwner,@SomethingChanged,#what=self);
+            Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
          }
 
          return;
@@ -3578,7 +3582,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       Send(self,@SetSkinTranslation,#translation=135);

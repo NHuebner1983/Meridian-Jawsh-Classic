@@ -414,7 +414,7 @@ messages:
 
          if poOwner <> $
          {
-            Send(poOwner,@SomethingChanged,#what=self);
+            Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
          }
       }
 
@@ -427,7 +427,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -579,7 +579,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -844,7 +844,7 @@ messages:
    DoSlash()
    {
       piAnimation = PANM_WEAPON_ATTACK;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = ANIM_NONE;
 
       return;
@@ -853,7 +853,7 @@ messages:
    DoBowFire()
    {
       piAnimation = PANM_BOW_FIRE;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
@@ -865,7 +865,7 @@ messages:
    DoFistAttack()
    {
       piAnimation = PANM_FIST_ATTACK;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -875,7 +875,7 @@ messages:
    "Causes the user to do spell casting arm, 1st & 3rd person"
    {
       piAnimation = PANM_CAST;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -885,7 +885,7 @@ messages:
    "If a monster has a special cast animation, call this."
    {
       piAnimation = PANM_CAST;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -1245,7 +1245,7 @@ messages:
 
       if poOwner <> $ AND alldone
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -1286,7 +1286,7 @@ messages:
 
       if poOwner <> $ AND alldone
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -1305,7 +1305,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -1331,7 +1331,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -1363,7 +1363,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -1383,7 +1383,7 @@ messages:
 
       if poOwner <> $ AND alldone
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -1428,7 +1428,7 @@ messages:
 
       if poOwner <> $ AND alldone
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -1585,7 +1585,7 @@ messages:
       Send(self,@AddOverlayObject,#what=what);
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -1598,7 +1598,7 @@ messages:
       Send(self,@RemoveOverlayObject,#what=what);
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -1812,7 +1812,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -1826,7 +1826,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -1850,7 +1850,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;

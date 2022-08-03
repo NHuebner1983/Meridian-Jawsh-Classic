@@ -146,7 +146,7 @@ messages:
    SetAnimation(what = $)
    {
       pbAnimate = what;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
       return;
    }

@@ -1459,7 +1459,7 @@ messages:
          AND (flag & (PFLAG_MURDERER | PFLAG_OUTLAW | PFLAG_INVISIBLE))
       {
          // Tell room about change in case there are ramifications.
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       if flag = PFLAG_MORPHED
@@ -1560,7 +1560,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       Post(self,@DrawOffense);
@@ -4465,7 +4465,7 @@ messages:
    TryUseItem(what = $)
    {
       local i,iSpace,iUse_type;
-	  
+
       if Send(self,@IsInCannotInteractMode)
       {
          Send(self,@MsgSendUser,#message_rsc=phased_out_cant_use);
@@ -10692,7 +10692,7 @@ messages:
       Send(self,@MsgSendUser,#message_rsc=player_dance);
 
       piAnimation = PANM_DANCE;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       Send(self,@SetPlayerFlag,#flag=PFLAG2_DANCING,#value=TRUE,#flagset=2);
       piAnimation = PANM_NONE;
 
@@ -10708,7 +10708,7 @@ messages:
 	  
       Send(self,@MsgSendUser,#message_rsc=player_stop_dance);
       Send(self,@SetPlayerFlag,#flag=PFLAG2_DANCING,#value=FALSE,#flagset=2);
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
       return;
    }
@@ -10719,7 +10719,7 @@ messages:
       Send(self,@MsgSendUser,#message_rsc=player_wave);
 
       piAnimation = PANM_WAVE;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -10731,7 +10731,7 @@ messages:
       Send(self,@DoWindowOverlayFistAttack);
 
       piAnimation = PANM_FIST_ATTACK;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -10743,7 +10743,7 @@ messages:
       Send(self,@MsgSendUser,#message_rsc=player_point);
 
       piAnimation = PANM_POINT;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -10755,7 +10755,7 @@ messages:
       Send(self,@DoWindowOverlayHandGlow);
 
       piAnimation = PANM_CAST;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -10764,7 +10764,7 @@ messages:
    DoBowFire()
    {
       piAnimation = PANM_BOW_FIRE;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -10921,7 +10921,7 @@ messages:
       Send(self,@AddOverlayObject,#what=what);
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -10934,7 +10934,7 @@ messages:
       Send(self,@RemoveOverlayObject,#what=what);
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -10985,7 +10985,7 @@ messages:
       }
 
       poHair_remove = what;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
       return;
    }
@@ -10996,7 +10996,7 @@ messages:
 
       if poOwner
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11007,7 +11007,7 @@ messages:
       piDrawfx = piDrawfx | drawfx;
       if poOwner <> $ AND SendSomethingChanged
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11019,7 +11019,7 @@ messages:
 
       if poOwner <> $ AND SendSomethingChanged
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11038,7 +11038,7 @@ messages:
 
       if poOwner <> $ AND alldone
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11084,7 +11084,7 @@ messages:
 
       if poOwner <> $ AND alldone
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11104,7 +11104,7 @@ messages:
 
       if poOwner <> $ AND alldone
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11149,7 +11149,7 @@ messages:
 
       if poOwner <> $ AND alldone
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11168,7 +11168,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11194,7 +11194,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11291,7 +11291,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11455,7 +11455,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11468,7 +11468,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11480,7 +11480,7 @@ messages:
    {
       poIllusion_set = what;
 
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
       return;
    }
@@ -11513,7 +11513,7 @@ messages:
    DoAttackSwing()
    {
       piAnimation = PANM_WEAPON_ATTACK;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -12442,7 +12442,7 @@ messages:
 
       if (poOwner <> $)
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -13486,7 +13486,7 @@ messages:
       if poOwner <> $
       {
          Send(self,@MsgSendUser,#message_rsc=player_temp_safe_end);
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       ptTempSafe = $;
@@ -13544,7 +13544,7 @@ messages:
 
       if (poOwner <> $)
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -13556,7 +13556,7 @@ messages:
 
       if (poOwner <> $)
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -14850,7 +14850,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -15598,7 +15598,7 @@ messages:
       if poOwner <> $
       {
          Send(poOwner,@RemoveFromBuilderGroup,#who=self);
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
          // Let's see that we left the group
          foreach i in Send(poOwner,@GetPlActive)
@@ -15607,7 +15607,7 @@ messages:
             if IsClass(each_obj,&User)
                AND Send(poOwner,@AreGroupedHere,#who=self,#what=each_obj)
             {
-               Send(self,@SomethingChanged,#what=each_obj);
+               Send(self,@SomethingChanged,#what=each_obj,#force=TRUE);
             }
          }
       }
@@ -15632,7 +15632,7 @@ messages:
       if poOwner <> $
       {
          Send(poOwner,@AddToBuilderGroup,#who=self);
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
          ptLeaveBuilderGroupTimer = CreateTimer(self,@LeaveBuilderGroupTimer,
                                        Send(poOwner,@GetGroupTime));
 
@@ -15643,7 +15643,7 @@ messages:
             if IsClass(each_obj,&User)
                AND Send(poOwner,@AreGroupedHere,#who=self,#what=each_obj)
             {
-               Send(self,@SomethingChanged,#what=each_obj);
+               Send(self,@SomethingChanged,#what=each_obj,#force=TRUE);
             }
          }
       }

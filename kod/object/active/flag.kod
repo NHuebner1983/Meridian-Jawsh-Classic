@@ -448,7 +448,7 @@ messages:
       }
 
       piFaction = Send(poClaimer,@GetFaction);
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
       // Delete the flag.
       iClaimerFaction = Send(poClaimer,@GetFaction);
@@ -806,7 +806,7 @@ messages:
       piFaction = faction;
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -818,7 +818,7 @@ messages:
       piFaction = faction;
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
          if piFaction <> FACTION_NEUTRAL
             AND ptGenerateTroops = $
             AND IsClass(poOwner,&MonsterRoom)
@@ -840,7 +840,7 @@ messages:
       pbClaimable=claimable;
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -1069,7 +1069,7 @@ messages:
       piFlagHotSpot = 4;
       if (poOwner <> $) 
       { 
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
       ptHalfStaffOff = CreateTimer(self,@HalfStaffTimer,duration);
 
@@ -1088,7 +1088,7 @@ messages:
       piFlagHotSpot = 1;
       if (poOwner <> $) 
       { 
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;

@@ -192,6 +192,8 @@ messages:
             #fine_col=32,#fine_row=16,#new_angle=ANGLE_NORTH);
       Send(self,@NewHold,#what=Create(&WoodenBox),#new_row=29,#new_col=30,
             #fine_col=0,#fine_row=0,#new_angle=ANGLE_SOUTH_WEST);
+      Send(self,@NewHold,#what=Create(&WoodenBox),#new_row=29,#new_col=28,
+            #fine_col=0,#fine_row=0,#new_angle=ANGLE_SOUTH_WEST);
 
       Send(self,@NewHold,#what=Create(&Table),#new_row=25,#new_col=8,
             #fine_col=16,#fine_row=0);

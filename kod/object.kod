@@ -1134,7 +1134,7 @@ messages:
          piNameColor = rgb;
          if poOwner <> $
          {
-            Send(poOwner,@SomethingChanged,#what=self);
+            Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
          }
 
          return TRUE;
@@ -1147,7 +1147,7 @@ messages:
          piNameColor = red * green * blue;
          if poOwner <> $
          {
-            Send(poOwner,@SomethingChanged,#what=self);
+            Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
          }
 
          return TRUE;

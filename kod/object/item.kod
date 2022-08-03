@@ -1341,7 +1341,7 @@ messages:
          Send(oItemAtt,@RemoveFromItem,#oItem=self);
       }
    
-      Send(poOwner,@SomethingChanged,#what=self);        
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);        
       Send(poOwner,@MsgSendUser,#message_rsc=vrItem_broken,
            #parm1=Send(self,@GetName));
       Send(poOwner,@TryUnuseItem,#what=self);
@@ -2352,7 +2352,7 @@ messages:
          oRoom = Send(poOwner,@GetOwner);
          if oRoom <> $
          {
-            Post(oRoom,@SomethingChanged,#what=poOwner);
+            Post(oRoom,@SomethingChanged,#what=poOwner,#force=TRUE);
          }
       }
 
@@ -2389,7 +2389,7 @@ messages:
       oRoom = Send(poOwner,@GetOwner);
       if oRoom <> $
       {
-         Send(oRoom,@SomethingChanged,#what=poOwner);
+         Send(oRoom,@SomethingChanged,#what=poOwner,#force=TRUE);
       }
 
       return;
@@ -2564,7 +2564,7 @@ messages:
       if poOwner <> $
          AND IsClass(poOwner,&User)
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -2586,7 +2586,7 @@ messages:
             if poOwner <> $
                AND IsClass(poOwner,&User)
             {
-               Send(poOwner,@SomethingChanged,#what=self);
+               Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
             }
 
             return;
@@ -2598,7 +2598,7 @@ messages:
       if poOwner <> $
          AND IsClass(poOwner,&User)
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;

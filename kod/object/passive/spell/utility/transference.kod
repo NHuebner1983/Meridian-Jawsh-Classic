@@ -19,18 +19,18 @@ resources:
    Transference_name_rsc = "transference"
    Transference_icon_rsc = iconveyance.bgf
    Transference_desc_rsc = \
-      "Sends any item to your guild hall chest.  "
+      "Sends any item to your guild hall chests.  "
       "Requires only a moment of your precious time."
-   Transference_cant = "You cannot convey %s%s to your guild hall chest."
-   Transference_chest_full = "Your guild chest can't hold anymore items."
+   Transference_cant = "You cannot send %s%s to your guild hall chests."
+   Transference_chest_full = "Your guild chests can't hold anymore items."
    Transference_not_holding = \
       "The item must be in your inventory first."
    Transference_cast = \
-      "Delivered %s%s to your guild hall chest."
+      "Delivered %s%s to your guild hall chests."
 
    Transference_not_guilded = "You must be guilded to cast this spell."
-   Transference_rank_too_low = "You are not high enough rank to access your guild hall chest."
-   Transference_no_hall = "Your guild does not own a hall. Perhaps you should complain to your guild master."
+   Transference_rank_too_low = "You are not high enough rank to access your guild hall chests."
+   Transference_no_hall = "Your guild does not own a hall. Perhaps your guild should buy or steal one."
 	  
 classvars:
 
@@ -108,7 +108,13 @@ messages:
    
    CastSpell(who = $, lTargets = $)
    {
-      local i, oTarget, oGuild, oGuildHall, oBox, bSuccess;
+      local i, oTarget, oGuild, oGuildHall, oBox, cClass, bSuccess, lBoxes, iBoxIndex, lBoxPatterns, lBoxSplit, lBoxSplitItems, bUseThisBox;
+
+      lBoxPatterns = [
+         [&Reagent, &Food, &Ammo],
+         [&Necklace, &Rod, &Potion, &Wand, &Ring, &Scroll, &Rose, &FaceMask, &GuildShield, &GoldSword, &Key, &Circlet, &BeerMug, &Pants, &Shirt, &Skirt],
+         [&Armor, &Helmet, &Weapon, &Shield]
+      ];
 
       if (lTargets = $)
       {
@@ -146,41 +152,122 @@ messages:
 	  
 	  // Whether or not the conveyance was successful...
 	  bSuccess = FALSE;
-	  
-	  foreach i in Send(oGuildHall,@GetHolderActive)
+	  lBoxes = [];
+
+      foreach i in Send(oGuildHall,@GetHolderActive)
       {
          oBox = First(i);
-		 
+
          if oBox <> $ AND IsClass(oBox,&StorageBox)
          {
-			if Send(oBox,@ReqNewHold,#what=oTarget,#who=who,#IsConveyance=TRUE)
-			{
-				Send(oBox,@NewHold,#what=oTarget);
-				
-				bSuccess = TRUE;
-				
-				break;
-			}
-			else
-			{
-				// Box can't hold anymore items...
-				Send(who,@MsgSendUser,#message_rsc=Transference_chest_full);
+            if Send(oBox,@ReqNewHold,#what=oTarget,#who=who,#IsConveyance=TRUE)
+            {
+               lBoxes = Cons(oBox, lBoxes);
+            }
+         }
+      }
 
-				break;
-			}
-		 }
-	  }
+      if Length(lBoxes) >= 3
+      {
+         // Items could go in 3 chests.
+         lBoxSplit = lBoxPatterns;
+         //Debug("3 boxes found",Length(lBoxSplit),"patterns ready");
+      }
+      else
+      {
+         if Length(lBoxes) <= 1
+         {
+            // All items go in one chest, no organization.
+            lBoxSplit = $;
+            //Debug("1 box found, not using any patterns.");
+         }
 
-	  if bSuccess 
-	  {
-		Send(who,@MsgSendUser,#message_rsc=Transference_cast,
-		   #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
-	  }
-	  else
-	  {
+         if Length(lBoxes) = 2
+         {
+            // Items could go in 2 chests.
+            lBoxSplit = [Nth(lBoxPatterns, 1), Cons(Nth(lBoxPatterns, 3),Nth(lBoxPatterns, 2))];
+            //Debug("2 boxes found",Length(lBoxSplit),"patterns ready");
+         }
+      }
+
+      bUseThisBox = FALSE;
+      iBoxIndex = 0;
+
+      foreach oBox in lBoxes
+      {
+         iBoxIndex = iBoxIndex + 1;
+
+         if lBoxSplit = $
+         {
+            // We only have 1 box, put it in there.
+            bUseThisBox = TRUE;
+         }
+         else
+         {
+            lBoxSplitItems = Nth(lBoxSplit, iBoxIndex);
+            
+            foreach cClass in lBoxSplitItems
+            {
+               if IsClass(oTarget, cClass)
+               {
+                  //Debug("Found a box for ", GetClass(oTarget),"in index",iBoxIndex,Length(lBoxSplitItems),"splititems");
+                  bUseThisBox = TRUE;
+                  break;
+               }
+            }
+         }
+
+         if NOT bUseThisBox AND iBoxIndex >= Length(lBoxes)
+         {
+            // We couldn't find a box to put this in.
+            // Let's put it in the last one.
+            //Debug("Couldn't find a box for ", GetClass(oTarget));
+            bUseThisBox = TRUE;
+         }
+
+         if bUseThisBox
+         {
+            break;
+         }
+      }
+
+      if NOT bUseThisBox
+      {
+         if Length(lBoxes) = 2
+         {
+            oBox = Nth(lBoxes, 2);
+            bUseThisBox = TRUE;
+         }
+         else
+         {
+            oBox = Nth(lBoxes, 1);
+            bUseThisBox = TRUE;
+         }
+      }
+      else
+      {
+         oBox = Nth(lBoxes, iBoxIndex);
+      }
+
+      if bUseThisBox
+      {
+        // Debug("Placed", GetClass(oTarget),"in box",iBoxIndex);
+         Send(oBox,@NewHold,#what=oTarget);
+
+         bSuccess = TRUE;
+      }
+
+      if bSuccess 
+      {
+         Send(who,@MsgSendUser,#message_rsc=Transference_cast,
+            #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+      }
+      else
+      {
          Send(who,@MsgSendUser,#message_rsc=Transference_cant,
-               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));		  
-	  }
+            #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));		  
+      }
+      
       propagate;
    }
 
