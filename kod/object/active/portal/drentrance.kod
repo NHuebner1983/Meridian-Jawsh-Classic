@@ -30,7 +30,7 @@ resources:
       "need to find him and convince him to send you back to the mortal realm. I wish you luck.''"
    DeathRealm_cant_enter = \
       "This portal leads to a unforgiving realm. Those to weak to fight mortals have no business there. "
-
+   No_Money = "~B~rThe void throws you back as your gold burns your skin through your pocket! "
 classvars:
 
    vrName = DeathRealmentrance_name_rsc
@@ -49,32 +49,42 @@ messages:
    TeleportSomething(what=$)
    "Called when something walks on top of us."
    {
-      local oRoom;
+      local i, lPassive, each_obj, oRoom;
 
       if (NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
       {
-         Send(what,@MsgSendUser,#message_rsc=DeathRealm_cant_enter);
-         Send(SYS,@UtilGoNearSquare,#what=what,#where=poOwner,
-               #new_row=Send(self,@GetRow) - ROW_ADJUST,
-               #new_col=Send(self,@GetCol) - COL_ADJUST,
-               #new_angle=ANGLE_SOUTH);
-               
          return;
       }
       else
       {
-         
-
-         if (poOwner = $
-            OR NOT IsClass(poOwner,&MarionCrypt4)
-            OR NOT IsClass(what,&User))
+         lPassive = send(what,@GetHolderPassive);
+         foreach i in lPassive
          {
-            propagate;
-         }
+            each_obj = send(what,@HolderExtractObject,#data=i);
+            if isClass(each_obj,&Money)
+            {
+               Send(what,@MsgSendUser,#message_rsc=DeathRealm_cant_enter);
+               Send(SYS,@UtilGoNearSquare,#what=what,#where=poOwner,
+                    #new_row=Send(self,@GetRow) - ROW_ADJUST,
+                    #new_col=Send(self,@GetCol) - COL_ADJUST,
+                    #new_angle=ANGLE_SOUTH);
 
-         Send(what,@MsgSendUser,#message_rsc=DeathRealm_entrance_enter);
+               Send(what,@MsgSendUser,#message_rsc=No_Money);
+
+               return;
+            }
+         }
+      }
+
+      if (poOwner = $
+         OR NOT IsClass(poOwner,&MarionCrypt4)
+         OR NOT IsClass(what,&User))
+      {
          propagate;
       }
+
+      Send(what,@MsgSendUser,#message_rsc=DeathRealm_entrance_enter);
+      propagate;
 
       return;
    }
