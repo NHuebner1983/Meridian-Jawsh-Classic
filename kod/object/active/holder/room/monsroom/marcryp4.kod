@@ -14,9 +14,19 @@ constants:
 
    include blakston.khd
 
+   SECTOR_QOR    = 1
+   SECTOR_SHAL   = 2
+   SECTOR_KRAN   = 3
+   SECTOR_JALA   = 4
+   SECTOR_FAREN  = 5
+   SECTOR_RIIJA  = 6
+
 resources:
 
    name_mar_crypt4 = "The Laboratory of the Mad Brothers" 
+   Ritual_1        = "Hear me Qor, accept my offer. Open your realm and lend me your strength.  " 
+   portal_DR       = "Through the portal, you see...darkness..and a red sky.."
+
    room_mar_crypt4 = marcrypt4.roo
 
    mar_crypt4_music = castle2.ogg
@@ -25,8 +35,8 @@ classvars:
 
    vrName = name_mar_crypt4
 
-   viTeleport_row = 10
-   viTeleport_col = 10
+   viTeleport_row = 39
+   viTeleport_col = 6
 
    viTerrain_type = TERRAIN_NECROPOLIS | TERRAIN_CAVES
 
@@ -40,10 +50,23 @@ properties:
 
    piOutside_factor = OUTDOORS_NONE
 
+   piPortal_counter = 0
+
 messages:
 
    Constructed()
    {
+      local oPortal;
+
+      plMonsters = [ [&Thrasher, 100] ];
+      plGenerators = [ [ 5, 30 ], [ 10, 35 ], [ 15, 40 ] ];
+
+      oPortal = Create(&DeathRealmEntrance,#desc=portal_DR,#dest_room_num=RID_DTEMPLE
+      ,#dest_col=8,#dest_row=17,#fine_row=15,#fine_col=32);
+
+	   Send(self,@NewHold,#what=oPortal,#new_row=53, #new_col=54,
+		#fine_row=16,#fine_col=50,#new_angle=ANGLE_NORTH);
+
       propagate;
    }
 
@@ -56,6 +79,246 @@ messages:
       plExits = Cons([ 25, 7, RID_MAR_CRYPT3a, 34, 27,
                        ROTATE_135, DISTANCE_NORMAL ],plExits);
       propagate;
+   }
+
+   SomeoneSaid(what=$,string=$)
+   {
+      local i, bShal, bQor, bRiija, bKran, bFaren, bJala;
+
+      if StringEqual(string,Ritual_1)
+      {
+         bShal  = FALSE;
+         bQor   = FALSE;
+         bRiija = FALSE;
+         bKran  = FALSE;
+         bFaren = FALSE;
+         bJala  = FALSE;
+
+         foreach i in plPassive
+         {
+            if IsClass(First(i),&OfferingShalille)
+               AND Send(self,@CheckShal,#what=First(i))
+            {
+               bShal = TRUE;
+            }
+            if IsClass(First(i),&OfferingQor)
+               AND Send(self,@CheckQor,#what=First(i))
+            {
+               bQor = TRUE;
+            }
+            if IsClass(First(i),&OfferingRiija)
+               AND Send(self,@CheckRiija,#what=First(i))
+            {
+               bRiija = TRUE;
+            }
+            if IsClass(First(i),&OfferingKraanan)
+               AND Send(self,@CheckKran,#what=First(i))
+            {
+               bKran = TRUE;
+            }
+            if IsClass(First(i),&OfferingFaren)
+               AND Send(self,@CheckFaren,#what=First(i))
+            {
+               bFaren = TRUE;
+            }
+            if IsClass(First(i),&OfferingJala)
+               AND Send(self,@CheckJala,#what=First(i))
+            {
+               bJala = TRUE;
+            }
+         }
+
+         if NOT bShal
+            OR NOT bQor
+            OR NOT bRiija
+            OR NOT bKran
+            OR NOT bFaren
+            OR NOT bJala
+         {
+            propagate;
+         }
+
+         // Okay, all the tokens should be here and in stonehenge.
+         // Open the portals.
+         Send(self,@OpenPortalToDeathRealm);
+      }
+
+      propagate;
+   }
+
+   CheckShal(what=$)
+   {
+      local iSector;
+
+      if what = $
+      {
+         Debug("what = $!  That ain't right!");
+
+         return FALSE;
+      }
+
+      iSector = Send(what,@GetSectorIDAtObject);
+
+      if ((iSector = 2 ))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   CheckQor(what=$)
+   {
+      local iSector;
+
+      if what = $
+      {
+         Debug("what = $!  That ain't right!");
+
+         return FALSE;
+      }
+
+      iSector = Send(what,@GetSectorIDAtObject);
+
+      if ((iSector = 1 ))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   CheckRiija(what=$)
+   {
+      local iSector;
+
+      if what = $
+      {
+         Debug("what = $!  That ain't right!");
+
+         return FALSE;
+      }
+
+      iSector = Send(what,@GetSectorIDAtObject);
+
+      if ((iSector = 6 ))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   CheckKran(what=$)
+   {
+      local iSector;
+
+      if what = $
+      {
+         Debug("what = $!  That ain't right!");
+
+         return FALSE;
+      }
+
+      iSector = Send(what,@GetSectorIDAtObject);
+
+      if ((iSector = 3 ))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   CheckFaren(what=$)
+   {
+      local iSector;
+
+      if what = $
+      {
+         Debug("what = $!  That ain't right!");
+
+         return FALSE;
+      }
+
+      iSector = Send(what,@GetSectorIDAtObject);
+
+      if ((iSector = 5 ))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   CheckJala(what=$)
+   {
+      local iSector;
+
+      if what = $
+      {
+         Debug("what = $!  That ain't right!");
+
+         return FALSE;
+      }
+
+      iSector = Send(what,@GetSectorIDAtObject);
+
+      if ((iSector = 4 ))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   OpenPortalToDeathRealm()
+   {
+      local i, oPortal, oRoom;
+
+      foreach i in plActive
+      {
+         if IsClass(First(i),&Portal)
+         {
+            // Refresh the portal counter, then return
+            piPortal_counter = 10;
+
+            return;
+         }
+      }
+
+      foreach i in plPassive
+      {
+         if First(i) <> $ AND IsClass(First(i),&Offering)
+         {
+            Send(First(i),@Delete);
+         }
+      }
+
+      oPortal = Create(&DeathRealmEntrance,#desc=portal_DR,#dest_room_num=RID_DTEMPLE,
+      #dest_col=8,#dest_row=17,#fine_row=15,#fine_col=32);
+
+	   Send(self,@NewHold,#what=oPortal,#new_row=27, #new_col=17,
+		#fine_row=63,#fine_col=17,#new_angle=ANGLE_NORTH);
+
+      piPortal_Counter = 10;
+
+      return;
+   }
+
+   ClosePortalToTemple()
+   {
+      local i, oRoom;
+
+      foreach i in plActive
+      {
+         if IsClass(First(i),&Portal)
+         {
+            Send(First(i),@Delete);
+         }
+      }
+
+      return;
    }
 
    CreateStandardObjects()
