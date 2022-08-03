@@ -276,17 +276,6 @@ messages:
    {
       local i, oPortal, oRoom;
 
-      foreach i in plActive
-      {
-         if IsClass(First(i),&Portal)
-         {
-            // Refresh the portal counter, then return
-            piPortal_counter = 10;
-
-            return;
-         }
-      }
-
       foreach i in plPassive
       {
          if First(i) <> $ AND IsClass(First(i),&Offering)
@@ -300,8 +289,6 @@ messages:
 
 	   Send(self,@NewHold,#what=oPortal,#new_row=27, #new_col=17,
 		#fine_row=63,#fine_col=17,#new_angle=ANGLE_NORTH);
-
-      piPortal_Counter = 10;
 
       return;
    }
