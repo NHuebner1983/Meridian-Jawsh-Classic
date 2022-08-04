@@ -53,5 +53,12 @@ messages:
       return;
    }
 
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&DeathRealmExit),#new_row=20,#new_col=26);
+
+      propagate;
+   }
+   
 end
 ////////////////////////////////////////////////////////////////////////////////

@@ -26,7 +26,6 @@ resources:
       "~B~rA voice from the goddess Shal'ille speaks to you ''You've done it!! "
       "You've slain Far'nohl and defeated his master Qor!! You must be one of the "
       "strongest adventurers in the land. If only Kraanan was around to see this..."
-   DeathRealmexit_cant_enter = "A magical force prevents anyhting from passing through. "
    Remove_souls = "Your contained souls have been released from there prison. "
 
 classvars:
@@ -48,33 +47,18 @@ messages:
    {
       local i, each_obj, oRoom;
 
-      if (NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
+      foreach i in Send(what,@GetHolderPassive)
       {
-         Send(what,@MsgSendUser,#message_rsc=DeathRealm_cant_enter);
-         Send(SYS,@UtilGoNearSquare,#what=what,#where=poOwner,
-               #new_row=Send(self,@GetRow) - ROW_ADJUST,
-               #new_col=Send(self,@GetCol) - COL_ADJUST,
-               #new_angle=ANGLE_SOUTH);
-               
-         return;
-      }
-      else
-      {
-         foreach i in Send(what,@GetHolderPassive)
+         each_obj = Send(what,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Souls)
          {
-            each_obj = Send(what,@HolderExtractObject,#data=i);
-            if IsClass(each_obj,&Souls)
-            {
-               Send(each_obj,@Delete);
-               Send(what,@MsgSendUser,#message_rsc=Remove_souls);
-            }
+            Send(each_obj,@Delete);
+            Send(what,@MsgSendUser,#message_rsc=Remove_souls);
          }
-
-         Send(what,@MsgSendUser,#message_rsc=DeathRealm_exit_enter);
-         Post(what,@AdminGoToSafety);
-         
-         propagate;
       }
+
+      Send(what,@MsgSendUser,#message_rsc=DeathRealm_exit_enter);
+      Post(what,@AdminGoToSafety);
 
       return;
    }
