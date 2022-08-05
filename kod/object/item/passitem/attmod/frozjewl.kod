@@ -226,7 +226,7 @@ messages:
             // Add big damage if we spent the mana. Adjust it by how strong
             // the wielder is relative to their maximum potential. Throwaway
             // characters will get very little benefit.
-            return damage + Send(self,@GetHealthBonus,#who=who);
+            return damage + iAdditionalDamage + Send(self,@GetHealthBonus,#who=who);
          }
 
          // Add a small amount of damage.
