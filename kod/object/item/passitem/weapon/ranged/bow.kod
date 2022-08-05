@@ -175,6 +175,10 @@ messages:
             {
                iTranslation = PT_BLUE_TO_ASHEN;
             }
+            else if iFaction = FACTION_KOC
+            {
+               iTranslation = XLAT_TO_GREEN;
+            }
             else if iFaction = FACTION_NECROMANCER
             {
                iTranslation = XLAT_TO_BLACK;
