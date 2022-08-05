@@ -7345,15 +7345,22 @@ messages:
          return;
       }
 
-	  // A reflection or servant wants to target a player.
-	  if (IsClass(self,&Reflection) OR IsClass(self,&Servant)) AND IsClass(what, &Player)
-	  {
-		 if NOT Send(what,@HasAttacked,#victim=self)
-		 {
-		    // I will only attack if you attack first.
-		    return FALSE;
-		 }
-	  }
+	   if IsClass(self,&Reflection) AND IsClass(what, &Player)
+      {
+         // A reflection wants to attack a player.
+         if IsClass(poMaster, &Servant)
+         {
+            // The Reflection's master is a servant, denied for now.
+            return FALSE;
+         }
+      }
+
+      if IsClass(self,&Servant) AND IsClass(what, &Player)
+      {
+         // A servant wants to attack a player
+         // This is not supported yet.
+         return FALSE;
+      }
 
       piHatred = iHatred;
 

@@ -4771,12 +4771,15 @@ messages:
 
       piLastAttack = GetTime();
 
-      if victim <> $ AND IsClass(victim, &Monster) AND Send(victim, @IsMinion)
-	  {
-	     // Do not attack your own minions.
-		 
-	     return FALSE;
-	  }
+      if victim <> $ 
+         AND IsClass(victim, &Monster) 
+         AND Send(victim, @IsMinionOf, #who=self) 
+         AND NOT IsClass(victim,&EvilTwin)
+      {
+         // Do not attack your own minions.
+         // We make sure your minion isn't an evil twin though.
+         return FALSE;
+      }
 
       // If the victim is in a room, then check that location instead.  This
       // allows distance attacks (like wall spells) to work properly.
@@ -4944,6 +4947,12 @@ messages:
 
             return FALSE;
          }*/
+
+         if IsClass(victim,&EvilTwin)
+         {
+            // Let's always be able to kill our evil twins.
+            return TRUE;
+         }
 
          if IsClass(victim,&Reflection)
             OR IsClass(victim,&EvilTwin)
