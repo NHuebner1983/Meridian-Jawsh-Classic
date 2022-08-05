@@ -1906,10 +1906,11 @@
    ITEMTYPE_MONEY =    0x002000
    // Special items like the necromancer amulet/hunter sword, to make them not
    //  dm-creatable
-   ITEMTYPE_SPECIAL =  0x004000
-   ITEMTYPE_SCROLL =   0x008000
-   ITEMTYPE_MASK =     0x010000
-   ITEMTYPE_ROD =      0x020000
+   ITEMTYPE_SPECIAL =    0x004000
+   ITEMTYPE_SCROLL =     0x008000
+   ITEMTYPE_MASK =       0x010000
+   ITEMTYPE_ROD =        0x020000
+   ITEMTYPE_INSTRUMENT = 0x040000
 
    // Item Attributes.  See the end of item.kod for details
    IA_DEFAULT              = 0

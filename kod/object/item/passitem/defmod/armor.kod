@@ -39,6 +39,7 @@ classvars:
    viGround_group = 2
    viInventory_group = 1
    viBroken_group = 3
+   viItem_type = ITEMTYPE_ARMOR
 
    vbShow_condition = TRUE
    vrCondition_exc = armor_condition_exc

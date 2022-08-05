@@ -70,6 +70,7 @@ classvars:
    viDefense_base = 20
 
    viUse_type = ITEM_USE_BODY | ITEM_USE_LEGS
+   viItem_type = ITEMTYPE_ARMOR
 
    vrIcon_male = robe_male_icon_rsc
    vrIcon_female = robe_female_icon_rsc

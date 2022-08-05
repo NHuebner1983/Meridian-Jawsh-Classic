@@ -271,7 +271,7 @@ resources:
    
    servant_already_learned = "~kYour servant whispers, ''You're dumb, you already know %s~n''~k"
 
-   servant_acknowledge = "~kYour servant nods, ''As you wish, master.~n''~k"
+   servant_acknowledge = "~kYour servant nods, ''As you wish, master.''~k"
 
    // This could be moved up to monster.kod
    // We'll just use it here for now.
@@ -332,6 +332,22 @@ resources:
    servant_talk_max_mystify_me = "~k%s whispers, ''Our mana reserves are full again. If you need additional mana, just ~rsay mystify me~r.''~k"
    
    servant_tougher = "~B~IYour servant suddenly feels a little tougher!~B~I"
+
+   servant_outfit_qor = "qor outfit"
+   servant_outfit_shally = "shal'ille outfit"
+   servant_outfit_faren = "faren outfit"
+   servant_outfit_kran = "kraanan outfit"
+   servant_outfit_riija = "riija outfit"
+   servant_outfit_jala = "jala outfit"
+   
+   servant_save_outfit_1 = "save outfit 1"
+   servant_save_outfit_2 = "save outfit 2"
+   servant_use_outfit_1 = "outfit 1"
+   servant_use_outfit_2 = "outfit 2"
+
+   servant_outfit_school = "~kYour servant nods, ''This is the best attire when in the pressence of %s with what you are carrying.''~k"
+   servant_outfit_saved = "~kYour servant nods, ''You have lovely taste. Just say ~Boutfit %i~B any time you want me to prepare you this way.''~k"
+   servant_outfit_saved_used = "~kYour servant nods, ''I prepared you the best I could with what you are carrying.''~k"
 
 classvars:
    
@@ -1537,13 +1553,19 @@ messages:
 
       if IsClass(what,&User) AND poMaster = what
       {
-         // Check for basic servant commands, they're the easiest to figure out first.
-         bResponded = Send(self,@GetSaidServantCommand,#said_string=string);
+         // Check for outfit management
+         bResponded = Send(self,@HandleOutfits,#string=string);
 
          if NOT bResponded
          {
-            // Check for player advancement (skills/spells).
-            bResponded = Send(self,@GetSaidProgress,#said_string=string);
+            // Check for general servant commands
+            bResponded = Send(self,@GetSaidServantCommand,#said_string=string);
+
+            if NOT bResponded
+            {
+               // Check for player advancement (skills/spells).
+               bResponded = Send(self,@GetSaidProgress,#said_string=string);
+            }
          }
       }
 
@@ -2447,6 +2469,552 @@ messages:
 	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
 	  
       return;
+   }
+
+   Outfit(iSchool=$, iExampleSpell=$)
+   {
+      local c, i, r, ap, w, s, lInventory, lResists, lSchoolResists, lWeaponResists, lKeep, bKeep, bReplace, lUnequip, lKeepTypesUsed, lAllowDuplicateTypes, oObj, iSpellPower, bHasSpellPower, bHasResists, lCantUnequip, lGoodItemTypes, bSkip, iResistTotal, bHasWeapon, bHasJof;
+
+      if iSchool = $
+      {
+         Debug("Outfit without a School Num.");
+
+         return FALSE;
+      }
+
+      lCantUnequip = [
+         &SoldierShield,
+         &NecromancerAmulet
+      ];
+
+      lGoodItemTypes = [
+         ITEMTYPE_ARMOR,
+         ITEMTYPE_WEAPON,
+         ITEMTYPE_INSTRUMENT,
+         ITEMTYPE_SHIELD,
+         ITEMTYPE_HELMET,
+         ITEMTYPE_GEM,
+         ITEMTYPE_NECKLACE,
+         ITEMTYPE_RING,
+         ITEMTYPE_CLOTHES,
+         ITEMTYPE_MASK,
+         ITEMTYPE_WAND
+      ];
+
+      lAllowDuplicateTypes = [
+         ITEMTYPE_HELMET,
+         ITEMTYPE_RING,
+         ITEMTYPE_CLOTHES,
+         ITEMTYPE_GEM
+      ];
+
+      lWeaponResists = [
+         ATCK_WEAP_ALL,
+         ATCK_WEAP_PIERCE,
+         ATCK_WEAP_SLASH,
+         ATCK_WEAP_THRUST,
+         ATCK_WEAP_BLUDGEON
+      ];
+
+      lSchoolResists = [
+         [SS_SHALILLE, [
+            -ATCK_SPELL_ALL,
+            -ATCK_SPELL_UNHOLY,
+            -ATCK_SPELL_ACID,
+            -ATCK_SPELL_FIRE,
+            -ATCK_SPELL_COLD,
+            -ATCK_SPELL_SHOCK,
+            -ATCK_SPELL_QUAKE
+         ]],
+         [SS_QOR, [
+            -ATCK_SPELL_ALL,
+            -ATCK_SPELL_HOLY,
+            -ATCK_SPELL_FIRE,
+            -ATCK_SPELL_COLD,
+            -ATCK_SPELL_SHOCK,
+            -ATCK_SPELL_QUAKE
+         ]],
+         [SS_KRAANAN, [
+            -ATCK_SPELL_ALL,
+            -ATCK_SPELL_HOLY,
+            -ATCK_SPELL_UNHOLY,
+            -ATCK_SPELL_ACID,
+            -ATCK_SPELL_FIRE,
+            -ATCK_SPELL_COLD,
+            -ATCK_SPELL_SHOCK,
+            -ATCK_SPELL_QUAKE
+         ]],
+         [SS_FAREN, [
+            -ATCK_SPELL_ALL,
+            -ATCK_SPELL_HOLY,
+            -ATCK_SPELL_UNHOLY,
+            -ATCK_SPELL_ACID,
+            -ATCK_SPELL_FIRE,
+            -ATCK_SPELL_COLD,
+            -ATCK_SPELL_SHOCK,
+            -ATCK_SPELL_QUAKE
+         ]],
+         [SS_RIIJA, [
+            -ATCK_SPELL_ALL,
+            -ATCK_SPELL_HOLY,
+            -ATCK_SPELL_UNHOLY,
+            -ATCK_SPELL_ACID,
+            -ATCK_SPELL_FIRE,
+            -ATCK_SPELL_COLD,
+            -ATCK_SPELL_SHOCK,
+            -ATCK_SPELL_QUAKE
+         ]],
+         [SS_JALA, [
+            -ATCK_SPELL_ALL,
+            -ATCK_SPELL_HOLY,
+            -ATCK_SPELL_UNHOLY,
+            -ATCK_SPELL_ACID,
+            -ATCK_SPELL_FIRE,
+            -ATCK_SPELL_COLD,
+            -ATCK_SPELL_SHOCK,
+            -ATCK_SPELL_QUAKE
+         ]]
+      ];
+
+      lKeep = [];
+      lUnequip = [];
+
+      // Let's unequip anything with negative general spell power.
+      // Let's unequip anything with negative spell power to this school.
+      // Let's pick items by type with the best spell power for this school.
+      // Let's finally equip the best items.
+
+      lInventory = [
+         Send(poMaster, @GetHolderActive), 
+         Send(poMaster, @GetHolderPassive)
+      ];
+
+      bHasWeapon = FALSE;
+      bHasJof = FALSE;
+
+      foreach ap in lInventory
+      {
+         if ap = $
+         {
+            continue;
+         }
+
+         foreach i in ap
+         {
+            if i = $
+            {
+               continue;
+            }
+
+            oObj = Send(self,@HolderExtractObject,#data=i);
+
+            if oObj = $
+            {
+               continue;
+            }
+
+            bSkip = FALSE;
+            bHasSpellPower = FALSE;
+            bHasResists = FALSE;
+
+            // Skip items that we can't unequip, like AO3/SoldierShield
+            foreach c in lCantUnequip
+            {
+               if IsClass(oObj, c)
+               {
+                  bSkip = TRUE;
+
+                  break;
+               }
+            }
+
+            if bSkip
+            {
+               continue;
+            }
+
+            // Only work with item types that are possible to work with.
+            bSkip = TRUE;
+
+            foreach c in lGoodItemTypes
+            {
+               if Send(oObj, @GetItemType) = c
+               {
+                  bSkip = FALSE;
+
+                  break;
+               }
+            }
+
+            if bSkip
+            {
+               continue;
+            }
+
+            // Check item resistances
+            // We do not want resistance against our school.
+
+            lResists = Send(oObj,@GetCurrentResistances);
+
+            if lResists <> $
+            {
+               bHasResists = TRUE;
+            }
+
+            // Check if our school has spellpower on this item
+            iSpellPower = Send(oObj,@GetSpellModifier,#oSpell=Send(SYS,@FindSpellByNum,#num=iExampleSpell));
+
+            if iSchool = SS_JALA AND IsClass(oObj, &Instrument)
+            {
+               // Jala gets special treatment...
+               // Treat instrument power as spell power
+               iSpellPower = iSpellPower + Send(oObj,@GetInstrumentLevel);
+            }
+
+            if iSpellPower <> $ AND iSpellPower <> 0
+            {
+               // We must consider negative spellpower in case we need to unequip it.
+               bHasSpellPower = TRUE;
+
+               if iSpellPower > 0
+               {
+                  if (IsClass(oObj, &Weapon) AND NOT IsClass(oObj, &JewelOfFroz))
+                     OR IsClass(oObj, &Instrument)
+                  {
+                     bHasWeapon = TRUE;
+                  }
+
+                  if IsClass(oObj, &JewelOfFroz)
+                  {
+                     bHasJof = TRUE;
+                  }
+               }
+            }
+
+            // We will build our own list with as much information above as possible.
+            // Then we will figure out the best items after we've collected everything.
+            if bHasSpellPower OR bHasResists
+            {
+               //Debug("Inventory: ",Send(oObj,@GetName));
+
+               iResistTotal = 0;
+
+               if bHasResists
+               {
+                  foreach r in lResists
+                  {
+                     foreach s in lSchoolResists
+                     {
+                        if First(s) = iSchool
+                        {
+                           foreach w in Nth(s, 2)
+                           {
+                              if First(r) = w
+                              {
+                                 iResistTotal = iResistTotal + Nth(r, 2);
+                              }
+                           }
+                        }
+                     }
+
+                     foreach w in lWeaponResists
+                     {
+                        if First(r) = w
+                        {
+                           iResistTotal = iResistTotal + Nth(r, 2);
+                        }
+                     }
+                     //Debug(Send(SYS,@GetResistanceName,#type=First(r)),Nth(r,2));
+                  }
+                  
+                  //Debug("Total Resists:", iResistTotal);
+               }
+
+               if bHasSpellPower
+               {
+                  if iSpellPower > 0
+                  {
+                     bKeep = TRUE;
+                     bReplace = $;
+
+                     foreach w in lKeep
+                     {
+                        if Nth(w, 1) = oObj
+                        {
+                           continue;
+                        }
+
+                        if Send(oObj, @GetItemType) = Nth(w, 2)
+                        {
+                           // Found a similar item in lKeep, but it's stronger than oObj.
+                           if iSpellPower < Nth(w, 3)
+                           {
+                              // The item in our lKeep is stronger.
+                              Debug(Send(Nth(w,1), @GetName),"is stronger than",Send(oObj,@GetName));
+                              bKeep = FALSE;
+                              break;
+                           } else {
+                              // We should replace the item in the lKeep
+                              bKeep = TRUE;
+                              
+                              if NOT FindListElem(lAllowDuplicateTypes, Nth(w, 2))
+                              {
+                                 // This item type must be unique.
+                                 Debug(Send(Nth(w,1), @GetName),"is duplicated by",Send(oObj,@GetName));
+                                 bReplace = w;
+                              }
+                           }
+                        }
+                     }
+
+                     if bKeep
+                     {
+                        if bReplace <> $ AND FindListElem(lKeep, bReplace)
+                        {
+                           // Let's remove this item from the list.
+                           Debug(Send(oObj,@GetName),"will replace",Send(Nth(bReplace,1),@GetName));
+                           lKeep = DelListElem(lKeep, bReplace);
+                        }
+
+                        // If we have a weapon, don't add jofs to the list
+                        if IsClass(oObj, &JewelOfFroz) AND bHasWeapon
+                        {
+                           Debug(Send(oObj,@GetName),"skipped because we have a weapon");
+                           continue;
+                        }
+
+                        // Let's add this item to the list.
+                        lKeep = AppendListElem([oObj, Send(oObj, @GetItemType), iSpellPower], lKeep);
+                        Debug("Keeping",Send(oObj,@GetName),iSpellPower);
+                     }
+                  }
+                  else
+                  {
+                     lUnequip = AppendListElem(oObj, lUnequip);
+                  }
+                  //Debug("Spell Power", iSpellPower);
+               }
+
+               //Debug("-----------------------");
+            }
+         }
+      }
+
+      if Length(lKeep)
+      {
+         foreach i in lKeep
+         {
+            if bHasWeapon AND IsClass(Nth(i,1), &JewelOfFroz)
+            {
+               Debug("Ignoring JOFs have a weapon",Send(Nth(i,1),@GetName));
+               continue;
+            }
+
+            // Try to equip the item.
+            Send(poMaster,@TryUseItem,#what=Nth(i,1));
+            Debug("Equipping",Send(Nth(i,1),@GetName));
+         }
+      }
+
+
+      if Length(lUnequip)
+      {
+         foreach i in lUnequip
+         {
+            // Try to unequip the item.
+            Send(poMaster,@TryUnuseItem,#what=i);
+            Debug("Unequipping",Send(i,@GetName));
+         }
+      }
+
+      return;
+   }
+
+   OutfitQor()
+   {
+      local iSchool, sSchool;
+
+      iSchool = SS_QOR;
+      sSchool = Send(SYS, @GetSchoolNameRsc, #iSchoolNum = iSchool);
+
+      Send(self,@Outfit,#iSchool=iSchool,#iExampleSpell=SID_DARKNESS);
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_school, #parm1=sSchool);
+
+      return;
+   }
+
+   OutfitShally()
+   {
+      local iSchool, sSchool;
+
+      iSchool = SS_SHALILLE;
+      sSchool = Send(SYS, @GetSchoolNameRsc, #iSchoolNum = iSchool);
+
+      Send(self,@Outfit,#iSchool=iSchool,#iExampleSpell=SID_SEANCE);
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_school, #parm1=sSchool);
+
+      return;
+   }
+
+   OutfitFaren()
+   {
+      local iSchool, sSchool;
+
+      iSchool = SS_FAREN;
+      sSchool = Send(SYS, @GetSchoolNameRsc, #iSchoolNum = iSchool);
+
+      Send(self,@Outfit,#iSchool=iSchool,#iExampleSpell=SID_LIGHT);
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_school, #parm1=sSchool);
+
+      return;
+   }
+
+   OutfitKran()
+   {
+      local iSchool, sSchool;
+
+      iSchool = SS_KRAANAN;
+      sSchool = Send(SYS, @GetSchoolNameRsc, #iSchoolNum = iSchool);
+
+      Send(self,@Outfit,#iSchool=iSchool,#iExampleSpell=SID_BLESS);
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_school, #parm1=sSchool);
+
+      return;
+   }
+
+   OutfitRiija()
+   {
+      local iSchool, sSchool;
+
+      iSchool = SS_RIIJA;
+      sSchool = Send(SYS, @GetSchoolNameRsc, #iSchoolNum = iSchool);
+
+      Send(self,@Outfit,#iSchool=iSchool,#iExampleSpell=SID_BLINK);
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_school, #parm1=sSchool);
+
+      return;
+   }
+
+   OutfitJala()
+   {
+      local iSchool, sSchool;
+
+      iSchool = SS_JALA;
+      sSchool = Send(SYS, @GetSchoolNameRsc, #iSchoolNum = iSchool);
+
+      Send(self,@Outfit,#iSchool=iSchool,#iExampleSpell=SID_MIRTH);
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_school, #parm1=sSchool);
+
+      return;
+   }
+   
+   OutfitSave(num=$)
+   {
+      if num = $
+      {
+         Debug("Outfit Save did not have a num.");
+
+         return FALSE;
+      }
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_saved, #parm1=num);
+
+      return;
+   }
+   
+   OutfitUse(num=$)
+   {
+      if num = $
+      {
+         Debug("Outfit Use did not have a num.");
+
+         return FALSE;
+      }
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_saved_used, #parm1=num);
+
+      return;
+   }
+
+   HandleOutfits(string="derpaderp")
+   {
+      if StringEqual(string, servant_outfit_qor)
+      {
+         Send(self, @OutfitQor);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_outfit_shally)
+      {
+         Send(self, @OutfitShally);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_outfit_faren)
+      {
+         Send(self, @OutfitFaren);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_outfit_kran)
+      {
+         Send(self, @OutfitKran);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_outfit_riija)
+      {
+         Send(self, @OutfitRiija);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_outfit_jala)
+      {
+         Send(self, @OutfitJala);
+         
+         return TRUE;
+      }
+   
+      if StringEqual(string, servant_save_outfit_1)
+      {
+         Send(self, @OutfitSave, #num=1);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_save_outfit_2)
+      {
+         Send(self, @OutfitSave, #num=2);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_use_outfit_1)
+      {
+         Send(self, @OutfitUse, #num=1);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_use_outfit_2)
+      {
+         Send(self, @OutfitUse, #num=2);
+         
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
 end

@@ -38,7 +38,7 @@ classvars:
 
    vrShield_window_overlay = $
    vrShield_overlay = $
-
+   viItem_type = ITEMTYPE_SHIELD
    viBroken_group = 4
    vbShow_condition = TRUE
    vrCondition_exc = shield_condition_exc 
