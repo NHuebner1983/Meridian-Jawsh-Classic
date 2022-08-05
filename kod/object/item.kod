@@ -1362,12 +1362,28 @@ messages:
    IsItemType(type = ITEMTYPE_MISC)
    {
       // Check for misc items (type 0)
-      if type = viItem_type            
+      if type = viItem_type
       {
          return TRUE;
-      }               
+      }
 
       return (viItem_type & type);
+   }
+
+   IsType(type = ITEMTYPE_MISC)
+   {
+      // Check for misc items (type 0)
+      if type = viItem_type
+      {
+         return TRUE;
+      }
+
+      return (viItem_type | type);
+   }
+
+   GetItemType()
+   {
+      return viItem_type;
    }
 
    DoShatter()
