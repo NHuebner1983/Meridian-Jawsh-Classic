@@ -5654,6 +5654,7 @@ messages:
 	  // Diggie New Masks
       plItemTemplates = cons(create(&WolfMask),plItemTemplates);
       plItemTemplates = cons(create(&RiceMask),plItemTemplates);
+      plItemTemplates = cons(create(&Shades),plItemTemplates);
 
       plItemTemplates = cons(create(&SpecialGift),plItemTemplates);
       plItemTemplates = cons(create(&SkullMask),plItemTemplates);
