@@ -169,7 +169,7 @@ messages:
       local oWhoOwner;
 
       // The player's owner.
-      oWhoOwner = Send(who,@GetGuildHall);
+      oWhoOwner = Send(who,@GetOwner);
 
       if ((isConveyance <> $ AND NOT isConveyance) OR isConveyance = $)
 	      AND (NOT Send(oWhoOwner,@LineOfSight,#obj1=who,#obj2=self))
@@ -201,12 +201,12 @@ messages:
          return FALSE;
       }
 
-      if IsClass(oWhoOwner,&GuildHall)
+      if Send(who, @GetGuildHall) <> $ AND IsClass(Send(who, @GetGuildHall),&GuildHall)
       {
-         return Send(oWhoOwner,@ReqUseGuildChest,#who=who);
+         return Send(Send(who, @GetGuildHall), @ReqUseGuildChest,#who=who);
       }
 
-      propagate;
+      return TRUE;
    }
 
    LockChest(bLocked=$)
