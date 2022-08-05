@@ -9,6 +9,7 @@ Meridian 420-cache
 #################
 *.bof
 *.rsc
+.vs
 .vscode
 kodbase.txt
 run/server/*
