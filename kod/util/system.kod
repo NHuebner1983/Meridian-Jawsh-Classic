@@ -346,6 +346,14 @@ resources:
 
    system_guild_rsc = "guild"
 
+   school_qor_rsc = "Qor"
+   school_shalille_rsc = "Shal'lle"
+   school_kraanan_rsc = "Kraanan"
+   school_faren_rsc = "Faren"
+   school_riija_rsc = "Riija"
+   school_jala_rsc = "Jala"
+   school_wc_rsc = "Weapons Craft"
+
    system_message_sound = system.ogg
    
 classvars:
@@ -7979,6 +7987,33 @@ messages:
 	  }
 	  
 	  return sSchoolName;
+   }
+
+   GetSchoolNameRsc(iSchoolNum = $)
+   {
+      switch(iSchoolNum)
+      {
+         case SS_SHALILLE:
+            return school_shalille_rsc;
+         break;
+         case SS_QOR:
+            return school_qor_rsc;
+         break;
+         case SS_KRAANAN:
+            return school_kraanan_rsc;
+         break;
+         case SS_FAREN:
+            return school_faren_rsc;
+         break;
+         case SS_RIIJA:
+            return school_riija_rsc;
+         break;
+         case SS_JALA:
+            return school_jala_rsc;
+         break;
+      }
+
+     return $;
    }
 
 #region Print Game Info
