@@ -270,7 +270,9 @@ resources:
    servant_tells_you_rsc = "~kYour servant whispers, ''%s~n''~k"
    
    servant_already_learned = "~kYour servant whispers, ''You're dumb, you already know %s~n''~k"
-   
+
+   servant_acknowledge = "~kYour servant nods, ''As you wish, master.~n''~k"
+
    // This could be moved up to monster.kod
    // We'll just use it here for now.
    
@@ -1527,28 +1529,28 @@ messages:
    //    stop buffing (makes them stop buffing)
    //    stop casting (makes them stop casting)
    //    stop attacking (makes them docile and useless)
-   SomeoneSaid(what = $,type = $,string = $)
+   ServantHandleSay(what = $,type = $,string = $)
    {
       local bResponded;
-	  
-	  bResponded = FALSE;
+
+      bResponded = FALSE;
 
       if IsClass(what,&User) AND poMaster = what
       {
-	     // Check for basic servant commands, they're the easiest to figure out first.
-		 bResponded = Send(self,@GetSaidServantCommand,#said_string=string);
-		 
-	     if NOT bResponded
-	     {
-		    // Check for player advancement (skills/spells).
-		    bResponded = Send(self,@GetSaidProgress,#said_string=string);
-	     }
+         // Check for basic servant commands, they're the easiest to figure out first.
+         bResponded = Send(self,@GetSaidServantCommand,#said_string=string);
+
+         if NOT bResponded
+         {
+            // Check for player advancement (skills/spells).
+            bResponded = Send(self,@GetSaidProgress,#said_string=string);
+         }
       }
-	  
-	  // Clear out the NPC library - it may be causing errors if we leave the data.
-	  plNPCLibrary = $;
-	  	  
-      propagate;
+
+      // Clear out the NPC library - it may be causing errors if we leave the data.
+      plNPCLibrary = $;
+
+      return bResponded;
    }
       
    GetSaidProgress(said_string="derpaderp")
@@ -1617,18 +1619,19 @@ messages:
 					 // Tell the master!
 					 Post(poMaster,@MsgSendUser,#message_rsc=servant_already_learned,#parm1=oAbilityName);
 					 
-					 return;
+					 return TRUE;
 				  }
 				  
 				  // Let's reach out to this NPC and see if we can learn it...
-				  bCanLearn = Send(oNPC, @CanDoTeach, #who=poMaster, #sid=iAbilityNum, 
+				  Send(oNPC, @CanDoTeach, #who=poMaster, #sid=iAbilityNum, 
 				      #bSkill=IsClass(oAbility, &Skill), #oRequester=self);
+              return TRUE;
 			   }
 			}
 		 }
 	  }
 	  
-	  return;
+	  return FALSE;
    }
    
    PrepareNPCList()
@@ -1915,15 +1918,17 @@ messages:
 
    GetSaidServantCommand(said_string="derpaderp")
    {
-      local bIsCommand, iPlayerMissingHealth, iPlayerMissingMana, iPlayerMissingVigor, iPulledAmount;
+      local bIsCommand, iPlayerMissingHealth, iPlayerMissingMana, iPlayerMissingVigor, iPulledAmount, bAcknowledge, bDeleteServant;
 	  
 	  bIsCommand = FALSE;
+     bAcknowledge = FALSE;
 	  
 	  // Show the help command output to our master.
       if StringEqual(said_string, servant_command_help)
       {
 	     Post(poMaster,@MsgSendUser,#message_rsc=servant_response_help);
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
 	  
 	  
@@ -1935,6 +1940,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }	  
       if StringEqual(said_string, servant_command_loud)
       {
@@ -1944,6 +1950,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_nodes)
       {
@@ -1959,6 +1966,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_do_buffs)
       {
@@ -1968,6 +1976,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_stop_taunting)
       {
@@ -1977,6 +1986,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_taunt)
       {
@@ -1986,6 +1996,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_stop_attacking)
       {
@@ -1999,6 +2010,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_attack)
       {
@@ -2011,6 +2023,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_stop_casting)
       {
@@ -2022,6 +2035,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_cast)
       {
@@ -2033,6 +2047,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_heal_me)
       {
@@ -2126,9 +2141,9 @@ messages:
       }
       if StringEqual(said_string, servant_command_go_away)
       {
-	     Send(self,@GracefullyDeleteServant);
-		 
+	     bDeleteServant = TRUE;
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }	  
       if StringEqual(said_string, servant_command_identify)
       {
@@ -2154,6 +2169,18 @@ messages:
       {
 	     Send(self,@DisguiseMaster);
 	     bIsCommand = TRUE;
+      }
+
+      if bAcknowledge
+      {
+         // Generic servant response.
+		   Post(poMaster,@MsgSendUser,#message_rsc=servant_acknowledge);
+      }
+
+      if bDeleteServant
+      {
+         // We delete afterwards so the poMaster is still set.
+         Send(self,@GracefullyDeleteServant);
       }
       
 	  return bIsCommand;

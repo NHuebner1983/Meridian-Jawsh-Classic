@@ -5371,6 +5371,18 @@ messages:
       }
 
       if type = SAY_NORMAL
+      {
+         if Send(self,@GetServant) <> $
+         {
+            if Send(Send(self,@GetServant), @ServantHandleSay, #what=self, #type=type, #string=string)
+            {
+               // Servant responded.
+               return;
+            }
+         }
+      }
+
+      if type = SAY_NORMAL
          OR type = SAY_EMOTE
          OR type = SAY_DM
       {
