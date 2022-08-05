@@ -35,9 +35,9 @@ classvars:
    viProficiency_needed = SKID_KICK
    viWeaponType = WEAPON_TYPE_SLASH
 
-   viValue_average = 250
-   viWeight = 20
-   viBulk = 20
+   viValue_average = 100000
+   viWeight = 15
+   viBulk = 12
 
    viGround_group = 1
    viInventory_group = 3
