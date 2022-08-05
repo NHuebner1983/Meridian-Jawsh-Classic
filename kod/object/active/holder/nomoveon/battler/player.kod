@@ -1166,12 +1166,22 @@ properties:
    // Actual Servant Resource repo.
    // There will be an HP, Vigor, Mana resource and an accumulation Nth(1) = HP/Vigor/Mana Nth(2) = Amount Available
    plServantResources = $
+
+   // Servant outfits saved for the player
+   // We are only supporting 2, but we could support more.
+   // They aren't nameable. It's just like "say save outfit 1" and "say outfit 1".
+   plServantOutfits = $
    
+   // Time player last moved in game
    piLastMoved = 0
+
+   // Time player last attacked in game
    piLastAttack = 0
 
+   // If we are a roaming NPC, whether or not we initialized
    pbRoamingNPCPlayerInitialized = FALSE
 
+   // Our NPC Player profile (if we are one) - ie: a monster as a player controller by the server.
    plNPCProfile = $
    
    // Number of monsters killed as NPCPlayer
