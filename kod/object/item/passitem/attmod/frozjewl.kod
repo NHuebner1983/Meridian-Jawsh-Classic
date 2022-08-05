@@ -173,9 +173,13 @@ messages:
 
    ModifyDamage(who=$,what=$,damage=$,stroke_obj=$)
    {
-      local i, iMana;
+      local i, iIndex, iMana, iAdditionalDamage, oOtherJof, iMyIndex, iOtherJofIndex;
 
       --piHits;
+
+      iAdditionalDamage = 0;
+      iIndex = 0;
+      iOtherJofIndex = 0;
 
       if piHits <= 0
       {
@@ -190,20 +194,30 @@ messages:
       if IsClass(stroke_obj,&Spell)
       {
          iMana = 0;
-         if pbDoubleManaCost
+
+         foreach i in Send(who,@GetPlayerUsing)
          {
-            foreach i in Send(who,@GetPlayerUsing)
+            iIndex = iIndex + 1;
+
+            if IsClass(i,&JewelOfFroz)
             {
-               if IsClass(i,&JewelOfFroz)
+               if i = self
                {
-                  // 1 mana default for one jewel, 4 mana total for two.
-                  iMana = iMana + piManaLossJewel;
+                  iMyIndex = iIndex;
                }
+               else
+               {
+                  oOtherJof = i;
+                  iOtherJofIndex = iIndex;
+               }
+
+               iAdditionalDamage = iAdditionalDamage + Random(1,2);
             }
          }
-         else
+
+         if oOtherJof = $ OR (oOtherJof <> $ AND iMyIndex < iOtherJofIndex)
          {
-             // Default 1 per jewel.
+            // Only drain mana from 1 jof, not both.
             iMana = iMana + piManaLossJewel;
          }
 
@@ -216,7 +230,7 @@ messages:
          }
 
          // Add a small amount of damage.
-         return damage + Random(1,2);
+         return damage + iAdditionalDamage;
       }
 
       return damage;
