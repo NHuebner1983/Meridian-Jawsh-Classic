@@ -331,7 +331,7 @@ resources:
    servant_talk_max_feed_me = "~k%s whispers, ''Our food reserves are full again. If you need additional vigor, just ~rsay feed me~r.''~k"
    servant_talk_max_mystify_me = "~k%s whispers, ''Our mana reserves are full again. If you need additional mana, just ~rsay mystify me~r.''~k"
    
-   servant_tougher = "~B~IYour servant suddenly feels a little tougher!~B~I"
+   servant_tougher = "~IYour servant suddenly feels a little tougher!~I"
 
    servant_outfit_qor = "qor outfit"
    servant_outfit_shally = "shal'ille outfit"
@@ -342,12 +342,16 @@ resources:
    
    servant_save_outfit_1 = "save outfit 1"
    servant_save_outfit_2 = "save outfit 2"
-   servant_use_outfit_1 = "outfit 1"
-   servant_use_outfit_2 = "outfit 2"
+   servant_use_outfit_1 = "use outfit 1"
+   servant_use_outfit_2 = "use outfit 2"
+   servant_undress_me = "undress me"
 
-   servant_outfit_school = "~kYour servant nods, ''This is the best attire when in the pressence of %s with what you are carrying.''~k"
-   servant_outfit_saved = "~kYour servant nods, ''You have lovely taste. Just say ~Boutfit %i~B any time you want me to prepare you this way.''~k"
+   servant_outfit_school = "~kYour servant nods, ''This is the best attire when in the pressence of ~B%s~B with what you are carrying.''~k"
+   servant_outfit_saved = "~kYour servant nods, ''You have lovely taste. Just ~Bsay use outfit %i~B any time you want me to prepare you this way. If you lose an item, I may not be able to find a suitable replacement for such good taste.''~k"
+   servant_outfit_not_saved = "~kYour servant nods, ''You should really put something on. If you really want to be naked, just say ~Bundress me~B. But let's not do this while women and children are around.''~k"
    servant_outfit_saved_used = "~kYour servant nods, ''I prepared you the best I could with what you are carrying.''~k"
+   servant_outfit_saved_not_used = "~kYour servant nods, ''I had trouble preparing you in that outfit. I can only outfit you with the original items you equipped. I wouldn't dare outfit you in something you found unacceptable.''~k"
+   servant_undressed = "~kYour servant gasps, ''You should really shave down there.''~k"
 
 classvars:
    
@@ -2916,6 +2920,8 @@ messages:
    
    OutfitSave(num=$)
    {
+      local bSaved;
+
       if num = $
       {
          Debug("Outfit Save did not have a num.");
@@ -2923,13 +2929,24 @@ messages:
          return FALSE;
       }
 
-      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_saved, #parm1=num);
+      bSaved = Send(poMaster,@SaveOutfit,#num=num);
+
+      if bSaved <> $ AND bSaved
+      {
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_saved, #parm1=num);
+      }
+      else
+      {
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_not_saved);  
+      }
 
       return;
    }
    
    OutfitUse(num=$)
    {
+      local bUsed;
+
       if num = $
       {
          Debug("Outfit Use did not have a num.");
@@ -2937,13 +2954,30 @@ messages:
          return FALSE;
       }
 
-      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_saved_used, #parm1=num);
+      bUsed = Send(poMaster,@UseOutfit,#num=num);
+
+      if bUsed <> $ AND bUsed
+      {
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_saved_used, #parm1=num);
+      }
+      else
+      {
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_saved_not_used);
+      }
 
       return;
    }
 
    HandleOutfits(string="derpaderp")
    {
+      if StringEqual(string, servant_undress_me)
+      {
+         Send(poMaster,@Undress);
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_undressed);
+         
+         return TRUE;
+      }
+
       if StringEqual(string, servant_outfit_qor)
       {
          Send(self, @OutfitQor);

@@ -141,6 +141,9 @@ properties:
    pbColored = FALSE
    piSpecial = $
 
+   // The outfits this item is part of for the player
+   plOutfit = $
+   
 messages:
 
    Constructor(corpse=$, oDMCreator=$)
@@ -175,6 +178,77 @@ messages:
       }
 
       propagate;
+   }
+
+   InOutfit(outfitNum=0)
+   "Check if this item is used in a specific outfit."
+   {
+      local i;
+
+      if outfitNum = $ OR outfitNum <= 0 OR plOutfit = $ OR Length(plOutfit) <= 0
+      {
+         return FALSE;
+      }
+
+      foreach i in plOutfit
+      {
+         if i = outfitNum
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
+   RemoveFromOutfit(outfitNum=0)
+   "Remove this item from a specific outfit."
+   {
+      local i;
+
+      if outfitNum = $ OR outfitNum <= 0 OR plOutfit = $ OR Length(plOutfit) <= 0
+      {
+         return $;
+      }
+
+      if Send(self,@InOutfit,#outfitNum=outfitNum)
+      {
+         plOutfit = DelListElem(plOutfit, outfitNum);
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   AddToOutfit(outfitNum=0)
+   "Adds this item to a player outfit."
+   {
+      local i;
+
+      if outfitNum = $ OR outfitNum <= 0
+      {
+         return $;
+      }
+
+      if plOutfit = $
+      {
+         plOutfit = [];
+      }
+
+      if NOT Send(self,@InOutfit,#outfitNum=outfitNum)
+      {
+         plOutfit = AppendListElem(outfitNum, plOutfit);
+      }
+
+      return TRUE;
+   }
+
+   ClearOutfit()
+   {
+      plOutfit = $;
+
+      return;
    }
 
    SetItemPlayerFlag(who=$,iSpecial=$)
@@ -1039,12 +1113,13 @@ messages:
       local lData;
 
       // If the person who is supposed to pick up an item picks up 
-      //  the item, then remove the corpsepointer.
-          
+      //  the item, then remove the corpsepointer.          
       if poOwner <> $ AND Send(self,@HasAttribute,#ItemAtt=IA_CORPSEPOINTER)
       {  
          Send(self,@RemoveAttribute,#ItemAtt=IA_CORPSEPOINTER);
-      }      
+      }
+
+      Send(self,@ClearOutfit);
 
       if poOwner <> $ AND Send(self,@HasAttribute,#ItemAtt=IA_BONDED)
       {
@@ -1178,7 +1253,9 @@ messages:
             return FALSE;
          }
       }
-      
+
+      Send(self,@ClearOutfit);
+
       propagate;
    }
 
@@ -1345,7 +1422,9 @@ messages:
       Send(poOwner,@MsgSendUser,#message_rsc=vrItem_broken,
            #parm1=Send(self,@GetName));
       Send(poOwner,@TryUnuseItem,#what=self);
-      
+
+      Send(self,@ClearOutfit);
+
       return;
    }
 
@@ -1396,6 +1475,7 @@ messages:
    
    Delete()
    {
+      Send(self,@ClearOutfit);
       Send(self,@ClearAllItemAttributes);
       
       propagate;

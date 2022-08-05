@@ -1167,10 +1167,10 @@ properties:
    // There will be an HP, Vigor, Mana resource and an accumulation Nth(1) = HP/Vigor/Mana Nth(2) = Amount Available
    plServantResources = $
 
-   // Servant outfits saved for the player
-   // We are only supporting 2, but we could support more.
-   // They aren't nameable. It's just like "say save outfit 1" and "say outfit 1".
-   plServantOutfits = $
+   // Outfits saved for the player
+   // Numbered, not named. User must access them by 1,2,etc.
+   // Items will be tagged on the item object itself so we can find which one to use, to make an exact match.
+   plOutfits = $
    
    // Time player last moved in game
    piLastMoved = 0
@@ -16120,6 +16120,264 @@ messages:
       propagate;
    }
    
+   GetOutfits(num=$)
+   "Providing a number will return a specific outfit."
+   {
+      local i;
+
+      if plOutfits = $ OR Length(plOutfits) <= 0
+      {
+         return $;
+      }
+
+      if num <> $ AND Length(plOutfits) >= num
+      {
+         foreach i in plOutfits
+         {
+            if i = num
+            {
+               return i;
+            }
+         }
+
+         return $;
+      }
+
+      return plOutfits;
+   }
+
+   SaveOutfit(num=$)
+   "Returns the outfit number you saved. Outfits aren't physically stored in plOutfits, only the number. You can find plOutfit in item.kod"
+   {
+      local iSavedNum, i, ap, c, oObj, lInventory, lCantUnequip, bSkip;
+
+      iSavedNum = num;
+
+      if plOutfits = $
+      {
+         plOutfits = [];
+      }
+
+      if num <> $ AND num > 0 AND Length(plOutfits) >= num
+      {
+         if FindListElem(plOutfits, num)
+         {
+            // Remove the existing outfit.
+            plOutfits = DelListElem(plOutfits, num);
+         }
+
+         // Put the updated outfit in its place.
+         plOutfits = AppendListElem(num, plOutfits);
+      }
+      else
+      {
+         // Add a new outfit without specifying a number to use
+         iSavedNum = Length(plOutfits) + 1;
+         plOutfits = AppendListElem(iSavedNum, plOutfits);
+      }
+
+      // We need to build an outfit.
+      lInventory = [
+         Send(self, @GetHolderActive), 
+         Send(self, @GetHolderPassive)
+      ];
+
+      lCantUnequip = [
+         &SoldierShield,
+         &NecromancerAmulet
+      ];
+
+      foreach ap in lInventory
+      {
+         if ap = $
+         {
+            continue;
+         }
+
+         foreach i in ap
+         {
+            if i = $
+            {
+               continue;
+            }
+
+            oObj = Send(self,@HolderExtractObject,#data=i);
+
+            if oObj = $
+            {
+               continue;
+            }
+
+            bSkip = FALSE;
+
+            foreach c in lCantUnequip
+            {
+               if IsClass(oObj, c)
+               {
+                  bSkip = TRUE;
+
+                  break;
+               }
+            }
+
+            if NOT bSkip AND Send(oObj,@InUse) AND NOT Send(oObj,@IsCursed)
+            {
+               // Add item to this outfit.
+               Send(oObj, @AddToOutfit, #outfitNum=iSavedNum);
+
+               continue;
+            }
+
+            // Make sure all other items are removed from this outfit.
+            Send(oObj, @RemoveFromOutfit, #outfitNum=iSavedNum);
+         }
+      }
+
+      return iSavedNum;
+   }
+
+   UseOutfit(num=$)
+   {
+      local i, ap, c, oObj, lInventory, lCantUnequip, bSkip, iOutfit;
+
+      iOutfit = Send(self,@GetOutfits,#num=num);
+
+      if plOutfits = $ OR iOutfit = $ OR iOutfit <= 0 OR Length(plOutfits) <= 0
+      {
+         return FALSE;
+      }
+
+      // We need to track down all of the items to equip.
+      lInventory = [
+         Send(self, @GetHolderActive), 
+         Send(self, @GetHolderPassive)
+      ];
+
+      lCantUnequip = [
+         &SoldierShield,
+         &NecromancerAmulet
+      ];
+
+      foreach ap in lInventory
+      {
+         if ap = $
+         {
+            continue;
+         }
+
+         foreach i in ap
+         {
+            if i = $
+            {
+               continue;
+            }
+
+            oObj = Send(self,@HolderExtractObject,#data=i);
+
+            if oObj = $
+            {
+               continue;
+            }
+
+            bSkip = FALSE;
+
+            foreach c in lCantUnequip
+            {
+               if IsClass(oObj, c)
+               {
+                  bSkip = TRUE;
+
+                  break;
+               }
+            }
+
+            if bSkip
+            {
+               continue;
+            }
+
+            if NOT Send(oObj,@InUse) 
+               AND NOT Send(oObj,@IsCursed) 
+               AND Send(oObj,@InOutfit,#outfitNum=num)
+            {
+               // Let's use this item
+               Send(self,@TryUseItem,#what=oObj);
+            }
+            else
+            {
+               if NOT Send(oObj,@IsCursed) 
+                  AND Send(oObj,@InUse)
+                  AND NOT Send(oObj,@InOutfit,#outfitNum=num)
+               {
+                  // Unequip things that weren't saved!
+                  Send(self,@TryUnuseItem,#what=oObj);
+               }
+            }
+         }
+      }
+
+      return TRUE;
+   }
+
+   Undress()
+   "Lets get naked."
+   {
+      local iSavedNum, i, ap, c, oObj, lInventory, lCantUnequip, bSkip, lOutfit;
+
+      lInventory = [
+         Send(self, @GetHolderActive), 
+         Send(self, @GetHolderPassive)
+      ];
+
+      lCantUnequip = [
+         &SoldierShield,
+         &NecromancerAmulet
+      ];
+
+      foreach ap in lInventory
+      {
+         if ap = $
+         {
+            continue;
+         }
+
+         foreach i in ap
+         {
+            if i = $
+            {
+               continue;
+            }
+
+            oObj = Send(self,@HolderExtractObject,#data=i);
+
+            if oObj = $
+            {
+               continue;
+            }
+
+            bSkip = FALSE;
+
+            foreach c in lCantUnequip
+            {
+               if IsClass(oObj, c)
+               {
+                  bSkip = TRUE;
+
+                  break;
+               }
+            }
+
+            if NOT bSkip AND Send(oObj,@InUse) AND NOT Send(oObj,@IsCursed)
+            {
+               // Take this off!
+               Send(self,@TryUnuseItem,#what=oObj);
+            }
+         }
+      }
+
+      return;
+   }
+
    PrepareServantResources()
    {
       if plServantResources = $
