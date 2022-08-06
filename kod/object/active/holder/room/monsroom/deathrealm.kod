@@ -143,7 +143,6 @@ messages:
 	  }
 	  
       if IsClass(oSpell,&Elusion)
-         OR IsClass(oSpell,&GlowWeapon)
          OR IsClass(oSpell,&Rescue)
          OR IsClass(oSpell,&DeathRift)
          OR IsClass(oSpell,&Truce)
