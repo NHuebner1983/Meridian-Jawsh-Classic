@@ -12394,7 +12394,7 @@ messages:
       }
 
       Send(self,@BreakTrance,#event=EVENT_REST);
-      ptRest = CreateTimer(self,@RestTimer,Send(self,@GetRestTime));
+      ptRest = CreateTimer(self,@RestTimer,Bound(Send(self,@GetRestTime), 1, 9999999));
       Send(self,@ResetPlayerFlagList);
 
       return;
