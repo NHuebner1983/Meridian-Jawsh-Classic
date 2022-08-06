@@ -93,30 +93,30 @@ messages:
 
       if prMonsters = TRUE
       {
-         plMonsters = [ [&HeadlessSkeleton, 7],
-                        [&Spirit, 7],
-                        [&Revenantb, 7],
+         plMonsters = [ [&HeadlessSkeleton, 10],
+                        [&Spirit, 10],
+                        [&Revenantb, 1],
                         [&Chimera, 7],
                         [&Cyclops, 7],
-                        [&FollowerOfQor, 7],
-                        [&MinotaurBerserker, 6],
+                        [&FollowerOfQor, 2],
+                        [&MinotaurBerserker, 2],
                         [&Tyrant, 6],
-                        [&FallenMonk, 6],
+                        [&FallenMonk, 4],
                         [&HellWasp, 6],
                         [&Croco, 6],
                         [&Vozun, 6],
-                        [&Dulahan, 6],
-                        [&BlackHydra, 6],
-                        [&RedHydra, 6],
-                        [&GoldHydra, 6],
-                        [&GreenHydra, 6],
-                        [&GreySeeker, 6],
-                        [&GreenSeeker, 6],
-                        [&BrownSeeker, 6],
-                        [&DeathMiteSoldier, 6],
-                        [&DeathMiteScout, 6],
-                        [&DeathMiteTank, 6],
-                        [&DeathMiteMage, 6]
+                        [&Dulahan, 4],
+                        [&BlackHydra, 2],
+                        [&RedHydra, 2],
+                        [&GoldHydra, 2],
+                        [&GreenHydra, 2],
+                        [&GreySeeker, 4],
+                        [&GreenSeeker, 4],
+                        [&BrownSeeker, 4],
+                        [&DeathMiteSoldier, 10],
+                        [&DeathMiteScout, 10],
+                        [&DeathMiteTank, 4],
+                        [&DeathMiteMage, 4]
                          ];
       }
 
