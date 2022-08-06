@@ -55,7 +55,7 @@ messages:
       plExits = $;
 
   /// TO TOWN
-      plExits = Cons([ 27, 41, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 27, 41, ROOM_LOCKED_DOOR, Needs_Key ],plExits);
 
       plEdge_Exits = $;
       plEdge_Exits = Cons([LEAVE_NORTH, RID_DH5, 45, 11, ROTATE_NONE], plEdge_exits);

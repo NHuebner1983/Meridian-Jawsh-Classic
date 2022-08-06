@@ -39,7 +39,7 @@ messages:
    {
       plExits = $;
 
-      plExits = Cons([ 56, 8, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 56, 8, ROOM_LOCKED_DOOR, Needs_Key ],plExits);
    
       plEdge_Exits = $;
 

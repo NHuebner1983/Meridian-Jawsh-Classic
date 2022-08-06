@@ -41,9 +41,9 @@ messages:
    {
       plExits = $;
 
-      plExits = Cons([ 3, 44, ROOM_LOCKED_DOOR ],plExits);
-      plExits = Cons([ 4, 44, ROOM_LOCKED_DOOR ],plExits);
-      plExits = Cons([ 5, 44, ROOM_LOCKED_DOOR ],plExits);                                                                             
+      plExits = Cons([ 3, 44, ROOM_LOCKED_DOOR, Needs_Key],plExits);
+      plExits = Cons([ 4, 44, ROOM_LOCKED_DOOR, Needs_Key],plExits);
+      plExits = Cons([ 5, 44, ROOM_LOCKED_DOOR, Needs_Key],plExits);                                                                             
 
       plEdge_exits = $;
       plEdge_Exits = Cons([ LEAVE_WEST, RID_DI9, 2, 27, ANGLE_SOUTH_WEST ], plEdge_exits); 

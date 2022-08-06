@@ -40,8 +40,8 @@ messages:
    {
       plExits = $;
 
-      plExits = Cons([ 6, 18, ROOM_LOCKED_DOOR ],plExits);
-      plExits = Cons([ 7, 18, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 6, 18, ROOM_LOCKED_DOOR, Needs_Key ],plExits);
+      plExits = Cons([ 7, 18, ROOM_LOCKED_DOOR, Needs_Key ],plExits);
 
       plEdge_exits = $;
       plEdge_Exits = Cons([LEAVE_NORTH, RID_DCORNOTH, 31, 67, ROTATE_NONE],

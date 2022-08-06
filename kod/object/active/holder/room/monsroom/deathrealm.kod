@@ -30,6 +30,8 @@ resources:
    // Quake Damage
    Quake_damage_hurt = "You feel the earth beneath you move violently."
 
+   Needs_Key = "You need a key for this door, ask the town folk for help."
+
    DeathRealm_music = drmusic.mp3
 
 classvars:
