@@ -5987,12 +5987,16 @@ messages:
       plItemTemplates = cons(create(&GoldSword),plItemTemplates);
       plItemTemplates = cons(create(&RiijaSword),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeSword),plItemTemplates);
+      plItemTemplates = cons(create(&NeruditeAxe),plItemTemplates);
       plItemTemplates = cons(create(&MysticSword),plItemTemplates);
       plItemTemplates = cons(create(&Scimitar),plItemTemplates);
       plItemTemplates = cons(create(&LongSword),plItemTemplates);
+      plItemTemplates = cons(create(&TwinBlade),plItemTemplates);
+      plItemTemplates = cons(create(&LightSword),plItemTemplates);
       plItemTemplates = cons(create(&ShortSword),plItemTemplates);
       plItemTemplates = cons(create(&Axe),plItemTemplates);
       plItemTemplates = cons(create(&Hammer),plItemTemplates);
+      plItemTemplates = cons(create(&Maul),plItemTemplates);
       plItemTemplates = cons(create(&Mace),plItemTemplates);
 
       plItemTemplates = cons(create(&ShieldRod),plItemTemplates);
