@@ -280,7 +280,7 @@ messages:
       oTarget = Send(mob,@GetTarget);
 	  
       //// Sanity check
-      if what = $ OR victim = $
+      if what = $
       {
          //Debug("BAD: null <what> in SomethingAttacked.");
       }
@@ -290,14 +290,14 @@ messages:
          return;
       }
 	  
-	  if IsClass(what, &Monster) AND IsClass(victim, &Player) AND NOT IsClass(what, &Servant)
+	  if what <> $ AND victim <> $ AND IsClass(what, &Monster) AND IsClass(victim, &Player) AND NOT IsClass(what, &Servant)
 	  {
 	     // Monster attacked player
 		 // Make sure the monster is known as an aggressor.
 		 Send(victim,@AddAggro,#what=what);
 	  }
 	  
-	  if IsClass(what, &Player) AND IsClass(victim, &Monster) AND NOT IsClass(victim, &Servant)
+	  if what <> $ AND victim <> $ AND IsClass(what, &Player) AND IsClass(victim, &Monster) AND NOT IsClass(victim, &Servant)
 	  {
 	    // Player attacked monster
 		 // Make sure the monster is known as an aggressor.
