@@ -20,6 +20,7 @@ classvars:
 
    viUse_type = ITEM_USE_HAND
    viUse_amount = 2
+   viItem_Type = ITEMTYPE_INSTRUMENT
 
    viInstrument_strength = 25
    vrInstrument_overlay = $

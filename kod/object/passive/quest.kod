@@ -263,6 +263,39 @@ messages:
             return FALSE;
          }
 
+         if ((iRestrict = Q_PLAYER_FACTION_HOLY)
+            AND (iFaction <> FACTION_HOLY))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_FACTION_HOLY.");
+            }
+
+            return FALSE;
+         }
+
+         if ((iRestrict = Q_PLAYER_FACTION_UNHOLY)
+            AND (iFaction <> FACTION_NECROMANCER))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_FACTION_UNHOLY.");
+            }
+
+            return FALSE;
+         }
+
+         if ((iRestrict = Q_PLAYER_FACTION_KOC)
+            AND (iFaction <> FACTION_KOC))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_FACTION_KOC.");
+            }
+
+            return FALSE;
+         }
+
          if ((iRestrict = Q_PLAYER_FACTION_SAME)
             AND (iFaction <> Send(oCurrentNPC,@GetFaction)))
          {

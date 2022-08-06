@@ -424,7 +424,12 @@ messages:
    SomethingChanged(what = $)
    "Override from Holder, optimised for Room."
    {
-      SendList(plActive,1,@SomethingChanged,#what=what);
+      local iMove;
+
+      if (what <> $ AND (NOT IsClass(what, &Player) OR (IsClass(what, &Player) AND Send(what,@SinceLastMove) > 1)))
+      {
+         SendList(plActive,1,@SomethingChanged,#what=what);
+      }
 
       return;
    }
@@ -457,16 +462,21 @@ messages:
 	  
 	  lPlayers = $;
 	  
+	  if plActive = $ OR Length(plActive) <= 0
+	  {
+	     return $;
+	  }
+	  
       foreach i in plActive
 	  {
-	     if IsClass(i, &Player)
+	     if i <> $ AND First(i) <> $ AND IsClass(First(i), &Player)
 		 {
 		    if lPlayers = $
 			{
 			   lPlayers = [];
 			}
 			
-			lPlayers = AppendListElem(i, lPlayers);
+			lPlayers = AppendListElem(First(i), lPlayers);
 		 }
 	  }
 	  
@@ -2362,6 +2372,16 @@ messages:
       Send(self,@LastUserLeft,#what=what);
 
       propagate;
+   }
+   
+   GetActive()
+   {
+      return plActive;
+   }
+   
+   GetPassive()
+   {
+      return plPassive;
    }
 
    GetRoomPos(what = $)

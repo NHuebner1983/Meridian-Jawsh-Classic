@@ -13,6 +13,7 @@ Servant is Monster
 constants:
 
    include blakston.khd
+   include protocol.khd
    
    // Distance from master before we abandon the fight
    RETREAT_DISTANCE = 100
@@ -101,19 +102,21 @@ resources:
       "~r~B''say buff me'' ~r~B~kand I will resume casting beneficial spells.~k\n"
       "~r~B''say stop taunting'' ~r~B~kand I will stop trying to steal your aggro.~k\n"
       "~r~B''say taunt'' ~r~B~kand it will send me into a rage, stealing your aggro, but it will hurt me a lot.~k\n"
-	  "~r~B''say stop attacking'' ~r~B~kand I will let you do all of the hard work.~k\n"
+      "~r~B''say stop attacking'' ~r~B~kand I will let you do all of the hard work.~k\n"
       "~r~B''say attack'' ~r~B~kand I will attack your enemies.~k\n"
-	  "~r~B''say stop casting spells'' ~r~B~kand I will stop casting harmful spells on your enemies.~k\n"
+      "~r~B''say stop casting spells'' ~r~B~kand I will stop casting harmful spells on your enemies.~k\n"
       "~r~B''say cast spells'' ~r~B~kand I will cast harmful spells I've learned on your enemies.~k\n"
-	  "~r~B''say mend this'' ~r~B~k in my Kraanan form and I will mend whatever you are wearing.~k\n"
+      "~r~B''say mend this'' ~r~B~k in my Kraanan form and I will mend whatever you are wearing.~k\n"
       "~r~B''say identify this'' ~r~B~kin my Shal'ille form and I will try to identify whatever you are wearing.~k\n"
       "~r~B''say reveal this'' ~r~B~kin my Shal'ille form and I will try to reveal whatever you are wearing.~k\n"
       "~r~B''say disguise me'' ~r~B~kin my Riija form and I may just turn you into a giant rat.~k\n"
       "~r~B''say throw bait'' ~r~B~kin my Riija form and I will attract monsters with delicious treats.~k\n"
-	  "~r~B''say heal me'' ~r~B~kand I will try to use a heal wand I stoled from that corpse over there.~k\n"
+      "~r~B''say heal me'' ~r~B~kand I will try to use a heal wand I stoled from that corpse over there.~k\n"
       "~r~B''say feed me'' ~r~B~kand I will try to feed you some food I ''may'' have stolen from you. You can't prove anything.~k\n"
       "~r~B''say mystify me'' ~r~B~kand I will give you some of the mana I have been stealing from you.~k\n"
       "~r~B''say go away'' ~r~B~kand I will leave your side until you summon me for more adventures.~k\n"
+      "~r~B''say save outfit 1'' ~r~B~kand I will remember what you're wearing. I can do 1 and 2.~k\n"
+      "~r~B''say use outfit 1'' ~r~B~kand I will try to dress you what you were wearing before. I can do 1 and 2.~k\n"
    
    // RPG Random Names
    servant_name_1 = "Eimmilth, The Mammoth"
@@ -269,7 +272,9 @@ resources:
    servant_tells_you_rsc = "~kYour servant whispers, ''%s~n''~k"
    
    servant_already_learned = "~kYour servant whispers, ''You're dumb, you already know %s~n''~k"
-   
+
+   servant_acknowledge = "~kYour servant nods, ''As you wish, master.''~k"
+
    // This could be moved up to monster.kod
    // We'll just use it here for now.
    
@@ -328,6 +333,28 @@ resources:
    servant_talk_max_feed_me = "~k%s whispers, ''Our food reserves are full again. If you need additional vigor, just ~rsay feed me~r.''~k"
    servant_talk_max_mystify_me = "~k%s whispers, ''Our mana reserves are full again. If you need additional mana, just ~rsay mystify me~r.''~k"
    
+   servant_tougher = "~IYour servant suddenly feels a little tougher!~I"
+
+   servant_outfit_qor = "qor outfit"
+   servant_outfit_shally = "shal'ille outfit"
+   servant_outfit_faren = "faren outfit"
+   servant_outfit_kran = "kraanan outfit"
+   servant_outfit_riija = "riija outfit"
+   servant_outfit_jala = "jala outfit"
+   
+   servant_save_outfit_1 = "save outfit 1"
+   servant_save_outfit_2 = "save outfit 2"
+   servant_use_outfit_1 = "use outfit 1"
+   servant_use_outfit_2 = "use outfit 2"
+   servant_undress_me = "undress me"
+
+   servant_outfit_school = "~kYour servant nods, ''This is the best attire when in the pressence of ~B%s~B with what you are carrying.''~k"
+   servant_outfit_saved = "~kYour servant nods, ''You have lovely taste. Just ~Bsay use outfit %i~B any time you want me to prepare you this way. If you lose an item, I may not be able to find a suitable replacement for such good taste.''~k"
+   servant_outfit_not_saved = "~kYour servant nods, ''You should really put something on. If you really want to be naked, just say ~Bundress me~B. But let's not do this while women and children are around.''~k"
+   servant_outfit_saved_used = "~kYour servant nods, ''I prepared you the best I could with what you are carrying.''~k"
+   servant_outfit_saved_not_used = "~kYour servant nods, ''I had trouble preparing you in that outfit. I can only outfit you with the original items you equipped. I wouldn't dare outfit you in something you found unacceptable.''~k"
+   servant_undressed = "~kYour servant gasps, ''You should really shave down there.''~k"
+
 classvars:
    
    vrKocName = servant_koc_name_rsc
@@ -465,14 +492,12 @@ messages:
    // Send these values when you use the Create(&Servant, #...) function.
    Constructor(who = $, oSpell = $, iSpellNum = $, iSpellPower = $)
    {
-      local iStats, iResistance, iNegativeResistance;
-	  
-	  if who = $ OR NOT IsClass(who, &Player)
-	  {
-	     // Only a player can have a servant.
-		 
-	     propagate;
-	  }
+
+      if who = $ OR NOT IsClass(who, &Player)
+      {
+         // Only a player can have a servant.
+         propagate;
+      }
 	  
 	  // Set our master
 	  poMaster = who;
@@ -483,92 +508,9 @@ messages:
 	  // The spell power from their summon cast.
 	  piSpellPower = iSpellPower;
 	  
-	  Send(self,@SetSpellsLevel);
-	  
-	  // The spell we used to summon the servant
-	  piSpellNum = iSpellNum;
-	  
-	  // The spell school
-	  piSpellSchool = Send(poSpell,@GetSchool);
-	  
-	  // Set damage this servant can do to players & monsters based on spell power.
-	  // They are the same, but I made two versions in case we want to balance PVP and PVE.
- 	  piPlayerDamage = Bound(piSpellPower / 4, 1, 25) * 100;
-	  piMonsterDamage = Bound(piSpellPower / 4, 1, 25) * 100;
-	  
-	  // Resistances based on spell power.
-      iResistance = Bound(iSpellPower, 1, 90);
-	  iNegativeResistance = Bound(-iSpellPower, -90, -1);
-	  
-	  // Stats based on spell power.
-	  iStats = Bound(iSpellPower / 2, 1, 50);
-	  
-	  // Aim & Agility are the main stats for the servant.
-	  piAim = iStats;
-	  piAgility = iStats;
-	  
-      switch(iSpellNum) {
-		case SID_RIIJA_SERVANT:
-		   Send(self, @SetRiijaSpells);
-		   Send(self, @ShockResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_RIIJA;
-		   piNameColor = 0xB300B3;
-		break;
-		case SID_FAREN_SERVANT:
-		   Send(self, @SetFarenSpells);
-		   Send(self, @NatureResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_FAREN;
-		   piNameColor = 0xFF0000;
-		break;
-		case SID_KRAN_SERVANT:
-		   Send(self, @SetKranSpells);
-		   Send(self, @HolyResistance, #amount=iResistance);
-		   Send(self, @UnholyResistance, #amount=iResistance);
-		   Send(self, @NatureResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iResistance);
-		   poAura = LIGHT_KRAANAN;
-		   piNameColor = 0x0078FF;
-		break;
-		case SID_SHAL_SERVANT:
-		   Send(self, @SetShalSpells);
-		   Send(self, @UnholyResistance, #amount=iNegativeResistance);
-		   Send(self, @HolyResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_SHALILLE;
-		   piNameColor = 0xFFFFFF;
-		break;
-		case SID_QOR_SERVANT:
-		   Send(self, @SetQorSpells);
-		   Send(self, @HolyResistance, #amount=iNegativeResistance);
-		   Send(self, @UnholyResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_QOR;
-		   piDrawfx = DRAWFX_BLACK;
-		   piNameColor = 0;
-		break;
-		case SID_JALA_SERVANT:
-		   Send(self, @SetJalaSpells);
-		   Send(self, @HolyResistance, #amount=iResistance);
-		   Send(self, @UnholyResistance, #amount=iResistance);
-		   Send(self, @NatureResistance, #amount=iResistance);
-           Send(self, @WeapResistance, #amount=iNegativeResistance);
-		   poAura = LIGHT_JALA;
-		   piNameColor = 0x00FF00;
-		break;
-	  }
-      
-	  // Prepare player's servant resources
-	  // feed me, heal me, mystify me
-	  Send(poMaster,@PrepareServantResources);
-	  
-	  // Set their name and description
-	  Send(self,@PrepareServantNameAndDesc);
+     // The recreate heavy work - made this way so upon imping the spell, we can increase the piSpellPower and call this.
+     Send(self,@RecalibrateServant, #iSpellNum=iSpellNum, #iSpellPower=iSpellPower);
 
-	  // Set the plSpellBook attack spells our monster can use
-	  Send(self,@SetServantSpellBook);
-	 
 	  // Start all of the servant's timers.
 	  Send(self,@CreateServantTimers);
 	 	  
@@ -580,6 +522,43 @@ messages:
 	  Send(self,@PrepareServantNameAndDesc);
 	  
 	  propagate;
+   }
+
+   RecalibrateServant(iSpellNum=$, iSpellPower=0)
+   {
+      local iStats;
+
+      Send(self,@SetSpellsLevel);
+
+      // The spell we used to summon the servant
+      piSpellNum = iSpellNum;
+
+      // The spell school
+      piSpellSchool = Send(poSpell,@GetSchool);
+
+      // Set damage this servant can do to players & monsters based on spell power.
+      // They are the same, but I made two versions in case we want to balance PVP and PVE.
+      piPlayerDamage = Bound(iSpellPower / 4, 1, 25) * 100;
+      piMonsterDamage = Bound(iSpellPower / 4, 1, 25) * 100;
+
+      // Stats based on spell power.
+      iStats = Bound(iSpellPower / 2, 1, 50);
+
+      // Aim & Agility are the main stats for the servant.
+      piAim = iStats;
+      piAgility = iStats;
+
+      // Prepare player's servant resources
+      // feed me, heal me, mystify me
+      Send(poMaster,@PrepareServantResources);
+
+      // Set their name and description
+      Send(self,@PrepareServantNameAndDesc);
+
+      // Set the plSpellBook attack spells our monster can use
+      Send(self,@SetServantSpellBook);
+
+      return;
    }
    
    SetSpellsLevel()
@@ -653,8 +632,8 @@ messages:
       Send(self,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS,#value=pbAllowWalkThroughWalls);
       Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_THROUGH_WALLS,#value=pbAllowAttackThroughWalls);
       
-	  // Disabled flags
-	  Send(self,@SetBehaviorFlag,#flag=AI_MOVE_RANDOM,#value=FALSE);
+	   // Disabled flags
+	   Send(self,@SetBehaviorFlag,#flag=AI_MOVE_RANDOM,#value=FALSE);
       Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_HYPERAGGRESSIVE,#value=FALSE);
 	  
       return;
@@ -688,7 +667,7 @@ messages:
    
    StartBuffTimer()
    {
-      ptBuffs = CreateTimer(self,@ServantBuffs,5000);
+      ptBuffs = CreateTimer(self,@ServantBuffs,3000);
 	  
 	  return;
    }
@@ -702,14 +681,14 @@ messages:
 
    StartImpTimer()
    {
-      ptImp = CreateTimer(self,@ServantImps,10000);
+      ptImp = CreateTimer(self,@ServantImps,1000);
 	  
 	  return;
    }
    
    StartTauntTimer()
    {
-      ptTaunt = CreateTimer(self,@TauntEnemies,1000);
+      ptTaunt = CreateTimer(self,@TauntEnemies,2000);
 	  
 	  return;
    }
@@ -744,37 +723,37 @@ messages:
    ClearServantTimers()
    {
       if NOT Send(self,@MasterCheck)
-	  {
-	     return;
-	  }
-	  
-	  if ptBuffs <> $ AND IsTimer(ptBuffs) AND GetTimeRemaining(ptBuffs) > 0
-	  {
-	     DeleteTimer(ptBuffs);
-		 ptBuffs = $;
-	  }
+      {
+         return;
+      }
+
+      if ptBuffs <> $ AND IsTimer(ptBuffs) AND GetTimeRemaining(ptBuffs) > 0
+      {
+         DeleteTimer(ptBuffs);
+         ptBuffs = $;
+      }
       if ptTalk <> $ AND IsTimer(ptTalk) AND GetTimeRemaining(ptTalk) > 0
-	  {
-	     DeleteTimer(ptTalk);
-		 ptTalk = $;
-	  }
+      {
+         DeleteTimer(ptTalk);
+         ptTalk = $;
+      }
       if ptImp <> $ AND IsTimer(ptImp) AND GetTimeRemaining(ptImp) > 0
-	  {
-	     DeleteTimer(ptImp);
-		 ptImp = $;
-	  }
-	  if ptTaunt <> $ AND IsTimer(ptTaunt) AND GetTimeRemaining(ptTaunt) > 0
-	  {
-	     DeleteTimer(ptTaunt);
-		 ptTaunt = $;
-	  }
-	  
+      {
+         DeleteTimer(ptImp);
+         ptImp = $;
+      }
+      if ptTaunt <> $ AND IsTimer(ptTaunt) AND GetTimeRemaining(ptTaunt) > 0
+      {
+         DeleteTimer(ptTaunt);
+         ptTaunt = $;
+      }
+
 	  return;
    }
    
    ServantBuffs()
    {
-      local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions, iChance, iHealth, iHealAmount, iMaxHealth;
+      local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions, iChance, iHealth, iHealAmount, iMaxHealth, iMissing;
 	  
 	  if NOT Send(self,@MasterCheck)
 	  {
@@ -834,10 +813,10 @@ messages:
 		 
 		 if iSpellRemove <> $ AND iSpellRemove = ENCHANT_REMOVE_SERVANT_DELETED
 		 {
-		    if plRemoveEnchants = $
-			{
-			   plRemoveEnchants = [];
-			}
+         if plRemoveEnchants = $
+         {
+            plRemoveEnchants = [];
+         }
 			
 		    plRemoveEnchants = AppendListElem(iSpellNum, plRemoveEnchants);
 		 }
@@ -846,31 +825,99 @@ messages:
 		 
 		 if iSpellRandom >= iRandom
 		 {
-		    iBuffPower = Send(poMaster, @GetSpellAbility, #spell_num=iSpellNum);
-			
-			if iBuffPower = 0
-			{
-			   iBuffPower = Random(piSpellPower / 2, piSpellPower - 1) + 1;
-			}
-			
-			oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
-			
-		    // We will do this buff/heal/whatever on master!
-            if (oSpell <> $)
-			   AND (NOT Send(poMaster,@IsEnchanted,#what=oSpell))
-			   AND (NOT Send(poOwner,@IsEnchanted,#what=oSpell))
+            iBuffPower = Send(poMaster, @GetSpellAbility, #spell_num=iSpellNum);
+            
+            if iBuffPower = 0
             {
-			   // Prevent servants from having too many reflections/minions.
-		       lMinions = Send(self,@GetControlledMinions);
-			
-		       if iSpellNum = SID_REFLECTION AND lMinions <> $ AND Length(lMinions) >= MAX_SERVANT_MINIONS
-		       {
-		          return;
-			   }
-			   
-               Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+               iBuffPower = Random(piSpellPower / 2, piSpellPower - 1) + 1;
+            }
+            
+            oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
+            
+            if (oSpell <> $)
+               AND (NOT Send(poMaster,@IsEnchanted,#what=oSpell))
+               AND (NOT Send(poOwner,@IsEnchanted,#what=oSpell))
+            {
+               if iSpellNum = SID_MINOR_HEAL
+                  OR iSpellNum = SID_MAJOR_HEAL
+                  OR iSpellNum = SID_BREATH_OF_LIFE
+                  OR iSpellNum = SID_HOSPICE
+               {
+                  // Only heal if the player needs mana.
+                  iMissing = Send(poMaster, @GetMissingHealth);
+
+                  if iMissing < 20
+                  {
+                     return;
+                  }
+
+                  Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+
+                  return;                  
+               }
+
+               if iSpellNum = SID_MYSTIC_TOUCH
+               {
+                  // Only MT if the player needs mana.
+                  iMissing = Send(poMaster, @GetMissingMana);
+
+                  if iMissing < 10
+                  {
+                     return;
+                  }
+
+                  iMissing = Send(poMaster, @GetMana);
+
+                  if iMissing > 75
+                  {
+                     // We cannot mystic touch past this point.
+                     return;
+                  }
+
+                  Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+                  
+                  // Restore servant's mana so mystic touch is less annoying.
+                  Send(self,@NewMaxMana,#amount=200);
+
+                  return;                  
+               }
+
+               if iSpellNum = SID_RELAY
+               {
+                  // Only relay if the player needs vigor
+                  iMissing = Send(poMaster, @GetVigor);
+
+                  if iMissing >= 135
+                  {
+                     // We cannot relay past this point.
+                     return;
+                  }
+
+                  Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+
+                  return;
+               }
+
+               // Prevent servants from having too many reflections/minions.
+               lMinions = Send(self,@GetControlledMinions);
+
+               if iSpellNum = SID_REFLECTION AND lMinions <> $ AND Length(lMinions) >= MAX_SERVANT_MINIONS
+               {
+                  return;
+               }
+               else
+               {
+                  if iSpellNum = SID_REFLECTION
+                  {
+                     Send(oSpell,@CastSpell,#who=self,#lTargets=[self],#iSpellPower=iBuffPower);
+
+                     return;
+                  }
+               }
+            
+               Send(oSpell,@CastSpell,#who=poMaster,#lTargets=[poMaster],#iSpellPower=iBuffPower);
             }			   
-		 }
+         }
 	  }
 	  
       return;
@@ -936,18 +983,18 @@ messages:
    ServantTalk()
    {
       local iRandomPart, iRandomPiece, chosen_resource, tmp_rsc;
-	  
-	  if NOT Send(self,@MasterCheck)
-	  {
-	     return;
-	  }
-	  
+
+      if NOT Send(self,@MasterCheck)
+      {
+         return;
+      }
+
       Send(self,@StartTalkTimer);
-	  
-	  if NOT pbAllowTalk
-	  {
-	     return;
-	  }
+
+      if NOT pbAllowTalk
+      {
+         return;
+      }
 
 	  iRandomPart = Random(0, Length(plTalk));
 	  iRandomPiece = Random(0, Length(Nth(plTalk, iRandomPart)));
@@ -960,31 +1007,55 @@ messages:
 
    ServantImps()
    {
-      local iRandom, iInitialChance, increase_chance;
+      local iRandom, iInitialChance, increase_chance, iLastAttack, iRandomCap;
 
-	  if NOT Send(self,@MasterCheck)
-	  {
-	     return;
-	  }
+      iRandomCap = 500;
 
-      Send(self,@StartImpTimer);
-	  
-      iInitialChance = Send(poSpell,@GetInitialChance,#who=poMaster);
-      iRandom = random(1,500);
-	  
-      if iRandom > iInitialChance
+      if NOT Send(self,@MasterCheck)
       {
          return;
       }
-	  	  
-      iRandom = random(0,500);
 
-      if iRandom < 10
-      {      
+      Send(self,@StartImpTimer);
+	   
+      iLastAttack = Send(poMaster, @SinceLastAttack);
+
+      if iLastAttack <= 10
+      {
+         iRandomCap = 300;
+      }
+
+      if iRandomCap >= 500
+      {
+         // Harder to imp while sitting still.
+         iInitialChance = Send(poSpell,@GetInitialChance,#who=poMaster);
+         iRandom = random(1,iRandomCap);
+      
+         if iRandom > iInitialChance
+         {
+            return;
+         }
+      }
+	  	  
+      iRandom = random(0,iRandomCap);
+
+      if iRandom < 5
+      {
          Send(poMaster,@ChangeSpellAbility,#spell_num=piSpellNum,#amount=1,#report=TRUE);
 
          // Since we advanced, reset our school cast improvement bonus.
          Send(poMaster,@ResetSchoolCast,#school=piSpellSchool);
+
+         // The spell power from their summon cast.
+         piSpellPower = Bound(piSpellPower + 1, 1, 99);
+         
+         // The recreate heavy work - made this way so upon imping the spell, we can increase the piSpellPower and call this.
+         Send(self,@RecalibrateServant, #iSpellNum=piSpellNum, #iSpellPower=piSpellPower);
+
+         if piSpellPower < 99
+         {
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_tougher);
+         }
       }
 	  
       return;
@@ -1025,7 +1096,7 @@ messages:
 	  
       plBuffs = [
 	     [1, SID_LIGHT, 100, $],
-	     [1, SID_MYSTIC_TOUCH, 2, $],
+	     [1, SID_MYSTIC_TOUCH, 60, $],
 	     [2, SID_RESIST_COLD, 100, $],
 	     [2, SID_RESIST_FIRE, 100, $],
 	     [3, SID_RESIST_SHOCK, 100, $]
@@ -1037,17 +1108,17 @@ messages:
    SetRiijaSpells()
    {
       plCasts = [
-	     [2, SID_FORGET, 2],
-	     [3, SID_ILLUSIONARY_WOUNDS, 50],
-		 [3, SID_VERTIGO, 10],
-		 [3, SID_DEMENT, 5],
-	     [4, SID_APPARITION, 20],
-	     [5, SID_EVIL_TWIN, 20]
+         [2, SID_FORGET, 2],
+         [3, SID_ILLUSIONARY_WOUNDS, 50],
+         [3, SID_VERTIGO, 10],
+         [3, SID_DEMENT, 5],
+         [4, SID_APPARITION, 20],
+         [5, SID_EVIL_TWIN, 20]
 	  ];
 
       plBuffs = [
-	     [1, SID_SHADOW_FORM, 100, $],
-		 [3, SID_REFLECTION, 100, $]
+         [1, SID_SHADOW_FORM, 100, $],
+         [3, SID_REFLECTION, 100, $]
 	  ];
 	  
       return;
@@ -1063,19 +1134,20 @@ messages:
       plCasts = $;
 
       plBuffs = [
-	     [2, SID_BLESS, 100, $],
-	     [2, SID_HASTE, 100, $],
-		 [2, SID_SUPER_STRENGTH, 100, $],
-		 [3, SID_MARTYRS_BATTLEGROUND, 100, $],
-		 [3, SID_NIGHT_VISION, 100, $],
-		 [3, SID_MAGIC_SHIELD, 100, $],
-		 [3, SID_DETECT_INVISIBLE, 50, $],
-		 [3, SID_FREE_ACTION, 50, $],
-		 [4, SID_DEFLECT, 50, $],
-		 [4, SID_EAGLE_EYES, 50, $],
-		 [5, SID_KILLING_FIELDS, 100, $],
-		 [5, SID_ARMOR_OF_GORT, 50, $],
-		 [5, SID_RESIST_MAGIC, 50, $]
+         [2, SID_BLESS, 100, $],
+         [2, SID_HASTE, 100, $],
+         [2, SID_RELAY, 60, $],
+         [2, SID_SUPER_STRENGTH, 100, $],
+         [3, SID_MARTYRS_BATTLEGROUND, 100, $],
+         [3, SID_NIGHT_VISION, 100, $],
+         [3, SID_MAGIC_SHIELD, 100, $],
+         [3, SID_DETECT_INVISIBLE, 70, $],
+         [3, SID_FREE_ACTION, 70, $],
+         [4, SID_DEFLECT, 70, $],
+         [4, SID_EAGLE_EYES, 70, $],
+         [5, SID_KILLING_FIELDS, 100, $],
+         [5, SID_ARMOR_OF_GORT, 60, $],
+         [5, SID_RESIST_MAGIC, 30, $]
 	  ];
 	  
       return;
@@ -1091,17 +1163,18 @@ messages:
 	  ];
      
 	  plBuffs = [
-	     [1, SID_MINOR_HEAL, 20, $],
+	     [1, SID_MINOR_HEAL, 5, $],
 	     [1, SID_DETECT_EVIL, 100, $],
+	     [1, SID_REMOVE_CURSE, 100, $],
 	     [2, SID_CURE_POISON, 100, $],
-	     [2, SID_REMOVE_CURSE, 100, $],
 	     [2, SID_RESIST_ACID, 100, $],
 	     [3, SID_CURE_DISEASE, 100, $],
 	     [3, SID_HOLY_RESOLVE, 100, $],
-	     [3, SID_HOSPICE, 3, $],
+        [3, SID_BREATH_OF_LIFE, 5, $],
+	     [3, SID_HOSPICE, 5, $],
 	     [4, SID_FORCES_OF_LIGHT, 90, $],
-	     [4, SID_PURIFY, 10, $],
-	     [5, SID_MAJOR_HEAL, 2, $]
+	     [4, SID_PURIFY, 3, $],
+	     [5, SID_MAJOR_HEAL, 1, $]
 	  ];
 
       return;
@@ -1113,7 +1186,7 @@ messages:
 	     [3, SID_ENFEEBLE, 60],
 	     [3, SID_VAMPIRIC_DRAIN, 50],
 	     [3, SID_POISON_FOG, 5],
-		 [4, SID_SPLASH_OF_ACID, 50],
+		  [4, SID_SPLASH_OF_ACID, 50],
 	     [4, SID_HOLD, 5],
 	     [5, SID_BLIND, 5]
 	  ];
@@ -1136,10 +1209,10 @@ messages:
 	  plCasts = $;
 	  
       plBuffs = [
-	     [1, SID_INVIGORATE, 100, ENCHANT_REMOVE_SERVANT_DELETED],
-	     [3, SID_WOLFPACK, 100, ENCHANT_REMOVE_SERVANT_DELETED],
-	     [3, SID_RESTORATE, 100, ENCHANT_REMOVE_SERVANT_DELETED],
-	     [5, SID_REJUVENATE, 100, ENCHANT_REMOVE_SERVANT_DELETED]
+	     [1, SID_INVIGORATE, 100, $],
+	     [3, SID_WOLFPACK, 100, $],
+	     [3, SID_RESTORATE, 100, $],
+	     [5, SID_REJUVENATE, 100, $]
 	  ];
 
       return;
@@ -1435,7 +1508,7 @@ messages:
 	  
 	  if Send(self,@MasterCheck) AND what = poMaster
 	  {
-	     iMasterDistance = Send(self,@SquaredDistanceTo,#what=poMaster);
+	    iMasterDistance = Send(self,@SquaredDistanceTo,#what=poMaster);
 		 iServantState = Send(self,@GetState);
 		 
 		 switch (iServantState)
@@ -1478,28 +1551,34 @@ messages:
    //    stop buffing (makes them stop buffing)
    //    stop casting (makes them stop casting)
    //    stop attacking (makes them docile and useless)
-   SomeoneSaid(what = $,type = $,string = $)
+   ServantHandleSay(what = $,type = $,string = $)
    {
       local bResponded;
-	  
-	  bResponded = FALSE;
+
+      bResponded = FALSE;
 
       if IsClass(what,&User) AND poMaster = what
       {
-	     // Check for basic servant commands, they're the easiest to figure out first.
-		 bResponded = Send(self,@GetSaidServantCommand,#said_string=string);
-		 
-	     if NOT bResponded
-	     {
-		    // Check for player advancement (skills/spells).
-		    bResponded = Send(self,@GetSaidProgress,#said_string=string);
-	     }
+         // Check for outfit management
+         bResponded = Send(self,@HandleOutfits,#string=string);
+
+         if NOT bResponded
+         {
+            // Check for general servant commands
+            bResponded = Send(self,@GetSaidServantCommand,#said_string=string);
+
+            if NOT bResponded
+            {
+               // Check for player advancement (skills/spells).
+               bResponded = Send(self,@GetSaidProgress,#said_string=string);
+            }
+         }
       }
-	  
-	  // Clear out the NPC library - it may be causing errors if we leave the data.
-	  plNPCLibrary = $;
-	  	  
-      propagate;
+
+      // Clear out the NPC library - it may be causing errors if we leave the data.
+      plNPCLibrary = $;
+
+      return bResponded;
    }
       
    GetSaidProgress(said_string="derpaderp")
@@ -1568,18 +1647,19 @@ messages:
 					 // Tell the master!
 					 Post(poMaster,@MsgSendUser,#message_rsc=servant_already_learned,#parm1=oAbilityName);
 					 
-					 return;
+					 return TRUE;
 				  }
 				  
 				  // Let's reach out to this NPC and see if we can learn it...
-				  bCanLearn = Send(oNPC, @CanDoTeach, #who=poMaster, #sid=iAbilityNum, 
+				  Send(oNPC, @CanDoTeach, #who=poMaster, #sid=iAbilityNum, 
 				      #bSkill=IsClass(oAbility, &Skill), #oRequester=self);
+              return TRUE;
 			   }
 			}
 		 }
 	  }
 	  
-	  return;
+	  return FALSE;
    }
    
    PrepareNPCList()
@@ -1829,6 +1909,8 @@ messages:
 
    TauntEnemies()
    {
+      ptTaunt = $;
+	  
    	  if NOT Send(self,@MasterCheck)
 	  {
 	     return;
@@ -1855,24 +1937,26 @@ messages:
    ClearTauntTimer()
    {
       if ptTaunt <> $ AND IsTimer(ptTaunt)
-	  {
-	     DeleteTimer(ptTaunt);
-	  }
+      {
+         DeleteTimer(ptTaunt);
+      }
 	  
 	  return;
    }
 
    GetSaidServantCommand(said_string="derpaderp")
    {
-      local bIsCommand, iPlayerMissingHealth, iPlayerMissingMana, iPlayerMissingVigor, iPulledAmount;
+      local bIsCommand, iPlayerMissingHealth, iPlayerMissingMana, iPlayerMissingVigor, iPulledAmount, bAcknowledge, bDeleteServant;
 	  
 	  bIsCommand = FALSE;
+     bAcknowledge = FALSE;
 	  
 	  // Show the help command output to our master.
       if StringEqual(said_string, servant_command_help)
       {
 	     Post(poMaster,@MsgSendUser,#message_rsc=servant_response_help);
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
 	  
 	  
@@ -1884,6 +1968,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }	  
       if StringEqual(said_string, servant_command_loud)
       {
@@ -1893,6 +1978,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_nodes)
       {
@@ -1908,6 +1994,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_do_buffs)
       {
@@ -1917,6 +2004,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_stop_taunting)
       {
@@ -1926,6 +2014,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_taunt)
       {
@@ -1935,6 +2024,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_stop_attacking)
       {
@@ -1948,6 +2038,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_attack)
       {
@@ -1960,6 +2051,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_stop_casting)
       {
@@ -1971,6 +2063,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_cast)
       {
@@ -1982,6 +2075,7 @@ messages:
 		 }
 		 
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }
       if StringEqual(said_string, servant_command_heal_me)
       {
@@ -2075,9 +2169,9 @@ messages:
       }
       if StringEqual(said_string, servant_command_go_away)
       {
-	     Send(self,@GracefullyDeleteServant);
-		 
+	     bDeleteServant = TRUE;
 	     bIsCommand = TRUE;
+        bAcknowledge = TRUE;
       }	  
       if StringEqual(said_string, servant_command_identify)
       {
@@ -2103,6 +2197,18 @@ messages:
       {
 	     Send(self,@DisguiseMaster);
 	     bIsCommand = TRUE;
+      }
+
+      if bAcknowledge
+      {
+         // Generic servant response.
+		   Post(poMaster,@MsgSendUser,#message_rsc=servant_acknowledge);
+      }
+
+      if bDeleteServant
+      {
+         // We delete afterwards so the poMaster is still set.
+         Send(self,@GracefullyDeleteServant);
       }
       
 	  return bIsCommand;
@@ -2369,6 +2475,582 @@ messages:
 	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
 	  
       return;
+   }
+
+   Outfit(iSchool=$, iExampleSpell=$)
+   {
+      local c, i, r, ap, w, s, lInventory, lResists, lSchoolResists, lWeaponResists, lKeep, bKeep, bReplace, lUnequip, lKeepTypesUsed, lAllowDuplicateTypes, oObj, iSpellPower, bHasSpellPower, bHasResists, lCantUnequip, lGoodItemTypes, bSkip, iResistTotal, bHasWeapon, bHasJof;
+
+      if iSchool = $
+      {
+         Debug("Outfit without a School Num.");
+
+         return FALSE;
+      }
+
+      lCantUnequip = [
+         &SoldierShield,
+         &NecromancerAmulet
+      ];
+
+      lGoodItemTypes = [
+         ITEMTYPE_ARMOR,
+         ITEMTYPE_WEAPON,
+         ITEMTYPE_INSTRUMENT,
+         ITEMTYPE_SHIELD,
+         ITEMTYPE_HELMET,
+         ITEMTYPE_GEM,
+         ITEMTYPE_NECKLACE,
+         ITEMTYPE_RING,
+         ITEMTYPE_CLOTHES,
+         ITEMTYPE_MASK,
+         ITEMTYPE_WAND
+      ];
+
+      lAllowDuplicateTypes = [
+         ITEMTYPE_HELMET,
+         ITEMTYPE_RING,
+         ITEMTYPE_CLOTHES,
+         ITEMTYPE_GEM
+      ];
+
+      lWeaponResists = [
+         ATCK_WEAP_ALL,
+         ATCK_WEAP_PIERCE,
+         ATCK_WEAP_SLASH,
+         ATCK_WEAP_THRUST,
+         ATCK_WEAP_BLUDGEON
+      ];
+
+      lSchoolResists = [
+         [SS_SHALILLE, [
+            -ATCK_SPELL_ALL,
+            -ATCK_SPELL_UNHOLY,
+            -ATCK_SPELL_ACID,
+            -ATCK_SPELL_FIRE,
+            -ATCK_SPELL_COLD,
+            -ATCK_SPELL_SHOCK,
+            -ATCK_SPELL_QUAKE
+         ]],
+         [SS_QOR, [
+            -ATCK_SPELL_ALL,
+            -ATCK_SPELL_HOLY,
+            -ATCK_SPELL_FIRE,
+            -ATCK_SPELL_COLD,
+            -ATCK_SPELL_SHOCK,
+            -ATCK_SPELL_QUAKE
+         ]],
+         [SS_KRAANAN, [
+            -ATCK_SPELL_ALL,
+            -ATCK_SPELL_HOLY,
+            -ATCK_SPELL_UNHOLY,
+            -ATCK_SPELL_ACID,
+            -ATCK_SPELL_FIRE,
+            -ATCK_SPELL_COLD,
+            -ATCK_SPELL_SHOCK,
+            -ATCK_SPELL_QUAKE
+         ]],
+         [SS_FAREN, [
+            -ATCK_SPELL_ALL,
+            -ATCK_SPELL_HOLY,
+            -ATCK_SPELL_UNHOLY,
+            -ATCK_SPELL_ACID,
+            -ATCK_SPELL_FIRE,
+            -ATCK_SPELL_COLD,
+            -ATCK_SPELL_SHOCK,
+            -ATCK_SPELL_QUAKE
+         ]],
+         [SS_RIIJA, [
+            -ATCK_SPELL_ALL,
+            -ATCK_SPELL_HOLY,
+            -ATCK_SPELL_UNHOLY,
+            -ATCK_SPELL_ACID,
+            -ATCK_SPELL_FIRE,
+            -ATCK_SPELL_COLD,
+            -ATCK_SPELL_SHOCK,
+            -ATCK_SPELL_QUAKE
+         ]],
+         [SS_JALA, [
+            -ATCK_SPELL_ALL,
+            -ATCK_SPELL_HOLY,
+            -ATCK_SPELL_UNHOLY,
+            -ATCK_SPELL_ACID,
+            -ATCK_SPELL_FIRE,
+            -ATCK_SPELL_COLD,
+            -ATCK_SPELL_SHOCK,
+            -ATCK_SPELL_QUAKE
+         ]]
+      ];
+
+      lKeep = [];
+      lUnequip = [];
+
+      // Let's unequip anything with negative general spell power.
+      // Let's unequip anything with negative spell power to this school.
+      // Let's pick items by type with the best spell power for this school.
+      // Let's finally equip the best items.
+
+      lInventory = [
+         Send(poMaster, @GetHolderActive), 
+         Send(poMaster, @GetHolderPassive)
+      ];
+
+      bHasWeapon = FALSE;
+      bHasJof = FALSE;
+
+      foreach ap in lInventory
+      {
+         if ap = $
+         {
+            continue;
+         }
+
+         foreach i in ap
+         {
+            if i = $
+            {
+               continue;
+            }
+
+            oObj = Send(self,@HolderExtractObject,#data=i);
+
+            if oObj = $
+            {
+               continue;
+            }
+
+            bSkip = FALSE;
+            bHasSpellPower = FALSE;
+            bHasResists = FALSE;
+
+            // Skip items that we can't unequip, like AO3/SoldierShield
+            foreach c in lCantUnequip
+            {
+               if IsClass(oObj, c)
+               {
+                  bSkip = TRUE;
+
+                  break;
+               }
+            }
+
+            if bSkip
+            {
+               continue;
+            }
+
+            // Only work with item types that are possible to work with.
+            bSkip = TRUE;
+
+            foreach c in lGoodItemTypes
+            {
+               if Send(oObj, @GetItemType) = c
+               {
+                  bSkip = FALSE;
+
+                  break;
+               }
+            }
+
+            if bSkip
+            {
+               continue;
+            }
+
+            // Check item resistances
+            // We do not want resistance against our school.
+
+            lResists = Send(oObj,@GetCurrentResistances);
+
+            if lResists <> $
+            {
+               bHasResists = TRUE;
+            }
+
+            // Check if our school has spellpower on this item
+            iSpellPower = Send(oObj,@GetSpellModifier,#oSpell=Send(SYS,@FindSpellByNum,#num=iExampleSpell));
+
+            if iSchool = SS_JALA AND IsClass(oObj, &Instrument)
+            {
+               // Jala gets special treatment...
+               // Treat instrument power as spell power
+               iSpellPower = iSpellPower + Send(oObj,@GetInstrumentLevel);
+            }
+
+            if iSpellPower <> $ AND iSpellPower <> 0
+            {
+               // We must consider negative spellpower in case we need to unequip it.
+               bHasSpellPower = TRUE;
+
+               if iSpellPower > 0
+               {
+                  if (IsClass(oObj, &Weapon) AND NOT IsClass(oObj, &JewelOfFroz))
+                     OR IsClass(oObj, &Instrument)
+                  {
+                     bHasWeapon = TRUE;
+                  }
+
+                  if IsClass(oObj, &JewelOfFroz)
+                  {
+                     bHasJof = TRUE;
+                  }
+               }
+            }
+
+            // We will build our own list with as much information above as possible.
+            // Then we will figure out the best items after we've collected everything.
+            if bHasSpellPower OR bHasResists
+            {
+               //Debug("Inventory: ",Send(oObj,@GetName));
+
+               iResistTotal = 0;
+
+               if bHasResists
+               {
+                  foreach r in lResists
+                  {
+                     foreach s in lSchoolResists
+                     {
+                        if First(s) = iSchool
+                        {
+                           foreach w in Nth(s, 2)
+                           {
+                              if First(r) = w
+                              {
+                                 iResistTotal = iResistTotal + Nth(r, 2);
+                              }
+                           }
+                        }
+                     }
+
+                     foreach w in lWeaponResists
+                     {
+                        if First(r) = w
+                        {
+                           iResistTotal = iResistTotal + Nth(r, 2);
+                        }
+                     }
+                     //Debug(Send(SYS,@GetResistanceName,#type=First(r)),Nth(r,2));
+                  }
+                  
+                  //Debug("Total Resists:", iResistTotal);
+               }
+
+               if bHasSpellPower
+               {
+                  if iSpellPower > 0
+                  {
+                     bKeep = TRUE;
+                     bReplace = $;
+
+                     foreach w in lKeep
+                     {
+                        if Nth(w, 1) = oObj
+                        {
+                           continue;
+                        }
+
+                        if Send(oObj, @GetItemType) = Nth(w, 2)
+                        {
+                           // Found a similar item in lKeep, but it's stronger than oObj.
+                           if iSpellPower < Nth(w, 3)
+                           {
+                              // The item in our lKeep is stronger.
+                              Debug(Send(Nth(w,1), @GetName),"is stronger than",Send(oObj,@GetName));
+                              bKeep = FALSE;
+                              break;
+                           } else {
+                              // We should replace the item in the lKeep
+                              bKeep = TRUE;
+                              
+                              if NOT FindListElem(lAllowDuplicateTypes, Nth(w, 2))
+                              {
+                                 // This item type must be unique.
+                                 Debug(Send(Nth(w,1), @GetName),"is duplicated by",Send(oObj,@GetName));
+                                 bReplace = w;
+                              }
+                           }
+                        }
+                     }
+
+                     if bKeep
+                     {
+                        if bReplace <> $ AND FindListElem(lKeep, bReplace)
+                        {
+                           // Let's remove this item from the list.
+                           Debug(Send(oObj,@GetName),"will replace",Send(Nth(bReplace,1),@GetName));
+                           lKeep = DelListElem(lKeep, bReplace);
+                        }
+
+                        // If we have a weapon, don't add jofs to the list
+                        if IsClass(oObj, &JewelOfFroz) AND bHasWeapon
+                        {
+                           Debug(Send(oObj,@GetName),"skipped because we have a weapon");
+                           continue;
+                        }
+
+                        // Let's add this item to the list.
+                        lKeep = AppendListElem([oObj, Send(oObj, @GetItemType), iSpellPower], lKeep);
+                        Debug("Keeping",Send(oObj,@GetName),iSpellPower);
+                     }
+                  }
+                  else
+                  {
+                     lUnequip = AppendListElem(oObj, lUnequip);
+                  }
+                  //Debug("Spell Power", iSpellPower);
+               }
+
+               //Debug("-----------------------");
+            }
+         }
+      }
+
+      if Length(lKeep)
+      {
+         foreach i in lKeep
+         {
+            if bHasWeapon AND IsClass(Nth(i,1), &JewelOfFroz)
+            {
+               Debug("Ignoring JOFs have a weapon",Send(Nth(i,1),@GetName));
+               continue;
+            }
+
+            // Try to equip the item.
+            Send(poMaster,@TryUseItem,#what=Nth(i,1));
+            Debug("Equipping",Send(Nth(i,1),@GetName));
+         }
+      }
+
+
+      if Length(lUnequip)
+      {
+         foreach i in lUnequip
+         {
+            // Try to unequip the item.
+            Send(poMaster,@TryUnuseItem,#what=i);
+            Debug("Unequipping",Send(i,@GetName));
+         }
+      }
+
+      return;
+   }
+
+   OutfitQor()
+   {
+      local iSchool, sSchool;
+
+      iSchool = SS_QOR;
+      sSchool = Send(SYS, @GetSchoolNameRsc, #iSchoolNum = iSchool);
+
+      Send(self,@Outfit,#iSchool=iSchool,#iExampleSpell=SID_DARKNESS);
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_school, #parm1=sSchool);
+
+      return;
+   }
+
+   OutfitShally()
+   {
+      local iSchool, sSchool;
+
+      iSchool = SS_SHALILLE;
+      sSchool = Send(SYS, @GetSchoolNameRsc, #iSchoolNum = iSchool);
+
+      Send(self,@Outfit,#iSchool=iSchool,#iExampleSpell=SID_SEANCE);
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_school, #parm1=sSchool);
+
+      return;
+   }
+
+   OutfitFaren()
+   {
+      local iSchool, sSchool;
+
+      iSchool = SS_FAREN;
+      sSchool = Send(SYS, @GetSchoolNameRsc, #iSchoolNum = iSchool);
+
+      Send(self,@Outfit,#iSchool=iSchool,#iExampleSpell=SID_LIGHT);
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_school, #parm1=sSchool);
+
+      return;
+   }
+
+   OutfitKran()
+   {
+      local iSchool, sSchool;
+
+      iSchool = SS_KRAANAN;
+      sSchool = Send(SYS, @GetSchoolNameRsc, #iSchoolNum = iSchool);
+
+      Send(self,@Outfit,#iSchool=iSchool,#iExampleSpell=SID_BLESS);
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_school, #parm1=sSchool);
+
+      return;
+   }
+
+   OutfitRiija()
+   {
+      local iSchool, sSchool;
+
+      iSchool = SS_RIIJA;
+      sSchool = Send(SYS, @GetSchoolNameRsc, #iSchoolNum = iSchool);
+
+      Send(self,@Outfit,#iSchool=iSchool,#iExampleSpell=SID_BLINK);
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_school, #parm1=sSchool);
+
+      return;
+   }
+
+   OutfitJala()
+   {
+      local iSchool, sSchool;
+
+      iSchool = SS_JALA;
+      sSchool = Send(SYS, @GetSchoolNameRsc, #iSchoolNum = iSchool);
+
+      Send(self,@Outfit,#iSchool=iSchool,#iExampleSpell=SID_MIRTH);
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_school, #parm1=sSchool);
+
+      return;
+   }
+   
+   OutfitSave(num=$)
+   {
+      local bSaved;
+
+      if num = $
+      {
+         Debug("Outfit Save did not have a num.");
+
+         return FALSE;
+      }
+
+      bSaved = Send(poMaster,@SaveOutfit,#num=num);
+
+      if bSaved <> $ AND bSaved
+      {
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_saved, #parm1=num);
+      }
+      else
+      {
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_not_saved);  
+      }
+
+      return;
+   }
+   
+   OutfitUse(num=$)
+   {
+      local bUsed;
+
+      if num = $
+      {
+         Debug("Outfit Use did not have a num.");
+
+         return FALSE;
+      }
+
+      bUsed = Send(poMaster,@UseOutfit,#num=num);
+
+      if bUsed <> $ AND bUsed
+      {
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_saved_used, #parm1=num);
+      }
+      else
+      {
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_outfit_saved_not_used);
+      }
+
+      return;
+   }
+
+   HandleOutfits(string="derpaderp")
+   {
+      if StringEqual(string, servant_undress_me)
+      {
+         Send(poMaster,@Undress);
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_undressed);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_outfit_qor)
+      {
+         Send(self, @OutfitQor);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_outfit_shally)
+      {
+         Send(self, @OutfitShally);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_outfit_faren)
+      {
+         Send(self, @OutfitFaren);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_outfit_kran)
+      {
+         Send(self, @OutfitKran);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_outfit_riija)
+      {
+         Send(self, @OutfitRiija);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_outfit_jala)
+      {
+         Send(self, @OutfitJala);
+         
+         return TRUE;
+      }
+   
+      if StringEqual(string, servant_save_outfit_1)
+      {
+         Send(self, @OutfitSave, #num=1);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_save_outfit_2)
+      {
+         Send(self, @OutfitSave, #num=2);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_use_outfit_1)
+      {
+         Send(self, @OutfitUse, #num=1);
+         
+         return TRUE;
+      }
+
+      if StringEqual(string, servant_use_outfit_2)
+      {
+         Send(self, @OutfitUse, #num=2);
+         
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
 end

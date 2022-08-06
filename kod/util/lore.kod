@@ -259,6 +259,12 @@ messages:
          return;
       }
 
+      if (IsClass(who, &Player) AND Send(who,@IsRoamingNPCPlayer))
+      {
+         // No NPCs.
+         return;
+      }
+
       riija = Send(who,@GetNumAbilityPointsInSchool,#school=SS_RIIJA);
       sjala = Send(who,@GetNumAbilityPointsInSchool,#school=SS_JALA);
       shalille = Send(who,@GetNumAbilityPointsInSchool,#school=SS_SHALILLE);
@@ -399,7 +405,7 @@ messages:
    "We also make notes of a person's score."
    {
       local i, lowscore, lowest, lNode;
-
+	  
       if who = $ OR score = $
       {
          Debug("Bad info passed to checkforworthiness");

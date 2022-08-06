@@ -62,7 +62,7 @@ messages:
 
    Constructor()
    {
-      poGoodGuard = Create(&KocatanCaptainGood);
+      //poGoodGuard = Create(&KocatanCaptainGood);
       poEvilGuard = Create(&KocatanCaptainEvil);
 
       propagate;
@@ -91,7 +91,8 @@ messages:
 
       if iHour = 8 OR iHour = 20
       {
-         Send(Self,@ChangeGuards);
+         // No more guard changes.
+         //Send(Self,@ChangeGuards);
       }
 
       propagate;
@@ -100,6 +101,9 @@ messages:
    ChangeGuards()
    {
       local i, each_obj;
+
+      // No more guard changes.
+      return;
 
       foreach i in plActive
       {
@@ -162,26 +166,27 @@ messages:
    SomethingTryGo(what=$,row=$,col=$)
    {
       local i;
+      
+      // No more locked door
+      // if ((row = 2)
+      //    AND ((col = 41) OR (col = 40)))
+      //    OR ((row = 3) AND (col = 41))
+      // {
+      //    foreach i in plActive
+      //    {
+      //       if (IsClass(First(i),&KocatanCaptainGood)
+      //          OR IsClass(First(i),&KocatanCaptainEvil))
+      //       {
+      //          if Send(First(i),@CanPass,#what=what)
+      //          {
+      //             // Someone bribed the evil guard.
+      //             propagate;
+      //          }
 
-      if ((row = 2)
-         AND ((col = 41) OR (col = 40)))
-         OR ((row = 3) AND (col = 41))
-      {
-         foreach i in plActive
-         {
-            if (IsClass(First(i),&KocatanCaptainGood)
-               OR IsClass(First(i),&KocatanCaptainEvil))
-            {
-               if Send(First(i),@CanPass,#what=what)
-               {
-                  // Someone bribed the evil guard.
-                  propagate;
-               }
-
-               return true;
-            }
-         }
-      }
+      //          return true;
+      //       }
+      //    }
+      // }
 
       propagate;
    }
@@ -210,16 +215,16 @@ messages:
 
       iHour = Send(SYS,@GetHour);
 
-      if iHour > 7 and iHour < 20
-      {
-         Send(self,@NewHold,#what=poGoodGuard,
-               #new_row=12,#new_col=36,#fine_row=16,#fine_col=40);
-      }
-      else
-      {
-         Send(self,@NewHold,#what=poEvilGuard,
-            #new_row=10,#new_col=36,#fine_row=24,#fine_col=40);
-      }
+      // if iHour > 7 and iHour < 20
+      // {
+         // Send(self,@NewHold,#what=poGoodGuard,
+         //       #new_row=12,#new_col=36,#fine_row=16,#fine_col=40);
+      // }
+      // else
+      // {
+          Send(self,@NewHold,#what=poEvilGuard,
+             #new_row=10,#new_col=36,#fine_row=24,#fine_col=40);
+      // }
 
       Send(self,@NewHold,#what=Create(&KocatanSentry),
             #new_row=21,#new_col=19,#fine_row=8,#fine_col=8);

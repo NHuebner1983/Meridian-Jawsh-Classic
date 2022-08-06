@@ -1,0 +1,47 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+KocFlag is FactionFlag
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include kocflag.lkod
+
+   KocFlag_icon_rsc = flagkinv.bgf
+   KocFlag_name_rsc = "ko'catan army flag"
+   KocFlag_desc_rsc = \
+      "This flag bears the colors of the Ko'catan army commanded by Cital ko'Manka."
+
+classvars:
+
+   vrName = KocFlag_name_rsc
+   vrDesc = KocFlag_desc_rsc
+   vrIcon = KocFlag_icon_rsc
+
+   viFaction = FACTION_KOC
+
+properties:
+
+messages:
+
+   TeleportHome()
+   {
+      Send(Send(SYS,@FindRoomByNum,#num=RID_KOC),
+            @NewHold,#what=self,#new_row=11,#new_col=35);
+
+      return;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

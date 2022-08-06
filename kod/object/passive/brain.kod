@@ -164,11 +164,16 @@ messages:
          return;
       }
 	  
-	  if what <> $ AND IsClass(what, &Player)
+	  if what <> $ AND IsClass(what, &Player) AND NOT IsClass(mob, &Reflection) AND NOT IsClass(mob, &Servant)
 	  {
+        //Debug(Send(mob,@GetName),"detected",Send(what,@GetName));
+        
+        Send(what,@RecalibrateAggro);
+
 	     if Send(what,@GetAggroCount) >= MAX_AGGRO AND NOT Send(what,@HasAggro,#what=mob)
-		 {
+		  {
 		    // Ignore the user, they are already being aggro'd by too many things.
+         //Debug("But the player has too much aggro.");
 			return;
 		 }
 	  }
@@ -184,6 +189,7 @@ messages:
       {
          if Send(mob,@GetOwner) <> $
          {
+            //Debug(Send(mob,@GetName),"is moving");
             Send(mob,@EnterStateMove,#actnow=FALSE);
          }
 
@@ -194,6 +200,7 @@ messages:
       if state & STATE_WAIT
          AND (ignoreWait = FALSE)
       {
+            //Debug(Send(mob,@GetName),"is waiting");
          return;
       }
 
@@ -201,6 +208,7 @@ messages:
       // us in general, do nothing.
       if NOT Send(self,@AttemptTargetSwitch,#what=what,#event=TS_MOVE,#mob=mob)
       {
+            //Debug(Send(mob,@GetName),"could not switch targets");
          return;
       }
 
@@ -214,20 +222,22 @@ messages:
       }
 	  
 	  // Reflections should only attack if provoked
-	  if what <> $ AND mob <> $ AND IsClass(what, &Player) AND IsClass(mob, &Reflection) AND NOT Send(what, @HasAttacked, #victim=mob)
-	  {
-	     return;
-	  }
+	//   if what <> $ AND mob <> $ AND IsClass(what, &Player) AND IsClass(mob, &Reflection) AND NOT Send(what, @HasAttacked, #victim=mob)
+	//   {
+	//      return;
+	//   }
 	  
 	  if (state & STATE_MOVE) OR (state & STATE_WAIT)
-      {
+     {
          if Send(mob,@CanReachLocation,#row=new_row,#col=new_col,
                   #fine_row=fine_row,#fine_col=fine_col)
          {
-		    //Debug("AttackNow221",GetClass(mob),GetClass(what));
+		      //Debug("AttackNow232",GetClass(mob),GetClass(what));
             Send(mob,@EnterStateAttack,#actnow=True);   // Used to be post.
 
             return;
+         } else {
+           //Debug(Send(mob,@GetName),"is too far, chasing now");
          }
 
          Send(mob,@EnterStateChase,#target=what,#actnow=True); // Used to be post.
@@ -289,9 +299,10 @@ messages:
 	  
 	  if IsClass(what, &Player) AND IsClass(victim, &Monster) AND NOT IsClass(victim, &Servant)
 	  {
-	     // Player attacked monster
+	    // Player attacked monster
 		 // Make sure the monster is known as an aggressor.
-		 Send(what,@AddAggro,#what=victim);
+       // Force it to be added to aggro!
+		 Send(what,@AddAggro,#what=victim,#force=TRUE);
 	  }
 
       //Debug(Send(what,@GetName),"attacked",Send(victim,@GetName));

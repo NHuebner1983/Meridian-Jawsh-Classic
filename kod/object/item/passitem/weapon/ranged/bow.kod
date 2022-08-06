@@ -125,7 +125,9 @@ messages:
 
    NewUsed()
    {
-      local oSoldierShield, iFaction, iTranslation;
+      local oSoldierShield, iFaction, iTranslation, iBaseXLAT;
+	  
+	  iBaseXLAT = $;
 
       if poOwner <> $
          AND IsClass(poOwner,&User)
@@ -169,14 +171,22 @@ messages:
             {
                iTranslation = XLAT_TO_RED;
             }
+            else if iFaction = FACTION_HOLY
+            {
+               iTranslation = PT_BLUE_TO_ASHEN;
+            }
+            else if iFaction = FACTION_KOC
+            {
+               iTranslation = XLAT_TO_GREEN;
+            }
             else if iFaction = FACTION_NECROMANCER
             {
-               iTranslation = XLAT_TO_GRAY;
+               iTranslation = XLAT_TO_BLACK;
             }
 
          }
 
-         Send(self,@UpdateColor,#iFactionColor=iTranslation);
+         Send(self,@UpdateColor,#iFactionColor=iTranslation,#iBaseXLAT=iBaseXLAT);
       }
 
       vrWeapon_window_overlay = prBowOverlay;

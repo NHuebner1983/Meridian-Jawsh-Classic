@@ -68,12 +68,15 @@ messages:
       //  to get better stuff.
 
       plItems_to_attribute = [ [ &Mace, 25 ],
-                               [ &ShortSword, 25 ],
-                               [ &Hammer, 15 ],
-                               [ &Axe, 15 ],
-                               [ &Longsword, 13 ],
-                               [ &Scimitar, 4 ],
-                               [ &MysticSword, 3 ]
+                               [ &ShortSword, 15 ],
+                               [ &Hammer, 25 ],
+                               [ &Axe, 25 ],
+                               [ &Longsword, 15 ],
+                               [ &Scimitar, 10 ],
+                               [ &MysticSword, 3 ],
+                               [ &NeruditeSword, 2 ],
+                               [ &BattleBow, 1 ],
+                               [ &LongBow, 1 ]
                              ];
       return;
    }

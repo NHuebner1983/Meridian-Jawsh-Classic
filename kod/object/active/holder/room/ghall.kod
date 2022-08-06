@@ -955,6 +955,13 @@ messages:
          propagate;
       }
 
+      if IsClass(what,&Admin) AND stringEqual(string,"open chest")
+      {
+         Send(self,@OpenSecretDoor);
+
+         propagate;
+      }
+
       if type = SAY_YELL OR NOT IsClass(what,&Player)
       {
          propagate;

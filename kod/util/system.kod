@@ -50,15 +50,16 @@ resources:
    // Accounts are taken over by the server upon logon.
    // Basic detection by Player Name Exact Match
    system_player_mob_aquatic    = "Aquatic Researcher"
-   system_player_mob_island     = "Island Native"
    system_player_mob_graveyard  = "Graveyard Watchman"
    system_player_mob_castle     = "Castle Guard"
    system_player_mob_crypt      = "Crypt Keeper"
    system_player_mob_arch       = "Archaeologist"
    system_player_mob_ancient    = "Ancient Collector"
-   system_player_mob_undead     = "Undead Researcher"
    system_player_mob_holy       = "Holy Inquisitor"
    system_player_mob_unholy     = "Unholy Inquisitor"
+   system_player_mob_survival_a = "Survival Specialist"
+   system_player_mob_survival_b = "Survival Expert"
+   system_player_mob_survival_c = "Survivalist"
 
    system_user_killed = "~B~U~k[###]~n ~B~v%q was just killed by %s%q."
    system_user_killed_by_pker = "~B~U~k[###]~n ~B~v%q has been murdered in cold blood."
@@ -75,7 +76,12 @@ resources:
    system_user_killed_token = "~B~U~k[###]~n ~B~v%q lost a token to %s%q."
    system_user_killed_arena = \
       "~B~U~k[###]~n ~B~v%q was bested in combat by %s%q."
-   system_user_killed_shield = "~B~U~k[###]~n ~B~v%q was bested by faction rival %s%q."
+   system_user_killed_shield_duke = "~B~U~k[###]~n ~B~v%q was killed in the name of Duke Akardius by faction rival %s%q."
+   system_user_killed_shield_rebel = "~B~U~k[###]~n ~B~v%q was killed in the name of Jonas D'Accor by faction rival %s%q."
+   system_user_killed_shield_princess = "~B~U~k[###]~n ~B~v%q was killed in the name of Princess Kateriina by faction rival %s%q."
+   system_user_killed_shield_unholy = "~B~U~k[###]~n ~B~v%q was defiled in the name of Queen Venya'Cyr by faction rival %s%q."
+   system_user_killed_shield_holy = "~B~U~k[###]~n ~B~v%q was smited in the name of Shal'ille by faction rival %s%q."
+   system_user_killed_shield_island = "~B~U~k[###]~n ~B~v%q was hunted down in the name of Cital ko'Manca by faction rival %s%q."
    system_user_killed_guild = \
       "~B~U~k[###]~n ~B~v%q of %s%q has been slaughtered by %s%q of %s%q in guild combat."
       
@@ -339,6 +345,14 @@ resources:
    inventory_ring_class_name = "rings"
 
    system_guild_rsc = "guild"
+
+   school_qor_rsc = "Qor"
+   school_shalille_rsc = "Shal'lle"
+   school_kraanan_rsc = "Kraanan"
+   school_faren_rsc = "Faren"
+   school_riija_rsc = "Riija"
+   school_jala_rsc = "Jala"
+   school_wc_rsc = "Weapons Craft"
 
    system_message_sound = system.ogg
    
@@ -605,6 +619,48 @@ messages:
       return;
    }
 
+   CompareLists(lListA=$,lListB=$)
+   "Single dimension list compare. Could upgrade to multi-dimension comparison..."
+   {
+      local bMatch, aItem, bItem, aIndex, bIndex;
+
+      if lListA = $ OR lListB = $ OR NOT IsList(lListA) OR NOT IsList(lListB)
+      {
+         return FALSE;
+      }
+
+      bMatch = TRUE;
+      aIndex = 0;
+
+      foreach aItem in lListA
+      {
+         aIndex = aIndex + 1;
+         bIndex = 0;
+
+         foreach bItem in lListB
+         {
+            bIndex = bIndex + 1;
+            
+            if aIndex <> bIndex
+            {
+               continue;
+            }
+
+            bMatch = (bItem = aItem);
+            
+            break;
+         }
+
+         if NOT bMatch
+         {
+            // The lists do not match.
+            break;
+         }
+      }
+
+      return bMatch;
+   }
+
    ResetRecreateAll()
    {
       piRecreate_State = RECREATE_NOT;
@@ -631,6 +687,7 @@ messages:
       Send(SETTINGS_OBJECT,@Recreate);
       Send(REALTIME_OBJECT,@Recreate);
       Send(EVENTENGINE_OBJECT,@Recreate);
+      Send(&TerritoryGame, @Recreate);
 
       if piRecreate_State <> RECREATE_NOT
       {
@@ -1846,7 +1903,15 @@ messages:
             if oSoldierShield <> $
                AND Send(oSoldierShield,@IsEnemyAttack,#what=killer)
             {
-               rMessage = system_user_killed_shield;
+			   // All of the factions supported.
+			   // New factions must be added here!
+			   if Send(killer, @FindUsing,#class=&DukeShield) { rMessage = system_user_killed_shield_duke; }
+			   if Send(killer, @FindUsing,#class=&PrincessShield) { rMessage = system_user_killed_shield_princess; }
+			   if Send(killer, @FindUsing,#class=&RebelShield) { rMessage = system_user_killed_shield_rebel; }
+			   if Send(killer, @FindUsing,#class=&HolyShield) { rMessage = system_user_killed_shield_holy; }
+			   if Send(killer, @FindUsing,#class=&NecromancerShield) { rMessage = system_user_killed_shield_unholy; }
+			   if Send(killer, @FindUsing,#class=&KocShield) { rMessage = system_user_killed_shield_island; }
+
                // Parameters set by default
             }
 
@@ -2596,6 +2661,8 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_MAR_CRYPT2,#class=&MarionCrypt2);
       Send(self,@CreateOneRoomIfNew,#num=RID_MAR_CRYPT3A,#class=&MarionCrypt3a);
       Send(self,@CreateOneRoomIfNew,#num=RID_MAR_CRYPT4,#class=&MarionCrypt4);
+
+      Send(self,@CreateOneRoomIfNew,#num=RID_OGRE_CAVE1,#class=&OgreCave1);
 
       Send(self,@CreateOneRoomIfNew,#num=RID_OLD_JASPER,#class=&OldJasper);
       Send(self,@CreateOneRoomIfNew,#num=RID_OLD_MARION,#class=&OldMarion);
@@ -4476,7 +4543,7 @@ messages:
       }
 
       if NOT StringConsistsOf(sName, 
-          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_ '!@$^&*()+=:[]{};/?|<>ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ")
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_ '!@$^&*()+=:[]{};/?|<>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")
       {
          Debug("Got char name with illegal characters for user ", oUser);
 
@@ -8033,6 +8100,33 @@ messages:
 	  }
 	  
 	  return sSchoolName;
+   }
+
+   GetSchoolNameRsc(iSchoolNum = $)
+   {
+      switch(iSchoolNum)
+      {
+         case SS_SHALILLE:
+            return school_shalille_rsc;
+         break;
+         case SS_QOR:
+            return school_qor_rsc;
+         break;
+         case SS_KRAANAN:
+            return school_kraanan_rsc;
+         break;
+         case SS_FAREN:
+            return school_faren_rsc;
+         break;
+         case SS_RIIJA:
+            return school_riija_rsc;
+         break;
+         case SS_JALA:
+            return school_jala_rsc;
+         break;
+      }
+
+     return $;
    }
 
 #region Print Game Info

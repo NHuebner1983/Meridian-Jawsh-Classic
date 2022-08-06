@@ -395,11 +395,11 @@ messages:
 
       // Only care about moving stuff if we're not already moving
       // Only care about non-immortal players we can see and are "close"
+	  //AND NOT (IsClass(what,&DM) AND Send(what,@PlayerIsImmortal)) [[ DMs can now wake statues ]]
       if viSpeed = SPEED_NONE
          AND NOT pbLockedDormant
          AND what <> $
          AND IsClass(what,&Player)
-         AND NOT (IsClass(what,&DM) AND Send(what,@PlayerIsImmortal))
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
          AND Send(self,@CanSee,#what=what)
       {
@@ -461,6 +461,7 @@ messages:
       viSpeed = viNormalSpeed;
 
       piBehavior = piBehavior & ~(AI_NOMOVE | AI_NOFIGHT | AI_NPC);
+	  
       if poOwner <> $
       {
          Send(poOwner,@SomethingChanged,#what=self);

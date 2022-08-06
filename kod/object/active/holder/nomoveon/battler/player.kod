@@ -63,7 +63,7 @@ constants:
    REST_TIME = 2500          
 
    // Number of ms to lose one boosted health or mana point.
-   BOOST_DECAY_TIME = 30000 
+   BOOST_DECAY_TIME = 1000 
 
    // Currently: 10 improves every 15-22 minutes.
    ADVANCE_TIMER_MIN =   900000
@@ -87,7 +87,7 @@ constants:
    BASE_NEED = 105
 
    // If vigor gets this low, see if second wind skill kicks in.
-   SECONDWIND_THRESHOLD = 60
+   SECONDWIND_THRESHOLD = 72
    
    // How steep is the curve for learning new levels of spells?
    //  A higher number means a greater slope (less points at low levels)
@@ -327,6 +327,9 @@ resources:
    player_faction_duke = "A staunch servant of Duke Akardius.\n"
    player_faction_princess = "Firmly loyal to Princess Kateriina.\n"
    player_faction_rebel = "A freedom fighter supporting Jonas.\n"
+   player_faction_holy = "A true believer of Shal'ille.\n"
+   player_faction_necro = "An undead soul of the Necromancers.\n"
+   player_faction_island = "A warrior of the Ko'catan Army.\n"
    player_faction_neutral = \
       "Not a court vassal, yet affected by the Meridian Council."
    player_not_intriguing = "Not yet concerned with affairs at the Royal Court."
@@ -1163,13 +1166,27 @@ properties:
    // Actual Servant Resource repo.
    // There will be an HP, Vigor, Mana resource and an accumulation Nth(1) = HP/Vigor/Mana Nth(2) = Amount Available
    plServantResources = $
+
+   // Outfits saved for the player
+   // Numbered, not named. User must access them by 1,2,etc.
+   // Items will be tagged on the item object itself so we can find which one to use, to make an exact match.
+   plOutfits = $
    
+   // Time player last moved in game
    piLastMoved = 0
-   
+
+   // Time player last attacked in game
+   piLastAttack = 0
+
+   // If we are a roaming NPC, whether or not we initialized
    pbRoamingNPCPlayerInitialized = FALSE
 
+   // Our NPC Player profile (if we are one) - ie: a monster as a player controller by the server.
    plNPCProfile = $
-
+   
+   // Number of monsters killed as NPCPlayer
+   piMonstersKilledAsNPC = 0
+   
 messages:
 
    Constructor()
@@ -1190,15 +1207,29 @@ messages:
    
    JustMoved()
    {
-      piLastMoved = GetTime();
+      if pbRoamingNPCPlayerInitialized = $
+	  {
+         piLastMoved = GetTime();
+	  }
 	  
 	  return;
    }
    
    SinceLastMove()
    {
+      if pbRoamingNPCPlayerInitialized = $
+      {
+         return 9999;
+      }
+
       return GetTime() - piLastMoved;
    }
+
+   SinceLastAttack()
+   {
+      return GetTime() - piLastAttack;
+   }
+
 
    Delete()
    {
@@ -1311,7 +1342,46 @@ messages:
 
       propagate;
    }
+   
+   RemoveFromInventory(class=$)
+   {
+      local i, oItem;
+	  
+	  foreach i in plActive
+	  {
+	     if IsList(i)
+		 {
+	        oItem = First(i);
+		 }
+		 else
+		 {
+		    if i <> $
+			{
+			   oItem = i;
+			}
+		 }
+		 
+		 if oItem <> $ AND IsObject(oItem) AND IsClass(oItem, class)
+		 {
+		    Send(oItem,@Delete);
+			//Debug("Deleted",oItem,"FromInventory");
+		 }
+	  }
+	  
+	  foreach i in plPassive
+	  {
+	     oItem = i;
+		 
+		 if oItem <> $ AND IsClass(oItem, class)
+		 {
+		    Send(oItem,@Delete);
+			//Debug("Deleted",oItem,"FromInventory");
+		 }
+	  }
 
+      return;
+   }
+   
    GetSectorID()
    "Gets the sector tag ID in this room for the given location.  Returns -1 on "
    "error, as valid tags are all >= 0."
@@ -1433,7 +1503,7 @@ messages:
          AND (flag & (PFLAG_MURDERER | PFLAG_OUTLAW | PFLAG_INVISIBLE))
       {
          // Tell room about change in case there are ramifications.
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       if flag = PFLAG_MORPHED
@@ -1534,7 +1604,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       Post(self,@DrawOffense);
@@ -2224,6 +2294,18 @@ messages:
       {
          AddPacket(4,player_faction_rebel);
       }
+      else if (i = FACTION_NECROMANCER)
+      {
+         AddPacket(4,player_faction_necro);
+      }
+      else if (i = FACTION_HOLY)
+      {
+         AddPacket(4,player_faction_holy);
+      }
+      else if (i = FACTION_KOC)
+      {
+         AddPacket(4,player_faction_island);
+      }
       else
       {
          AddPacket(4,system_blank_resource);
@@ -2416,7 +2498,10 @@ messages:
 	      OR StringEqual(Send(self,@GetName), system_player_mob_arch)
 	      OR StringEqual(Send(self,@GetName), system_player_mob_ancient)
 	      OR StringEqual(Send(self,@GetName), system_player_mob_holy)
-	      OR StringEqual(Send(self,@GetName), system_player_mob_unholy);
+	      OR StringEqual(Send(self,@GetName), system_player_mob_unholy)
+	      OR StringEqual(Send(self,@GetName), system_player_mob_survival_a)
+	      OR StringEqual(Send(self,@GetName), system_player_mob_survival_b)
+	      OR StringEqual(Send(self,@GetName), system_player_mob_survival_c);
    }
    
    IsInventoryEmpty()
@@ -2470,11 +2555,13 @@ messages:
    SetupRoamingNPCPlayer()
    {
       local oObj, bHasTotem;
-	  
+	   
+      Send(Send(SYS,@GetLore),@ExcludePlayer,#who=self);
+
       if pbRoamingNPCPlayerInitialized OR NOT Send(self, @IsRoamingNPCPlayer)
-	  {
-	     return;
-	  }
+	   {
+	      return;
+	   }
 	  
 	  pbRoamingNPCPlayerInitialized = TRUE;
 	  
@@ -2558,9 +2645,9 @@ messages:
 	  }
 	  
 	  // Make the NPC Player PKable
-	  Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);
-      Send(self,@PlayerIsIntriguing);
-
+	  Send(self,@SetAge,#age=100);
+	  Send(self,@PKillEnable);
+	  
       return;
    }
 
@@ -2574,7 +2661,7 @@ messages:
 	  if Send(self, @IsRoamingNPCPlayer)
 	  {
 	     pbRoamingNPCPlayerInitialized = FALSE;
-		 
+		  Send(Send(SYS,@GetLore),@ExcludePlayer,#who=self);
 	     Send(self, @SetupRoamingNPCPlayer);
 	  }
 	  else
@@ -4384,6 +4471,16 @@ messages:
 		 {
 		    iSpace += 1;
 		 }
+
+		 if IsClass(i, &HunterSword)
+		 {
+		    iSpace += 1;
+		 }
+
+		 if IsClass(i, &SoldierShield)
+		 {
+		    iSpace += 1;
+		 }
       }
 
       if iSpace < Send(what,@GetItemUseAmount)
@@ -4414,7 +4511,10 @@ messages:
          }
          else
          {
-            Send(self,@MsgSendUser,#message_rsc=player_use_full);
+		    if NOT IsClass(what, &NecromancerAmulet)
+			{
+               Send(self,@MsgSendUser,#message_rsc=player_use_full);
+			}
          }
 
          return FALSE;
@@ -4488,7 +4588,7 @@ messages:
 
       if NOT Send(what,@ReqUse,#what=self)
       {
-         return FALSE;
+	     return FALSE;
       }
 
       // make sure nothing in room disallows
@@ -4503,7 +4603,7 @@ messages:
       {
          if i = what
          {
-            Send(self,@MsgSendUser,#message_rsc=player_using_already);
+		    Send(self,@MsgSendUser,#message_rsc=player_using_already);
 
             return FALSE;
          }
@@ -4720,12 +4820,17 @@ messages:
       // Default location to check is where we are.
       oRoom = poOwner;
 
-      if victim <> $ AND IsClass(victim, &Monster) AND Send(victim, @IsMinion)
-	  {
-	     // Do not attack your own minions.
-		 
-	     return FALSE;
-	  }
+      piLastAttack = GetTime();
+
+      if victim <> $ 
+         AND IsClass(victim, &Monster) 
+         AND Send(victim, @IsMinionOf, #who=self) 
+         AND NOT IsClass(victim,&EvilTwin)
+      {
+         // Do not attack your own minions.
+         // We make sure your minion isn't an evil twin though.
+         return FALSE;
+      }
 
       // If the victim is in a room, then check that location instead.  This
       // allows distance attacks (like wall spells) to work properly.
@@ -4893,6 +4998,12 @@ messages:
 
             return FALSE;
          }*/
+
+         if IsClass(victim,&EvilTwin)
+         {
+            // Let's always be able to kill our evil twins.
+            return TRUE;
+         }
 
          if IsClass(victim,&Reflection)
             OR IsClass(victim,&EvilTwin)
@@ -5330,6 +5441,7 @@ messages:
 
       // Check attack time.
       if NOT Send(self,@IsOkayAttackTime)
+         AND NOT Send(self,@HasBecomeMonster)
       {
          return FALSE;
       }
@@ -5358,6 +5470,7 @@ messages:
 
       // Deny attack if no line of sight
       if NOT Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
+         AND NOT Send(self,@HasBecomeMonster)
       {
          Send(self,@MsgSendUser,#message_rsc=player_attack_not_in_view);
 
@@ -5377,6 +5490,7 @@ messages:
 
       if NOT Send(self,@TargetWithinSightAndRange,#oTarget=what,#iRange=iRange,
                   #use_weapon=use_weapon,#stroke_obj=stroke_obj)
+         AND NOT Send(self,@HasBecomeMonster)
       {
          return FALSE;
       }
@@ -7134,12 +7248,12 @@ messages:
    "Find the first instance of 'class' that player has equipped. "
    "Returns $ if nothing is found."
    {
-      if class <> $
-	  {
+      if class <> $ AND IsList(plUsing)
+      {
          return GetListElemByClass(plUsing,class);
-	  }
-	  
-	  return $;
+      }
+
+      return $;
    }
 
    FindHaving(class=$)
@@ -7997,9 +8111,24 @@ messages:
       return piMax_Mana - piMana;
    }
    
+   GetMaxMana()
+   {
+      return piMax_Mana;
+   }
+
+   GetMana()
+   {
+      return piMana;
+   }
+
    GetMissingVigor()
    {
       return viMax_vigor - piVigor;
+   }
+
+   GetMaxVigor()
+   {
+      return viMax_vigor;
    }
 
    SetHealth(amount=$)
@@ -8494,8 +8623,11 @@ messages:
       iOldValue = Nth(plSchools,school);
       SetNth(plSchools,school,(iOldValue+change));
 
-      oLore = Send(SYS,@GetLore);
-      Send(oLore,@PlayerAdvanced,#who=self,#school = school);
+      if NOT Send(self, @IsRoamingNPCPlayer)
+      {
+         oLore = Send(SYS,@GetLore);
+         Send(oLore,@PlayerAdvanced,#who=self,#school = school);
+      }
 
       return TRUE;
    }
@@ -8535,8 +8667,11 @@ messages:
       if informlore OR lOldList = $
       { 
          // Assume that something has changed
-         oLore = Send(SYS,@GetLore);
-         Send(oLore,@PlayerAdvanced,#who=self,#school = iSchool);
+         if NOT Send(self, @IsRoamingNPCPlayer)
+         {
+            oLore = Send(SYS,@GetLore);
+            Send(oLore,@PlayerAdvanced,#who=self,#school = iSchool);
+         }
          
          return;
       }
@@ -9311,6 +9446,18 @@ messages:
 
       return;
    }
+   
+   ResetMonstersKilledAsNPC()
+   {
+      piMonstersKilledAsNPC = 0;
+	  
+	  return;
+   }
+   
+   GetMonstersKilledAsNPC()
+   {
+      return piMonstersKilledAsNPC;
+   }
 
    //// Advancement in combat
 
@@ -9320,6 +9467,11 @@ messages:
 
       if victim <> $ AND IsClass(victim, &Monster)
 	  {
+	     if pbRoamingNPCPlayerInitialized
+		 {
+		    piMonstersKilledAsNPC = piMonstersKilledAsNPC + 1;
+		 }
+		 
 	     Send(self,@ReduceAggro,#what=victim);
 	  }
 
@@ -9462,21 +9614,21 @@ messages:
          // 25// XP for any other group member kill.
          // 25// XP for monsters at the same level as the player.
          // 10// XP for monsters 1-4HP lower than the player.
-         if monster_level > iMaxHealth
+         if monster_level >= iMaxHealth
          {
+            // Add any item XP bonuses here. Have to get the kill, and
+            // either take damage or dodge to gain bonus XP.
+            foreach i in plUsing
+            {
+               iItemBonus = iItemBonus + Send(i,@GetItemXPBonus);
+            }
+
             if killing_blow
                AND ((piFlags & PFLAG_TOOK_DAMAGE)
                   OR (piFlags & PFLAG_DODGED))
             {
-               // Player took damage and landed killing blow
+			   // Gain extra XP for the killing blow.
                iXP = monster_level;
-
-               // Add any item XP bonuses here. Have to get the kill, and
-               // either take damage or dodge to gain bonus XP.
-               foreach i in plUsing
-               {
-                  iItemBonus = iItemBonus + Send(i,@GetItemXPBonus);
-               }
             }
             else
             {
@@ -9649,12 +9801,10 @@ messages:
          // either reached the max, or a multiple of 100.
          if piTraining_points > 999
          {
-            if piInform
-            {
-               Send(self,@MsgSendUser,#message_rsc=player_reached_maxtraining,
-                  #parm1=piTraining_points);
-               piInform = FALSE;
-            }
+		    // Always notify the user they are over max TP.
+            Send(self,@MsgSendUser,#message_rsc=player_reached_maxtraining,
+               #parm1=piTraining_points);
+            piInform = FALSE;
          }
          else if piTraining_points % 100 = 0
                AND piTraining_points <> 0
@@ -10627,7 +10777,7 @@ messages:
       Send(self,@MsgSendUser,#message_rsc=player_dance);
 
       piAnimation = PANM_DANCE;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       Send(self,@SetPlayerFlag,#flag=PFLAG2_DANCING,#value=TRUE,#flagset=2);
       piAnimation = PANM_NONE;
 
@@ -10643,7 +10793,7 @@ messages:
 	  
       Send(self,@MsgSendUser,#message_rsc=player_stop_dance);
       Send(self,@SetPlayerFlag,#flag=PFLAG2_DANCING,#value=FALSE,#flagset=2);
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
       return;
    }
@@ -10654,7 +10804,7 @@ messages:
       Send(self,@MsgSendUser,#message_rsc=player_wave);
 
       piAnimation = PANM_WAVE;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -10666,7 +10816,7 @@ messages:
       Send(self,@DoWindowOverlayFistAttack);
 
       piAnimation = PANM_FIST_ATTACK;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -10678,7 +10828,7 @@ messages:
       Send(self,@MsgSendUser,#message_rsc=player_point);
 
       piAnimation = PANM_POINT;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -10690,7 +10840,7 @@ messages:
       Send(self,@DoWindowOverlayHandGlow);
 
       piAnimation = PANM_CAST;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -10699,7 +10849,7 @@ messages:
    DoBowFire()
    {
       piAnimation = PANM_BOW_FIRE;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -10856,7 +11006,7 @@ messages:
       Send(self,@AddOverlayObject,#what=what);
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -10869,7 +11019,7 @@ messages:
       Send(self,@RemoveOverlayObject,#what=what);
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -10920,7 +11070,7 @@ messages:
       }
 
       poHair_remove = what;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
       return;
    }
@@ -10931,7 +11081,7 @@ messages:
 
       if poOwner
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -10942,7 +11092,7 @@ messages:
       piDrawfx = piDrawfx | drawfx;
       if poOwner <> $ AND SendSomethingChanged
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -10954,7 +11104,7 @@ messages:
 
       if poOwner <> $ AND SendSomethingChanged
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -10973,7 +11123,7 @@ messages:
 
       if poOwner <> $ AND alldone
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11019,7 +11169,7 @@ messages:
 
       if poOwner <> $ AND alldone
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11039,7 +11189,7 @@ messages:
 
       if poOwner <> $ AND alldone
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11084,7 +11234,7 @@ messages:
 
       if poOwner <> $ AND alldone
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11103,7 +11253,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11129,7 +11279,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11226,7 +11376,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11390,7 +11540,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11403,7 +11553,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -11415,7 +11565,7 @@ messages:
    {
       poIllusion_set = what;
 
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
       return;
    }
@@ -11448,7 +11598,7 @@ messages:
    DoAttackSwing()
    {
       piAnimation = PANM_WEAPON_ATTACK;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = PANM_NONE;
 
       return;
@@ -12377,7 +12527,7 @@ messages:
 
       if (poOwner <> $)
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -13421,7 +13571,7 @@ messages:
       if poOwner <> $
       {
          Send(self,@MsgSendUser,#message_rsc=player_temp_safe_end);
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       ptTempSafe = $;
@@ -13479,7 +13629,7 @@ messages:
 
       if (poOwner <> $)
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -13491,7 +13641,7 @@ messages:
 
       if (poOwner <> $)
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -13502,7 +13652,7 @@ messages:
       local oSoldierShield;
 
       if faction < FACTION_NEUTRAL
-         OR faction > FACTION_NORMAL_MAX
+         OR faction > FACTION_MAX
       {
          return FALSE;
       }
@@ -13658,6 +13808,42 @@ messages:
                Send(self,@ClearOneQuestHistory,#index=QST_ID_REBEL_SERVICE);
             }
          }
+
+         if piFaction = FACTION_HOLY
+         {
+            Send(Send(SYS,@GetQuestEngine),@ScheduleQuest,
+                  #index=QST_ID_HOLY_SERVICE,#override=TRUE);
+            iHistory = first(Send(self,@GetQuestHistory,
+                  #index=QST_ID_HOLY_SERVICE)) & (~QUEST_HISTORY_MASK);
+            if ( iHistory & QUEST_HISTORY_SUCCESS ) <> 0
+            {
+               Send(self,@ClearOneQuestHistory,#index=QST_ID_HOLY_SERVICE);
+            }
+         }
+
+         if piFaction = FACTION_NECROMANCER
+         {
+            Send(Send(SYS,@GetQuestEngine),@ScheduleQuest,
+                  #index=QST_ID_UNHOLY_SERVICE,#override=TRUE);
+            iHistory = first(Send(self,@GetQuestHistory,
+                  #index=QST_ID_UNHOLY_SERVICE)) & (~QUEST_HISTORY_MASK);
+            if ( iHistory & QUEST_HISTORY_SUCCESS ) <> 0
+            {
+               Send(self,@ClearOneQuestHistory,#index=QST_ID_UNHOLY_SERVICE);
+            }
+         }
+
+         if piFaction = FACTION_KOC
+         {
+            Send(Send(SYS,@GetQuestEngine),@ScheduleQuest,
+                  #index=QST_ID_KOC_SERVICE,#override=TRUE);
+            iHistory = first(Send(self,@GetQuestHistory,
+                  #index=QST_ID_KOC_SERVICE)) & (~QUEST_HISTORY_MASK);
+            if ( iHistory & QUEST_HISTORY_SUCCESS ) <> 0
+            {
+               Send(self,@ClearOneQuestHistory,#index=QST_ID_KOC_SERVICE);
+            }
+         }
       }
 
       if renew AND Send(SYS,@GetParliament) <> $
@@ -13771,7 +13957,7 @@ messages:
       }
 
       if new_faction <= FACTION_NEUTRAL
-         OR new_faction > FACTION_NORMAL_MAX
+         OR new_faction > FACTION_MAX
       {
          return FALSE;
       }
@@ -13817,6 +14003,39 @@ messages:
          Post(self,@DrawOffense);
       }
 
+      if piFaction = FACTION_HOLY
+      {
+         Send(oQuestEngine,@SetQuestMaxActive,#index = QST_ID_HOLY_SERVICE,
+               #new_max = (1+Nth(Send(oQuestEngine,@GetQuestTemplate,
+                                      #index=QST_ID_HOLY_SERVICE),
+                                      QT_MAX_NUM_ACTIVE)));
+         Send(oQuestEngine,@ScheduleQuest,
+               #index=QST_ID_HOLY_SERVICE,#override=TRUE);
+         Post(self,@DrawOffense);
+      }
+
+      if piFaction = FACTION_NECROMANCER
+      {
+         Send(oQuestEngine,@SetQuestMaxActive,#index = QST_ID_UNHOLY_SERVICE,
+               #new_max = (1+Nth(Send(oQuestEngine,@GetQuestTemplate,
+                                      #index=QST_ID_UNHOLY_SERVICE),
+                                      QT_MAX_NUM_ACTIVE)));
+         Send(oQuestEngine,@ScheduleQuest,
+               #index=QST_ID_UNHOLY_SERVICE,#override=TRUE);
+         Post(self,@DrawOffense);
+      }
+
+      if piFaction = FACTION_KOC
+      {
+         Send(oQuestEngine,@SetQuestMaxActive,#index = QST_ID_KOC_SERVICE,
+               #new_max = (1+Nth(Send(oQuestEngine,@GetQuestTemplate,
+                                      #index=QST_ID_KOC_SERVICE),
+                                      QT_MAX_NUM_ACTIVE)));
+         Send(oQuestEngine,@ScheduleQuest,
+               #index=QST_ID_KOC_SERVICE,#override=TRUE);
+         Post(self,@DrawOffense);
+      }
+
       piFactionTimeUpdated = GetTime();
       piFactionServiceUpdate = 0;
       oParliament = Send(SYS,@GetParliament);
@@ -13853,7 +14072,22 @@ messages:
 
    ResignFaction(bNoTimer=FALSE)
    {
-      local numMembers, oParliament, oQuestEngine, oQuest, oFlagPole;
+      local numMembers, oParliament, oQuestEngine, oQuest, oFlagPole, oSoth, oAo3;
+
+      // AO3 / Soth holders need to lose their AO3 & Soth!
+      if Send(self, @PossessesA, #class=&HunterSword)
+      {
+         oSoth = Send(self, @FindHolding, #class=&HunterSword);
+         Send(self,@UnuseItem,#what=oSoth);
+         Send(oSoth, @Delete);
+      }
+
+      if Send(self, @PossessesA, #class=&NecromancerAmulet)
+      {
+         oAo3 = Send(self, @FindHolding, #class=&NecromancerAmulet);
+         Send(self,@UnuseItem,#what=oAo3);
+         Send(oAo3, @Delete);
+      }
 
       if poOwner <> $
       {
@@ -13928,6 +14162,57 @@ messages:
          else
          {
             Debug("ResignFaction miscounted number of Rebel faction members!");
+         }
+         Post(self,@DrawOffense);
+      }
+
+      if piFaction = FACTION_HOLY
+      {
+         oQuest = Send(oQuestEngine,@GetQuestTemplate,
+                       #index=QST_ID_HOLY_SERVICE);
+         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
+         if numMembers > 0
+         {
+            Send(oQuestEngine,@SetQuestMaxActive,#index=QST_ID_HOLY_SERVICE,
+                 #new_max=(numMembers-1));
+         }
+         else
+         {
+            Debug("ResignFaction miscounted number of Holy faction members!");
+         }
+         Post(self,@DrawOffense);
+      }
+
+      if piFaction = FACTION_NECROMANCER
+      {
+         oQuest = Send(oQuestEngine,@GetQuestTemplate,
+                       #index=QST_ID_UNHOLY_SERVICE);
+         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
+         if numMembers > 0
+         {
+            Send(oQuestEngine,@SetQuestMaxActive,#index=QST_ID_UNHOLY_SERVICE,
+                 #new_max=(numMembers-1));
+         }
+         else
+         {
+            Debug("ResignFaction miscounted number of Unholy faction members!");
+         }
+         Post(self,@DrawOffense);
+      }
+
+      if piFaction = FACTION_KOC
+      {
+         oQuest = Send(oQuestEngine,@GetQuestTemplate,
+                       #index=QST_ID_KOC_SERVICE);
+         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
+         if numMembers > 0
+         {
+            Send(oQuestEngine,@SetQuestMaxActive,#index=QST_ID_KOC_SERVICE,
+                 #new_max=(numMembers-1));
+         }
+         else
+         {
+            Debug("ResignFaction miscounted number of Ko'catan faction members!");
          }
          Post(self,@DrawOffense);
       }
@@ -14650,7 +14935,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -14825,7 +15110,7 @@ messages:
 	  return piMonsterChasers;
    }
    
-   AddAggro(what=$)
+   AddAggro(what=$, force=FALSE)
    {
       if Length(plAggro) >= 39
 	  {
@@ -14839,7 +15124,8 @@ messages:
 	        plAggro = [];
 	     }
 		 
-		 if NOT FindListElem(plAggro, what)
+		 if NOT FindListElem(plAggro, what) 
+          AND (force OR (NOT force AND Length(plAggro) < MAX_AGGRO))
 		 {
             plAggro = AppendListElem(what, plAggro);
 		 }
@@ -14851,24 +15137,24 @@ messages:
    ReduceAggro(what=$)
    {
       if Length(plAggro) >= 39
-	  {
-	     plAggro = [];
-		 
-		 return 0;
-	  }
+      {
+         plAggro = [];
+
+         return 0;
+      }
 	  
       if what <> $ AND IsClass(what, &Monster) AND NOT IsClass(what, &Servant)
-	  {
+      {
          if plAggro = $
-	     {
-	        plAggro = [];
-	     }
-		 
-	     if FindListElem(plAggro, what)
-		 {
-		    plAggro = DelListElem(plAggro, what);
-		 }
-	  }
+         {
+            plAggro = [];
+         }
+
+         if FindListElem(plAggro, what)
+         {
+            plAggro = DelListElem(plAggro, what);
+         }
+	}
 	  
       return Length(plAggro);
    }
@@ -14889,6 +15175,28 @@ messages:
       return iCount;
    }
    
+   RecalibrateAggro()
+   "Iterates through the player's aggro to see if the mobs still exist and are on this map. Removes ones that aren't."
+   {
+      local oMob;
+
+      if plAggro <> $ AND Length(plAggro)
+      {
+         foreach oMob in plAggro
+         {
+            if oMob = $
+               OR Send(oMob,@GetMaster) <> $       // This mob is a flec / illusion / servant
+               OR Send(oMob,@GetOwner) <> poOwner  // This mob is on a different map
+               OR Send(oMob,@GetState) = 1         // This mob is dead
+            {
+               Send(self,@ReduceAggro,#what=oMob);
+            }
+         }   
+      }
+
+      return;
+   }
+
    HasAggro(what=$)
    {
       local bHasAggro;
@@ -15375,7 +15683,7 @@ messages:
       if poOwner <> $
       {
          Send(poOwner,@RemoveFromBuilderGroup,#who=self);
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
          // Let's see that we left the group
          foreach i in Send(poOwner,@GetPlActive)
@@ -15384,7 +15692,7 @@ messages:
             if IsClass(each_obj,&User)
                AND Send(poOwner,@AreGroupedHere,#who=self,#what=each_obj)
             {
-               Send(self,@SomethingChanged,#what=each_obj);
+               Send(self,@SomethingChanged,#what=each_obj,#force=TRUE);
             }
          }
       }
@@ -15409,7 +15717,7 @@ messages:
       if poOwner <> $
       {
          Send(poOwner,@AddToBuilderGroup,#who=self);
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
          ptLeaveBuilderGroupTimer = CreateTimer(self,@LeaveBuilderGroupTimer,
                                        Send(poOwner,@GetGroupTime));
 
@@ -15420,7 +15728,7 @@ messages:
             if IsClass(each_obj,&User)
                AND Send(poOwner,@AreGroupedHere,#who=self,#what=each_obj)
             {
-               Send(self,@SomethingChanged,#what=each_obj);
+               Send(self,@SomethingChanged,#what=each_obj,#force=TRUE);
             }
          }
       }
@@ -15887,6 +16195,264 @@ messages:
       propagate;
    }
    
+   GetOutfits(num=$)
+   "Providing a number will return a specific outfit."
+   {
+      local i;
+
+      if plOutfits = $ OR Length(plOutfits) <= 0
+      {
+         return $;
+      }
+
+      if num <> $ AND Length(plOutfits) >= num
+      {
+         foreach i in plOutfits
+         {
+            if i = num
+            {
+               return i;
+            }
+         }
+
+         return $;
+      }
+
+      return plOutfits;
+   }
+
+   SaveOutfit(num=$)
+   "Returns the outfit number you saved. Outfits aren't physically stored in plOutfits, only the number. You can find plOutfit in item.kod"
+   {
+      local iSavedNum, i, ap, c, oObj, lInventory, lCantUnequip, bSkip;
+
+      iSavedNum = num;
+
+      if plOutfits = $
+      {
+         plOutfits = [];
+      }
+
+      if num <> $ AND num > 0 AND Length(plOutfits) >= num
+      {
+         if FindListElem(plOutfits, num)
+         {
+            // Remove the existing outfit.
+            plOutfits = DelListElem(plOutfits, num);
+         }
+
+         // Put the updated outfit in its place.
+         plOutfits = AppendListElem(num, plOutfits);
+      }
+      else
+      {
+         // Add a new outfit without specifying a number to use
+         iSavedNum = Length(plOutfits) + 1;
+         plOutfits = AppendListElem(iSavedNum, plOutfits);
+      }
+
+      // We need to build an outfit.
+      lInventory = [
+         Send(self, @GetHolderActive), 
+         Send(self, @GetHolderPassive)
+      ];
+
+      lCantUnequip = [
+         &SoldierShield,
+         &NecromancerAmulet
+      ];
+
+      foreach ap in lInventory
+      {
+         if ap = $
+         {
+            continue;
+         }
+
+         foreach i in ap
+         {
+            if i = $
+            {
+               continue;
+            }
+
+            oObj = Send(self,@HolderExtractObject,#data=i);
+
+            if oObj = $
+            {
+               continue;
+            }
+
+            bSkip = FALSE;
+
+            foreach c in lCantUnequip
+            {
+               if IsClass(oObj, c)
+               {
+                  bSkip = TRUE;
+
+                  break;
+               }
+            }
+
+            if NOT bSkip AND Send(oObj,@InUse) AND NOT Send(oObj,@IsCursed)
+            {
+               // Add item to this outfit.
+               Send(oObj, @AddToOutfit, #outfitNum=iSavedNum);
+
+               continue;
+            }
+
+            // Make sure all other items are removed from this outfit.
+            Send(oObj, @RemoveFromOutfit, #outfitNum=iSavedNum);
+         }
+      }
+
+      return iSavedNum;
+   }
+
+   UseOutfit(num=$)
+   {
+      local i, ap, c, oObj, lInventory, lCantUnequip, bSkip, iOutfit;
+
+      iOutfit = Send(self,@GetOutfits,#num=num);
+
+      if plOutfits = $ OR iOutfit = $ OR iOutfit <= 0 OR Length(plOutfits) <= 0
+      {
+         return FALSE;
+      }
+
+      // We need to track down all of the items to equip.
+      lInventory = [
+         Send(self, @GetHolderActive), 
+         Send(self, @GetHolderPassive)
+      ];
+
+      lCantUnequip = [
+         &SoldierShield,
+         &NecromancerAmulet
+      ];
+
+      foreach ap in lInventory
+      {
+         if ap = $
+         {
+            continue;
+         }
+
+         foreach i in ap
+         {
+            if i = $
+            {
+               continue;
+            }
+
+            oObj = Send(self,@HolderExtractObject,#data=i);
+
+            if oObj = $
+            {
+               continue;
+            }
+
+            bSkip = FALSE;
+
+            foreach c in lCantUnequip
+            {
+               if IsClass(oObj, c)
+               {
+                  bSkip = TRUE;
+
+                  break;
+               }
+            }
+
+            if bSkip
+            {
+               continue;
+            }
+
+            if NOT Send(oObj,@InUse) 
+               AND NOT Send(oObj,@IsCursed) 
+               AND Send(oObj,@InOutfit,#outfitNum=num)
+            {
+               // Let's use this item
+               Send(self,@TryUseItem,#what=oObj);
+            }
+            else
+            {
+               if NOT Send(oObj,@IsCursed) 
+                  AND Send(oObj,@InUse)
+                  AND NOT Send(oObj,@InOutfit,#outfitNum=num)
+               {
+                  // Unequip things that weren't saved!
+                  Send(self,@TryUnuseItem,#what=oObj);
+               }
+            }
+         }
+      }
+
+      return TRUE;
+   }
+
+   Undress()
+   "Lets get naked."
+   {
+      local iSavedNum, i, ap, c, oObj, lInventory, lCantUnequip, bSkip, lOutfit;
+
+      lInventory = [
+         Send(self, @GetHolderActive), 
+         Send(self, @GetHolderPassive)
+      ];
+
+      lCantUnequip = [
+         &SoldierShield,
+         &NecromancerAmulet
+      ];
+
+      foreach ap in lInventory
+      {
+         if ap = $
+         {
+            continue;
+         }
+
+         foreach i in ap
+         {
+            if i = $
+            {
+               continue;
+            }
+
+            oObj = Send(self,@HolderExtractObject,#data=i);
+
+            if oObj = $
+            {
+               continue;
+            }
+
+            bSkip = FALSE;
+
+            foreach c in lCantUnequip
+            {
+               if IsClass(oObj, c)
+               {
+                  bSkip = TRUE;
+
+                  break;
+               }
+            }
+
+            if NOT bSkip AND Send(oObj,@InUse) AND NOT Send(oObj,@IsCursed)
+            {
+               // Take this off!
+               Send(self,@TryUnuseItem,#what=oObj);
+            }
+         }
+      }
+
+      return;
+   }
+
    PrepareServantResources()
    {
       if plServantResources = $

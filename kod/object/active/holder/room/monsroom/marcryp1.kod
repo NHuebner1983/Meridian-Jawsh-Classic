@@ -57,6 +57,7 @@ resources:
    // Let players call upon the "gods" to receive protection
    MarionCrypt1_gods = "gods"
    MarionCrypt1_venyacyr = "Venya'cyr the Damned"
+   MarionCrypt1_levers = "pick lock"
 
 classvars:
 
@@ -253,6 +254,16 @@ messages:
          Send(self,@DoMartyr);
       }
 
+      if what <> self
+         AND StringContain(string,MarionCrypt1_levers)
+      {
+	     // say pick lock
+         Send(self,@OpenFinalDoor);
+         Send(self,@CloseDoorDown);
+		 Send(self,@ResetMonstersInFinal);
+		 piSwitched = 2;
+      }
+
       // Set the IsClass check to Player when finished testing.
       if NOT IsClass(what,&DM) OR type = SAY_YELL
       {
@@ -352,9 +363,17 @@ messages:
       if IsClass(victim,&Monster)
       {
          // gotta post because here it's not removed from room yet
-         Post(self,@CheckAllDeadMonsters);
+         Post(self,@CheckAllDeadMonsters,#what=what);
       }
-
+	  
+	  if piSwitched <> 2 AND what <> $ AND IsClass(what, &Player) AND Send(what,@IsRoamingNPCPlayer)
+	  {
+         Send(self,@OpenFinalDoor);
+         Send(self,@CloseDoorDown);
+		 Send(self,@ResetMonstersInFinal);
+		 piSwitched = 2;	  
+	  }
+	  
       propagate;
    }
 
@@ -458,10 +477,10 @@ messages:
       return;
    }
 
-   CheckAllDeadMonsters()
+   CheckAllDeadMonsters(what=$)
    {
       if Send(self,@CountInFinal,#count=COUNT_MONSTERS) = 0
-         AND Send(self,@CountInFinal,#count=COUNT_PLAYERS) <> 0
+            AND Send(self,@CountInFinal,#count=COUNT_PLAYERS) <> 0
       {
          Send(self,@SomethingWaveRoom,#wave_rsc=MarionCrypt1_door1_rsc,
                #what=poLever1);
@@ -510,7 +529,7 @@ messages:
       {
          each_obj = First(i);
          if count = COUNT_MONSTERS
-               AND IsClass(each_obj,&Monster)
+               AND (IsClass(each_obj,&Monster) AND NOT IsClass(each_obj,&Servant) AND NOT IsClass(each_obj,&Reflection))
             OR count = COUNT_PLAYERS
                AND IsClass(each_obj,&User)
          {
@@ -539,7 +558,7 @@ messages:
       foreach i in plActive
       {
          each_obj = First(i);
-         if IsClass(each_obj,&Monster)
+         if IsClass(each_obj,&Monster) AND NOT IsClass(each_obj, &Servant) AND NOT IsClass(each_obj, &Reflection)
          {
             iRow = Send(each_obj,@GetRow);
             iCol = Send(each_obj,@GetCol);

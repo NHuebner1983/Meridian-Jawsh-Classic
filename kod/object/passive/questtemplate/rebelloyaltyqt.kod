@@ -34,7 +34,7 @@ resources:
 
    // Quest description.
    rebelloyalty_icon_rsc = wngenera.bgf
-   rebelloyalty_name_rsc = "rebel loyalty quest"
+   rebelloyalty_name_rsc = "Rebel loyalty quest"
    rebelloyalty_desc_rsc = \
       "Jonas D'Accor's troops need equipment, and he has requested that "
       "you help the cause by bringing him some."

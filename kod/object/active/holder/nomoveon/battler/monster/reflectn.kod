@@ -316,7 +316,7 @@ messages:
             else
             {
                // Break target, go to original master.
-               Send(self,@EnterStateWait);
+               poTarget = $;
                Send(self,@GotoMaster);
             }
          }

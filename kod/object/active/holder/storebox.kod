@@ -32,7 +32,7 @@ classvars:
    vrIcon = storagebox_icon_rsc
    vrDesc = storagebox_desc_rsc
 
-   viBulk_hold_max = 60000000
+   viBulk_hold_max = 999999999
    viWeight_hold_max = $
 
 properties:
@@ -201,12 +201,12 @@ messages:
          return FALSE;
       }
 
-      if IsClass(oWhoOwner,&GuildHall)
+      if Send(who, @GetGuildHall) <> $ AND IsClass(Send(who, @GetGuildHall),&GuildHall)
       {
-         return Send(oWhoOwner,@ReqUseGuildChest,#who=who);
+         return Send(Send(who, @GetGuildHall), @ReqUseGuildChest,#who=who);
       }
 
-      propagate;
+      return TRUE;
    }
 
    LockChest(bLocked=$)
@@ -223,7 +223,7 @@ messages:
          viObject_Flags |= OF_CONTAINER;
       }
 
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
       return;
    }

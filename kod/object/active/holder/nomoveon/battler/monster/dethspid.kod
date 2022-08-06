@@ -78,6 +78,7 @@ messages:
    Constructed()
    {
       plResistances = [ [ -ATCK_SPELL_ALL, 75 ],
+                        [ -ATCK_SPELL_HOLY, -75 ],
                         [ ATCK_WEAP_MAGIC, 75 ],
                         [ ATCK_WEAP_NONMAGIC, -15 ] ];
 

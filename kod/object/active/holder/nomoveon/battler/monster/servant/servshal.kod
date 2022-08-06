@@ -1,0 +1,50 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+ServShal is Servant
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   serv_shal_icon_rsc = faerie-g.bgf
+   serv_shal_dead_icon_rsc = faerieXG.bgf
+
+classvars:
+
+properties:
+
+   vrIcon = serv_shal_icon_rsc
+   vrDead_icon = serv_shal_dead_icon_rsc
+
+   poAura = LIGHT_SHALILLE
+   piNameColor = 0xFFFFFF
+
+messages:
+
+   Constructor(iSpellPower=75)
+   {
+      local iResistance, iNegativeResistance;
+	  
+      iResistance = Bound(iSpellPower, 1, 90);
+	  iNegativeResistance = Bound(-iSpellPower, -90, -1);
+
+      Send(self, @SetShalSpells);
+      Send(self, @UnholyResistance, #amount=iNegativeResistance);
+      Send(self, @HolyResistance, #amount=iResistance);
+      Send(self, @WeapResistance, #amount=iNegativeResistance);
+	  
+	  propagate;
+   }
+   
+end
+////////////////////////////////////////////////////////////////////////////////

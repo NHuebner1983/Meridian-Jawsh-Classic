@@ -29,7 +29,8 @@ constants:
    AUTOLOOT_CANNOT_GET = 4
 
    // Number of ms to lose one boosted health or mana point.
-   BOOST_DECAY_TIME = 30000 
+   // Monsters get special boost decay time!
+   BOOST_DECAY_TIME = 60000
 
 resources:
 
@@ -428,6 +429,7 @@ properties:
    plWantedItems = $
    // List of items offered to the player by buyer.
    plOffer_items = $
+   poOffer_who = $
    // List of items offered to the player by seller.
    // [item list, skill list, spell list, conditional items (?)]
    plFor_sale = $
@@ -564,7 +566,9 @@ properties:
    // 20 seconds default for players, 60 for monsters
    piHurtMeTime = 60000
    
-     viCurrentState = STATE_WAIT
+   viCurrentState = STATE_WAIT
+
+   ptFollowTimer = $
 
 messages:
 
@@ -1128,6 +1132,11 @@ messages:
 
    EnterStateAttack(target = $, actnow=TRUE)
    {
+      if actnow AND target <> $ AND IsClass(target, &Player)
+      {
+         Send(target, @AddAggro, #what=self, #force=TRUE);
+      }
+
       Send(self,@SetState,#bit=STATE_ATTACK);
       Send(self,@ClearBehavior);
 	  
@@ -1159,7 +1168,10 @@ messages:
 	     bPlaySound = (NOT IsClass(poTarget, &Servant));
 	  }
 	  
-      if poTarget <> target AND vrSound_aware <> $ AND bPlaySound
+      if poTarget <> $ AND target <> $ AND poTarget <> target AND vrSound_aware <> $ AND bPlaySound 
+         AND NOT IsClass(self, &Servant) AND NOT IsClass(self, &Reflection)
+         AND NOT IsClass(target, &Servant) AND NOT IsClass(target, &Reflection)
+         AND NOT IsClass(poTarget, &Servant) AND NOT IsClass(poTarget, &Reflection)
       {
          Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=vrSound_aware,
               #flags=SOUND_RANDOM_PITCH);
@@ -1175,6 +1187,11 @@ messages:
       else
       {
          ptBehavior = CreateTimer(self,@ChaseTimer,Send(self,@GetMoveTime));
+      }
+
+      if actnow AND target <> $ AND IsClass(target, &Player)
+      {
+         Send(target, @AddAggro, #what=self, #force=TRUE);
       }
 
       return;
@@ -1254,9 +1271,32 @@ messages:
    SomethingMoved(what=$,new_row=$,new_col=$,fine_row=$,fine_col=$)
    "Check to see if we need to change our combat plan because someone moved."
    {
+      local iActionDistance, iMasterDistance, oNewWhat, oMaster;
+      
+      oNewWhat = what;
+      oMaster = poMaster;
+
+      if IsClass(self, &Reflection) AND poMaster <> $
+      {
+         // Our master is a monster.
+         if IsClass(poMaster, &Monster)
+         {
+            // Let's follow our master's master, but we'll check if they were the one we detected moving.
+            oMaster = Send(poMaster, @GetMaster);
+            oNewWhat = oMaster;
+
+            if oMaster = $ OR oMaster <> what
+            {
+               // Our master's master is not what moved.
+               oMaster = poMaster;
+               oNewWhat = what;
+            }
+         }
+      }
+
       // If either we or our target moved, then we no longer know 
       //  if the attack is valid.
-      if what = self OR what = poTarget
+      if oNewWhat = self OR oNewWhat = poTarget
       {
          piState = (piState & VSTATE_VALIDITY_MASK);
       }
@@ -1264,11 +1304,110 @@ messages:
       if poBrain <> $
       {
          Send(poBrain,@SomethingMoved,#mob=self,#state=piState,
-               #what=what,#new_row=new_row,#new_col=new_col,
+               #what=oNewWhat,#new_row=new_row,#new_col=new_col,
                #fine_row=fine_row,#fine_col=fine_col);
+      }
+      
+      if oMaster <> $ AND oNewWhat = oMaster 
+      {
+         if poOwner <> Send(oMaster,@GetOwner)
+         {
+            // oMaster is in a different room.
+            Debug("Our master moved to a new room");
+            Send(SYS,@UtilGoNearSquare,#what=self,#where=Send(oMaster,@GetOwner),
+                  #new_row=Send(oMaster,@GetRow),
+                  #new_col=Send(oMaster,@GetCol));
+
+            return;
+         }
+
+         iMasterDistance = Send(self,@SquaredDistanceTo,#what=oMaster);
+
+         iActionDistance = 2;
+         
+         switch (viCurrentState)
+         {
+            case STATE_ATTACK:
+               iActionDistance = 100;
+            break;
+            case STATE_CHASE:
+               iActionDistance = 100;
+            break; 
+            case STATE_MOVE: 
+               iActionDistance = 100;
+            break;
+            case STATE_LIMBO:
+               iActionDistance = 20;
+            break;
+            case STATE_WAIT:
+               iActionDistance = 20;
+            break;
+         }
+
+         if iMasterDistance <= iActionDistance
+         {
+            // We are close enough to stop following our master.
+            if ptFollowTimer <> $
+            {
+               ptFollowTimer = $;
+            }
+
+            if IsClass(self,&Reflection)
+            {
+               Send(self,@EnterStateWait);
+            }
+         }
+
+         if iMasterDistance > iActionDistance
+         {
+            if IsClass(self,&Reflection)
+            {
+               Send(self,@EnterStateWait);
+            }
+            ptFollowTimer = CreateTimer(self, @FollowTimer, 100);
+         }
+
+         if iMasterDistance > 100
+         {
+            // Retreat distance.
+            poTarget = $;
+            Send(self,@EnterStateWait);
+            ptFollowTimer = CreateTimer(self, @FollowTimer, 100);
+         }
+
+         if iMasterDistance > 150
+         {
+            // Teleport distance
+            poTarget = $;
+            Send(self,@EnterStateWait);
+            ptFollowTimer = CreateTimer(self, @FollowTimer, 100);
+            Send(self,@GotoMaster);
+            Send(SYS,@UtilGoNearSquare,#what=self,#where=Send(oMaster, @GetOwner),
+                  #new_row=Send(oMaster,@GetRow),
+                  #new_col=Send(oMaster,@GetCol));
+         }
       }
 
       propagate;
+   }
+
+   FollowTimer()
+   {
+      if poMaster <> $ AND Send(poMaster,@GetOwner) = poOwner
+      {
+         if Send(self,@SquaredDistanceTo,#what=poMaster) > 20
+         {
+            Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE);
+            ptFollowTimer = CreateTimer(self, @FollowTimer, 100);
+         }
+      }
+
+      if ptFollowTimer <> $
+      {
+         ptFollowTimer = $;
+      }
+
+      return;
    }
 
    SomethingAttacked(what = $,victim = $,use_weapon = $)
@@ -1465,6 +1604,8 @@ messages:
          if (oState <> $)
          {
             Send(self,@SetMaster,#oMaster=oState);
+            Send(self,@EnterStateWait);
+            ptFollowTimer = CreateTimer(self, @FollowTimer, 100);
          }
       }
 
@@ -1475,16 +1616,21 @@ messages:
    {
       local oNewRoom;
 
+      poTarget = $;
+
       if poMaster = $
       {
          return;
       }
 
       oNewRoom = Send(poMaster,@GetOwner);
+
       if oNewRoom = $
       {
          return;
       }
+
+      Send(self,@EnterStateWait);
 
       if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 25) OR IsClass(self, &Servant)
       {
@@ -1850,7 +1996,7 @@ messages:
 
       // Go back to the master if we don't have a target.
       if (poMaster <> $
-         AND poTarget = $)
+         AND (poTarget = $ OR poTarget = poMaster))
       {
          lBehavior = Cons(AI_MOVE_FOLLOW_MASTER,lBehavior);
       }
@@ -2204,6 +2350,16 @@ messages:
     "Can this monster attack the victim? "
    {
       local oRoom, bWasBad, lMinions;
+
+      if (IsClass(self, &Reflection) AND IsClass(victim, &Reflection))
+         OR (IsClass(self, &Servant) AND IsClass(victim, &Reflection))
+         OR (IsClass(self, &Reflection) AND IsClass(victim, &Servant))
+      {
+         // Let's just keep reflections and servants peaceful for now.
+         poTarget = $;
+
+         return FALSE;
+      }
 
       // Must be in a room to attack, must have target.
       if (poOwner = $
@@ -2971,7 +3127,10 @@ messages:
       {
          piState = iState;
 
-         // debug("step",iRow,iCol,iFineRow,iFineCol);
+         if IsClass(self,&Reflection)
+         {
+            //Debug(Send(self,@GetName),"step",iRow,iCol,iFineRow,iFineCol);
+         }
 	  
          if (NOT (piBehavior & AI_MOVE_WALKTHROUGH_WALLS))
              OR Send(self,@ReqMonsterMove,#new_row=iRow,#new_col=iCol,
@@ -3080,6 +3239,8 @@ messages:
    "offer the value of the items in return."
    {
       local i,j, lArgList, iValueOffered, oQuestNode, bIsBuyer, bWarnAboutUnwantedItems;
+	  
+	  poOffer_who = what;
 
       if item_list = $
       {
@@ -3279,6 +3440,8 @@ messages:
    "We have been given an item on our wanted list. This is either a banker"
    "type, or a quest completion of some kind or an intrigue token."
    {
+      Debug("GotWantedMonster",obj,who);
+	  
       // Handle the kludgy banker interface immediately.
       if (piAttributes & MOB_BANKER) AND IsClass(obj,&Money)
       {
@@ -5286,7 +5449,7 @@ messages:
    "If a monster has a special cast animation, call this."
    {
       piAnimation = ANIM_ATTACK;
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       piAnimation = ANIM_NONE;
 
       return;
@@ -7118,7 +7281,7 @@ messages:
 
       if poOwner <> $
       {
-         Post(poOwner,@SomethingChanged,#what=self);
+         Post(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -7423,15 +7586,22 @@ messages:
          return;
       }
 
-	  // A reflection or servant wants to target a player.
-	  if (IsClass(self,&Reflection) OR IsClass(self,&Servant)) AND IsClass(what, &Player)
-	  {
-		 if NOT Send(what,@HasAttacked,#victim=self)
-		 {
-		    // I will only attack if you attack first.
-		    return FALSE;
-		 }
-	  }
+	   if IsClass(self,&Reflection) AND IsClass(what, &Player)
+      {
+         // A reflection wants to attack a player.
+         if IsClass(poMaster, &Servant)
+         {
+            // The Reflection's master is a servant, denied for now.
+            return FALSE;
+         }
+      }
+
+      if IsClass(self,&Servant) AND IsClass(what, &Player)
+      {
+         // A servant wants to attack a player
+         // This is not supported yet.
+         return FALSE;
+      }
 
       piHatred = iHatred;
 
@@ -7453,8 +7623,8 @@ messages:
 
       piState = (piState & VSTATE_VALIDITY_MASK);
 
-      // 'lock' sound (but don't do it for servants, they are taunting)
-      if vrSound_aware <> $ AND NOT IsClass(what, &Servant)
+      // 'lock' sound (but don't do it for servants or reflections, they are taunting)
+      if vrSound_aware <> $ AND NOT IsClass(what, &Servant) AND NOT IsClass(what, &Reflection)
       {
          Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=vrSound_aware);
       }

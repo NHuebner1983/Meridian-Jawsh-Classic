@@ -184,10 +184,10 @@ messages:
       // Only care about moving stuff if we're not already moving
       // Only care about non-immortal players we can see and are "close"
       // We only care about players within 7 squares of us.
+	  // AND NOT (IsClass(what,&DM) AND Send(what,@PlayerIsImmortal))
       if viSpeed = SPEED_NONE
          AND what <> $
          AND IsClass(what,&Player)
-         AND NOT (IsClass(what,&DM) AND Send(what,@PlayerIsImmortal))
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
          AND Send(self,@SquaredDistanceTo,#what=what) <= 49
       {

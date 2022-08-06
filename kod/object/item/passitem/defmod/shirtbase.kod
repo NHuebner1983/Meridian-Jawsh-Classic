@@ -67,6 +67,8 @@ classvars:
 
    viGender = GENDER_MALE
 
+   viItem_type = ITEMTYPE_CLOTHES
+   
    vrName = shirt_name_rsc
    vrIcon = shirt_ground_icon
 

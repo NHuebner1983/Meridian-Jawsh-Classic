@@ -1,0 +1,229 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+HolyShield is SoldierShield
+
+// Currently uses Duke shield resources/stat changes. Change this if
+// we ever allow players to access this shield.
+// Stats affected: Intellect and Stamina
+// Special bonus: This shield gives a bonus 20 Spellpower to all spells.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include holyshield.lkod
+
+   holyshield_name_rsc = "shield of Shal'ille's army"
+
+   holyshield_desc_rsc = "This shield identifies you as an elite soldier of Shal'ille's army."
+
+   holyshield_ArmyName = "the holy army"
+
+   holyshield_emblem_over = gshshov.bgf
+   holyshield_emblem_drop = gshsh.bgf
+   holyshield_emblem_back = gshshbk.bgf
+
+   holyshield_welcome_mail = "Subject: You are now an elite soldier of light..\n"
+      "Welcome to the holy army.  Your ambition suits you very well.\n\n"
+      "There are some rules imposed by those that think themselves above us.  It suits "
+      "our purpose to follow these rules for now.\n\n"
+      "SOLDIER SHIELD: Your shield shows you as part of my army.  If you lose this "
+      "shield, it signifies that you are no longer part of our army.\n\n"
+      "ENEMY SOLDIERS: Enemies from the other pathetic faction have full right to try "
+      "to attack you when they find you.  For this, they will suffer no penalty.  Of "
+      "course, you will also be unpenalized for destroying them in combat.  I am sure "
+      "our cowardly foes will take shelter in safe spots like inns or halls, but it is "
+      "your job to be waiting for them to leave.  As with the regular members of my "
+      "faction, I will not allow traitorous attacks against those loyal to me; to do so "
+      "is to reduce your own power as you are removed from my service in all aspects.  "
+      "In order to better defeat our enemies, I will teach you how to do additional "
+      "damage to our enemies.  Deaths inflicted upon enemies will give them the penalties "
+      "they deserve for standing up to us!\n\n"
+      "RANKS: Kill our enemies, and I will see you raised to be worshipped by those that "
+      "follow me.  Die or act dishonorably, and you will once again be at the lowest "
+      "end of the army.  Those that try to leave this land unsafely and leave behind a "
+      "ghost to escape combat will also meet with my displeasure.\n\n"
+      "ABILITIES: In return for your loyal service, I will give you power!  I will teach "
+      "you how to increase your natural mysticism, intellect and strength in combat.  I will also show "
+      "you ways to tap into the holy aspects of magic to boost all your spells.  These "
+      "powers grow as you gain my attention and ranks within the army.\n\n"
+      "THE COUNCILORS: The councilors whom we must convince do not wish you soldiers to "
+      "interfere with the tokens.  For now, do as they say, for we must gain their trust "
+      "if they are to declare me the true ruler I am.  Let one of my followers that is "
+      "not a soldier take the token and convince the councilor of our might and our "
+      "right.  Your job for now is to hunt down the undead army of Queen Venya'Cyr.  Only soldiers of light "
+      "can strike down the unholy soldiers of the Necromancers.\n\n"
+      "LOYALTY: Do not bother yourself with tax errands while you are a soldier.  Defeat "
+      "our enemies in combat and you will demonstrate all the loyalty I need.\n\n"
+      "We will rid the land of evil.  You have given your support wisely.\n\n"
+      "Shal'ille, Holy Priestess of Meridian"
+	  
+classvars:
+
+   vrName = holyshield_name_rsc
+   vrDesc = holyshield_desc_rsc
+
+   prShield_emblem_held = holyshield_emblem_over
+   prShield_emblem_drop = holyshield_emblem_drop
+   prShield_emblem_back = holyshield_emblem_back
+
+   viFaction = FACTION_HOLY
+   viColor = $
+
+   // Stuff for rank
+   vrArmyName = holyshield_ArmyName
+
+   vrWelcomeMessage = holyshield_welcome_mail
+   
+properties:
+
+   piMightChange = 0
+   piStaminaChange = 0
+   piIntellectChange = 0
+   piMysticismChange = 0
+   piAgilityChange = 0
+   piAimChange = 0
+   
+   // Makes the shield white.
+   piItem_flags = 132
+
+messages:
+
+   Constructor()
+   {
+      propagate;
+   }
+
+   Constructed()
+   {
+	  propagate;
+   }
+   
+   GetResistanceModifiers()
+   {
+      return [ [ ATCK_WEAP_ALL, 10],
+               [-ATCK_SPELL_UNHOLY,-25]
+             ];
+   }
+   
+   RemoveStats()
+   {
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
+      {
+         // Reset owner's stats
+	     Send(poOwner,@AddMight,#points=-piMightChange);
+	     Send(poOwner,@AddStamina,#points=-piStaminaChange);
+         Send(poOwner,@AddIntellect,#points=-piIntellectChange);
+         Send(poOwner,@AddMysticism,#points=-piMysticismChange);
+         Send(poOwner,@AddAgility,#points=-piAgilityChange);
+	     Send(poOwner,@AddAim,#points=-piAimChange);
+		 piMightChange = 0;
+		 piStaminaChange = 0;
+         piIntellectChange = 0;
+         piMysticismChange = 0;
+		 piAgilityChange = 0;
+	     piAimChange = 0;
+      }
+
+      return;
+   }
+
+   GetFaction()
+   {
+      return viFaction;
+   }
+
+   UpdateRankPowers()
+   "Updates any rank powers.  Affects stats."
+   {
+      local iStatAdjustment, iNewAdjustment;
+
+      if poOwner = $
+         OR NOT IsClass(poOwner,&User)
+      {
+         return;
+      }
+
+      if piFactionRank <= 2
+      {
+         iStatAdjustment = 0;
+      }
+      else if piFactionRank <= 6
+      {
+         iStatAdjustment = 3;
+      }
+      else
+      {
+         iStatAdjustment = 5;
+      }
+
+      // In the following:
+      //  iNewAdjustment is how much the stat changed this time around.
+      //  pi(stat)Change is the cumulative change to that stat.
+      if iStatAdjustment <> piMightChange
+      {
+         iNewAdjustment = Send(poOwner,@AddMight,
+                                 #points=(iStatAdjustment-piMightChange));
+         piMightChange = piMightChange + iNewAdjustment;
+      }
+
+      if iStatAdjustment <> piStaminaChange
+      {
+         iNewAdjustment = Send(poOwner,@AddStamina,
+                                 #points=(iStatAdjustment-piStaminaChange));
+         piStaminaChange = piStaminaChange + iNewAdjustment;
+      }
+
+      if iStatAdjustment <> piIntellectChange
+      {
+         iNewAdjustment = Send(poOwner,@AddIntellect,
+                                 #points=(iStatAdjustment-piIntellectChange));
+         piIntellectChange = piIntellectChange + iNewAdjustment;
+      }
+
+      if iStatAdjustment <> piMysticismChange
+      {
+         iNewAdjustment = Send(poOwner,@AddMysticism,
+                                 #points=(iStatAdjustment-piMysticismChange));
+         piMysticismChange = piMysticismChange + iNewAdjustment;
+      }
+
+      if iStatAdjustment <> piAgilityChange
+      {
+         iNewAdjustment = Send(poOwner,@AddAgility,
+                                 #points=(iStatAdjustment-piAgilityChange));
+         piAgilityChange = piAgilityChange + iNewAdjustment;
+      }
+
+      if iStatAdjustment <> piAimChange
+      {
+         iNewAdjustment = Send(poOwner,@AddAim,
+                                 #points=(iStatAdjustment-piAimChange));
+         piAimChange = piAimChange + iNewAdjustment;
+      }
+
+      return;
+   }
+
+   GetBaseSpellModifier(oSpell=$)
+   {
+      local iModifier;
+
+      iModifier = ((15 * piFactionRank) / 10);
+
+      return iModifier;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

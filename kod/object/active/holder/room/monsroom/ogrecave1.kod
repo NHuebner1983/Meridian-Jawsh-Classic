@@ -1,0 +1,226 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+OgreCave1 is MonsterRoom
+
+constants:
+
+   SECTOR_DOOR = 12
+
+   SECTOR_TEMPLE1 = 6
+   SECTOR_TEMPLE2 = 7
+   SECTOR_TEMPLE3 = 8
+   SECTOR_TEMPLE4 = 9
+   SECTOR_TEMPLE5 = 10
+   SECTOR_TEMPLE6 = 11
+
+   SECTOR_STAIR1 = 1
+   SECTOR_STAIR2 = 2
+   SECTOR_STAIR3 = 3
+   SECTOR_STAIR4 = 4
+   SECTOR_STAIR5 = 5
+
+   include blakston.khd
+
+resources:
+
+   include ogrecave1.lkod
+
+   room_name_ogrecave1 = "Ancient Vault of the Ogre Guardians"
+   room_ogrecave1 = ogrecave1.roo
+   ogrecave1_music = ksong.ogg
+
+   ogrecave1_sound_rsc = wtemple1.ogg
+   waterfall_soundOgrecave1 = wfall2.ogg
+
+classvars:
+
+   vrName = room_name_ogrecave1
+
+   viTeleport_row = 74
+   viTeleport_col = 34
+
+   viTerrain_Type = TERRAIN_LAKE | TERRAIN_WATERFALL | TERRAIN_CAVES
+
+properties:
+
+   prRoom = room_ogrecave1
+   piRoom_num = RID_OGRE_CAVE1
+
+   prMusic = ogrecave1_music
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = 1
+   pbDoorOpen = FALSE
+
+   // A dynamic light that appears when the Froz jewel appears.
+   poLight = $
+
+   piGen_time = 25000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 25
+
+messages:
+
+   Constructed()
+   {
+      plLooping_sounds = [[ waterfall_soundOgrecave1, 50, 67, 60, 100 ]];
+      plMonsters = [ [&Ogre, 100] ];
+      plGenerators = [ 
+                        [27,41],
+                        [28,30],
+                        [38,24],
+                        [49,24],
+                        [55,30],
+                        [41,39],
+                        [46,42],
+                        [55,43],
+                        [55,50],
+                        [47,54],
+                        [40,53]
+                     ];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+      plExits = Cons([ 75, 34, RID_J3, 20, 10, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   NewHold(what=$,new_row=$ )
+   {
+      if isClass(what,&User) AND new_row < 69
+      {
+         send(SYS,@UtilGoNearSquare,#what=what,#where=self,#new_row=74,#new_col=34);
+      }
+
+      propagate;
+   }
+
+   SomethingTryGo(what=$,row=$,col=$)
+   {
+      if row = 68 AND (col=37 OR col=38)
+      {
+         pbDoorOpen = TRUE;
+         send(self,@RaiseTemple);
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+   RaiseTemple()
+   {
+      // Door
+      send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+           #height=260,#speed=150);
+
+      // Temple
+      send(self,@SetSector,#sector=SECTOR_TEMPLE1,#animation=ANIMATE_FLOOR_LIFT,
+           #height=300,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE2,#animation=ANIMATE_FLOOR_LIFT,
+           #height=308,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE3,#animation=ANIMATE_FLOOR_LIFT,
+           #height=444,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE4,#animation=ANIMATE_FLOOR_LIFT,
+           #height=372,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE5,#animation=ANIMATE_FLOOR_LIFT,
+           #height=332,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE6,#animation=ANIMATE_FLOOR_LIFT,
+           #height=324,#speed=10);
+
+      // Stairs
+      send(self,@SetSector,#sector=SECTOR_STAIR1,#animation=ANIMATE_FLOOR_LIFT,
+           #height=244,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR2,#animation=ANIMATE_FLOOR_LIFT,
+           #height=260,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR3,#animation=ANIMATE_FLOOR_LIFT,
+           #height=276,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR4,#animation=ANIMATE_FLOOR_LIFT,
+           #height=292,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR5,#animation=ANIMATE_FLOOR_LIFT,
+           #height=300,#speed=20);
+
+      return;
+   }
+   
+   LowerTemple()
+   {
+      // Door
+      send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+           #height=336,#speed=150);
+      
+      // Temple
+      send(self,@SetSector,#sector=SECTOR_TEMPLE1,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE2,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE3,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE4,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE5,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE6,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=10);
+      
+      // Stairs
+      send(self,@SetSector,#sector=SECTOR_STAIR1,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR2,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR3,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR4,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR5,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=20);
+      
+      return;
+   }
+   
+   LastUserLeft()
+   {
+      pbDoorOpen = FALSE;
+      send(self,@LowerTemple);
+      send(self,@DeleteLight);
+
+      propagate;
+   }
+
+   LeaveHold(what = $)
+   {
+      propagate;
+   }
+
+   DeleteLight()
+   "Deletes any dynamic lights in the area."
+   {
+      if poLight <> $
+      {
+         send(poLight,@Delete);
+         poLight = $;
+      }
+
+      return;
+   }
+
+
+end
+////////////////////////////////////////////////////////////////////////////////

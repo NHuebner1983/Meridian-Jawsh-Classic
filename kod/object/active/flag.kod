@@ -36,6 +36,15 @@ resources:
    flag_rebel_desc_rsc = \
       "This flagpole flies the colors of the rebel forces based "
       "in Jasper.  %r"
+   flag_holy_desc_rsc = \
+      "This flagpole flies the colors of the holy army based "
+      "in Marion.  %r"
+   flag_unholy_desc_rsc = \
+      "This flagpole flies the colors of the necromancer army based "
+      "in The Cragged Mountains.  %r"
+   flag_koc_desc_rsc = \
+      "This flagpole flies the colors of the Ko'catan army based "
+      "Outside the Guard Tower on the island.  %r"
    flag_append_desc = \
       "%s%s is currently attempting to stake a claim to this "
       "territory in the name of %s."
@@ -46,13 +55,19 @@ resources:
    flag_duke_icon_rsc = flagduke.bgf
    flag_princess_icon_rsc = flagprnc.bgf
    flag_rebel_icon_rsc = flagjspr.bgf
+   flag_holy_icon_rsc = flagholy.bgf
+   flag_unholy_icon_rsc = flagunholy.bgf
+   flag_koc_icon_rsc = flagkoc.bgf
 
    flag_claim_attempt = \
       "~I%s%s has bravely staked a claim to %s%s in the name of %s!"
    flag_claim_plugin_duke = "Duke Akardius"
    flag_claim_plugin_princess = "Princess Kateriina"
-   flag_claim_plugin_rebel = "the rebel forces"
-   flag_claim_plugin_unfactioned = "the unfactioned"
+   flag_claim_plugin_holy = "the Holy Army of Shal'ille"
+   flag_claim_plugin_unholy = "the Necromancers of Queen Venya'Cyr"
+   flag_claim_plugin_koc = "the Ko'catan Army of Cital ko'Manka"
+   flag_claim_plugin_rebel = "the Rebel Forces of Jonas D'Accor"
+   flag_claim_plugin_unfactioned = "the misguided unfactioned"
    flag_claim_attempt_succeeded = \
       "~IAll hail %s%s, who has successfully claimed %s%s in the name of %s!"
    flag_claim_attempt_failed_flee = \
@@ -355,6 +370,9 @@ messages:
       if ((iClaimerFaction = FACTION_DUKE) AND NOT Send(who,@PossessesA,#class=&DukeFlag))
          OR ((iClaimerFaction = FACTION_PRINCESS) AND NOT Send(who,@PossessesA,#class=&PrincessFlag))
          OR ((iClaimerFaction = FACTION_REBEL) AND NOT Send(who,@PossessesA,#class=&RebelFlag))
+         OR ((iClaimerFaction = FACTION_HOLY) AND NOT Send(who,@PossessesA,#class=&HolyFlag))
+         OR ((iClaimerFaction = FACTION_NECROMANCER) AND NOT Send(who,@PossessesA,#class=&UnholyFlag))
+         OR ((iClaimerFaction = FACTION_KOC) AND NOT Send(who,@PossessesA,#class=&KocFlag))
       {
          return FALSE;
       }
@@ -430,7 +448,7 @@ messages:
       }
 
       piFaction = Send(poClaimer,@GetFaction);
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
       // Delete the flag.
       iClaimerFaction = Send(poClaimer,@GetFaction);
@@ -448,6 +466,21 @@ messages:
       if iClaimerFaction = FACTION_REBEL
       {
          oClaimingFlag = Send(poClaimer,@FindHolding,#class=&RebelFlag);
+      }
+
+      if iClaimerFaction = FACTION_HOLY
+      {
+         oClaimingFlag = Send(poClaimer,@FindHolding,#class=&HolyFlag);
+      }
+
+      if iClaimerFaction = FACTION_NECROMANCER
+      {
+         oClaimingFlag = Send(poClaimer,@FindHolding,#class=&UnholyFlag);
+      }
+
+      if iClaimerFaction = FACTION_KOC
+      {
+         oClaimingFlag = Send(poClaimer,@FindHolding,#class=&KocFlag);
       }
 
       if oClaimingFlag <> $
@@ -609,7 +642,7 @@ messages:
    SendOverlays()
    {
       if (piFaction <= FACTION_NEUTRAL)
-         OR (piFaction > FACTION_REBEL)
+         OR (piFaction > FACTION_KOC)
       {
          // Flagpole is bare for Neutral or invalid faction values.
          propagate;
@@ -632,6 +665,21 @@ messages:
          AddPacket(4,flag_rebel_icon_rsc);
       }
 
+      if piFaction = FACTION_HOLY
+      {
+         AddPacket(4,flag_holy_icon_rsc);
+      }
+
+      if piFaction = FACTION_NECROMANCER
+      {
+         AddPacket(4,flag_unholy_icon_rsc);
+      }
+
+      if piFaction = FACTION_KOC
+      {
+         AddPacket(4,flag_koc_icon_rsc);
+      }
+
       //AddPacket(1,HS_FLAG);
       AddPacket(1,piFlagHotSpot);
       AddPacket(1,ANIMATE_CYCLE,4,100,2,FRAME_START,2,FRAME_END);
@@ -652,6 +700,18 @@ messages:
       else if piFaction = FACTION_REBEL
       {
          AddPacket(4,flag_rebel_desc_rsc);
+      }
+      else if piFaction = FACTION_HOLY
+      {
+         AddPacket(4,flag_holy_desc_rsc);
+      }
+      else if piFaction = FACTION_NECROMANCER
+      {
+         AddPacket(4,flag_unholy_desc_rsc);
+      }
+      else if piFaction = FACTION_KOC
+      {
+         AddPacket(4,flag_koc_desc_rsc);
       }
       else
       {
@@ -695,6 +755,18 @@ messages:
             {
                return flag_claim_plugin_rebel;
             }
+            else if iFaction = FACTION_HOLY
+            {
+               return flag_claim_plugin_holy;
+            }
+            else if iFaction = FACTION_NECROMANCER
+            {
+               return flag_claim_plugin_unholy;
+            }
+            else if iFaction = FACTION_KOC
+            {
+               return flag_claim_plugin_koc;
+            }
          }
       }
 
@@ -734,7 +806,7 @@ messages:
       piFaction = faction;
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -746,7 +818,7 @@ messages:
       piFaction = faction;
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
          if piFaction <> FACTION_NEUTRAL
             AND ptGenerateTroops = $
             AND IsClass(poOwner,&MonsterRoom)
@@ -768,7 +840,7 @@ messages:
       pbClaimable=claimable;
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;
@@ -851,7 +923,7 @@ messages:
 
       if piFaction = FACTION_DUKE
       {
-         if Random(0,8) = 1
+         if Random(0,3) = 1
          {
             oTroop = &DukeMage;
          }
@@ -862,7 +934,7 @@ messages:
       }
       else if piFaction = FACTION_PRINCESS
       {
-         if Random(0,8) = 1
+         if Random(0,3) = 1
          {
             oTroop = &PrincessMage;
          }
@@ -871,9 +943,49 @@ messages:
             oTroop = &PrincessTroop;
          }
       }
+      else if piFaction = FACTION_HOLY
+      {
+         if Random(0,3) = 1
+         {
+            oTroop = &HolyMage;
+         }
+         else
+         {
+            oTroop = &HolyTroop;
+         }
+      }
+      else if piFaction = FACTION_NECROMANCER
+      {
+         if Random(0,3) = 1
+         {
+            oTroop = &UnholyMage;
+         }
+         else
+         {
+            oTroop = &NecromancerTroop;
+         }
+      }
+      else if piFaction = FACTION_KOC
+      {
+         if Random(0,3) = 1
+         {
+            oTroop = &KocMage;
+         }
+         else
+         {
+            oTroop = &KocTroop;
+         }
+      }
       else if piFaction = FACTION_REBEL
       {
-         oTroop = &RebelTroop;
+         if Random(0,3) = 1
+         {
+            oTroop = &JonasMage;
+         }
+         else
+         {
+            oTroop = &RebelTroop;
+         }
       }
 
       if oTroop = $
@@ -957,7 +1069,7 @@ messages:
       piFlagHotSpot = 4;
       if (poOwner <> $) 
       { 
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
       ptHalfStaffOff = CreateTimer(self,@HalfStaffTimer,duration);
 
@@ -976,7 +1088,7 @@ messages:
       piFlagHotSpot = 1;
       if (poOwner <> $) 
       { 
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       return;

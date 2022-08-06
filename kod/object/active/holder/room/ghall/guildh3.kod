@@ -212,6 +212,9 @@ messages:
             #new_row=29,#new_col=9,#fine_row=32,#fine_col=0,
             #new_angle=ANGLE_NORTH_EAST);
       Send(self,@NewHold,#what=Create(&Chest),
+            #new_row=27,#new_col=9,#fine_row=32,#fine_col=0,
+            #new_angle=ANGLE_NORTH_EAST);
+      Send(self,@NewHold,#what=Create(&Chest),
             #new_row=26,#new_col=9,#fine_row=32,#fine_col=0,
             #new_angle=ANGLE_SOUTH_EAST);
 

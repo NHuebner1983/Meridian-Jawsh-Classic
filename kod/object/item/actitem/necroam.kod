@@ -253,6 +253,25 @@ messages:
 
    NewOwner(what = $)
    {
+      // AO3 will now immediately be worn when received.
+      if IsClass(what, &Battler)
+      {
+         pbWarned = TRUE;
+
+         if pbIn_Use = $ OR pbIn_use = FALSE
+         {
+            Post(what, @UserUseItem, #what=self);
+            
+            if what <> $
+               AND IsClass(what,&User)
+            {
+               Post(self,@HoldingDamageTrigger);
+            }
+            
+            propagate;
+         }
+      }
+
       pbWarned = FALSE;
 
       if ptHoldingDamage <> $
@@ -367,7 +386,7 @@ messages:
 
             return FALSE;
          }
-
+        		
         return TRUE;
       }
 
@@ -391,7 +410,12 @@ messages:
          Send(poOwner, @MsgSendUser, #message_rsc = necamulet_used_unworthy);
       }
 
-      Send(self,@AdjustStats);
+	  if poOwner <> $ AND IsClass(poOwner, &Battler) AND NOT Send(poOwner, @PossessesA, #class=&NecromancerShield)
+	  {
+	     Send(self,@BecomeUndeadSoldier);
+	  }
+      
+	  Send(self,@AdjustStats);
       Send(self,@AdjustColor);
       ptHungerTimer = CreateTimer(self,@HungerTrigger,
                            Send(Send(SYS,@GetNecromancerBalance),@GetHungerInterval));
@@ -531,9 +555,39 @@ messages:
       return;
    }
 
+   // We will obtain a Holy Soldier Shield &NecromancerShield
+   // and become part of Shal'ille's faction.
+   BecomeUndeadSoldier()
+   {
+      local oShield;
+	  
+      if poOwner <> $ AND IsClass(poOwner, &Battler)
+	  {
+	     oShield = Create(&NecromancerShield);
+		 
+	     Send(poOwner, @ResetFaction, #faction=FACTION_NECROMANCER);
+         Send(poOwner, @RemoveFromInventory, #class=&NecromancerShield);
+		 Send(poOwner, @NewHold, #what=oShield);
+		 Send(poOwner, @TryUseItem, #what=oShield);
+	  }
+	  
+      return;
+   }
+   
+   LoseUndeadSoldier()
+   {
+      if poOwner <> $ AND IsClass(poOwner, &Battler)
+	  {
+         Send(poOwner, @RemoveFromInventory, #class=&NecromancerShield);
+		 Send(poOwner, @ResetFaction, #faction=FACTION_NEUTRAL);
+	  }
+	  
+      return;
+   }
+
    GetBaseSpellModifier(oSpell=$)
    {
-      return 20;
+      return 0;
    }
    
    AdjustColor()
@@ -856,7 +910,8 @@ messages:
          }
 
          oGuild = Send(poOwner,@GetGuild);
-         if oGuild <> $
+
+         if oGuild <> $ AND what <> $
             AND IsClass(oGuild,&NecromancerGuild)
          {
             Send(oGuild,@MemberKilled,#victim=poOwner,#killer=what);
@@ -864,6 +919,7 @@ messages:
 
          // Instead of deleting the amulet, we put it back in circulation.
          // Post(self,@Delete);
+		   Send(self, @LoseUndeadSoldier);
          Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
       }
 
@@ -897,6 +953,8 @@ messages:
 	  {
 	     return;
 	  }
+	  
+	  Send(self, @LoseUndeadSoldier);
 	  
       if pbCounted
       {
@@ -1065,11 +1123,11 @@ messages:
 
    ReqUseSomething(what = $)
    {
-      if IsClass(what,&Necklace)
+      if what <> self
 	  {
 	     propagate;
 	  }
-	  
+   
       if IsClass(what,&Necklace)
          OR IsClass(what,&NecromancerAmulet)
       {
@@ -1095,6 +1153,11 @@ messages:
 
    ReqUse(what=$)
    {
+      if what <> self
+	  {
+	     propagate;
+	  }
+	  
       if NOT Send(what,@CanAdvance)
       {
          Send(what,@DontInterfere);
@@ -1303,6 +1366,7 @@ messages:
    {
       if NOT pbIn_Use
       {
+	     Send(self,@LoseUndeadSoldier);
          Send(poOwner,@MsgSendUser,#message_rsc=necamulet_drops);
          Send(Send(poOwner,@GetOwner),@NewHold,#what=self,
                #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol),
@@ -1394,6 +1458,8 @@ messages:
       {
          return FALSE;
       }
+	  
+	  Send(self, @LoseUndeadSoldier);
 
       return TRUE;
    }

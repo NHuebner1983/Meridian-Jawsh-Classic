@@ -25,12 +25,11 @@ When a client connects to your server, this key is checked. If the keys do not m
 
 Play Meridian 59
 --------------
-This repository is for the "Server 105" version of Meridian 59.
+This repository is for the "Server 420" version of Meridian 59.
 You can create an account for this server and download the client on
-the [server 105 website] (https://www.meridiannext.com/play/). Note that this
+the [server 420 website] (https://meridian59.us). Note that this
 repository is for the "classic" version of the client, the Ogre client
-repository is at https://github.com/cyberjunk/meridian59-dotnet. A list of known
-servers is kept on the [105 website](https://www.meridiannext.com/community/).
+repository is at https://github.com/cyberjunk/meridian59-dotnet. 
 
 
 Contribute to Meridian 59 development

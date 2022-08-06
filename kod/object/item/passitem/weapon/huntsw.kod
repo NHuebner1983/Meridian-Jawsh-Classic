@@ -141,7 +141,7 @@ properties:
    piKarmaWorthyThreshold = -30
 
    piAttack_type = ATCK_WEAP_SLASH
-   piAttack_Spell = ATCK_SPELL_HUNTERSWORD
+   piAttack_Spell = ATCK_SPELL_HOLY
 
    pbCounted = FALSE
    pbCheapDeath = FALSE
@@ -157,6 +157,11 @@ messages:
       propagate;
    }
 
+   GetBaseSpellModifier(oSpell=$)
+   {
+      return 0;
+   }
+   
    // If the SOTH does not have an owner, let's remove it from the system.
    Reset()
    {
@@ -200,6 +205,7 @@ messages:
          // Post these so that they happen after 'what' actually becomes our owner.
          Post(self,@AdjustStats);
          Post(self,@AdjustColor);
+		 Post(self,@BecomeHolySoldier);
 
          ptHungerTimer = CreateTimer(self,@HungerTrigger,Send(Send(SYS,@GetNecromancerBalance),
                               @GetHungerInterval));
@@ -221,6 +227,37 @@ messages:
       }
 
       propagate;
+   }
+   
+   // We will obtain a Holy Soldier Shield &HolyShield
+   // and become part of Shal'ille's faction.
+   BecomeHolySoldier()
+   {
+      local oShield;
+	  
+      if poOwner <> $ AND IsClass(poOwner, &Battler)
+	  {
+	     oShield = Create(&HolyShield);
+		 
+	     Send(poOwner, @ResetFaction, #faction=FACTION_HOLY);
+         Send(poOwner, @RemoveFromInventory, #class=&HolyShield);
+		 Send(poOwner, @NewHold, #what=oShield);
+		 Send(poOwner, @TryUseItem, #what=oShield);
+		 Send(poOwner, @TryUseItem, #what=self);
+	  }
+	  
+      return;
+   }
+   
+   LoseHolySoldier()
+   {
+      if poOwner <> $ AND IsClass(poOwner, &Battler)
+	  {
+         Send(poOwner, @RemoveFromInventory, #class=&HolyShield);
+		 Send(poOwner, @ResetFaction, #faction=FACTION_NEUTRAL);
+	  }
+	  
+      return;
    }
 
    ReqNewOwner(what = $)
@@ -310,7 +347,7 @@ messages:
 
          return FALSE;
       }
-
+	  
       propagate;
    }
 
@@ -667,6 +704,7 @@ messages:
             }
 
             Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_lose_sword);
+            Send(poOwner,@ResignFaction);
             Send(Send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
 
             return;
@@ -747,6 +785,9 @@ messages:
       }
       else
       {
+	      // Lose the Holy Shield.
+		   Send(self,@LoseHolySoldier);
+		 
          // Instead of deleting the sword, we put it back in circulation.
          //Post(self,@Delete);
          Post(Send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
@@ -786,10 +827,11 @@ messages:
    Delete()
    {
       if poOwner = $
-	  {
-	     return;
-	  }
+	   {
+	      return;
+	   }
 	  
+	   Send(self,@LoseHolySoldier);
       Send(self,@NewOwner,#what=$);
 
       if pbCounted

@@ -90,7 +90,6 @@ resources:
    
    // Item color commands for targetted item   
    dm_color_command="color"
-   dm_get_robes_command = "get robes"
    
    dm_get_spells_command = "get spells"
    dm_get_skills_command = "get skills"
@@ -132,6 +131,10 @@ resources:
    dm_get_misc_command = "get misc"
    dm_get_weapons_command = "get weapons"
    dm_get_armor_command = "get armor"
+   dm_get_helmets_command = "get helmets"
+   dm_get_shields_command = "get shields"
+   dm_get_clothes_command = "get clothes"
+   dm_get_robes_command = "get robes"
    dm_get_food_command = "get food"
    dm_get_reagents_command = "get reagents"
    dm_get_gems_command = "get gems"
@@ -145,6 +148,13 @@ resources:
    dm_get_potions_command = "get potions"
    dm_get_scrolls_command = "get scrolls"
    dm_get_masks_command = "get masks"
+   dm_give_tp = "give tp"
+   dm_event_loot = "event loot"
+   dm_move_forward = "move forward"
+   dm_move_back = "move back"
+   dm_move_left = "move left"
+   dm_move_right = "move right"
+   
    dm_hidden_command = "hidden"
    dm_blank_command = "blank"
 
@@ -472,7 +482,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       Post(self,@DrawOffense);
@@ -846,7 +856,7 @@ messages:
    
    UserSay(string=$,type=$)
    {
-      local i;
+      local i, iInt, sString, oObject, rResource, lList;
 
       if type <> SAY_DM
       {
@@ -884,6 +894,82 @@ messages:
       {
          StringSubstitute(string,"gemote ","");
          Send(SYS,@AdminSystemMessage,#string=string,#bSound=TRUE,#bPrefix=FALSE);
+
+         return;
+      }
+
+      if StringContain(string, dm_move_forward)
+      {
+         Debug("Moving forward",(Nth(Send(self,@GetPos),1)+1),(Nth(Send(self,@GetPos),2)+1));
+         Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)+1),#new_col=(Nth(Send(self,@GetPos),2)+1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
+         Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)+1), #new_col=(Nth(Send(self,@GetPos),2)+1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
+         return;
+      }
+
+      if StringContain(string, dm_move_back)
+      {
+         Debug("Moving back",(Nth(Send(self,@GetPos),1)-1),(Nth(Send(self,@GetPos),2)-1));
+         Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)-1),#new_col=(Nth(Send(self,@GetPos),2)-1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
+         Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)-1), #new_col=(Nth(Send(self,@GetPos),2)-1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
+         return;
+      }
+
+      if StringContain(string, dm_move_left)
+      {
+         Debug("Moving left",(Nth(Send(self,@GetPos),1)+1),(Nth(Send(self,@GetPos),2)-1));
+         Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)+1),#new_col=(Nth(Send(self,@GetPos),2)-1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
+         Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)+1), #new_col=(Nth(Send(self,@GetPos),2)-1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
+         return;
+      }
+
+      if StringContain(string, dm_move_right)
+      {
+         Debug("Moving right",(Nth(Send(self,@GetPos),1)-1),(Nth(Send(self,@GetPos),2)+1));
+         Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)-1),#new_col=(Nth(Send(self,@GetPos),2)+1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
+         Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)-1), #new_col=(Nth(Send(self,@GetPos),2)+1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
+         return;
+      }
+
+      if StringContain(string, dm_give_tp)
+      {
+         StringSubstitute(string, dm_give_tp, "");
+
+         // Give amount specified by command
+         iInt = StringToNumber(string);
+
+         if iInt > 0
+         {
+            Debug(Send(self,@GetName),"gave out",iInt,"training points to everyone online");
+            foreach i in Send(SYS, @GetUsersLoggedOn)
+            {
+               Send(i, @AddTrainingPoints, #points=iInt, #report=TRUE, #bCap=FALSE);
+            }
+
+            ClearTempString();
+            AppendTempString("Out of the goodness of their hearts, the gods have given you some training points!");
+            Send(SYS,@AdminSystemMessage,
+               #string=GetTempString(),
+               #bSound=TRUE,
+               #bPrefix=FALSE);
+         }
+
+         return;
+      }
+
+      if StringContain(string, dm_event_loot)
+      {
+         StringSubstitute(string, dm_event_loot, "");
+
+         // Give amount specified by command
+         iInt = StringToNumber(string);
+
+         if iInt > 0
+         {
+            Debug(Send(self,@GetName),"created event loot with",iInt,"items from RID_GODROOM chest");
+            oObject = Create(&EventLoot);
+            Send(oObject, @SetLoot, #who=self, #count=iInt);
+            Send(oObject, @Delete);
+         }
 
          return;
       }
@@ -1547,7 +1633,7 @@ messages:
                Send(self,@MsgSendUser,#message_rsc=dm_mortal);
             }
 
-            Send(poOwner,@SomethingChanged,#what=self);
+            Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
             return;
          }
@@ -1567,7 +1653,7 @@ messages:
                Send(self,@MsgSendUser,#message_rsc=dm_immortal);
             }
 
-            Send(poOwner,@SomethingChanged,#what=self);
+            Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
             return;
          }
@@ -2080,7 +2166,7 @@ messages:
       }
 
       // Do this so that our name changes properly.
-      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
 
       return;
    }
@@ -2701,7 +2787,7 @@ messages:
 
          if poOwner <> $ AND alldone
          {
-            Send(poOwner,@SomethingChanged,#what=self);
+            Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
          }
 
          return;
@@ -2804,6 +2890,22 @@ messages:
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_ARMOR);
       }
+      else if StringEqual(string,dm_get_helmets_command)
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_HELMET);
+      }
+      else if StringEqual(string,dm_get_shields_command)
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_SHIELD);
+      }
+      else if StringEqual(string,dm_get_clothes_command)
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_CLOTHES);
+      }
+      else if StringEqual(string,dm_get_robes_command)
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_ROBES);
+      }
       else if StringEqual(string,dm_get_food_command)
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_FOOD);
@@ -2870,20 +2972,119 @@ messages:
 
    GetOneOfEach(type=ITEMTYPE_MISC)
    {
-      local lTemplate, i, iNumber;
+      local oItem, lTemplate, i, iNumber, bIsHelmet, bIsShield, bIsClothes, bIsRobes;
 
       iNumber = 100;
       if type = ITEMTYPE_MONEY
       {
-         iNumber = 250000;
+         iNumber = 10000000;
       }
+	  
+	  bIsHelmet = FALSE;
+	  bIsShield = FALSE;
+	  bIsClothes = FALSE;
+	  bIsRobes = FALSE;
+	  
+	  if type = ITEMTYPE_HELMET
+	  {
+	     bIsHelmet = TRUE;
+		 type = ITEMTYPE_ARMOR;
+	  }
+
+	  if type = ITEMTYPE_SHIELD
+	  {
+	     bIsShield = TRUE;
+		 type = ITEMTYPE_ARMOR;
+	  }
+	  
+	  if type = ITEMTYPE_CLOTHES
+	  {
+	     bIsClothes = TRUE;
+		 type = ITEMTYPE_ARMOR;
+	  }
+	  
+	  if type = ITEMTYPE_ROBES
+	  {
+	     bIsRobes = TRUE;
+		 type = ITEMTYPE_ARMOR;
+	  }
 
       lTemplate = Send(SYS,@GetItemTemplates);
       foreach i in lTemplate
       {
-         if Send(i,@IsItemType,#type=type)
-            AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
+         if bIsShield OR bIsHelmet OR bIsClothes OR bIsRobes OR (Send(i,@IsItemType,#type=type)
+            AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
          {
+		    // Normal Armor will prevent all of this extra stuff from surfacing.
+		    if NOT bIsShield 
+			   AND NOT bIsHelmet 
+			   AND NOT bIsClothes 
+			   AND NOT bIsRobes 
+			   AND type = ITEMTYPE_ARMOR
+			{
+			   if IsClass(i, &Helmet) 
+			      OR IsClass(i, &Shield) 
+				  OR IsClass(i, &FaceMask)
+				  OR IsClass(i, &ShirtBase)
+				  OR IsClass(i, &DiscipleRobe)
+				  OR IsClass(i, &LightDiscipleRobe)
+				  OR IsClass(i, &TankTop)
+				  OR IsClass(i, &Pants)
+			   {
+			      continue;
+			   }
+			}
+			
+            if bIsHelmet
+			{
+			   if NOT IsClass(i, &Helmet)
+			   {
+			      continue;
+			   }
+			}
+
+		    if bIsShield
+			{
+			   if NOT IsClass(i, &Shield)
+			   {
+			      continue;
+			   }
+			}
+
+		    if bIsClothes
+			{
+			   if NOT IsClass(i, &Pants) AND NOT IsClass(i, &Shirt) AND NOT IsClass(i,&RoyalShirt) AND NOT IsClass(i,&TankTop)
+			   {
+			      continue;
+			   }
+			}
+
+		    if bIsRobes
+			{
+			   if NOT IsClass(i, &DiscipleRobe) AND NOT IsClass(i, &LightDiscipleRobe)
+			   {
+			      continue;
+			   }
+			   			   
+			   // Create all schools!
+               Send(self,@NewHold,#what=Create(GetClass(i),#school=1,#number=1,#oDMCreator=self));
+               Send(self,@NewHold,#what=Create(GetClass(i),#school=2,#number=1,#oDMCreator=self));
+               Send(self,@NewHold,#what=Create(GetClass(i),#school=3,#number=1,#oDMCreator=self));
+               Send(self,@NewHold,#what=Create(GetClass(i),#school=4,#number=1,#oDMCreator=self));
+               Send(self,@NewHold,#what=Create(GetClass(i),#school=5,#number=1,#oDMCreator=self));
+               Send(self,@NewHold,#what=Create(GetClass(i),#school=6,#number=1,#oDMCreator=self));
+			   
+			   break;
+			}
+			
+			if IsClass(i,&Tanktop)
+			{
+			   // Create an exotic tanktop (undershirt) - Female Bra.
+			   oItem = Create(GetClass(i),#number=iNumber,#oDMCreator=self);
+			   Send(oItem, @Exotic);
+               Send(self,@NewHold,#what=oItem);
+			}
+
             Send(self,@NewHold,#what=Create(GetClass(i),#number=iNumber,
                                           #oDMCreator=self));
          }
@@ -3423,7 +3624,7 @@ messages:
 
       if poOwner <> $
       {
-         Send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self,#force=TRUE);
       }
 
       Send(self,@SetSkinTranslation,#translation=135);

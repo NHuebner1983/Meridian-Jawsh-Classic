@@ -168,9 +168,15 @@ messages:
 
    ActivateScenario()
    {
+      // Shal'ille and Queen Venya'Cyr require you to join their faction
+      // and do Soldier Shield quest to obtain the Soth/Ao3 now.
+      Debug("Soth/AO3 regenerative systems disabled (Faction Controlled Now).");
+
+      return;
+
       if pbScenarioActivated
       {
-         Debug("Tried to activate Necromancer/Hunter Scenario more than once!");
+         //Debug("Tried to activate Necromancer/Hunter Scenario more than once!");
 
          return;
       }
@@ -206,6 +212,7 @@ messages:
 	  {
 	     pbStartupDistribution = TRUE;
 		 
+       // We're turning off immediate regeneration.
 	     // Let's get some AO3's and SoTHs out!
 	     Send(self,@GenerateAmulet);
 	     Send(self,@GenerateAmulet);
@@ -227,9 +234,11 @@ messages:
    DeactivateScenario()
    "Admin supported. Disable the necromancer / hunter scenario"
    {
+      Send(self, @DeleteOperations);
+      
       if NOT pbScenarioActivated 
       { 
-         Debug("Tried to deactivate Necromancer/Hunter Scenario without it active!");
+         //Debug("Tried to deactivate Necromancer/Hunter Scenario without it active!");
 
          return;
       }
@@ -614,6 +623,13 @@ messages:
 
    Delete()
    {
+      Send(self, @DeleteOperations);
+
+      return;
+   }
+
+   DeleteOperations()
+   {
       Send(self,@DeleteOrphanArtifacts);
       Send(self,@ClearNecromancerGuild);
 
@@ -758,7 +774,7 @@ messages:
       piNumAmuletsGenerated = piNumAmuletsGenerated - 1;
       if piNumAmuletsGenerated < 0
       {
-         Debug("Miscounted amulets somehow;  count less than zero.");
+         Debug("Miscounted amulets somehow: count less than zero.");
          piNumAmuletsGenerated = 0;
       }
 
@@ -777,7 +793,7 @@ messages:
       piNumSwordsGenerated = piNumSwordsGenerated - 1;
       if piNumSwordsGenerated < 0
       {
-         Debug("Miscounted swords somehow;  count less than zero.");
+         Debug("Miscounted swords somehow: count less than zero.");
          piNumSwordsGenerated = 0;
       }
 

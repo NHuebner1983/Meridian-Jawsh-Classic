@@ -38,7 +38,7 @@ classvars:
 
    vrShield_window_overlay = $
    vrShield_overlay = $
-
+   viItem_type = ITEMTYPE_SHIELD
    viBroken_group = 4
    vbShow_condition = TRUE
    vrCondition_exc = shield_condition_exc 
@@ -218,6 +218,7 @@ messages:
       iFlags = piItem_flags & ITEM_PALETTE_MASK;
       if iFlags <> 0
       {
+	     Debug("Flags",iFlags,Send(self,@GetName));
          AddPacket(1,ANIMATE_TRANSLATION, 1,iFlags);
       }
 

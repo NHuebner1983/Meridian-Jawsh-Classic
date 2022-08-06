@@ -16,9 +16,13 @@ constants:
 
 resources:
 
+	EventLoot_stolen = "~B~k[Event]~n ~B~v A %s has been stolen by a %s near %s."
+
 classvars:
 
 properties:
+
+    poLastMonsterChosen = $
 
 messages:
 
@@ -29,7 +33,7 @@ messages:
 
    GetRandomMonster(who = $)
    {
-		local i, oRoom, iRoom, sRoomName, lMonsters, iMonsterCount, oMonster, oMonsterChosen;
+		local i, iLoopProtect, oRoom, iRoom, sRoomName, lMonsters, iMonsterCount, oMonster, oMonsterChosen;
 		
 		oRoom = Send(who, @GetOwner);
 		iRoom = Send(oRoom,@GetRoomNum);
@@ -40,21 +44,31 @@ messages:
 		Debug("Room has", Length(lMonsters),"active");
 		
 		iMonsterCount = 1;
+		iLoopProtect = 0;
 		oMonsterChosen = $;
 		
 		Debug("Choosing a monster");
 		
 		while oMonsterChosen = $
 		{
+			iLoopProtect = iLoopProtect + 1;
+
+			if iLoopProtect > 100
+			{
+				Debug("Event Loot Loop Protection exceeded, did not pick a monster for the next loot.");
+				break;
+			}
+
 			foreach i in lMonsters
 			{
 				oMonster = First(i);
 				
-				if oMonster <> $ AND IsClass(oMonster, &Monster)
+				if oMonster <> $ AND IsClass(oMonster, &Monster) 
+				   AND (poLastMonsterChosen = $ OR poLastMonsterChosen <> oMonster)
 				{
 					iMonsterCount++;
 					
-					if Random(0, 5) = 1
+					if Random(0, Length(lMonsters)) = 1
 					{
 						oMonsterChosen = oMonster;
 					}
@@ -63,16 +77,16 @@ messages:
 			
 			if oMonsterChosen = $ AND iMonsterCount = 1
 			{
-				Debug("Not even monsters to start the event");
+				Debug("Not enough monsters to start the event");
 				break;
 			}
 		}
-		
-		if oMonsterChosen = $
+
+		if oMonsterChosen <> $
 		{
-			return $;
+			poLastMonsterChosen = oMonsterChosen;
 		}
-		
+
 		return oMonsterChosen;
    }
 
@@ -109,6 +123,8 @@ messages:
 							{
 								Send(oMonster, @NewHold, #what=c);
 								Debug("Gave", Send(c, @GetName),"to",Send(oMonster, @GetName));
+								Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
+               						#string=EventLoot_stolen,#parm1=Send(c, @GetName),#parm2=Send(oMonster,@GetName),#parm3=Send(Send(oMonster,@GetOwner),@GetName));
 							}
 							
 							if iGivenOut >= count 

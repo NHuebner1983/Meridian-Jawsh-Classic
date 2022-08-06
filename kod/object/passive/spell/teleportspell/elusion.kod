@@ -164,7 +164,7 @@ messages:
 
    SomethingSaidDuringTrance(who=$,string=$,lTargets = $)
    {
-      local lAllTargets, oGuildHall, sRoomName, bFound, oRoom, i, each_obj;
+      local lAllTargets, sRoomName, bFound, oRoom, i, each_obj;
 
       // Check if string is a location.  If it is, and the caster has
       // sufficient spellpower make it the target.  Get percent in the
@@ -175,20 +175,6 @@ messages:
       bFound = FALSE;
 
       lAllTargets = lTargets;
-
-      // Special bonus!  Warp to guild hall with high enough spellpower.
-      // Spellpower has to be high enough that you were already going to 5
-      // or more places.
-      if Length(lTargets) >= 5
-      {
-         oGuildHall = Send(who,@GetGuildHall);
-
-         if oGuildHall <> $
-            AND Send(who,@CanPlayerPvP)
-         {
-            lAllTargets = Cons(oGuildHall,lAllTargets);
-         }
-      }
 
       foreach oRoom in lAllTargets
       {
@@ -227,27 +213,20 @@ messages:
 
    GetLocations(iSpellpower=$,target=$)
    {
-      local lLocations, lAvailable, iNumLocations, oRoom, sLocations;
+      local lLocations, lAvailable, iNumLocations, oRoom, sLocations, oGuildHall;
 
       lLocations = [Send(SYS,@FindRoomByNum,#num=RID_TOS),
                     Send(SYS,@FindRoomByNum,#num=RID_MARION),
                     Send(SYS,@FindRoomByNum,#num=RID_BARLOQUE),
                     Send(SYS,@FindRoomByNum,#num=RID_CORNOTH),
                     Send(SYS,@FindRoomByNum,#num=RID_JASPER),
-                    Send(SYS,@FindRoomByNum,#num=RID_RAZA)];
+                    Send(SYS,@FindRoomByNum,#num=RID_RAZA),
+                    Send(SYS,@FindRoomByNum,#num=RID_KOC_INN)];
 
       lAvailable = $;
 
       // 84 spellpower for Island (7 locations, divide by 12)
       iNumLocations = Bound(iSpellPower/12,1,7);
-
-      if Send(Send(target,@GetOwner),@GetRegion) = RID_KOCATAN
-         OR iNumLocations = 7
-      {
-         lAvailable = Cons(Send(SYS,@FindRoomByNum,
-                           #num=RID_KOC_INN),lAvailable);
-         --iNumLocations;
-      }
 
       while iNumLocations > 0
       {
@@ -259,6 +238,20 @@ messages:
          lLocations = DelListElem(lLocations,oRoom);
 
          --iNumLocations;
+      }
+
+      // Special bonus!  Warp to guild hall with high enough spellpower.
+      // Spellpower has to be high enough that you were already going to 5
+      // or more places.
+      if Length(lAvailable) >= 5
+      {
+         oGuildHall = Send(target,@GetGuildHall);
+
+         if oGuildHall <> $
+            AND Send(target,@CanPlayerPvP)
+         {
+            lAvailable = Cons(oGuildHall,lAvailable);
+         }
       }
 
       return lAvailable;

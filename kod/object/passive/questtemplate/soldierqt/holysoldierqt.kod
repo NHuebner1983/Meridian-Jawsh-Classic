@@ -1,0 +1,150 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+/////////////////////////////////////////////////////////////////////////////////
+HolySoldierQuest is SoldierQuestTemplate
+// Quest nodes 211, 212, 213.
+// QNT_ID_HOLY_SOLDIER_ONE, QNT_ID_HOLY_SOLDIER_TWO, QNT_ID_HOLY_SOLDIER_THREE
+
+// QuestTemplate is
+// [ quest template index
+//   quest template object
+//   number of players,
+//   type of quest,
+//   eligible player restrictions,
+//   quest nodes,
+//   max number active,
+//   currently active quests,
+//   percent chance of scheduling (on timer firing)
+//   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+   
+   // TODO: Tyrant translate
+   include holysoldierqt.lkod
+
+   // Quest description.
+   holysoldier_icon_rsc = flaghinv.bgf
+   holysoldier_name_rsc = "Holy soldier shield quest"
+   holysoldier_desc_rsc = \
+     "Shal'ille will allow you to join the Holy Army, but first "
+      "you must prove your loyalty by slaying her enemies."
+
+   holysoldier_completed_rsc = \
+      "You have proven your worth, and are now a soldier in the Holy Army."
+
+   // Quest resources.
+   holy_faction_soldier_assign_1 =\
+      "I am in need of allies.  Please, prove your loyalty by smiting "
+      "%INDEF_MONSTER%MONSTER.  You should find one in the Ancient City of Brax. "
+      "Come back and let me know you are done."
+   holy_faction_soldier_assign_2 =\
+      "I am glad to see you have returned.  Please fight "
+      "%INDEF_MONSTER%MONSTER.  Tell me when you are done and you will "
+      "be made a soldier."
+   holy_faction_soldier_success =\
+      "It is good that we can count you as an ally.  Take this as "
+      "a symbol of your commitment."
+   holy_faction_soldier_failure =\
+      "You are not ready to join my army. Return if you should gain enough "
+      "strength to fight our enemy."
+
+classvars:
+
+   vrIcon = holysoldier_icon_rsc
+   vrName = holysoldier_name_rsc
+   vrDesc = holysoldier_desc_rsc
+
+   vrCompleted = holysoldier_completed_rsc
+
+   // The QST_ID constant for this quest.
+   viQuestID = QST_ID_HOLY_SOLDIER
+
+properties:
+
+   piPlayerRestrict \
+      = Q_PLAYER_KARMA_GOOD | Q_PLAYER_FACTION_HOLY | Q_PLAYER_NOTTRIED_RECENTLY | Q_PLAYER_PVP_ENABLED
+
+messages:
+
+   Constructor()
+   {
+      // Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_HOLY_SOLDIER_ONE, QNT_ID_HOLY_SOLDIER_TWO,
+                      QNT_ID_HOLY_SOLDIER_THREE];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      // Template #211 is 1st Holy Soldier Shield quest, say "soldier"
+      // QNT_ID_HOLY_SOLDIER_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+            #cargolist=[ faction_soldier_trigger ],
+            #quest_node_index=QNT_ID_HOLY_SOLDIER_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_HOLY_SOLDIER_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                        #iJob=MOB_ROLE_ROYALTY,#cNPC_class=&HolyLiege));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_HOLY_SOLDIER_ONE");
+      }
+
+      // Template #212 is 2nd Holy Soldier Shield quest, kill first faction soldier
+      // QNT_ID_HOLY_SOLDIER_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#NPC_modifier=QN_NPCMOD_SAME,
+               #questnode_type=QN_TYPE_MONSTER,#monsterlist=[&DaemonSkeleton],
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_HOLY_SOLDIER_TWO)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_HOLY_SOLDIER_TWO,
+               #new_hint=holy_faction_soldier_assign_1);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_HOLY_SOLDIER_TWO,
+               #new_hint=holy_faction_soldier_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_HOLY_SOLDIER_TWO");
+      }
+
+      // Template #213 is 3rd Holy Soldier Shield quest, kill second faction soldier
+      // QNT_ID_HOLY_SOLDIER_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#NPC_modifier=QN_NPCMOD_SAME,
+               #questnode_type=QN_TYPE_MONSTER,#monsterlist=[&NecromancerTroop],
+               #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &HunterSword, 1 ] ],
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_HOLY_SOLDIER_THREE)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_HOLY_SOLDIER_THREE,
+               #new_hint=holy_faction_soldier_assign_2);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_HOLY_SOLDIER_THREE,
+               #new_hint=holy_faction_soldier_success);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_HOLY_SOLDIER_THREE,
+               #new_hint=holy_faction_soldier_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_HOLY_SOLDIER_THREE");
+      }
+
+      return;
+   }
+
+end
+/////////////////////////////////////////////////////////////////////////////////

@@ -321,6 +321,14 @@ messages:
             #new_row=13,#new_col=27,#fine_row=48,#fine_col=16,
             #new_angle=ANGLE_SOUTH);
 
+      Send(self,@NewHold,#what=Create(&Chest),
+            #new_row=14,#new_col=29,#fine_row=48,#fine_col=16,
+            #new_angle=ANGLE_SOUTH);
+
+      Send(self,@NewHold,#what=Create(&Chest),
+            #new_row=14,#new_col=25,#fine_row=48,#fine_col=16,
+            #new_angle=ANGLE_SOUTH);
+
       propagate;
    }
 

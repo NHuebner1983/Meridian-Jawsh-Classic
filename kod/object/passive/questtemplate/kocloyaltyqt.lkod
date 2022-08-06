@@ -1,0 +1,21 @@
+kocloyalty_name_rsc = de "ko'catan loyalty quest"
+kocloyalty_desc_rsc = de \
+   "Cital, ko'Manka's troops need equipment, and he has requested that "
+   "you help the cause by bringing him some."
+kocloyalty_deliver_rsc = de \
+   "Cital, ko'Manka's troops need equipment, and he has requested that "
+   "you help the cause by bringing him %s%s to remain in favor."
+kocloyalty_completed = de \
+   "You have completed the Ko'catan Army loyalty quest and shown your "
+   "dedication for the cause."
+koc_standard2_assign = de \
+   "Ah, %NAME, my fellow soldier of the island.  My troops have need of more "
+   "equipment.  This war costs us much, and I do not have the luxury of a "
+   "large treasury like the other leaders do.  Bring me %INDEF_CARGO%CARGO "
+   "and I will not forget your loyalty."
+koc_standard2_success = de \
+   "Ah, excellent.  I will definitely put this to good use."
+koc_standard2_failure = de \
+   "Subject: You are not a true soldier of the Ko'catan Army\n"
+   "You have failed me when I needed you most.  Go crawling to one of the "
+   "other lieges, for I have no more use of one such as you."

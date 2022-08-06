@@ -46,7 +46,7 @@ classvars:
    viValue_average = 50
    viWeight = 10
    viBulk = 10
-
+   viItem_type = ITEMTYPE_CLOTHES
    viGround_group = 1
    viInventory_group = 2
 

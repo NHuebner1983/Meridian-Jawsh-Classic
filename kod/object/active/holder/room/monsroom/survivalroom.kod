@@ -30,11 +30,11 @@ constants:
    GOAL_MINIBOSSES = 3
    GOAL_KILL_FRIENDLY = 4
 
-   // 3 minutes to begin public survivals
-   PB_START_TIME = 180000
+   // 15 seconds to begin public survivals
+   PB_START_TIME = 15000
    
-   // 1 minute to begin other survivals
-   DEFLT_START_TIME = 30000
+   // 15 seconds to begin other survivals
+   DEFLT_START_TIME = 15000
    
    // Report goals every 1 minute
    REPORT_TIME = 60000
@@ -93,6 +93,8 @@ resources:
       "You must wait at least %i seconds after the creation of a Survival "
       "Arena before you may exit."
    survivalroom_user_say_leave = "leave survival"
+   survivalroom_public_waves_until_lockout = "~IPublic survival complete wave %i. In %i waves you will not be able to join. To join, visit an inn and type say join public survival.~I"
+
    round_begin_wav = gong.ogg
 
 classvars:
@@ -159,7 +161,7 @@ properties:
    piHasBegun = FALSE
 
    // Last level that players can join the public/guild arenas
-   piLastJoinLevel = 6
+   piLastJoinLevel = 50
 
    // Boolean for resource restoration on level completion.
    pbRestoreResources = TRUE
@@ -306,8 +308,7 @@ messages:
                             [&DeathSpider, 3],
                             [&DragonFly, 3],
                             [&Avar, 3],
-                            [&AvarShaman, 3],
-                            [&DuskRat, 3],
+                            [&DuskRat, 6],
                             [&EvilEnt, 3],
                             [&Iceperson, 3]];
 
@@ -335,8 +336,7 @@ messages:
                             [&DeathSpider, 3],
                             [&DragonFly, 3],
                             [&Avar, 3],
-                            [&AvarShaman, 3],
-                            [&DuskRat, 3],
+                            [&DuskRat, 6],
                             [&EvilEnt, 3],
                             [&Iceperson, 3],
                             [&MolluskMonster, 3],
@@ -367,16 +367,14 @@ messages:
                     [&DeathSpider, 3],
                     [&DragonFly, 3],
                     [&Avar, 3],
-                    [&AvarShaman, 3],
-                    [&DuskRat, 3],
+                    [&DuskRat, 6],
                     [&EvilEnt, 3],
                     [&Iceperson, 3],
                     [&MolluskMonster, 3],
                     [&NarthylWorm, 3],
                     [&DaemonSkeleton, 3],
                     [&AvarChieftain, 3],
-                    [&GiantRatSoldier, 3],
-                    [&StoneTroll, 3]];
+                    [&GiantRatSoldier, 6]];
 
       plBosses = [&EarthElementalChampion,
                   &FireElementalChampion,
@@ -391,6 +389,7 @@ messages:
 
       plMinibosses = [&GroundWormQueen,
                       &OrcPitBoss,
+					  &GiantDaemonSkeleton,
                       &DragonFlyQueen,
                       &Shadowbeast,
                       &SpiderQueen,
@@ -413,9 +412,10 @@ messages:
                         [&DaemonMask,40],
                         [&FeyMask,50],
                         [&XeoMask,60],
-                        [&KriipaMask,70],
-                        [&StoneTrollMask,80],
-                        [&CowMask,90],
+                        [&FarenCharm,100],
+                        [&RiijaCharm,100],
+                        [&ShalilleCharm,100],
+                        [&QorCharm,100],
                         [&KraananCharm,100]];
 
       Send(self,@RecalcLightAndWeather);
@@ -424,6 +424,27 @@ messages:
       piCreationTime = GetTime();
 
       propagate;
+   }
+
+   AnnounceRemainingWavesToJoinPublicSurvival()
+   "This will announce to the server how many waves are left until players can join."
+   {
+      local iRemaining;
+
+      iRemaining = 0;
+
+      if piPublic
+      {
+         iRemaining = Bound(piLastJoinLevel - piLevel, 0, piLastJoinLevel - 1);
+      }
+
+      if iRemaining > 0
+      {
+         // Players have this many waves until they can't join.
+         Send(&Player,@MsgSendUser,#message_rsc=survivalroom_public_waves_until_lockout,#parm1=piLevel,#parm2=iRemaining);
+      }
+
+      return;
    }
 
    InitiateNextLevel(timer=$)
@@ -477,6 +498,8 @@ messages:
             Send(First(i),@MsgSendUser,#message_rsc=begin_level,#parm1=piLevel);
          }
       }
+
+      Send(self,@AnnounceRemainingWavesToJoinPublicSurvival);
 
       plLevelGoals = $;
       plExtraLifeGoals = $;
@@ -1461,7 +1484,7 @@ messages:
 
    CountdownToBoot(who=$)
    {
-      plCrashProtection = Cons([who,CreateTimer(self,@CountdownBootUser,300000)],
+      plCrashProtection = Cons([who,CreateTimer(self,@CountdownBootUser,900000)],
                                plCrashProtection);
 
       if plParticipants <> $
@@ -1721,16 +1744,17 @@ messages:
 
       if StringEqual(string,survivalroom_user_say_leave)
       {
-         // Check if the room was just created.
-         if (GetTime() < piCreationTime + viCreationLeaveDelaySec)
-         {
-            Send(what,@MsgSendUser,#message_rsc=survivalroom_cant_leave_yet,
-                  #parm1=viCreationLeaveDelaySec);
-         }
-         else
-         {
+         // // Check if the room was just created.
+         // if (GetTime() < piCreationTime + viCreationLeaveDelaySec)
+         // {
+         //    Send(what,@MsgSendUser,#message_rsc=survivalroom_cant_leave_yet,
+         //          #parm1=viCreationLeaveDelaySec);
+         // }
+         // else
+         // {
+            // LEAVE AS FAST AS WE WANT!
             Post(self,@BootUser,#who=what);
-         }
+         // }
 
          return;
       }

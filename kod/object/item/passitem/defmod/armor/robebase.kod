@@ -70,6 +70,7 @@ classvars:
    viDefense_base = 20
 
    viUse_type = ITEM_USE_BODY | ITEM_USE_LEGS
+   viItem_type = ITEMTYPE_ARMOR
 
    vrIcon_male = robe_male_icon_rsc
    vrIcon_female = robe_female_icon_rsc
@@ -96,6 +97,8 @@ classvars:
 
 properties:
 
+   pbColorSet = FALSE
+
 messages:
 
    Constructor(translation = $,model = $, color = $)
@@ -120,10 +123,13 @@ messages:
 
          propagate;
       }
-
-      Send(self,@SetPaletteTranslation,
-            #translation=Send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_BLUE,
-                              #color2=XLAT_TO_SKIN1));
+      
+	  if NOT pbColorSet
+	  {
+         Send(self,@SetPaletteTranslation,
+               #translation=Send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_BLUE,
+                                 #color2=XLAT_TO_SKIN1));
+      }
 
       propagate;
    }

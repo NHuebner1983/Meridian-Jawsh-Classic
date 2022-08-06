@@ -883,7 +883,7 @@ messages:
       foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
-         Send(each_obj,@SomethingChanged,#what=what);
+         Send(each_obj,@SomethingChanged,#what=what,#force=(IsClass(each_obj, &Item)));
       }
 
       return;
@@ -992,6 +992,38 @@ messages:
       }
 
       return;
+   }
+
+   // We have equipped the item.
+   IsActive(oObj=$)
+   {
+      local i;
+
+      foreach i in plActive
+      {
+         if i = oObj
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
+   // The item is not equipped.
+   IsPassive(oObj=$)
+   {
+      local i;
+
+      foreach i in plPassive
+      {
+         if i = oObj
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
    }
 
    GetHolderActive()

@@ -567,7 +567,29 @@ properties:
 	bAutoAttacking = FALSE
 	bMonsterHuntReady = FALSE
 	iMonsterTimers = 0
-	
+	ptEraseTarget = $
+   poIgnoreLastTarget = $
+   
+   // Prevent the client from unnecessary updates.
+   piLastDrawnHealth = 0
+   piLastDrawnVigor = 0
+   piLastDrawnMana = 0
+   piLastDrawnMight = 0
+   piLastDrawnIntellect = 0
+   piLastDrawnStamina = 0
+   piLastDrawnAim = 0
+   piLastDrawnAgility = 0
+   piLastDrawnKarma = 0
+   piLastDrawnTrainingPoints = 0
+   piLastDrawnCapacity = 0
+   piLastDrawnBulk = 0
+   piLastDrawnMysticism = 0
+   piLastDrawnOffense = 0
+   piLastDrawnDefense = 0
+   piLastDrawnArmor = 0
+   plLastDrawnResistance = $
+   pbLightingSent = FALSE
+
 messages:
 
    Constructor(name = $,icon = $)
@@ -818,6 +840,8 @@ messages:
    {
       local i, sGuild, oBRoom, oHRoom;
 
+      Send(self, @ResetMonsterChasers);
+      
       poSession = session_id;
       pbLogged_on = TRUE;
 
@@ -3155,7 +3179,7 @@ messages:
 
       // Send the lighting information.
       Send(what,@SendLightingInformation);
-
+      
       if show_type = SHOW_LOOK
       {
          Send(what,@SendLookAnimation);
@@ -3957,6 +3981,8 @@ messages:
          iDx, iDy, iMoveLength, iMaxMoveRun, 
          iQflags, iRflags, iHeightF, iHeightFWD, iHeightC, iServerID;
 
+      piLastMoved = GetTime();
+
       //
       // 1.1 Get current position values
       //
@@ -3985,7 +4011,9 @@ messages:
       // 2. Do not allow any moves if player is marked as not allowed to move or 
       //    if destination is outside of the map.
       //
-      if (piFlags & PFLAG_NO_MOVE) OR NOT (iRflags & LIR_SECTOR_INSIDE)
+      if ((piFlags & PFLAG_NO_MOVE) OR NOT (iRflags & LIR_SECTOR_INSIDE))
+         AND NOT bMonsterMode
+         AND NOT IsClass(self, &DM)
       {
          // Reset position
          Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
@@ -4163,10 +4191,11 @@ messages:
             AND iRoomNum <= RID_GUILDH_MAX)
          OR iRoomNum = RID_I9
       {
-         if NOT Send(poOwner,@IsMoveOK,
-                  #old_row=iRow,#old_col=iCol,#old_fine_row=iFineRow,
-                  #old_fine_col=iFineCol,#new_row=new_row,#new_col=new_col,
-                  #new_fine_row=fine_row,#new_fine_col=fine_col,#who=self)
+         if NOT IsClass(self, &DM) 
+            AND NOT Send(poOwner,@IsMoveOK,
+                     #old_row=iRow,#old_col=iCol,#old_fine_row=iFineRow,
+                     #old_fine_col=iFineCol,#new_row=new_row,#new_col=new_col,
+                     #new_fine_row=fine_row,#new_fine_col=fine_col,#who=self)
          {
             // Rooms now handle logging, for customized debug messages.
             // Reset position
@@ -4228,6 +4257,8 @@ messages:
       //
       // 9. Process the move
       //
+      //Debug(Send(self,@GetName),"moving to",new_row,new_col);
+
       Send(poOwner,@SomethingMoved,#what=self,
             #new_row=new_row,#new_col=new_col,
             #fine_row=fine_row,#fine_col=fine_col,
@@ -5340,6 +5371,18 @@ messages:
       }
 
       if type = SAY_NORMAL
+      {
+         if Send(self,@GetServant) <> $
+         {
+            if Send(Send(self,@GetServant), @ServantHandleSay, #what=self, #type=type, #string=string)
+            {
+               // Servant responded.
+               return;
+            }
+         }
+      }
+
+      if type = SAY_NORMAL
          OR type = SAY_EMOTE
          OR type = SAY_DM
       {
@@ -6364,7 +6407,7 @@ messages:
       }
 
       Send(self,@TryUseItem,#what=what);
-
+      
       return;
    }
 
@@ -8102,6 +8145,8 @@ messages:
    {
       if (what = self)
       {
+         Send(self, @ResetMonsterChasers);
+
          // Phase our evil twin back in, if we have one.
          if (poEvilTwin <> $)
          {
@@ -8168,9 +8213,9 @@ messages:
    }
 
    SomethingMoved(what=$, new_row=$, new_col=$, fine_row = $, fine_col = $,
-                  cause = $, speed = 0)
+                  cause = $, speed = 0, force = FALSE)
    {
-      local iRow,iCol,lPos;
+      local iRow,iCol,lPos,iSpeed;
 
       if IsClass(what,&DM)
          AND Send(what,@IsDMStealthed)
@@ -8181,7 +8226,7 @@ messages:
 
       if pbLogged_on
       {
-         if what <> self OR cause <> CAUSE_USER_INPUT
+         if force OR ((IsClass(self,&DM) OR bMonsterMode) AND cause <> CAUSE_USER_INPUT) OR (what <> self OR cause <> CAUSE_USER_INPUT)
          {
             AddPacket(1,BP_MOVE, 4,what,
                       2,new_row*FINENESS+fine_row, 2,new_col*FINENESS+fine_col,
@@ -8217,7 +8262,7 @@ messages:
       if pbLogged_on
       {
          // Need to set new angle of object somewhere
-         if (what <> self or cause <> CAUSE_USER_INPUT)
+         if IsClass(self,&DM) OR bMonsterMode OR (what <> self or cause <> CAUSE_USER_INPUT)
          {
             AddPacket(1,BP_TURN,4,what,2,new_angle);
             SendPacket(poSession);
@@ -8559,7 +8604,7 @@ messages:
       propagate;
    }
 
-   SomethingChanged(what = $)
+   SomethingChanged(what = $, force = FALSE)
    {
       local rName, rIcon;
 
@@ -8588,7 +8633,6 @@ messages:
          }
          else
          {
-            // in the room
             Send(self,@ToCliObject,#what=what);
          }
 
@@ -8667,11 +8711,12 @@ messages:
 
    DrawHealth()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnHealth <> Send(self,@GetHealth)
       {
          AddPacket(1,BP_STAT,1,1);
          Send(self,@SendStatHealth);
          SendPacket(poSession);
+         piLastDrawnHealth = Send(self,@GetHealth);
       }
       
       return;
@@ -8687,11 +8732,12 @@ messages:
 
    DrawMana()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnMana <> Send(self,@GetMana)
       {
          AddPacket(1,BP_STAT,1,1);
          Send(self,@SendStatMana);
          SendPacket(poSession);
+         piLastDrawnMana = Send(self,@GetMana);
       }
 
       return;
@@ -8707,11 +8753,12 @@ messages:
 
    DrawMight()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnMight <> Send(self,@GetMight)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatMight);
          SendPacket(poSession);
+         piLastDrawnMight = Send(self,@GetMight);
       }
 
       return;
@@ -8727,11 +8774,12 @@ messages:
 
    DrawIntellect()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnIntellect <> Send(self,@GetIntellect)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatIntellect);
          SendPacket(poSession);
+         piLastDrawnIntellect = Send(self,@GetIntellect);
       }
 
       return;
@@ -8748,11 +8796,12 @@ messages:
 
    DrawAgility()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnAgility <> Send(self,@GetAgility)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatAgility);
          SendPacket(poSession);
+         piLastDrawnAgility = Send(self,@GetAgility);
       }
 
       return;
@@ -8768,11 +8817,12 @@ messages:
 
    DrawStamina()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnStamina <> Send(self,@GetStamina)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatStamina);
          SendPacket(poSession);
+         piLastDrawnStamina = Send(self,@GetStamina);
       }
 
       return;
@@ -8788,11 +8838,12 @@ messages:
 
    DrawMysticism()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnMysticism <> Send(self,@GetMysticism)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatMysticism);
          SendPacket(poSession);
+         piLastDrawnMysticism = Send(self,@GetMysticism);
       }
 
       return;
@@ -8809,11 +8860,12 @@ messages:
 
    DrawAim()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnAim <> Send(self,@GetAim)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatAim);
          SendPacket(poSession);
+         piLastDrawnAim = Send(self,@GetAim);
       }
 
       return;
@@ -8829,11 +8881,12 @@ messages:
 
    DrawKarma()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnKarma <> (piKarma/100)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatKarma);
          SendPacket(poSession);
+         piLastDrawnKarma = (piKarma/100);
       }
 
       return;
@@ -8855,11 +8908,12 @@ messages:
 
    DrawTraining()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnTrainingPoints <> Send(self,@GetTrainingPoints)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatTraining);
          SendPacket(poSession);
+         piLastDrawnTrainingPoints = Send(self,@GetTrainingPoints);
       }
 
       return;
@@ -8879,11 +8933,12 @@ messages:
 
    DrawCapacity()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnCapacity <> (Send(self,@GetWeightHold) + Send(self,@GetWeightMax))
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatCapacity);
          SendPacket(poSession);
+         piLastDrawnCapacity = (Send(self,@GetWeightHold) + Send(self,@GetWeightMax));
       }
 
       return;
@@ -8904,11 +8959,12 @@ messages:
    
    DrawBulk()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnBulk <> (Send(self,@GetBulkHold) + Send(self,@GetBulkMax))
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatBulk);
          SendPacket(poSession);
+         piLastDrawnBulk = (Send(self,@GetBulkHold) + Send(self,@GetBulkMax));
       }
 
       return;
@@ -8928,11 +8984,12 @@ messages:
 
    DrawOffense()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnOffense <> Send(self,@GetOffense)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatOffense);
          SendPacket(poSession);
+         piLastDrawnOffense = Send(self,@GetOffense);
       }
 
       return;
@@ -8952,11 +9009,12 @@ messages:
 
    DrawDefense()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnDefense <> Send(self,@GetDefense)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatDefense);
          SendPacket(poSession);
+         piLastDrawnDefense = Send(self,@GetDefense);
       }
 
       return;
@@ -8976,11 +9034,12 @@ messages:
    
    DrawArmor()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnArmor <> Send(self,@SumDamageReduction)
       {
          AddPacket(1,BP_STAT,1,2);
          Send(self,@SendStatArmor);
          SendPacket(poSession);
+         piLastDrawnArmor = Send(self,@SumDamageReduction);
       }
 
       return;
@@ -9192,7 +9251,7 @@ messages:
    {
       local i, lResists;
 
-      if pbLogged_on
+      if pbLogged_on AND (plLastDrawnResistance = $ OR Send(SYS,@CompareLists,#lListA=plLastDrawnResistance,#lListB=Send(self,@GetCurrentResistances)))
       {
          lResists = Send(self,@GetCurrentResistances);
          for (i = 1; i < 14; ++i)
@@ -9201,6 +9260,8 @@ messages:
             Send(self,@SendStatResistances,#num=i,#lCurrentResistances=lResists);
             SendPacket(poSession);
          }
+
+         plLastDrawnResistance = lResists;
       }
 
       return;
@@ -9260,11 +9321,12 @@ messages:
 
    DrawVigor()
    {
-      if pbLogged_on
+      if pbLogged_on AND piLastDrawnVigor <> Send(self,@GetVigor)
       {
          AddPacket(1,BP_STAT, 1,1);
          Send(self,@SendStatVigor);
          SendPacket(poSession);
+         piLastDrawnVigor = Send(self,@GetVigor);
       }
 
       return;
@@ -10163,7 +10225,22 @@ messages:
    ResignFaction()
    "Cancel any active loyalty or faction quests."
    {
-      local i, iQID;
+      local i, iQID, oSoth, oAo3;
+
+      // AO3 / Soth holders need to lose their AO3 & Soth!
+      if Send(self, @PossessesA, #class=&HunterSword)
+      {
+         oSoth = Send(self, @FindHolding, #class=&HunterSword);
+         Send(self,@UnuseItem,#what=oSoth);
+         Send(oSoth, @OwnerKilled);
+      }
+
+      if Send(self, @PossessesA, #class=&NecromancerAmulet)
+      {
+         oAo3 = Send(self, @FindHolding, #class=&NecromancerAmulet);
+         Send(self,@UnuseItem,#what=oAo3);
+         Send(oAo3, @OwnerKilled);
+      }
 
       if plActiveQuests = $
       {
@@ -10176,9 +10253,15 @@ messages:
          if iQID = QST_ID_PRINCESS_SERVICE
             OR iQID = QST_ID_DUKE_SERVICE
             OR iQID = QST_ID_REBEL_SERVICE
+            OR iQID = QST_ID_KOC_SERVICE
             OR iQID = QST_ID_PRINCESS_SOLDIER
             OR iQID = QST_ID_DUKE_SOLDIER
             OR iQID = QST_ID_REBEL_SOLDIER
+            OR iQID = QST_ID_KOC_SOLDIER
+            OR iQID = QST_ID_HOLY_SERVICE
+            OR iQID = QST_ID_UNHOLY_SERVICE
+            OR iQID = QST_ID_HOLY_SOLDIER
+            OR iQID = QST_ID_UNHOLY_SOLDIER
          {
             // Post this, because it will edit the plActiveQuests list.
             Post(Nth(i,2),@DeadlineExpired);
@@ -11000,7 +11083,7 @@ messages:
    // Monster movements copied from Monster KOD 
    // to be able to control players in an AI-Like state.
    MoveTowards(oTarget = $, face_target=TRUE, face_away=FALSE,
-               to_master=FALSE)
+               to_master=FALSE, row_offset=1, col_offset=-1)
    {
 	  if NOT pbLogged_On
 	  {
@@ -11018,8 +11101,8 @@ messages:
 	  //Debug(Send(self,@GetName),"moving towards object",Send(oTarget,@GetName));
 	  
       return Send(self, @MoveTowardsCoords,
-                   #iRow=Send(oTarget,@GetRow),
-                   #iCol=Send(oTarget,@GetCol),
+                   #iRow=Send(oTarget,@GetRow) + row_offset,
+                   #iCol=Send(oTarget,@GetCol) + col_offset,
                    #iFineRow=Send(oTarget,@GetFineRow),
                    #iFineCol=Send(oTarget,@GetFineCol),
                    #face_target=TRUE);
@@ -11127,10 +11210,28 @@ messages:
 
       return;
    }
+   
+   SetTarget(oTarget=$)
+   {
+      poTarget = oTarget;
+
+      return oTarget;
+   }
+
+   IgnoreTarget()
+   {
+      poIgnoreLastTarget = poTarget;
+
+      Send(self, @SetTarget, #oTarget=$);
+
+      ptEraseTarget = $;
+
+      return;
+   }
 
    FindNextMonster()
    {
-	   local lActive, i, iFlags, oNewTarget, iClosest, iDistance;
+	   local lActive, i, iFlags, iIndex, oNewTarget, iClosest, iDistance, iSkipRandom;
 	   
 	   if NOT pbLogged_On
 	   {
@@ -11151,17 +11252,57 @@ messages:
 	   }
 	   
 	   iClosest = 1000000;
-	   
+	   iIndex = 0;
+
 	   foreach i in lActive
 	   {
+         iIndex = iIndex + 1;
+
+         // if iSkipRandom <> $ AND iSkipRandom > iIndex
+         // {
+         //    continue;
+         // }
+
+	      if IsClass(First(i),&Monster)
+		   {
+		      if IsClass(First(i),&Revenant) OR IsClass(First(i),&Reflection) OR IsClass(First(i),&Servant)
+			  {
+			     // Let's not fight Revenants, Reflections or Servants.
+			     continue;
+			  }
+		   }
+		   
 		   if IsClass(First(i),&Monster) AND Send(First(i),@GetCurrentState) <> 1
 		   {
+
+			   // if First(i) = poTarget AND (poIgnoreLastTarget = $ OR First(i) <> poIgnoreLastTarget)
+			   // {
+				//    // Do not change targets, we're already on the one from before...
+            //    // We'll set a 10 second timer to get rid of this target
+            //    if ptEraseTarget = $
+            //    {
+            //       Debug("Waiting 5 seconds, then ignoring this target...");
+            //       ptEraseTarget = CreateTimer(self, @IgnoreTarget, 5000);
+            //    }
+
+				//    Debug("same target",poTarget,Send(poTarget,@GetName));
+				   
+				//    return TRUE;
+			   // }
+			   
 			   if First(i) = poTarget
 			   {
-				   // Do not change targets, we're already on the one from before...
-				//Debug("same target",poTarget,Send(poTarget,@GetName));
+				   //Debug("same target",poTarget,Send(poTarget,@GetName));
 				   
 				   return TRUE;
+			   }
+
+			   if poOwner <> $ AND IsClass(poOwner, &MonsterRoom) AND Send(poOwner,@IsMiniBoss,#what=First(i)) OR Send(poOwner,@IsBoss,#what=First(i))
+			   {
+			      // This target is a mini boss, let's always go after them first.
+				  oNewTarget = First(i);
+				  
+				  break;
 			   }
 			   
 			   iFlags = Send(First(i),@GetObjectFlags,#what=self);
@@ -11177,6 +11318,15 @@ messages:
 				   }
 			   }
 		   }
+
+         // if oNewTarget = poTarget
+         //    OR (poIgnoreLastTarget <> $ AND oNewTarget = poIgnoreLastTarget)
+         // {
+         //    // We're trying to pick the same target or one we need to ignore, let's find a different one.
+         //    iSkipRandom = Random(iIndex, Length(lActive));
+         //    oNewTarget = $;
+         //    Debug("Continuing to a different target", iIndex, Length(lActive),iSkipRAndom);
+         // }
 	   }
 	   
 	   if oNewTarget <> $
@@ -11203,7 +11353,7 @@ messages:
 	   
 	   if poTarget <> $ AND NOT bAutoAttacking
 	   {
-		   tAutoAttack = CreateTimer(self,@AttackMonster,500);
+		   tAutoAttack = CreateTimer(self,@AttackMonster,1200);
 		   bAutoAttacking = TRUE;
 	   }
 	   
@@ -11241,30 +11391,34 @@ messages:
 	   {
 	       iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
 		   
-		   if iDistance <> $ AND iDistance < 2
+		   if iDistance <> $ AND iDistance < 20
 		   {
 		      // We need to be close enough to attack.
-		      bMonsterAttacked = Send(self,@UserAttack,#what=poTarget);
+		      bMonsterAttacked = Send(self,@UserAttack,#type=STROKE_NORMAL,#what=poTarget);
 		   
 		      if NOT bMonsterAttacked
 		      {
-			      // Probably can't see target
-			   Send(self,@MoveTowards,#oTarget=poTarget);
+			     // Probably can't see target
+              // Try some different angles...
+              Send(self,@MoveTowards, #oTarget=poTarget, #face_target=TRUE, 
+                 #face_away=FALSE,#to_master=FALSE, 
+                 #row_offset=Random(-1,1), 
+                 #col_offset=Random(-1,1));
 		      }
 		   }
 		   
 		   bAutoAttacking = TRUE;
-		   
-		   tAutoAttack = CreateTimer(self,@AttackMonster,500);
-		   
+
+         // Let's keep kickin' ass.
+         tAutoAttack = CreateTimer(self,@AttackMonster,1200);
 	   }
-	   else
-	   {
-		   bAutoAttacking = FALSE;
-		   tAutoAttack = $;
-	   }
-	   	   
-	   return;	   
+      else
+      {
+         // No monsters to attack, let's hang out for a few seconds...
+         tAutoAttack = CreateTimer(self,@AttackMonster,3000);
+      }
+
+	   return;
    }
    
    
@@ -11318,14 +11472,10 @@ messages:
 			   Send(self,@MoveTowards,#oTarget=poTarget);
 			   Send(self,@SendMonsterAttacks);
 		   }
-		   else
-		   {
-//			   Debug("no targets as monster");
-		   }
 	   }
 	   
 	   // Continue the automatic fighting cycle...
-	   Send(self,@AsMonsterContinue);
+	   Send(self,@AsMonsterContinue,#iInterval=1000);
 	   	   
 	   return;
    }
@@ -11341,15 +11491,20 @@ messages:
 
 	   Send(self,@StopBeingMonster);
 	   
-	   Debug(Send(self,@GetName),"Became monster");
+	   Debug("Became monster",Send(self,@GetName));
 	   	   
 	   bMonsterMode = TRUE;
 	   
-	   Send(self,@AsMonsterContinue);
+	   Send(self,@AsMonsterContinue,#iInterval=1000);
 	   
 	   return;
    }
    
+   HasBecomeMonster()
+   {
+      return bMonsterMode;
+   }
+
    StopBeingMonster()
    {
 	   if NOT bMonsterMode
@@ -11367,7 +11522,7 @@ messages:
 
 	   tAutoAttack = $;
 	   
-	   Debug("Stop being monster");
+	   Debug("Stopped being monster",Send(self,@GetName));
 
 	   return;
    }

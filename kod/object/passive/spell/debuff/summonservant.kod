@@ -49,13 +49,13 @@ classvars:
    viSpell_level = $
    
    // Cast time
-   viCast_time = 3000
+   viCast_time = 300
    
    // Default for all servant spells.
    viMana = 15
-   viChance_To_Increase = 30
+   viChance_To_Increase = 15
    viMeditate_ratio = 300
-   viSpellExertion = 80
+   viSpellExertion = 70
 
    vrSucceed_wav = summon_servant_class_sound
 
@@ -77,23 +77,6 @@ messages:
       return;
    }
 
-   CanPayCosts(who = $)
-   {
-      if Send(who,@GetVigor) < viSpellExertion
-      {
-	     Post(who,@MsgSendUser,#message_rsc=summon_servant_low_vigor);
-	     return FALSE;
-      }
-	  
-      if Send(who,@GetMana) < viMana
-      {
-	     Post(who,@MsgSendUser,#message_rsc=summon_servant_low_mana);
-	     return FALSE;
-      }
-	  
-	  return TRUE;
-   }
-   
    CanForget()
    {
       return FALSE;
@@ -112,7 +95,7 @@ messages:
 
    CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
-      local oServant, bExistingServant, playerRoom, iGenRow, iGenCol;
+      local oServant, bExistingServant, playerRoom, iGenRow, iGenCol, oServantType;
 	  
 	  // Only players can have servants.
 	  if IsClass(who, &Player) {
@@ -124,7 +107,8 @@ messages:
 		     Send(bExistingServant, @Delete);
 		  }
 		  
-		  oServant = Create(&Servant,#who=who,#oSpell=self,#iSpellNum=viSpell_num,#iSpellPower=iSpellPower);
+		  oServantType = Send(self, @GetServantType, #iSpellNum=viSpell_num);
+		  oServant = Create(oServantType,#who=who,#oSpell=self,#iSpellNum=viSpell_num,#iSpellPower=iSpellPower);
 
 		  iGenRow = Send(who,@GetRow);
 		  iGenCol = Send(who,@GetCol);
@@ -152,6 +136,33 @@ messages:
 	  }
 
       propagate;
+   }
+   
+   GetServantType(iSpellNum=$)
+   {
+      switch(iSpellNum)
+	  {
+	     case SID_RIIJA_SERVANT:
+		    return &ServRiija;
+		 break;
+	     case SID_KRAN_SERVANT:
+		    return &ServKran;
+		 break;
+	     case SID_SHAL_SERVANT:
+		    return &ServShal;
+		 break;
+	     case SID_FAREN_SERVANT:
+		    return &ServFaren;
+		 break;
+	     case SID_QOR_SERVANT:
+		    return &ServQor;
+		 break;
+	     case SID_JALA_SERVANT:
+		    return &ServJala;
+		 break;
+	  }
+	  
+	  return $;
    }
 
    EndEnchantment(who=$,report=TRUE,state=$)

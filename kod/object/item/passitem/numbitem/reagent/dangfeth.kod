@@ -32,8 +32,8 @@ classvars:
    vrName_plural = darkangelfeather_name_plural_rsc
 
    viValue_average = 150
-   viWeight = 2
-   viBulk = 4
+   viWeight = 1
+   viBulk = 1
 
 properties:
 

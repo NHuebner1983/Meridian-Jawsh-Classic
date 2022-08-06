@@ -1,0 +1,41 @@
+KocLiege_name_rsc = de "Cital ko'Manca"
+KocLiege_desc_rsc = de \
+   "As the one of the highest ranking officers in the Ko'catan Army, Cital "
+   "ko'Manca is serious and crisp in his duties. In peacetime these duties "
+   "include supervising the main gatehouse during daylight against actions "
+   "by enemies unknown. Cital ko'Manca is extraordinarily young to have "
+   "achieved such a high rank, but he is well respected for his fairness "
+   "and his adherence to military law."
+KocLiege_token_delivered_rsc = de \
+   "Returning this token will show the counselors my power is not to be "
+   "ignored. %s"
+KocLiege_koc_delivered_rsc = de \
+   "You are very loyal to my cause.  I thank you."
+KocLiege_neutral_delivered_rsc = de \
+   "Do you also oppose the tyranny of the current pretenders to the "
+   "Throne?  Join me."
+KocLiege_other_delivered_rsc = de \
+   "Does the yoke of your current liege restrict you so much that you "
+   "bring me such gifts?  Join us in our quest for a strong crown."
+KocLiege_toopowered_rsc = de \
+   "Currently I cannot bring another into my ranks for fear they will "
+   "swell beyond my control."
+KocLiege_already_have_spell = de \
+   "I believe you already have knowledge of the %s spell."
+KocLiege_no_murderer = de \
+   "I am a servant of the Law, and as such my conscience "
+   "will not allow me to help you.  Please be on your way."
+KocLiege_thanks = de \
+   "A less understanding officer might see this offer as a bribe, which is "
+   "very serious in Ko'catan.  Bribing a gate officer is a capital "
+   "offense.  But I know that all you really wanted to do is make is a "
+   "generous donation to the Kici'ca widows and orphans.  I'll see that "
+   "this `es there, and you'll be on your way."
+KocLiege_not_bullied = de \
+   "You think you can just threaten me? I should have you thrown in jail!"
+KocLiege_bullied = de \
+   "You think you can just threaten me? Is that a servant of magical arts? "
+   "I am no match for you and your servant. "
+   "You may pass, but keep an eye on that servant. Many corrupt wizards seek them out to do their bidding. "
+   "And take your pathetic servant with you, it's stinking up my guard post. "
+KocLiege_bullied_said = de "threaten"

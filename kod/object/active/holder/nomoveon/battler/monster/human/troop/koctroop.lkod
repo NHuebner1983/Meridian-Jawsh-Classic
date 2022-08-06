@@ -1,0 +1,4 @@
+KocTroop_name_rsc = de "Ein Soldat der Armee der Prinzessin"
+KocTroop_desc_rsc = de \
+   "Dieser Soldat trägt mit Stolz die Farben der Prinzessin."
+KocTroop_dead_name_rsc = de "Ein toter Soldat"
