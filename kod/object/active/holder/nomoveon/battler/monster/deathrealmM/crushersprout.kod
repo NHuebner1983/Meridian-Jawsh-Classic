@@ -19,9 +19,15 @@ resources:
    crushersprout_name_rsc = "crusher sprout"
    crushersprout_icon_rsc = crusher.bgf
    crushersprout_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. crusher sprout are known to be much more  "
-      "violent then friendly.  "
+      "This overgrown fly trap seeks out more than just bugs. "
+      "After a billion years of evolution, its large mouth has grown "
+      "thick spikes, etched with sharp teeth along the spikes. It will chew "
+      "through the strongest armor, and at the center of its jaw, " 
+      "a large acid-dripping tooth will eject a powerful venom. "
+      "You would certainly lose a limb if you remain in its proximity. "
+      "If you are unlucky enough to be injected by its venom, "
+      "you may be better off letting it kill you than carrying on "
+      "with its venom in your veins."
 
 
    crushersprout_dead_icon_rsc = crusherX.bgf

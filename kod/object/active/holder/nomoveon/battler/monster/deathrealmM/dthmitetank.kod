@@ -19,10 +19,13 @@ resources:
    Death_Mite_Tank_name_rsc = "death mite tank"
    Death_Mite_Tank_icon_rsc = dthmitea.bgf
    Death_Mite_Tank_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. Death mite tank are known to be much more  "
-      "violent then friendly.  "
-
+      "This death mite contains the soul of a reincarnated Ko'catan soldier. "
+      "Reincarnated by Kraanan, it has been protected by an armor of gort."
+      "It seeks out water, but finds that blood is just as satisfying."
+      "These creatures have a strong cerebral constitution, making them "
+      "the perfect vessel of a damned soul. They are commonly used by "
+      "magicians to return fallen masters from the dead. The strong armor "
+      "and barrier of magic make it a difficult foe to conquor."
 
    Death_Mite_Tank_dead_icon_rsc = dthmiteaX.bgf
    Death_Mite_Tank_dead_name_rsc = "slain death mite tank"

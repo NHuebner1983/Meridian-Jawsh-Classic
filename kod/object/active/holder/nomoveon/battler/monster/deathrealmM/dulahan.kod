@@ -19,10 +19,11 @@ resources:
    dulahan_name_rsc = "dulahan"
    dulahan_icon_rsc = dulahan.bgf
    dulahan_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. dulahans are known to be much more  "
-      "violent then friendly.  "
-
+      "This dark creature wields the head of its victim. "
+      "The mace-like sculpture is made of molten lava found "
+      "scattered throughout the death realm. Their armor is "
+      "a classic combination of death knight and pieces "
+      "gathered from the remains of Ko'catan soldiers."
 
    dulahan_dead_icon_rsc = dulahanX.bgf
    dulahan_dead_name_rsc = "slain dulahan"

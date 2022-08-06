@@ -280,7 +280,7 @@ messages:
       oTarget = Send(mob,@GetTarget);
 	  
       //// Sanity check
-      if what = $
+      if what = $ OR victim = $
       {
          //Debug("BAD: null <what> in SomethingAttacked.");
       }

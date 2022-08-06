@@ -19,10 +19,15 @@ resources:
    Death_Mite_Mage_name_rsc = "death mite mage"
    Death_Mite_Mage_icon_rsc = dthmitec.bgf
    Death_Mite_Mage_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. Death mite mage are known to be much more  "
-      "violent then friendly.  "
-
+      "A dark reincarnated cross-breed of a Qor master, "
+      "mutant ant and crusher sprout. This creature is one of the "
+      "deadliest in the land. Cursed by evil, it has the intelligence "
+      "of a human, dark aspirations of a Qor master, and natural "
+      "taste for blood. It delivers a strong acid-like bite which "
+      "breaks down armor, clothing, skin and bone. It seeks out water, "
+      "but occasionally will return to its human desire to seek out "
+      "blood of the innocent. It finds that encounters with positive "
+      "karma foes are repulsive and only angers it more."
 
    Death_Mite_Mage_dead_icon_rsc = dthmitecX.bgf
    Death_Mite_Mage_dead_name_rsc = "slain death mite mage"

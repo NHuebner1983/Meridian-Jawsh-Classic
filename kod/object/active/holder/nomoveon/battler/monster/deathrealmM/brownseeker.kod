@@ -14,15 +14,17 @@ constants:
 
    include blakston.khd
 
+   EXPIRE_SELF_AT = 360000 // self-delete in milliseconds (5 minutes)
+
 resources:
    
    BrownSeeker_name_rsc = "brown seeker"
    BrownSeeker_icon_rsc = seekerc.bgf
    BrownSeeker_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. Brown seekers are known to be much more  "
-      "violent then friendly.  "
-
+      "Summoned from hell, this seeker has been purposed "
+      "to find souls to devour. It emits a loud sonar-like "
+      "attack, deafening those around it. If a prey is not found "
+      "within a certain amount of time, it may return to hell and rest."
 
    BrownSeeker_dead_icon_rsc = seekercX.bgf
    BrownSeeker_dead_name_rsc = "slain brown seeker"
@@ -63,11 +65,18 @@ classvars:
 properties:
 
    piAnimation = ANIM_IDLE
-
    piDrawEffectFlag = OF_BOUNCING
+   ptSelfDelete = $
 
 messages:
 
+   Constructor()
+   {
+      ptSelfDelete = CreateTimer(self, @Delete, EXPIRE_SELF_AT);
+
+      propagate;
+   }
+   
    Constructed()
    {
       plResistances = [ [-ATCK_SPELL_ACID, 80 ],
@@ -79,6 +88,9 @@ messages:
 
    MonsterAttack(what = $)
    {
+      DeleteTimer(ptSelfDelete);
+      ptSelfDelete = CreateTimer(self, @Delete, EXPIRE_SELF_AT);
+
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_IDLE;

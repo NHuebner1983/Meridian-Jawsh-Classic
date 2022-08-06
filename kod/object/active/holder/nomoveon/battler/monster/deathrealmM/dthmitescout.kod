@@ -19,9 +19,11 @@ resources:
    Death_Mite_Scout_name_rsc = "death mite scout"
    Death_Mite_Scout_icon_rsc = dthmited.bgf
    Death_Mite_Scout_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. Death mite scout are known to be much more  "
-      "violent then friendly.  "
+      "This wandering creature requires a soul to be coherent in battle. "
+      "It seeks out water, but finds that blood is just as satisfying."
+      "These creatures have a strong cerebral constitution, making them "
+      "the perfect vessel of a damned soul. They are commonly used by "
+      "dark magicians to return fallen Qor masters from the dead."
 
 
    Death_Mite_Scout_dead_icon_rsc = dthmitedX.bgf

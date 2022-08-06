@@ -19,9 +19,11 @@ resources:
    Death_Mite_Soldier_name_rsc = "death mite soldier"
    Death_Mite_Soldier_icon_rsc = dthmiteb.bgf
    Death_Mite_Soldier_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. Death mite soldiers are known to be much more  "
-      "violent then friendly.  "
+      "This death mite contains the soul of a reincarnated Rebel soldier. "
+      "It seeks out water, but finds that blood is just as satisfying."
+      "These creatures have a strong cerebral constitution, making them "
+      "the perfect vessel of a damned soul. They are commonly used by "
+      "magicians to return fallen masters from the dead."
 
 
    Death_Mite_Soldier_dead_icon_rsc = dthmitebX.bgf

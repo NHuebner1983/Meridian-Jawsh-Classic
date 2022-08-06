@@ -19,9 +19,13 @@ resources:
    cyclops_name_rsc = "cyclops"
    cyclops_icon_rsc = cyclops.bgf
    cyclops_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. cyclopss are known to be much more  "
-      "violent then friendly.  "
+      "Standing nearly 20 feet tall, this unnatural dark magic breed "
+      "of orc and ogre stares at you with its single eye. It feels no "
+      "fear and will fight anything that enters its line of sight. "
+      "Its armor is made of thick deathscale armor collected from "
+      "dragons in the death realm. The heavy weapon it carries was "
+      "constructed from chimera and crusher sprout bones and is "
+      "bound together with dried hell wasp venom."
 
 
    cyclops_dead_icon_rsc = cyclopsX.bgf

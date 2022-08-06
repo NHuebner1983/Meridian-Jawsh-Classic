@@ -19,10 +19,11 @@ resources:
    Chimera_name_rsc = "chimera"
    Chimera_icon_rsc = chimera.bgf
    Chimera_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. Chimeras are known to be much more  "
-      "violent then friendly.  "
-
+      "This is a dark magic cross-breed of a hell hound and miniature black dragon. "
+      "It can trek long distances in a short amount of time, hide in "
+      "brush and bushes and deliver a potent venomous bite to subdue its prey. "
+      "Its versatility allows it to travel by land, in water and by air. Escaping "
+      "this creature is a challenging effort."
 
    Chimera_dead_icon_rsc = chimeraX.bgf
    Chimera_dead_name_rsc = "slain chimera"
@@ -41,7 +42,7 @@ classvars:
    vrDead_name = Chimera_dead_name_rsc
 
    viTreasure_type = TID_OGRE
-   viSpeed = SPEED_FAST
+   viSpeed = SPEED_VERY_FAST
    viAttributes = 0
    viLevel = 300
    viDifficulty = 9

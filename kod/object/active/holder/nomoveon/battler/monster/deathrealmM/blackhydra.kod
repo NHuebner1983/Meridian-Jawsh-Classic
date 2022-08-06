@@ -19,10 +19,11 @@ resources:
    blackhydra_name_rsc = "black hydra"
    blackhydra_icon_rsc = hydrab.bgf
    blackhydra_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. black hydras are known to be much more  "
-      "violent then friendly.  "
-
+      "This mythical creature is known for its dark scales and crushing bite. "
+      "Many knights can be found in its stomach. Evidently you see blades "
+      "protruding from its belly as living creatures tried escaping its "
+      "bowels. The acid in this creature's stomach seals its wounds almost "
+      "instantly, trapping the victim inside until it is decomposed."
 
    blackhydra_dead_icon_rsc = hydrabX.bgf
    blackhydra_dead_name_rsc = "slain black hydra"

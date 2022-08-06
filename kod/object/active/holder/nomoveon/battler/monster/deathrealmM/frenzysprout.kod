@@ -19,10 +19,12 @@ resources:
    frenzysprout_name_rsc = "frenzy sprout"
    frenzysprout_icon_rsc = frenzy.bgf
    frenzysprout_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. frenzy sprout are known to be much more  "
-      "violent then friendly.  "
-
+      "When angered, this sprout extends to 15 feet tall before it "
+      "attacks its prey. Its powerful jaws can rip through the strongest "
+      "armor and chew through deathscale armor with ease. This sprout is"
+      "a close relative to the crusher sprout. This particular species "
+      "is known for its brutal bites. It carries no venom, but can "
+      "easily rip you in half. "
 
    frenzysprout_dead_icon_rsc = frenzyX.bgf
    frenzysprout_dead_name_rsc = "slain frenzy sprout"

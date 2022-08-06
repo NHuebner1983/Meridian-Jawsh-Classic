@@ -19,10 +19,13 @@ resources:
    croco_name_rsc = "croco"
    croco_icon_rsc = croco.bgf
    croco_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. crocos are known to be much more  "
-      "violent then friendly.  "
-
+      "This scaley creature can easily be mistaken for sticks "
+      "while it travels through water. Its deathscale armor is strong enough "
+      "to withstand lava for extended periods of time. The elongated jaw "
+      "provides a secure bite to keep its prey from escaping its grasp. "
+      "Although this creature resembles a crocodile, it certainly has "
+      "attributes similar to deathscale dragons, but appears to be lacking "
+      "wings."
 
    croco_dead_icon_rsc = crocoX.bgf
    croco_dead_name_rsc = "slain croco"
