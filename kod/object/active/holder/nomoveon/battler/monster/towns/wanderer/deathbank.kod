@@ -28,6 +28,9 @@ resources:
       "souls....I know you have them...i can smell the death on you..let me keep the lost "
       "safe for you."
 
+   Lm_bnkr_did_withdraw_souls = \
+      "Here are your %i souls. Thank you for your business."
+
 classvars:
 
    vrName = Deathbanker_name_rsc
@@ -219,7 +222,7 @@ messages:
       // Send this message even if we gave the almost full one - players are
       // used to seeing this message on a successful transaction.
       Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-            #string=Lm_bnkr_did_withdraw,#parm1=amount);
+            #string=Lm_bnkr_did_withdraw_souls,#parm1=amount);
 
       Send(self,@AffectMood,#why=MOODMOD_BANK_WITHDRAWAL);
 
