@@ -1,0 +1,85 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Damion Schubert, November 1996
+
+GoldNecklace is Necklace
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   GoldNecklace_name_rsc = "golden necklace"
+   GoldNecklace_icon_rsc = GoldNecklace.bgf
+   GoldNecklace_desc_rsc = \
+   "At first glance this looks like an ordinary necklace. Altho one touch and you feel something "
+   "off... Nothing feel wrong., yet nothing feels right.. somthing is different. You dont feel so "
+   "bound to nature...infact it seems to make the wearer feel above mortal restraints.  "
+
+classvars:
+
+   vrName = GoldNecklace_name_rsc
+   vrIcon = GoldNecklace_icon_rsc
+   vrDesc = GoldNecklace_desc_rsc
+
+   viValue_average = 500
+
+   viBulk = 20
+   viWeight = 25
+   viMax_Disp_hits = 5
+
+   viGround_group = 2
+
+properties:
+
+   pbIn_use = FALSE
+
+   piDisp_hits = 0
+
+messages:
+
+   Constructor()
+   {
+      piDisp_hits = viMax_disp_hits;
+
+      propagate;
+   }
+
+   NewOwner()
+   {
+      piDisp_hits = viMax_disp_hits;
+
+      propagate;
+   }
+
+   DestroyDisposable()
+   {
+      if piDisp_Hits = 0
+      {
+           Send(self,@Delete);
+
+           return;
+      }
+      --piDisp_hits;
+
+      return;
+   }
+
+   GetMinimapDotFlags()
+   {
+      // Special item, add minimap dot.
+      return MM_RARE_ITEM;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

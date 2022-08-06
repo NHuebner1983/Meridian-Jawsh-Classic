@@ -5739,6 +5739,7 @@ messages:
       plItemTemplates = cons(create(&ShalilleCharm),plItemTemplates);
       plItemTemplates = cons(create(&QorCharm),plItemTemplates);
       plItemTemplates = cons(create(&Gift),plItemTemplates);
+      plItemTemplates = cons(create(&GoldNecklace),plItemTemplates);
 
       // Scrolls
       plItemTemplates = cons(create(&DarknessScroll),plItemTemplates);
