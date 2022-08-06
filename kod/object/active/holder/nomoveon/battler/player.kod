@@ -1186,6 +1186,11 @@ properties:
    
    // Number of monsters killed as NPCPlayer
    piMonstersKilledAsNPC = 0
+
+
+   // Expansion Adjustments
+   // When a new expansion is released, some modifications need to happen to the player when they logon.
+   pbExpansionAdjusted_DeathRealm = FALSE
    
 messages:
 
@@ -2654,7 +2659,13 @@ messages:
    UserLogonHook()
    {
       local i, oObj, iBonus, iDefaultBonus, iTimespan;
-	  
+
+      if NOT pbExpansionAdjusted_DeathRealm
+      {
+         // Adjust character for DeathRealm Expansion
+         Send(self,@AdjustExpansionDeathRealm);
+      }
+
       SendList(plPassive, 0, @UserLogon);
       SendList(plActive, 0, @UserLogon);
 
@@ -9850,7 +9861,7 @@ messages:
       return;
    }
 
-   TryGainBaseMaxHealth()
+   TryGainBaseMaxHealth(report=TRUE, gainTP=TRUE)
    "Handles the roll for tougher based on the player's gain chance plus "
    "the iLevel parameter.  Returns TRUE if the player gains a hit point, "
    "FALSE otherwise.  The iLevel parameter has the player's base max HP "
@@ -9879,12 +9890,17 @@ messages:
 
          if pbLogged_on
          {
-            Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
-            Send(self,@WaveSendUser,#what=self,#wave_rsc=player_tougher_wav_rsc);
+            if report
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
+               Send(self,@WaveSendUser,#what=self,#wave_rsc=player_tougher_wav_rsc);
 
-            // Boost the player to max health, and give them 200 vigor.
-            Send(self,@MsgSendUser,#message_rsc=player_improve_health_invigorate);
+               // Boost the player to max health, and give them 200 vigor.
+               Send(self,@MsgSendUser,#message_rsc=player_improve_health_invigorate);
+            }
+
             piHealth = piMax_Health * 100;
+
             Send(self,@DrawHealth);
             Send(self,@EatSomething,#nutrition=200);
             Post(self,@DrawOffense);
@@ -9892,7 +9908,7 @@ messages:
 
             // Report to shrunken head, if they have one.
             oShrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-            if oShrunken <> $
+            if oShrunken <> $ AND report
             {
                Send(oShrunken,@Tougher,#hp=Send(self,@GetBaseMaxHealth));
             }
@@ -9911,7 +9927,7 @@ messages:
          iMaxHealth = Send(self,@GetBaseMaxHealth) * 2;
 
          if (iMaxHealth >= 100 + iStamina
-            OR iMaxHealth >= MAX_HP)
+            OR iMaxHealth >= MAX_HP) AND gainTP
          {
             Send(self,@AddTrainingPoints,#points=iMaxHealth * 3,#bCap=FALSE);
          }
@@ -9927,7 +9943,7 @@ messages:
       return piXP_total;
    }
 
-   AddXP(iAmount=0,report=TRUE)
+   AddXP(iAmount=0, report=TRUE, gainTP=TRUE)
    "All code that adds or subtracts XP should go through this message. "
    "Handles resource display and toughers."
    {
@@ -9942,7 +9958,7 @@ messages:
       // TryGainBaseMaxHealth checks if player can be awarded a hit point.
       if (piXP_total >= iXPNeeded)
       {
-         Send(self,@TryGainBaseMaxHealth);
+         Send(self,@TryGainBaseMaxHealth, #report=report, #gainTP=gainTP);
       }
       else
       {
@@ -16649,6 +16665,42 @@ messages:
 	  }
 	  
 	  return $;
+   }
+
+   AdjustExpansionDeathRealm()
+   {
+      local i, iLoopProtect;
+
+      // DeathRealm 200 HP Update:  Make sure Player XP total is reduced to the 150HP cap.
+      if piMax_Health >= (100 + piStamina)
+      {
+         // Gradually rebuild HP
+         piXP_total = 0;
+
+         Send(self, @AddXP, #iAmount=1, #report=FALSE, #gainTP=FALSE);
+
+         iLoopProtect = 0;
+
+         while piMax_Health < (100 + piStamina)
+         {
+            iLoopProtect = iLoopProtect + 1;
+
+            if iLoopProtect > 150
+            {
+               Debug("Loop Protected at 100 iterations", Send(self,@GetName));
+               break;
+            }
+
+            Send(self, @AddXP, #iAmount=25000, #report=FALSE, #gainTP=FALSE);
+         }
+      }
+
+      Debug(Send(self,@GetName),"has",piMax_Health,"at",piXP_total);
+
+      // Player adjustments complete.
+      pbExpansionAdjusted_DeathRealm = TRUE;
+
+      return;
    }
 
 end
