@@ -4823,6 +4823,7 @@ messages:
       }
 
       Send(oMoney,@SubtractNumber,#number=amount);
+      Send(oSouls,@SubtractNumber,#number=amount);
       Send(oBank,@DepositAccount,#what=who,#amount=amount);
 
       oRoom = poOwner;
