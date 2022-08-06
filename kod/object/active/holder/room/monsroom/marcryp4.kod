@@ -74,9 +74,9 @@ messages:
    {
       plExits = $;
 
-      plExits = Cons([ 25, 6, RID_MAR_CRYPT3a, 34, 27,
+      plExits = Cons([ 39, 4, RID_MAR_CRYPT3a, 34, 27,
                        ROTATE_135, DISTANCE_NORMAL ],plExits);
-      plExits = Cons([ 25, 7, RID_MAR_CRYPT3a, 34, 27,
+      plExits = Cons([ 40, 5, RID_MAR_CRYPT3a, 34, 27,
                        ROTATE_135, DISTANCE_NORMAL ],plExits);
       propagate;
    }
