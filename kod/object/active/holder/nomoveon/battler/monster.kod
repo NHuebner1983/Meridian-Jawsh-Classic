@@ -4822,9 +4822,20 @@ messages:
          }
       }
 
-      Send(oMoney,@SubtractNumber,#number=amount);
-      Send(oSouls,@SubtractNumber,#number=amount);
-      Send(oBank,@DepositAccount,#what=who,#amount=amount);
+      if oMoney <> $
+      {
+         Send(oMoney,@SubtractNumber,#number=amount);
+      }
+      
+      if oSouls <> $
+      {
+         Send(oSouls,@SubtractNumber,#number=amount);
+      }
+      
+      if oBank <> $
+      {
+         Send(oBank,@DepositAccount,#what=who,#amount=amount);
+      }
 
       oRoom = poOwner;
 
