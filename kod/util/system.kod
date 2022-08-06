@@ -5928,6 +5928,7 @@ messages:
 	  plItemTemplates = cons(create(&DaemonHelm),plItemTemplates);
 	  plItemTemplates = cons(create(&SteelHelm),plItemTemplates);
 	  plItemTemplates = cons(create(&WarHelm),plItemTemplates);
+	  plItemTemplates = cons(create(&LegionHelm),plItemTemplates);
 
       // Shields
       plItemTemplates = cons(create(&GuildShield),plItemTemplates);
