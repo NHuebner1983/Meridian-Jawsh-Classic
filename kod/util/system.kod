@@ -5930,6 +5930,7 @@ messages:
 	  plItemTemplates = cons(create(&SteelHelm),plItemTemplates);
 	  plItemTemplates = cons(create(&WarHelm),plItemTemplates);
 	  plItemTemplates = cons(create(&LegionHelm),plItemTemplates);
+	  plItemTemplates = cons(create(&KnightsHelm),plItemTemplates);
 
       // Shields
       plItemTemplates = cons(create(&GuildShield),plItemTemplates);
