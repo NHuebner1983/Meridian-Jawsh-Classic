@@ -3666,7 +3666,7 @@ messages:
          if IsClass(each_obj, &Monster)
          {
             aMobAttributes = Send(each_obj,@GetAttributes);
-            
+
             if (aMobAttributes & MOB_RECEIVE)
                OR (aMobAttributes & MOB_SELLER)
                OR (aMobAttributes & MOB_NOFIGHT)
@@ -3744,14 +3744,14 @@ messages:
          }
 
          // All checks are good, count this player or monster.
-         Debug("[karma] Counted",Send(each_obj,@GetName));
+         //Debug("[karma] Counted",Send(each_obj,@GetName));
          iCount = iCount + 1;
          iTotal = Send(each_obj,@GetKarma);
       }
 
       if iCount > 0 AND iTotal <> 0
       {
-         Debug("[karma] Average",iTotal," / ",iCount," = ",(iTotal / iCount));
+         //Debug("[karma] Average",iTotal," / ",iCount," = ",(iTotal / iCount));
          return iTotal / iCount;
       }
 
