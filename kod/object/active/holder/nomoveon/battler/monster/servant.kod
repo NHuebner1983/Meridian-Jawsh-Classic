@@ -667,7 +667,7 @@ messages:
    
    StartBuffTimer()
    {
-      ptBuffs = CreateTimer(self,@ServantBuffs,3000);
+      ptBuffs = CreateTimer(self,@ServantBuffs,1000);
 	  
 	  return;
    }
@@ -688,7 +688,7 @@ messages:
    
    StartTauntTimer()
    {
-      ptTaunt = CreateTimer(self,@TauntEnemies,2000);
+      ptTaunt = CreateTimer(self,@TauntEnemies,1000);
 	  
 	  return;
    }
@@ -753,7 +753,7 @@ messages:
    
    ServantBuffs()
    {
-      local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions, iChance, iHealth, iHealAmount, iMaxHealth, iMissing;
+      local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions, iChance, iHealth, iHealAmount, iMaxHealth, iMissing, iAverageKarmaInRoom, bQuietSpellCast;
 	  
 	  if NOT Send(self,@MasterCheck)
 	  {
@@ -761,6 +761,7 @@ messages:
 	  }
 	  
 	  plRemoveEnchants = $;
+     bQuietSpellCast = FALSE;
    
 	  Send(self,@StartBuffTimer);
 	  
@@ -835,8 +836,8 @@ messages:
             oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
             
             if (oSpell <> $)
-               AND (NOT Send(poMaster,@IsEnchanted,#what=oSpell))
-               AND (NOT Send(poOwner,@IsEnchanted,#what=oSpell))
+               AND (NOT Send(poMaster,@IsEnchanted,#what=oSpell) OR iSpellNum = SID_MIRTH OR iSpellNum = SID_MELANCHOLY)
+               AND (NOT Send(poOwner,@IsEnchanted,#what=oSpell) OR iSpellNum = SID_MIRTH OR iSpellNum = SID_MELANCHOLY)
             {
                if iSpellNum = SID_MINOR_HEAL
                   OR iSpellNum = SID_MAJOR_HEAL
@@ -851,7 +852,7 @@ messages:
                      return;
                   }
 
-                  if Send(Send(poMaster, @GetOwner), @ReqSpellCast,#who=self,#oSpell=oSpell)
+                  if Send(Send(poMaster, @GetOwner), @ReqSpellCast, #who=self, #oSpell=oSpell)
                   {
                      Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
                   }
@@ -877,7 +878,7 @@ messages:
                      return;
                   }
 
-                  if Send(Send(poMaster, @GetOwner), @ReqSpellCast,#who=self,#oSpell=oSpell)
+                  if Send(Send(poMaster, @GetOwner), @ReqSpellCast, #who=self, #oSpell=oSpell)
                   {
                      Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
                   }
@@ -899,7 +900,7 @@ messages:
                      return;
                   }
 
-                  if Send(Send(poMaster, @GetOwner), @ReqSpellCast,#who=self,#oSpell=oSpell)
+                  if Send(Send(poMaster, @GetOwner), @ReqSpellCast, #who=self, #oSpell=oSpell)
                   {
                      Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
                   }
@@ -916,7 +917,7 @@ messages:
                }
                else
                {
-                  if iSpellNum = SID_REFLECTION AND Send(Send(poMaster, @GetOwner), @ReqSpellCast,#who=self,#oSpell=oSpell)
+                  if iSpellNum = SID_REFLECTION AND Send(Send(poMaster, @GetOwner), @ReqSpellCast, #who=self, #oSpell=oSpell)
                   {
                      Send(oSpell,@CastSpell,#who=self,#lTargets=[self],#iSpellPower=iBuffPower);
 
@@ -924,9 +925,37 @@ messages:
                   }
                }
 
-               if Send(Send(poMaster, @GetOwner), @ReqSpellCast,#who=self,#oSpell=oSpell)
+               // Only cast Mirth/Melancholy if the surrounding monster karma match the spell benefits.
+               if iSpellNum = SID_MELANCHOLY OR iSpellNum = SID_MIRTH
                {
-                  Send(oSpell,@CastSpell,#who=poMaster,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+                  iAverageKarmaInRoom = Send(Send(poMaster, @GetOwner), 
+                     @GetAverageKarma, 
+                     #lObjIgnore=[poMaster], 
+                     #iOptionalRadiusDistance=Send(oSpell, @CalculateRange, #iSpellPower=iBuffPower),
+                     #oOptionalRadiusFromObj=poMaster);
+                  
+                  if (iAverageKarmaInRoom <= 0 AND iSpellNum = SID_MELANCHOLY)
+                     OR (iAverageKarmaInRoom >= 0 AND iSpellNum = SID_MIRTH)
+                  {
+                     // Zero karma average will cast neither.
+                     // In fact, we should try to uncast them if they are up to preserve mana.
+                     Send(oSpell, @RemoveRadiusEnchant, #who=poMaster, #iSpellNum=iSpellNum);
+                     
+                     continue;
+                  }
+
+                  if Send(poMaster,@IsEnchanted,#what=oSpell) OR Send(self,@IsEnchanted,#what=oSpell)
+                  {
+                     // We added this check here in case we wanted to remove Mirth or Melancholy to preserve mana.
+                     continue;
+                  }
+
+                  bQuietSpellCast = TRUE;
+               }
+
+               if Send(Send(poMaster, @GetOwner), @ReqSpellCast, #who=self, #oSpell=oSpell)
+               {
+                  Send(oSpell,@CastSpell,#who=poMaster,#lTargets=[poMaster],#iSpellPower=iBuffPower,#quiet=bQuietSpellCast);
                }
             }			   
          }
@@ -1222,6 +1251,8 @@ messages:
 	  
       plBuffs = [
 	     [1, SID_INVIGORATE, 100, $],
+	     [1, SID_MELANCHOLY, 100, $],
+	     [1, SID_MIRTH, 100, $],
 	     [3, SID_WOLFPACK, 100, $],
 	     [3, SID_RESTORATE, 100, $],
 	     [5, SID_REJUVENATE, 100, $]
