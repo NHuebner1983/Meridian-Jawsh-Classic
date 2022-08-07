@@ -33,7 +33,8 @@ BGFS = neeleme.bgf neelemeX.bgf iunholyt.bgf xeoneru.bgf xeoneruX.bgf \
        riijaservantspell.bgf shalservantspell.bgf captain.bgf snake.bgf snakeX.bgf whelm.bgf \
        whelmb.bgf warhelm.bgf warhelmb.bgf shades.bgf shadesb.bgf silskllmask.bgf silskllmaskb.bgf \
        riijafol.bgf riijafolX.bgf shalliege.bgf legionhelm.bgf legionhelmb.bgf goldnecklace.bgf \
-       croco.bgf crocoX.bgf vozun.bgf vozunX.bgf hellwasp.bgf hellwaspX.bgf seekerc.bgf seekercX.bgf
+       croco.bgf crocoX.bgf vozun.bgf vozunX.bgf hellwasp.bgf hellwaspX.bgf seekerc.bgf seekercX.bgf \
+       lightsw.bgf lightswov.bgf povlightsw.bgf bersaxe.bgf bersaxeov.bgf povbersaxe.bgf
 
 !include $(RESOURCEDIR)\copy.mak
 

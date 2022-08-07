@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   LightSword_name_rsc = "Sword of light"
+   LightSword_name_rsc = "sword of light"
    LightSword_icon_rsc = lightsw.bgf
 
    LightSword_desc_rsc = \
