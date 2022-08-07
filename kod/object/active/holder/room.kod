@@ -3658,8 +3658,14 @@ messages:
             }
          }
 
-         if bSkip
+         if bSkip OR IsClass(each_obj, &DM)
          {
+            continue;
+         }
+
+         if NOT IsClass(each_obj, &Player) AND NOT IsClass(each_obj, &Monster)
+         {
+            // We only count things that can return karma.
             continue;
          }
 
@@ -3674,12 +3680,6 @@ messages:
                // We only count real monsters.
                continue;
             }
-         }
-
-         if NOT IsClass(each_obj, &Player) AND NOT IsClass(each_obj, &Monster)
-         {
-            // We only count things that can return karma.
-            continue;
          }
          
          if IsClass(each_obj,&Player) AND NOT bIncludePlayers
@@ -3745,8 +3745,11 @@ messages:
 
          // All checks are good, count this player or monster.
          //Debug("[karma] Counted",Send(each_obj,@GetName));
-         iCount = iCount + 1;
-         iTotal = Send(each_obj,@GetKarma);
+         if Send(each_obj,@GetKarma) <> 0
+         {
+            iCount = iCount + 1;
+            iTotal = iTotal + Send(each_obj,@GetKarma);
+         }
       }
 
       if iCount > 0 AND iTotal <> 0
