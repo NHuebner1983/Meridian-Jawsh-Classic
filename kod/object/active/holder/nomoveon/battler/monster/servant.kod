@@ -1179,6 +1179,7 @@ messages:
          [2, SID_HASTE, 100, $],
          [2, SID_RELAY, 60, $],
          [2, SID_SUPER_STRENGTH, 100, $],
+         [2, SID_RESIST_POISON, 100, $],
          [3, SID_MARTYRS_BATTLEGROUND, 100, $],
          [3, SID_NIGHT_VISION, 100, $],
          [3, SID_MAGIC_SHIELD, 100, $],
