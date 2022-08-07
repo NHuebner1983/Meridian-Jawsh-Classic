@@ -250,11 +250,15 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
          s->account->account_id, s->version_major, s->version_minor);
       if (s->version_major * 100 + s->version_minor < ConfigInt(LOGIN_CLASSIC_MIN_VERSION))
       {
-         AddByteToPacket(AP_MESSAGE);
+         /*AddByteToPacket(AP_MESSAGE);
          AddStringToPacket(strlen(ConfigStr(LOGIN_OLD_VERSION_STR)),
                            ConfigStr(LOGIN_OLD_VERSION_STR));
          AddByteToPacket(LA_LOGOFF);
-         SendPacket(s->session_id);
+         SendPacket(s->session_id);*/
+        SynchedSendGetClient(s);
+        HangupSession(s);
+        return;
+
          break;
       }
       /* if game locked, only admins allowed on */
