@@ -5371,18 +5371,6 @@ messages:
       }
 
       if type = SAY_NORMAL
-      {
-         if Send(self,@GetServant) <> $
-         {
-            if Send(Send(self,@GetServant), @ServantHandleSay, #what=self, #type=type, #string=string)
-            {
-               // Servant responded.
-               return;
-            }
-         }
-      }
-
-      if type = SAY_NORMAL
          OR type = SAY_EMOTE
          OR type = SAY_DM
       {
@@ -5415,10 +5403,29 @@ messages:
             }
          }
 
-         // If the user has says squelched, don't let them speak.
-         if Send(self,@TrySay)
+         if type = SAY_NORMAL
          {
-            Send(poOwner,@SomeoneSaidRoom,#what=self,#type=type,#string=string);
+            if Send(self,@GetServant) <> $
+            {
+               if Send(Send(self,@GetServant), @ServantHandleSay, #what=self, #type=type, #string=string)
+               {
+                  // Servant responded.
+                  return;
+               }
+            }
+         }
+
+         if type = SAY_NORMAL
+            OR type = SAY_EMOTE
+            OR type = SAY_DM
+         {
+            // If the user has says squelched, don't let them speak.
+            if Send(self,@TrySay)
+            {
+               Send(poOwner,@SomeoneSaidRoom,#what=self,#type=type,#string=string);
+
+               return;
+            }
          }
 
          return;
