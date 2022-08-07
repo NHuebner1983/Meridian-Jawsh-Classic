@@ -64,6 +64,10 @@ messages:
 				oMonster = First(i);
 				
 				if oMonster <> $ AND IsClass(oMonster, &Monster) 
+				   AND NOT IsClass(oMonster, &Servant)
+				   AND NOT IsClass(oMonster, &Reflection)
+				   AND NOT IsClass(oMonster, &EvilTwin)
+				   AND Send(oMonster, @GetMaster) = $
 				   AND (poLastMonsterChosen = $ OR poLastMonsterChosen <> oMonster)
 				{
 					iMonsterCount++;
