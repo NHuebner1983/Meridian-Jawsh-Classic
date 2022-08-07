@@ -32,9 +32,9 @@ constants:
    SUICIDE_REPEAT_TIME = 600 
 
    // What's the length of the Posting timer check? Currently 30 mins.
-   NEWS_POSTING_DELAY = 30 * 60
+   NEWS_POSTING_DELAY = 30 // 30 seconds
    // How many times can we Post during the delay?
-   NEWS_POSTING_LIMIT = 2
+   NEWS_POSTING_LIMIT = 3
    // how long can news messages be
    NEWS_POSTING_MAX_LENGTH = 4096
    // Max subject length client can handle.
