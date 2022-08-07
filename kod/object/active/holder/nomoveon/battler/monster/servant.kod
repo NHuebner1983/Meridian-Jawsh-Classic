@@ -851,7 +851,10 @@ messages:
                      return;
                   }
 
-                  Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+                  if Send(Send(poMaster, @GetOwner), @ReqSpellCast,#who=self,#oSpell=oSpell)
+                  {
+                     Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+                  }
 
                   return;                  
                }
@@ -874,7 +877,10 @@ messages:
                      return;
                   }
 
-                  Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+                  if Send(Send(poMaster, @GetOwner), @ReqSpellCast,#who=self,#oSpell=oSpell)
+                  {
+                     Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+                  }
                   
                   // Restore servant's mana so mystic touch is less annoying.
                   Send(self,@NewMaxMana,#amount=200);
@@ -893,7 +899,10 @@ messages:
                      return;
                   }
 
-                  Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+                  if Send(Send(poMaster, @GetOwner), @ReqSpellCast,#who=self,#oSpell=oSpell)
+                  {
+                     Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+                  }
 
                   return;
                }
@@ -907,15 +916,18 @@ messages:
                }
                else
                {
-                  if iSpellNum = SID_REFLECTION
+                  if iSpellNum = SID_REFLECTION AND Send(Send(poMaster, @GetOwner), @ReqSpellCast,#who=self,#oSpell=oSpell)
                   {
                      Send(oSpell,@CastSpell,#who=self,#lTargets=[self],#iSpellPower=iBuffPower);
 
                      return;
                   }
                }
-            
-               Send(oSpell,@CastSpell,#who=poMaster,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+
+               if Send(Send(poMaster, @GetOwner), @ReqSpellCast,#who=self,#oSpell=oSpell)
+               {
+                  Send(oSpell,@CastSpell,#who=poMaster,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+               }
             }			   
          }
 	  }
