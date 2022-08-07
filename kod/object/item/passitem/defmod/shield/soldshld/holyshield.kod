@@ -112,7 +112,7 @@ messages:
    GetResistanceModifiers()
    {
       return [ [ ATCK_WEAP_ALL, 10],
-               [-ATCK_SPELL_UNHOLY,-25]
+               [-ATCK_SPELL_UNHOLY,-10]
              ];
    }
    
