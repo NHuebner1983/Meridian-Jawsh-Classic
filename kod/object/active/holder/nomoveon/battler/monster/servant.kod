@@ -67,6 +67,8 @@ resources:
    servant_command_feed_me = "feed me"
    servant_command_mystify_me = "mystify me"
    servant_command_go_away = "go away"
+   servant_command_transference = "transfer new loot to my guild hall"
+   servant_command_conveyance = "convey new loot to my vault"
    
    // School spells your servant might know
    servant_command_identify = "identify this"
@@ -468,6 +470,8 @@ properties:
    pbAllowFollow = TRUE
    pbAllowWalkThroughWalls = TRUE
    pbAllowAttackThroughWalls = TRUE
+   pbAutoTransference = FALSE
+   pbAutoConveyance = FALSE
    
    // Servant PVP flags
    // TODO: Enable PVP defensive!
@@ -594,7 +598,7 @@ messages:
    // TODO: We will need to get this turned on so the servant can protect the master.
    CanAttackPlayer(who = $)
    {
-      Debug("ServantKODAttack",Send(self,@GetName),Send(who,@GetName));
+      //Debug("ServantKODAttack",Send(self,@GetName),Send(who,@GetName));
 	  
       return FALSE;
    }
@@ -839,6 +843,21 @@ messages:
                AND (NOT Send(poMaster,@IsEnchanted,#what=oSpell) OR iSpellNum = SID_MIRTH OR iSpellNum = SID_MELANCHOLY)
                AND (NOT Send(poOwner,@IsEnchanted,#what=oSpell) OR iSpellNum = SID_MIRTH OR iSpellNum = SID_MELANCHOLY)
             {
+               if iSpellNum = SID_MARTYRS_BATTLEGROUND 
+                  AND IsClass(poMaster, &Player)
+                  AND (Send(poMaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+                     OR Send(poMaster,@CheckPlayerFlag,#flag=PFLAG_OUTLAW))
+               {
+                  // Do not cast Martyr's Battleground, that won't help us.
+                  continue;
+               }
+
+               if iSpellNum = SID_PURIFY AND IsClass(poMaster, &DM)
+               {
+                  // Do not purify DM's, it purges them.
+                  continue;
+               }
+
                if iSpellNum = SID_MINOR_HEAL
                   OR iSpellNum = SID_MAJOR_HEAL
                   OR iSpellNum = SID_BREATH_OF_LIFE
@@ -849,15 +868,17 @@ messages:
 
                   if iMissing < 20
                   {
-                     return;
+                     continue;
                   }
 
                   if Send(Send(poMaster, @GetOwner), @ReqSpellCast, #who=self, #oSpell=oSpell)
                   {
                      Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+
+                     continue;
                   }
 
-                  return;                  
+                  continue;                  
                }
 
                if iSpellNum = SID_MYSTIC_TOUCH
@@ -867,7 +888,7 @@ messages:
 
                   if iMissing < 10
                   {
-                     return;
+                     continue;
                   }
 
                   iMissing = Send(poMaster, @GetMana);
@@ -875,18 +896,20 @@ messages:
                   if iMissing > 75
                   {
                      // We cannot mystic touch past this point.
-                     return;
+                     continue;
                   }
 
                   if Send(Send(poMaster, @GetOwner), @ReqSpellCast, #who=self, #oSpell=oSpell)
                   {
                      Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+
+                     continue;
                   }
                   
                   // Restore servant's mana so mystic touch is less annoying.
                   Send(self,@NewMaxMana,#amount=200);
 
-                  return;                  
+                  continue;                  
                }
 
                if iSpellNum = SID_RELAY
@@ -897,15 +920,17 @@ messages:
                   if iMissing >= 135
                   {
                      // We cannot relay past this point.
-                     return;
+                     continue;
                   }
 
                   if Send(Send(poMaster, @GetOwner), @ReqSpellCast, #who=self, #oSpell=oSpell)
                   {
                      Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+
+                     continue;
                   }
 
-                  return;
+                  continue;
                }
 
                // Prevent servants from having too many reflections/minions.
@@ -913,7 +938,7 @@ messages:
 
                if iSpellNum = SID_REFLECTION AND lMinions <> $ AND Length(lMinions) >= MAX_SERVANT_MINIONS
                {
-                  return;
+                  continue;
                }
                else
                {
@@ -921,7 +946,7 @@ messages:
                   {
                      Send(oSpell,@CastSpell,#who=self,#lTargets=[self],#iSpellPower=iBuffPower);
 
-                     return;
+                     continue;
                   }
                }
 
@@ -930,8 +955,8 @@ messages:
                {
                   iAverageKarmaInRoom = Send(Send(poMaster, @GetOwner), 
                      @GetAverageKarma, 
-                     #lObjIgnore=[poMaster], 
-                     #iOptionalRadiusDistance=Send(oSpell, @CalculateRange, #iSpellPower=iBuffPower),
+                     #lObjIgnore=[poMaster, self], 
+                     #iOptionalRadiusDistance=900, // Send(oSpell, @CalculateRange, #iSpellPower=iBuffPower) (commented out, variations are bad)
                      #oOptionalRadiusFromObj=poMaster);
                   
                   if (iAverageKarmaInRoom <= 0 AND iSpellNum = SID_MELANCHOLY)
@@ -940,6 +965,7 @@ messages:
                      // Zero karma average will cast neither.
                      // In fact, we should try to uncast them if they are up to preserve mana.
                      Send(oSpell, @RemoveRadiusEnchant, #who=poMaster, #iSpellNum=iSpellNum);
+                     //Debug("Removed",Send(oSpell,@GetName),iAverageKarmaInRoom,"Karma");
                      
                      continue;
                   }
@@ -947,7 +973,7 @@ messages:
                   if Send(poMaster,@IsEnchanted,#what=oSpell) OR Send(self,@IsEnchanted,#what=oSpell)
                   {
                      // We added this check here in case we wanted to remove Mirth or Melancholy to preserve mana.
-                     continue;
+                     return;
                   }
 
                   bQuietSpellCast = TRUE;
@@ -956,6 +982,9 @@ messages:
                if Send(Send(poMaster, @GetOwner), @ReqSpellCast, #who=self, #oSpell=oSpell)
                {
                   Send(oSpell,@CastSpell,#who=poMaster,#lTargets=[poMaster],#iSpellPower=iBuffPower,#quiet=bQuietSpellCast);
+                  //Debug("Casted",Send(oSpell,@GetName));
+
+                  continue;
                }
             }			   
          }
@@ -2800,7 +2829,7 @@ messages:
                            if iSpellPower < Nth(w, 3)
                            {
                               // The item in our lKeep is stronger.
-                              Debug(Send(Nth(w,1), @GetName),"is stronger than",Send(oObj,@GetName));
+                              //Debug(Send(Nth(w,1), @GetName),"is stronger than",Send(oObj,@GetName));
                               bKeep = FALSE;
                               break;
                            } else {
@@ -2810,7 +2839,7 @@ messages:
                               if NOT FindListElem(lAllowDuplicateTypes, Nth(w, 2))
                               {
                                  // This item type must be unique.
-                                 Debug(Send(Nth(w,1), @GetName),"is duplicated by",Send(oObj,@GetName));
+                                 //Debug(Send(Nth(w,1), @GetName),"is duplicated by",Send(oObj,@GetName));
                                  bReplace = w;
                               }
                            }
@@ -2822,20 +2851,20 @@ messages:
                         if bReplace <> $ AND FindListElem(lKeep, bReplace)
                         {
                            // Let's remove this item from the list.
-                           Debug(Send(oObj,@GetName),"will replace",Send(Nth(bReplace,1),@GetName));
+                           //Debug(Send(oObj,@GetName),"will replace",Send(Nth(bReplace,1),@GetName));
                            lKeep = DelListElem(lKeep, bReplace);
                         }
 
                         // If we have a weapon, don't add jofs to the list
                         if IsClass(oObj, &JewelOfFroz) AND bHasWeapon
                         {
-                           Debug(Send(oObj,@GetName),"skipped because we have a weapon");
+                           //Debug(Send(oObj,@GetName),"skipped because we have a weapon");
                            continue;
                         }
 
                         // Let's add this item to the list.
                         lKeep = AppendListElem([oObj, Send(oObj, @GetItemType), iSpellPower], lKeep);
-                        Debug("Keeping",Send(oObj,@GetName),iSpellPower);
+                        //Debug("Keeping",Send(oObj,@GetName),iSpellPower);
                      }
                   }
                   else
@@ -2856,13 +2885,13 @@ messages:
          {
             if bHasWeapon AND IsClass(Nth(i,1), &JewelOfFroz)
             {
-               Debug("Ignoring JOFs have a weapon",Send(Nth(i,1),@GetName));
+               //Debug("Ignoring JOFs have a weapon",Send(Nth(i,1),@GetName));
                continue;
             }
 
             // Try to equip the item.
             Send(poMaster,@TryUseItem,#what=Nth(i,1));
-            Debug("Equipping",Send(Nth(i,1),@GetName));
+            //Debug("Equipping",Send(Nth(i,1),@GetName));
          }
       }
 
@@ -2873,7 +2902,7 @@ messages:
          {
             // Try to unequip the item.
             Send(poMaster,@TryUnuseItem,#what=i);
-            Debug("Unequipping",Send(i,@GetName));
+            //Debug("Unequipping",Send(i,@GetName));
          }
       }
 
