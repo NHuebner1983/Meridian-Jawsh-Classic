@@ -7357,10 +7357,11 @@ messages:
    }
 
    LoseUnboundEnergy()
+   "Decays your unbound energy. Prevent losing the last 25 unbound energy in case you need to cast a touch spell."
    {
       local iReduction;
 
-      if NOT Send(self,@IsInCannotInteractMode)
+      if NOT Send(self,@IsInCannotInteractMode) AND piUnbound_energy > 25
       {
          iReduction = Bound(piUnbound_energy * Send(SETTINGS_OBJECT,@GetUnboundDecay)
                            / 1000,1,$);
