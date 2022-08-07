@@ -33,7 +33,7 @@ messages:
 
    GetRandomMonster(who = $)
    {
-		local i, iLoopProtect, oRoom, iRoom, sRoomName, lMonsters, iMonsterCount, oMonster, oMonsterChosen;
+		local i, iLoopProtect, oRoom, iRoom, sRoomName, lMonsters, iMonsterCount, oMonster, oMonsterChosen, aMobAttributes;
 		
 		oRoom = Send(who, @GetOwner);
 		iRoom = Send(oRoom,@GetRoomNum);
@@ -70,6 +70,19 @@ messages:
 				   AND Send(oMonster, @GetMaster) = $
 				   AND (poLastMonsterChosen = $ OR poLastMonsterChosen <> oMonster)
 				{
+					if IsClass(oMonster, &Monster)
+					{
+						aMobAttributes = Send(oMonster,@GetAttributes);
+
+						if (aMobAttributes & MOB_RECEIVE)
+							OR (aMobAttributes & MOB_SELLER)
+							OR (aMobAttributes & MOB_NOFIGHT)
+						{
+							// We only count real monsters.
+							continue;
+						}
+					}
+
 					iMonsterCount++;
 					
 					if Random(0, Length(lMonsters)) = 1
