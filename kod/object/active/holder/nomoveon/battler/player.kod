@@ -91,14 +91,14 @@ constants:
    
    // How steep is the curve for learning new levels of spells?
    //  A higher number means a greater slope (less points at low levels)
-   POINTS_SLOPE = 7                 
+   POINTS_SLOPE = 7
 
    // Sets a reasonable lower level on the number of percents needed to
    //  advance to the next level of spells/skills.
-   MIN_NEEDED_TO_ADVANCE = 75       
+   MIN_NEEDED_TO_ADVANCE = 75
                                     
    // How many weapon swings until we get an improve check?
-   SWINGS_PER_IMPROVE_CHECK = 75    
+   SWINGS_PER_IMPROVE_CHECK = 75
 
    // What's the length after having a player attacked before we let "mules" 
    //  cast on them again.  Currently set to 15 minutes.  Should be bigger 
