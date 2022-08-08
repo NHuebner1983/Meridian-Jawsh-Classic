@@ -101,18 +101,29 @@ messages:
 
       plItems_to_attribute = \
              [ [ &Mace, 20],
-               [ &MetalShield, 15],
                [ &ShortSword, 15],
-               [ &LeatherArmor, 10],
-               [ &GoldShield, 9],
                [ &Hammer, 8],
-               [ &ChainArmor, 6],
-               [ &Axe, 6],
+               [ &Axe, 8],
                [ &Longsword, 4],
-               [ &ScaleArmor, 3],
-               [ &KnightShield, 2],
                [ &Scimitar, 1],
-               [ &PlateArmor, 1]
+               [ &MysticSword, 1],
+               [ &NeruditeSword, 1],
+
+               [ &Gauntlet, 5],
+               [ &SimpleHelm, 5],
+               [ &DaemonHelm, 5],
+               [ &JewelOfFroz, 5],
+
+               [ &LeatherArmor, 10],
+               [ &ChainArmor, 5],
+               [ &ScaleArmor, 4],
+               [ &PlateArmor, 1],
+               [ &NeruditeArmor, 5],
+
+               [ &MetalShield, 15],
+               [ &GoldShield, 9],
+               [ &KnightShield, 4],
+               [ &OrcShield, 5]
              ];
 
       return;
