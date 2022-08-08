@@ -150,7 +150,11 @@ resources:
    dm_move_back = "move back"
    dm_move_left = "move left"
    dm_move_right = "move right"
-   
+   dm_generate_monster_and_die = "make monsters die"
+   dm_sweep = "sweep"
+   dm_clear_floor = "clean"
+   dm_animate = "animate"
+
    dm_hidden_command = "hidden"
    dm_blank_command = "blank"
 
@@ -399,6 +403,9 @@ properties:
    pbSetLowRoll = FALSE
    piLowRoll = 0
    piHighRoll = 0
+
+   ptGenerateMonstersAndDieTimer = $
+   pbStopGenerateMonstersAndDie = FALSE
 
 messages:
 
@@ -849,10 +856,138 @@ messages:
 
 		 return;
    }
-   
+
+   GenerateMonstersAndDie()
+   {
+      local oMonster;
+
+      if pbStopGenerateMonstersAndDie
+      {
+         // DM says stop.
+         ptGenerateMonstersAndDieTimer = $;
+
+         return;
+      }
+
+      oMonster = Send(self,@DMSayMakeMonster,#string="giant daemon skeleton");
+      Send(oMonster, @Killed, #what=self);
+      oMonster = Send(self,@DMSayMakeMonster,#string="ghost");
+      Send(oMonster, @Killed, #what=self);
+      oMonster = Send(self,@DMSayMakeMonster,#string="ogre");
+      Send(oMonster, @Killed, #what=self);
+      oMonster = Send(self,@DMSayMakeMonster,#string="minotaur");
+      Send(oMonster, @Killed, #what=self);
+      oMonster = Send(self,@DMSayMakeMonster,#string="yeti");
+      Send(oMonster, @Killed, #what=self);
+
+      ptGenerateMonstersAndDieTimer = CreateTimer(self, @GenerateMonstersAndDie, 100);
+
+      Send(self, @ClearDeadBodies);
+      Send(self, @CleanFloor);
+
+      return;
+   }
+
+   SweepRoom()
+   {
+      local i, j, k, l, m, n, bBool, iInt, sString, oObj, oObject, rResource, lList, lSecondlist, lThirdlist;
+
+      // Sweep everything from the floor into your inventory
+      lList = Send(poOwner, @GetHolderPassive);
+
+      foreach i in lList
+      {
+         oObj = First(i);
+
+         if oObj <> $ AND IsClass(oObj, &Item)
+         {
+            Send(self,@NewHold,#what=oObj);
+         }
+      }
+               
+      return;
+   }
+   CleanFloor()
+   {
+      local i, j, k, l, m, n, bBool, iInt, sString, oObj, oObject, rResource, lList, lSecondlist, lThirdlist;
+
+      // Clear all loot and dead bodies from the floor
+      lList = Send(poOwner, @GetHolderPassive);
+
+      foreach i in lList
+      {
+         oObj = First(i);
+
+         bBool = FALSE;
+
+         if oObj <> $ AND IsClass(oObj, &Item)
+         {
+            lSecondList = Send(oObj, @GetAttributes);
+
+            foreach j in lSecondList
+            {
+               k = Send(oObj,@GetNumFromCompound,#compound=First(j));
+               oObject = Send(SYS,@FindItemAttByNum,#num=k);
+               
+               if oObject <> $
+               {
+                  if NOT StringEqual("special %s", Send(oObject, @GetName))
+                  {
+                     // Put the "odd" item in our inventory
+                     Send(self,@NewHold,#what=oObj);
+
+                     bBool = TRUE;
+
+                     break;
+                  }
+               }
+            }
+
+            if NOT bBool
+            {
+               // Delete item from floor..
+               Send(oObj, @Delete);
+            }
+         }
+      }
+
+      return;      
+   }
+
+   ClearDeadBodies(animated=FALSE)
+   {
+      local i, j, k, l, m, n, bBool, iInt, sString, oObj, oObject, rResource, lList, lSecondlist, lThirdlist, oSpell;
+
+      // Clear all the dead bodies
+      lList = Send(poOwner, @GetHolderPassive);
+
+      foreach i in lList
+      {
+         oObj = First(i);
+
+         bBool = FALSE;
+
+         if oObj <> $ AND IsClass(oObj, &DeadBody)
+         {
+            if animated
+            {
+               oSpell = Send(SYS,@FindSpellByNum,#num=SID_ANIMATE);
+               Send(oSpell,@CastSpell,#who=self,#lTargets=[oObj],
+               #iSpellPower=Random(1,99));
+            }
+            else
+            {
+               Send(oObj, @Delete);
+            }
+         }
+      }
+
+      return;
+   }
+
    UserSay(string=$,type=$)
    {
-      local i, iInt, sString, oObject, rResource, lList;
+      local i, j, k, l, m, n, bBool, iInt, sString, oObj, oObject, rResource, lList, lSecondlist, lThirdlist;
 
       if type <> SAY_DM
       {
@@ -890,6 +1025,57 @@ messages:
       {
          StringSubstitute(string,"gemote ","");
          Send(SYS,@AdminSystemMessage,#string=string,#bSound=TRUE,#bPrefix=FALSE);
+
+         return;
+      }
+
+      if StringContain(string, dm_generate_monster_and_die)
+      {
+         // Will generate a monster every 1/2 second until you use the same command.
+         if ptGenerateMonstersAndDieTimer <> $
+         {
+            pbStopGenerateMonstersAndDie = TRUE;
+            Debug("Stop Generating Monsters");
+         }
+
+         if pbStopGenerateMonstersAndDie
+         {
+            pbStopGenerateMonstersAndDie = FALSE;
+
+            if ptGenerateMonstersAndDieTimer <> $ AND IsTimer(ptGenerateMonstersAndDieTimer)
+            {
+               DeleteTimer(ptGenerateMonstersAndDieTimer);
+               ptGenerateMonstersAndDieTimer = $;
+            }
+
+            return;
+         }
+
+         ptGenerateMonstersAndDieTimer = CreateTimer(self, @GenerateMonstersAndDie, 100);
+
+         return;
+      }
+
+      if StringContain(string, dm_sweep)
+      {
+         Send(self, @SweepRoom);
+         Send(self, @ClearDeadBodies);
+
+         return;
+      }
+
+      if StringContain(string, dm_clear_floor)
+      {
+         Send(self, @CleanFloor);
+         Send(self, @ClearDeadBodies);
+
+         return;
+      }
+
+      if StringContain(string, dm_animate)
+      {
+         // Animate all dead bodies on the floor
+         Send(self, @ClearDeadBodies, #animated=TRUE);
 
          return;
       }
@@ -1276,6 +1462,9 @@ messages:
       if StringContain(string,dm_makemonsters)
          AND NOT StringContain(string,dm_monster_authorize_command)
       {
+         StringSubstitute(string, "monster ", "");
+         StringSubstitute(string, "monsters ", "");
+
          Send(self,@DMSayMakeMonster,#string=string);
          Send(self,@DMSayMakeMonster,#string=string);
          Send(self,@DMSayMakeMonster,#string=string);
@@ -1287,6 +1476,10 @@ messages:
       if StringContain(string,dm_makemonster)
          AND NOT StringContain(string,dm_monster_authorize_command)
       {
+
+         StringSubstitute(string, "monster ", "");
+         StringSubstitute(string, "monsters ", "");
+
          Send(self,@DMSayMakeMonster,#string=string);
 
          return;
@@ -2314,14 +2507,12 @@ messages:
 
       if (string = $)
       {
-         return;
+         return $;
       }
 
       bFound = FALSE;
       lTemplate = Send(SYS,@GetMonsterTemplates);
-	  StringSubstitute(string, "monster ", "");
-	  StringSubstitute(string, "monsters ", "");
-	  
+      
       foreach i in lTemplate
       {
 	     sName = Send(i,@GetName);
@@ -2386,6 +2577,8 @@ messages:
                         #string=dm_void,#parm1=vrName,
                         #parm2=Send(i,@GetIndef),#parm3=Send(i,@GetName));
                }
+
+               return oObject;
             }
          }
       }
@@ -2395,7 +2588,7 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=dm_no_monster);
       }
 
-      return;
+      return $;
    }
 
    DMSayMobAuthorize(string=$)
