@@ -357,7 +357,7 @@ resources:
    servant_outfit_saved_not_used = "~kYour servant nods, ''I had trouble preparing you in that outfit. I can only outfit you with the original items you equipped. I wouldn't dare outfit you in something you found unacceptable.''~k"
    servant_undressed = "~kYour servant gasps, ''You should really shave down there.''~k"
 
-   servant_pvp_cant_help = "~kYour servant shrugs, ''I cannot help you for some time if you have engaged in PVP comat.''~k"
+   servant_pvp_cant_help = "~kYour servant shrugs, ''You've recently engaged in PVP combat. I am forbidden to interfere.''~k"
 
 classvars:
    
@@ -492,13 +492,39 @@ properties:
    
    // Servants should be walk-through.
    pbNoMoveOn = FALSE
-      
+
+   // When you engage in PVP, some servant commands & abilities will no longer work.
+   pbCanHelp = TRUE
+   ptCanHelpTimer = $
+
+   // Intervals for servant routines
+   piCanHelpInterval = 3000
+
+   piResourceInterval = 1000
+   piResourceIntervalNormal = 1000
+   piResourceIntervalPvp = 10000
+
+   piBuffInterval = 1000
+   piBuffIntervalNormal = 1000
+   piBuffIntervalPvp = 10000
+
+   piTalkInterval = 120000
+   piTalkIntervalNormal = 120000
+   piTalkIntervalPvp = 240000
+
+   piImpInterval = 1000
+   piImpIntervalNormal = 1000
+   piImpIntervalPvp = 120000
+
+   piTauntInterval = 1000
+   piTauntIntervalNormal = 1000
+   piTauntIntervalPvp = 30000
+
 messages:
    
    // Send these values when you use the Create(&Servant, #...) function.
    Constructor(who = $, oSpell = $, iSpellNum = $, iSpellPower = $)
    {
-
       if who = $ OR NOT IsClass(who, &Player)
       {
          // Only a player can have a servant.
@@ -604,18 +630,18 @@ messages:
       
       return FALSE;
    }
-   
+
    PrepareServantNameAndDesc()
    {
-         if piSpellNum <> $ AND sServantName = $
+      if piSpellNum <> $ AND sServantName = $
       {
          Send(self,@SetServantName);
          Send(self,@SetServantDesc,#iSpellNum=piSpellNum);
       }
-      
+
       return;
    }
-   
+
    MasterCheck()
    {
       if poMaster = $
@@ -655,6 +681,8 @@ messages:
       
       // Start the servant's timers
       // TODO: Figure out why we're getting "Delete Timer / Cleanup Timer Failures all over our logs"...
+      Send(self,@CheckCanHelp);
+      Send(self,@StartCanHelpTimer);
       Send(self,@StartBuffTimer);
       Send(self,@StartTalkTimer);
       Send(self,@StartImpTimer);
@@ -663,40 +691,80 @@ messages:
       
       return;
    }
+
+   StartCanHelpTimer()
+   {
+      ptCanHelpTimer = CreateTimer(self,@CheckCanHelp,piCanHelpInterval);
+
+      return;
+   }
    
    StartServantResourcesTimer()
    {
-      ptServantResources = CreateTimer(self,@UpdateServantResources,1000);
+      ptServantResources = CreateTimer(self,@UpdateServantResources,piResourceInterval);
       
       return;
    }
 
    StartBuffTimer()
    {
-      ptBuffs = CreateTimer(self,@ServantBuffs,1000);
+      ptBuffs = CreateTimer(self,@ServantBuffs,piBuffInterval);
       
       return;
    }
 
    StartTalkTimer()
    {
-      ptTalk = CreateTimer(self,@ServantTalk,120000);
-      
+      ptTalk = CreateTimer(self,@ServantTalk,piTalkInterval);
+
       return;
    }
 
    StartImpTimer()
    {
-      ptImp = CreateTimer(self,@ServantImps,1000);
+      ptImp = CreateTimer(self,@ServantImps,piImpInterval);
       
       return;
    }
 
    StartTauntTimer()
    {
-      ptTaunt = CreateTimer(self,@TauntEnemies,1000);
+      ptTaunt = CreateTimer(self,@TauntEnemies,piTauntInterval);
       
       return;
+   }
+
+   CheckCanHelp()
+   {
+      if NOT Send(self, @MasterCheck)
+      {
+         return;
+      }
+
+      pbCanHelp = Send(poMaster, @CanHelpPlayer);
+
+      Send(self,@StartCanHelpTimer);
+
+      if NOT pbCanHelp
+      {
+         // Player is involved in PVP.
+         piImpInterval = piImpIntervalPvp;
+         piBuffInterval = piBuffIntervalPvp;
+         piTalkInterval = piTalkIntervalPvp;
+         piTauntInterval = piTauntIntervalPvp;
+         piResourceInterval = piResourceIntervalPvp;
+      }
+      else
+      {
+         // Player is not involved in PVP.
+         piImpInterval = piImpIntervalNormal;
+         piBuffInterval = piBuffIntervalNormal;
+         piTalkInterval = piTalkIntervalNormal;
+         piTauntInterval = piTauntIntervalNormal;
+         piResourceInterval = piResourceIntervalNormal;
+      }
+
+      return pbCanHelp;
    }
 
    UpdateServantResources()
@@ -761,77 +829,79 @@ messages:
    {
       local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions, iChance, iHealth, iHealAmount, iMaxHealth, iMissing, iAverageKarmaInRoom, bQuietSpellCast;
 	  
-	  if NOT Send(self,@MasterCheck) OR NOT Send(poMaster, @CanHelpPlayer)
-	  {
-	     return;
-	  }
-	  
-	  plRemoveEnchants = $;
-     bQuietSpellCast = FALSE;
-   
-	  Send(self,@StartBuffTimer);
-	  
-	  iHealth = Send(self,@GetHealth);
-	  iMaxHealth = Send(self,@GetMaxHealth);
-	  
-	  // Check servant health and try to heal self.
-	  if piSpellSchool = SS_SHALILLE
-	  {
-	     iChance = 40;
-	  }
-	  else
-	  {
-	     iChance = 35;
-	  }
-	  
-	  if iHealth < iMaxHealth AND Random(1, 80) <= iChance
-	  {
-	     if piSpellSchool = SS_SHALILLE
-	     {
-		    iHealAmount = Random(35, 60);
-		    Post(poMaster,@MsgSendUser,#message_rsc=servant_heals_self_shalille,#parm1=iHealAmount);
-		 }
-		 else
-		 {
-		    iHealAmount = Random(25, 35);
-		    Post(poMaster,@MsgSendUser,#message_rsc=servant_heals_self_wand,#parm1=iHealAmount);
-		 }
-		 
-		 Send(self,@HealHitPoint,#exact_amount=Bound(iHealAmount, 1, iMaxHealth - iHealth));
-	  }
-	  
-	  if NOT pbAllowBuff
-	  {
-	     return;
-	  }
-	  
-	  foreach iSpellGroup in plBuffs
-	  {
-	     iSpellLevel = Nth(iSpellGroup, 1);
-		 
-		 if piSpellLevel < iSpellLevel
-		 {
-		    continue;
-		 }
-		 
-		 iSpellNum = Nth(iSpellGroup, 2);
-		 iSpellRandom = Nth(iSpellGroup, 3);
-		 iSpellRemove = Nth(iSpellGroup, 4);
-		 
-		 if iSpellRemove <> $ AND iSpellRemove = ENCHANT_REMOVE_SERVANT_DELETED
-		 {
-         if plRemoveEnchants = $
+      if NOT Send(self,@MasterCheck)
+      {
+         // Servant may not have a master or can't help you while in PVP Combat.
+         return;
+      }
+      
+      plRemoveEnchants = $;
+      bQuietSpellCast = FALSE;
+
+      Send(self,@StartBuffTimer);
+      
+      iHealth = Send(self,@GetHealth);
+      iMaxHealth = Send(self,@GetMaxHealth);
+      
+      // Check servant health and try to heal self.
+      if piSpellSchool = SS_SHALILLE
+      {
+         iChance = 35;
+      }
+      else
+      {
+         iChance = 30;
+      }
+      
+      if iHealth < iMaxHealth AND Random(1, 80) <= iChance
+      {
+         if piSpellSchool = SS_SHALILLE
          {
-            plRemoveEnchants = [];
+            iHealAmount = Random(30, 40);
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_heals_self_shalille,#parm1=iHealAmount);
          }
-			
-		    plRemoveEnchants = AppendListElem(iSpellNum, plRemoveEnchants);
-		 }
-		 
-		 iRandom = Random(0, 100);
-		 
-		 if iSpellRandom >= iRandom
-		 {
+         else
+         {
+            iHealAmount = Random(20, 30);
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_heals_self_wand,#parm1=iHealAmount);
+         }
+         
+         Send(self,@HealHitPoint,#exact_amount=Bound(iHealAmount, 1, iMaxHealth - iHealth));
+      }
+      
+      if NOT pbAllowBuff OR NOT pbCanHelp
+      {
+         // Servant Buffing is off or the player is in a state they cannot be helped.
+         return;
+      }
+      
+      foreach iSpellGroup in plBuffs
+      {
+         iSpellLevel = Nth(iSpellGroup, 1);
+         
+         if piSpellLevel < iSpellLevel
+         {
+            continue;
+         }
+         
+         iSpellNum = Nth(iSpellGroup, 2);
+         iSpellRandom = Nth(iSpellGroup, 3);
+         iSpellRemove = Nth(iSpellGroup, 4);
+         
+         if iSpellRemove <> $ AND iSpellRemove = ENCHANT_REMOVE_SERVANT_DELETED
+         {
+            if plRemoveEnchants = $
+            {
+               plRemoveEnchants = [];
+            }
+         
+            plRemoveEnchants = AppendListElem(iSpellNum, plRemoveEnchants);
+         }
+         
+         iRandom = Random(0, 100);
+         
+         if iSpellRandom >= iRandom
+         {
             iBuffPower = Send(poMaster, @GetSpellAbility, #spell_num=iSpellNum);
             
             if iBuffPower = 0
@@ -990,54 +1060,54 @@ messages:
                }
             }			   
          }
-	  }
-	  
+      }
+      
       return;
    }
-   
+
    RemoveImportantServantEnchants()
    {
       local iSpellNum, oSpell, lPlayers, lPlayer;
-	  
-	  if NOT Send(self,@MasterCheck)
-	  {
-	     return;
-	  }
-	  
-	  // All radius enchantments will go
-	  Send(poMaster,@RemoveAllRadiusEnchantments,#report=TRUE);
-	  	  
+      
+      if NOT Send(self,@MasterCheck)
+      {
+         return;
+      }
+      
+      // All radius enchantments will go
+      Send(poMaster,@RemoveAllRadiusEnchantments,#report=TRUE);
+         
       if plRemoveEnchants = $
-	  {
-	     return;
-	  }
-	  
-	  foreach iSpellNum in plRemoveEnchants
-	  {
-	     oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
+      {
+         return;
+      }
+      
+      foreach iSpellNum in plRemoveEnchants
+      {
+         oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
 
-		 if oSpell <> $
-		    AND (Send(poMaster,@IsEnchanted,#what=oSpell)
-		         OR Send(poOwner,@IsEnchanted,#what=oSpell))
-		 {
-			if Send(poMaster,@IsEnchanted,#what=oSpell)
-			{
-		       Send(poMaster,@RemoveEnchantment,#what=oSpell);
-			}
-			
-			if Send(poOwner,@IsEnchanted,#what=oSpell)
-			{
-		       Send(poOwner,@RemoveEnchantment,#what=oSpell);
-			}
-		 }			   
-	  }
-	  
-	  plRemoveEnchants = $;
-	  
-	  // Reset my icons and room enchants in case someone else has them up
- 	  Send(poOwner,@ResetMyRoomEnchantments,#who=poMaster);
-	  
-	  return;
+         if oSpell <> $
+            AND (Send(poMaster,@IsEnchanted,#what=oSpell)
+               OR Send(poOwner,@IsEnchanted,#what=oSpell))
+         {
+            if Send(poMaster,@IsEnchanted,#what=oSpell)
+            {
+                  Send(poMaster,@RemoveEnchantment,#what=oSpell);
+            }
+            
+            if Send(poOwner,@IsEnchanted,#what=oSpell)
+            {
+                  Send(poOwner,@RemoveEnchantment,#what=oSpell);
+            }
+         }			   
+      }
+      
+      plRemoveEnchants = $;
+      
+      // Reset my icons and room enchants in case someone else has them up
+      Send(poOwner,@ResetMyRoomEnchantments,#who=poMaster);
+      
+      return;
    }
       
    // Needed for relay
@@ -1050,6 +1120,14 @@ messages:
    GetVigor()
    {
       return 200;
+   }
+
+   ServantCantInterfere()
+   "Generic response to poMaster that we cannot interfere."
+   {
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_pvp_cant_help);
+
+      return;  
    }
    
    ServantTalk()
@@ -1068,12 +1146,20 @@ messages:
          return;
       }
 
-	  iRandomPart = Random(0, Length(plTalk));
-	  iRandomPiece = Random(0, Length(Nth(plTalk, iRandomPart)));
-	  chosen_resource = Nth(Nth(plTalk, iRandomPart), iRandomPiece);
-	  
-	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc,#parm1=chosen_resource);
-	  	  
+      if NOT pbCanHelp
+      {
+         // Player can't be helpd in PVP, this will be all we talk about.
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_pvp_cant_help);
+
+         return;
+      }
+
+      iRandomPart = Random(0, Length(plTalk));
+      iRandomPiece = Random(0, Length(Nth(plTalk, iRandomPart)));
+      chosen_resource = Nth(Nth(plTalk, iRandomPart), iRandomPiece);
+      
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc,#parm1=chosen_resource);
+         
       return;
    }
 
@@ -1160,19 +1246,19 @@ messages:
    SetFarenSpells()
    {
       plCasts = [
-	     [4, SID_BLAST_OF_FIRE, 50],
-	     [4, SID_FIREBALL, 30],
-	     [4, SID_EXPLOSIVE_FROST, 15],
-	     [5, SID_LIGHTNING_BOLT, 20]
-	  ];
-	  
+         [4, SID_BLAST_OF_FIRE, 50],
+         [4, SID_FIREBALL, 30],
+         [4, SID_EXPLOSIVE_FROST, 15],
+         [5, SID_LIGHTNING_BOLT, 20]
+      ];
+
       plBuffs = [
-	     [1, SID_LIGHT, 100, $],
-	     [1, SID_MYSTIC_TOUCH, 60, $],
-	     [2, SID_RESIST_COLD, 100, $],
-	     [2, SID_RESIST_FIRE, 100, $],
-	     [3, SID_RESIST_SHOCK, 100, $]
-	  ];
+         [1, SID_LIGHT, 100, $],
+         [1, SID_MYSTIC_TOUCH, 60, $],
+         [2, SID_RESIST_COLD, 100, $],
+         [2, SID_RESIST_FIRE, 100, $],
+         [3, SID_RESIST_SHOCK, 100, $]
+      ];
 
       return;
    }
@@ -1186,12 +1272,12 @@ messages:
          [3, SID_DEMENT, 5],
          [4, SID_APPARITION, 20],
          [5, SID_EVIL_TWIN, 20]
-	  ];
+      ];
 
       plBuffs = [
          [1, SID_SHADOW_FORM, 100, $],
          [3, SID_REFLECTION, 100, $]
-	  ];
+      ];
 	  
       return;
    }
@@ -1221,7 +1307,7 @@ messages:
          [5, SID_KILLING_FIELDS, 100, $],
          [5, SID_ARMOR_OF_GORT, 60, $],
          [5, SID_RESIST_MAGIC, 30, $]
-	  ];
+      ];
 	  
       return;
    }
@@ -1229,26 +1315,26 @@ messages:
    SetShalSpells()
    {
       plCasts = [
-	     [4, SID_DAZZLE, 5],
-	     [4, SID_MARK_OF_DISHONOR, 25],
-	     [4, SID_HOLY_BLAZE, 50],
-	     [5, SID_PURGE, 5]
-	  ];
-     
-	  plBuffs = [
-	     [1, SID_MINOR_HEAL, 5, $],
-	     [1, SID_DETECT_EVIL, 100, $],
-	     [1, SID_REMOVE_CURSE, 100, $],
-	     [2, SID_CURE_POISON, 100, $],
-	     [2, SID_RESIST_ACID, 100, $],
-	     [3, SID_CURE_DISEASE, 100, $],
-	     [3, SID_HOLY_RESOLVE, 100, $],
-        [3, SID_BREATH_OF_LIFE, 5, $],
-	     [3, SID_HOSPICE, 5, $],
-	     [4, SID_FORCES_OF_LIGHT, 90, $],
-	     [4, SID_PURIFY, 3, $],
-	     [5, SID_MAJOR_HEAL, 1, $]
-	  ];
+         [4, SID_DAZZLE, 5],
+         [4, SID_MARK_OF_DISHONOR, 25],
+         [4, SID_HOLY_BLAZE, 50],
+         [5, SID_PURGE, 5]
+      ];
+
+      plBuffs = [
+         [1, SID_MINOR_HEAL, 5, $],
+         [1, SID_DETECT_EVIL, 100, $],
+         [1, SID_REMOVE_CURSE, 100, $],
+         [2, SID_CURE_POISON, 100, $],
+         [2, SID_RESIST_ACID, 100, $],
+         [3, SID_CURE_DISEASE, 100, $],
+         [3, SID_HOLY_RESOLVE, 100, $],
+         [3, SID_BREATH_OF_LIFE, 5, $],
+         [3, SID_HOSPICE, 5, $],
+         [4, SID_FORCES_OF_LIGHT, 90, $],
+         [4, SID_PURIFY, 3, $],
+         [5, SID_MAJOR_HEAL, 1, $]
+      ];
 
       return;
    }
@@ -1256,22 +1342,22 @@ messages:
    SetQorSpells()
    {
       plCasts = [
-	     [3, SID_ENFEEBLE, 60],
-	     [3, SID_VAMPIRIC_DRAIN, 50],
-	     [3, SID_POISON_FOG, 5],
-		  [4, SID_SPLASH_OF_ACID, 50],
-	     [4, SID_HOLD, 5],
-	     [5, SID_BLIND, 5]
-	  ];
+         [3, SID_ENFEEBLE, 60],
+         [3, SID_VAMPIRIC_DRAIN, 50],
+         [3, SID_POISON_FOG, 5],
+         [4, SID_SPLASH_OF_ACID, 50],
+         [4, SID_HOLD, 5],
+         [5, SID_BLIND, 5]
+      ];
 
       plBuffs = [
-	     [1, SID_CLOAK, 100, $],
-	     [1, SID_DARKNESS, 100, $],
-	     [1, SID_DETECT_GOOD, 100, $],
-	     [1, SID_UNHOLY_RESOLVE, 100, $],
-	     [5, SID_DEATH_LINK, 100, $],
-	     [5, SID_INVISIBILITY, 50, $]
-	  ];
+         [1, SID_CLOAK, 100, $],
+         [1, SID_DARKNESS, 100, $],
+         [1, SID_DETECT_GOOD, 100, $],
+         [1, SID_UNHOLY_RESOLVE, 100, $],
+         [5, SID_DEATH_LINK, 100, $],
+         [5, SID_INVISIBILITY, 50, $]
+      ];
 	  
       return;
    }
@@ -1282,13 +1368,13 @@ messages:
 	  plCasts = $;
 	  
       plBuffs = [
-	     [1, SID_INVIGORATE, 100, $],
-	     [1, SID_MELANCHOLY, 100, $],
-	     [1, SID_MIRTH, 100, $],
-	     [3, SID_WOLFPACK, 100, $],
-	     [3, SID_RESTORATE, 100, $],
-	     [5, SID_REJUVENATE, 100, $]
-	  ];
+         [1, SID_INVIGORATE, 100, $],
+         [1, SID_MELANCHOLY, 100, $],
+         [1, SID_MIRTH, 100, $],
+         [3, SID_WOLFPACK, 100, $],
+         [3, SID_RESTORATE, 100, $],
+         [5, SID_REJUVENATE, 100, $]
+      ];
 
       return;
    }
@@ -1299,31 +1385,31 @@ messages:
    SetServantSpellBook()
    {
       local iSpellGroup, oSpell;
-	  
+      
       if plCasts = $
-	  {
+      {
          return;
-	  }
-	  
-	  plSpellBook = $;
-	  
-	  foreach iSpellGroup in plCasts
-	  {
-	     if piSpellLevel >= Nth(iSpellGroup, 1)
-		 {
-	        if plSpellBook = $
-			{
-			   plSpellBook = [];
-			}
-			
-			// Nth(2) = Spell Num, 1 = Mana, Nth(3) = Random 1-100 chance
-			// See plCasts.
-			oSpell = Send(SYS,@FindSpellByNum,#num=Nth(iSpellGroup, 2));
-	        plSpellBook = AppendListElem([Nth(iSpellGroup, 2), 1, Nth(iSpellGroup, 3)], plSpellBook);
-		 }
-	  }
-	  
-	  return;
+      }
+      
+      plSpellBook = $;
+      
+      foreach iSpellGroup in plCasts
+      {
+         if piSpellLevel >= Nth(iSpellGroup, 1)
+         {
+            if plSpellBook = $
+            {
+               plSpellBook = [];
+            }
+         
+            // Nth(2) = Spell Num, 1 = Mana, Nth(3) = Random 1-100 chance
+            // See plCasts.
+            oSpell = Send(SYS,@FindSpellByNum,#num=Nth(iSpellGroup, 2));
+            plSpellBook = AppendListElem([Nth(iSpellGroup, 2), 1, Nth(iSpellGroup, 3)], plSpellBook);
+         }
+      }
+      
+      return;
    }
    
    GetPlayerDamage()
@@ -1342,23 +1428,22 @@ messages:
    AllowBattlerAttack(victim=$)
    {
       // Must be in a room to attack, must have target.
-      if (poOwner = $
-         OR victim = $)
+      if (poOwner = $ OR victim = $)
       {
          return FALSE;
       }
 
       if (IsClass(victim,&Player) OR IsClass(victim,&User)) AND NOT Send(self,@CanAttackPlayer,#who=victim)
       {
-	     // Servant is not allowed to attack this player.
+         // Servant is not allowed to attack this player.
          return FALSE;
       }
-	  
-	  // Master may have turned off attacking through commands.
-	  if NOT pbAllowAttack
-	  {
-	     return FALSE;
-	  }
+
+      // Master may have turned off attacking through commands, or they are in PVP combat.
+      if NOT pbAllowAttack OR NOT pbCanHelp
+      {
+         return FALSE;
+      }
 
       propagate;
    }
@@ -1464,18 +1549,17 @@ messages:
    Killed(what=$)
    {
       if (IsClass(what, &Servant) AND Send(poMaster,@GetServant) = what)
-	     OR (IsClass(what, &Player) AND poMaster = what)
-	  {
-	     Send(self,@GracefullyDeleteServant);
-	  }
-	  
-	  propagate;
+         OR (IsClass(what, &Player) AND poMaster = what)
+      {
+         Send(self,@GracefullyDeleteServant);
+      }
+
+      propagate;
    }
    
    GracefullyDeleteServant()
    {
       Send(self,@RemoveAllMinions);
-
       Send(self,@ClearServantTimers);
 
       if Send(self,@MasterCheck) 
@@ -1559,9 +1643,9 @@ messages:
       Send(self,@EnterStateWait);
       Send(self,@TweakBehavior);
 
-	  Send(SYS,@UtilGoNearSquare,#what=self,#where=oRoom,
-		    #new_row=Send(poMaster,@GetRow),
-		    #new_col=Send(poMaster,@GetCol));
+      Send(SYS,@UtilGoNearSquare,#what=self,#where=oRoom,
+            #new_row=Send(poMaster,@GetRow),
+            #new_col=Send(poMaster,@GetCol));
 
       return;
    }
@@ -2026,7 +2110,7 @@ messages:
       bAcknowledge = FALSE;
 
       // Show the help command output to our master.
-      if StringEqual(said_string, servant_command_help)
+      if StringEqual(said_string, servant_command_help) AND pbCanHelp
       {
          Post(poMaster,@MsgSendUser,#message_rsc=servant_response_help);
          bIsCommand = TRUE;
@@ -2034,7 +2118,7 @@ messages:
       }
 
 
-      if StringEqual(said_string, servant_command_quiet)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_quiet)
       {
          if pbAllowTalk
          {
@@ -2045,7 +2129,7 @@ messages:
          bAcknowledge = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_loud)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_loud)
       {
          if NOT pbAllowTalk
          {
@@ -2056,14 +2140,14 @@ messages:
          bAcknowledge = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_nodes)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_nodes)
       {
          Send(Send(SYS,@GetLibrary), @PlayerManaNodeList, #mob=self, #person=poMaster);
 
          bIsCommand = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_no_buffs)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_no_buffs)
       {
          if pbAllowBuff
          {
@@ -2074,7 +2158,7 @@ messages:
          bAcknowledge = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_do_buffs)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_do_buffs)
       {
          if NOT pbAllowBuff
          {
@@ -2085,7 +2169,7 @@ messages:
          bAcknowledge = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_stop_taunting)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_stop_taunting)
       {
          if pbAllowTaunt
          {
@@ -2096,7 +2180,7 @@ messages:
          bAcknowledge = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_taunt)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_taunt)
       {
          if NOT pbAllowTaunt
          {
@@ -2107,7 +2191,7 @@ messages:
          bAcknowledge = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_stop_attacking)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_stop_attacking)
       {
          if pbAllowAttack
          {
@@ -2122,7 +2206,7 @@ messages:
          bAcknowledge = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_attack)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_attack)
       {
          if NOT pbAllowAttack
          {
@@ -2136,7 +2220,7 @@ messages:
          bAcknowledge = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_stop_casting)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_stop_casting)
       {
          if pbAllowCast
          {
@@ -2149,7 +2233,7 @@ messages:
          bAcknowledge = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_cast)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_cast)
       {
          if NOT pbAllowCast
          {
@@ -2162,8 +2246,15 @@ messages:
          bAcknowledge = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_heal_me)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_heal_me)
       {
+         if NOT pbCanHelp
+         {
+            Send(self,@ServantCantInterfere);
+
+            return TRUE;
+         }
+
          iPlayerMissingHealth = Send(poMaster, @GetMissingHealth);
 
          if iPlayerMissingHealth <> 0
@@ -2193,8 +2284,15 @@ messages:
          bIsCommand = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_feed_me)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_feed_me)
       {
+         if NOT pbCanHelp
+         {
+            Send(self,@ServantCantInterfere);
+
+            return TRUE;
+         }
+
          iPlayerMissingVigor = Send(poMaster, @GetMissingVigor);
 
          if iPlayerMissingVigor <> 0
@@ -2224,8 +2322,15 @@ messages:
          bIsCommand = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_mystify_me)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_mystify_me)
       {
+         if NOT pbCanHelp
+         {
+            Send(self,@ServantCantInterfere);
+
+            return TRUE;
+         }
+
          iPlayerMissingMana = Send(poMaster, @GetMissingMana);
 
          if iPlayerMissingMana <> 0
@@ -2255,39 +2360,53 @@ messages:
          bIsCommand = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_go_away)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_go_away)
       {
          bDeleteServant = TRUE;
          bIsCommand = TRUE;
          bAcknowledge = TRUE;
       }	  
 
-      if StringEqual(said_string, servant_command_identify)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_identify)
       {
          Send(self,@IdentifyMasterHolding);
          bIsCommand = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_reveal)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_reveal)
       {
          Send(self,@RevealMasterHolding);
          bIsCommand = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_mend)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_mend)
       {
          Send(self,@MendMasterHolding);
          bIsCommand = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_bait)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_bait)
       {
+         if NOT pbCanHelp
+         {
+            Send(self,@ServantCantInterfere);
+
+            return TRUE;
+         }
+
          Send(self,@BaitMonsters);
          bIsCommand = TRUE;
       }
 
-      if StringEqual(said_string, servant_command_disguise)
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_disguise)
       {
+         if NOT pbCanHelp
+         {
+            Send(self,@ServantCantInterfere);
+
+            return TRUE;
+         }
+
          Send(self,@DisguiseMaster);
          bIsCommand = TRUE;
       }
