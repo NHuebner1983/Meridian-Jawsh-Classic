@@ -504,30 +504,30 @@ messages:
          // Only a player can have a servant.
          propagate;
       }
-	  
-	  // Set our master
-	  poMaster = who;
-	  
-	  // The spell object
-	  poSpell = oSpell;
       
-	  // The spell power from their summon cast.
-	  piSpellPower = iSpellPower;
-	  
-     // The recreate heavy work - made this way so upon imping the spell, we can increase the piSpellPower and call this.
-     Send(self,@RecalibrateServant, #iSpellNum=iSpellNum, #iSpellPower=iSpellPower);
+      // Set our master
+      poMaster = who;
+      
+      // The spell object
+      poSpell = oSpell;
+      
+      // The spell power from their summon cast.
+      piSpellPower = iSpellPower;
+      
+      // The recreate heavy work - made this way so upon imping the spell, we can increase the piSpellPower and call this.
+      Send(self,@RecalibrateServant, #iSpellNum=iSpellNum, #iSpellPower=iSpellPower);
 
-	  // Start all of the servant's timers.
-	  Send(self,@CreateServantTimers);
-	 	  
+      // Start all of the servant's timers.
+      Send(self,@CreateServantTimers);
+         
       propagate;
    }
-   
+
    Constructed()
    {   
-	  Send(self,@PrepareServantNameAndDesc);
-	  
-	  propagate;
+      Send(self,@PrepareServantNameAndDesc);
+      
+      propagate;
    }
 
    RecalibrateServant(iSpellNum=$, iSpellPower=0)
@@ -570,64 +570,64 @@ messages:
    SetSpellsLevel()
    {
       if piSpellPower > 0 AND piSpellPower <= 20
-	  {
-	     piSpellLevel = 1;
-	  }
+      {
+         piSpellLevel = 1;
+      }
       if piSpellPower > 20 AND piSpellPower <= 40
-	  {
-	     piSpellLevel = 2;
-	  }
+      {
+         piSpellLevel = 2;
+      }
       if piSpellPower > 40 AND piSpellPower <= 60
-	  {
-	     piSpellLevel = 3;
-	  }
+      {
+         piSpellLevel = 3;
+      }
       if piSpellPower > 60 AND piSpellPower <= 80
-	  {
-	     piSpellLevel = 4;
-	  }
+      {
+         piSpellLevel = 4;
+      }
       if piSpellPower > 80 AND piSpellPower <= 98
-	  {
-	     piSpellLevel = 5;
-	  }
+      {
+         piSpellLevel = 5;
+      }
       if piSpellPower >= 99
-	  {
-	     piSpellLevel = 6;
-	  }
-	  
-	  return;
+      {
+         piSpellLevel = 6;
+      }
+      
+      return;
    }
    
    // TODO: We will need to get this turned on so the servant can protect the master.
    CanAttackPlayer(who = $)
    {
       //Debug("ServantKODAttack",Send(self,@GetName),Send(who,@GetName));
-	  
+      
       return FALSE;
    }
    
    PrepareServantNameAndDesc()
    {
-   	  if piSpellNum <> $ AND sServantName = $
-	  {
-        Send(self,@SetServantName);
-	    Send(self,@SetServantDesc,#iSpellNum=piSpellNum);
-	  }
-	  
-	  return;
+         if piSpellNum <> $ AND sServantName = $
+      {
+         Send(self,@SetServantName);
+         Send(self,@SetServantDesc,#iSpellNum=piSpellNum);
+      }
+      
+      return;
    }
    
    MasterCheck()
    {
       if poMaster = $
-	  {
-	     Send(self,@Delete);
-		 
-		 return FALSE;
-	  }
-	  
-	  return TRUE;
+      {
+         Send(self,@Delete);
+         
+         return FALSE;
+      }
+      
+      return TRUE;
    }
-   
+
    TweakBehavior(mob = $)
    {
       Send(self,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=pbAllowFollow);
@@ -648,18 +648,18 @@ messages:
    CreateServantTimers()
    {
       // Clear existing timers
-	  Send(self,@ClearServantTimers);
-	  
-	  // Create some default data we need while working with timers
-	  Send(self,@SetServantTalk);
-	  
-	  // Start the servant's timers
-	  // TODO: Figure out why we're getting "Delete Timer / Cleanup Timer Failures all over our logs"...
+      Send(self,@ClearServantTimers);
+      
+      // Create some default data we need while working with timers
+      Send(self,@SetServantTalk);
+      
+      // Start the servant's timers
+      // TODO: Figure out why we're getting "Delete Timer / Cleanup Timer Failures all over our logs"...
       Send(self,@StartBuffTimer);
-	  Send(self,@StartTalkTimer);
-	  Send(self,@StartImpTimer);
-	  Send(self,@StartTauntTimer);
-	  Send(self,@StartServantResourcesTimer);
+      Send(self,@StartTalkTimer);
+      Send(self,@StartImpTimer);
+      Send(self,@StartTauntTimer);
+      Send(self,@StartServantResourcesTimer);
       
       return;
    }
@@ -667,63 +667,63 @@ messages:
    StartServantResourcesTimer()
    {
       ptServantResources = CreateTimer(self,@UpdateServantResources,1000);
-	  
-	  return;
+      
+      return;
    }
-   
+
    StartBuffTimer()
    {
       ptBuffs = CreateTimer(self,@ServantBuffs,1000);
-	  
-	  return;
+      
+      return;
    }
 
    StartTalkTimer()
    {
       ptTalk = CreateTimer(self,@ServantTalk,120000);
-	  
-	  return;
+      
+      return;
    }
 
    StartImpTimer()
    {
       ptImp = CreateTimer(self,@ServantImps,1000);
-	  
-	  return;
+      
+      return;
    }
-   
+
    StartTauntTimer()
    {
       ptTaunt = CreateTimer(self,@TauntEnemies,1000);
-	  
-	  return;
+      
+      return;
    }
-   
+
    UpdateServantResources()
    {
       if NOT Send(self,@MasterCheck)
-	  {
-	     return;
-	  }
-	  
-	  Send(self,@StartServantResourcesTimer);
+      {
+         return;
+      }
+      
+      Send(self,@StartServantResourcesTimer);
 
-	  if Send(poMaster,@IncrementServantResourceInterval,#what=SERVANT_RESOURCE_HP)
-	  {
-	     Send(poMaster,@IncrementServantResource,#what=SERVANT_RESOURCE_HP,#amount=1);
-	  }
-	  
-	  if Send(poMaster,@IncrementServantResourceInterval,#what=SERVANT_RESOURCE_MANA)
-	  {
-	     Send(poMaster,@IncrementServantResource,#what=SERVANT_RESOURCE_MANA,#amount=1);
-	  }
-	  
-	  if Send(poMaster,@IncrementServantResourceInterval,#what=SERVANT_RESOURCE_VIGOR)
-	  {
-	     Send(poMaster,@IncrementServantResource,#what=SERVANT_RESOURCE_VIGOR,#amount=1);
-	  }
-	  
-	  return;
+      if Send(poMaster,@IncrementServantResourceInterval,#what=SERVANT_RESOURCE_HP)
+      {
+         Send(poMaster,@IncrementServantResource,#what=SERVANT_RESOURCE_HP,#amount=1);
+      }
+      
+      if Send(poMaster,@IncrementServantResourceInterval,#what=SERVANT_RESOURCE_MANA)
+      {
+         Send(poMaster,@IncrementServantResource,#what=SERVANT_RESOURCE_MANA,#amount=1);
+      }
+      
+      if Send(poMaster,@IncrementServantResourceInterval,#what=SERVANT_RESOURCE_VIGOR)
+      {
+         Send(poMaster,@IncrementServantResource,#what=SERVANT_RESOURCE_VIGOR,#amount=1);
+      }
+      
+      return;
    }
 
    ClearServantTimers()
@@ -754,9 +754,9 @@ messages:
          ptTaunt = $;
       }
 
-	  return;
+      return;
    }
-   
+
    ServantBuffs()
    {
       local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions, iChance, iHealth, iHealAmount, iMaxHealth, iMissing, iAverageKarmaInRoom, bQuietSpellCast;
