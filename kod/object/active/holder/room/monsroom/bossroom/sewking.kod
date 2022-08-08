@@ -55,9 +55,9 @@ constants:
    BLINKBOX2_E = 43
    BLINKBOX2_N = 1
 
-   DROWN_COUNTDOWN_TIME = 11500
-   DROWN_INTERVAL = 20000
-   DROWN_DAMAGE = 40
+   DROWN_COUNTDOWN_TIME = 2000
+   DROWN_INTERVAL = 250
+   DROWN_DAMAGE = 300
    DROWNBOX1_S = 28
    DROWNBOX1_W = 24
    DROWNBOX1_E = 41
@@ -80,9 +80,7 @@ resources:
    SewerKingLair_lever_desc = \
       "This lever is caked with years' worth of accumulated rust and slime."
    SewerKingLair_drowning = \
-      "You gasp for breath in the last half-inch of air left near the "
-      "ceiling, taking as much water as air into your lungs. "
-      "Maybe the power of Riija could save you from your impending doom?"
+      "You feel crushed by the intense pressure of the rising water in the chamber."
 
    SewerKingLair_jumped_mistake = "~B~r~IYou sense you've made a grave mistake as you fall to your death.~B~r~I"
 
@@ -106,6 +104,24 @@ resources:
       "The Barloque & Jasper City Council Safety Board"
       "\n\n"
       
+   SewerKingLair_Drown_Signname = "DROWN WARNING"
+   SewerKingLair_Drown_Sign = \
+      "THIS CAVE ENTRANCE IS VERY UNSTABLE."
+      "\n\n"
+      "As dangerous as this sounds, the only advice "
+      "that can be given is to make your way through this cave and into "
+      "the Lupogg King's chamber, or turn back and exit this cave immediately."
+      "\n\n"
+      "If the Lupogg King collapses, the area you are in will be filled with water in "
+      "a matter of seconds. You will not survive without the help of the gods."
+      "\n\n"
+      "---LEAVE THIS AREA IMMEDIATELY---"
+      "---YOU WILL DIE IF YOU REMAIN---"
+      "\n\n"
+      "Sincerely yours, \n"
+      "The Barloque & Jasper City Council Safety Board"
+      "\n\n"
+
 //   sewking_bones_name = "pile of bones"
 //   sewking_bones_icon = skelX.bgf
 //   sewking_bones_desc = \
@@ -119,8 +135,8 @@ classvars:
 
    vrName = room_name_SewerKingLair
 
-   viTeleport_row = 38
-   viTeleport_col = 33
+   viTeleport_row = 40
+   viTeleport_col = 13
    viTeleport_rowW = 40
    viTeleport_colW = 10
    viTeleport_rowE = 18
@@ -231,6 +247,10 @@ messages:
       oObj = Create(&Sign,#desc=SewerKingLair_Sign,#newbie=TRUE,#name=SewerKingLair_Signname);
       Send(self,@NewHold,#what=oObj,#new_row=12,#new_col=24,
          #fine_row=18,#fine_col=7);
+      
+      // Drown warning
+      oObj = Create(&Sign,#desc=SewerKingLair_Drown_Sign,#newbie=TRUE,#name=SewerKingLair_Drown_Signname);
+      Send(self,@NewHold,#what=oObj,#new_row=21,#new_col=26);
 
       //Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=00,#fine_col=00);
       //Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=16,#fine_col=00);
@@ -760,12 +780,13 @@ messages:
    DrownIntervalTrigger()
    {
       local i,UsersStillDrowning;
+
       UsersStillDrowning = FALSE;
       ptDrownIntervalTimer = $;
 
       foreach i in plActive
       {
-         if IsClass(First(i),&User)
+         if IsClass(First(i),&User) AND NOT IsClass(First(i), &DM)
             AND Send(self,@IsInDrownArea,#who=First(i))
          {
             // Do horrible nasty drowning stuff here.  (heh, heh, heh...)
