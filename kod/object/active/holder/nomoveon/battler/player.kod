@@ -103,7 +103,7 @@ constants:
    // What's the length after having a player attacked before we let "mules" 
    //  cast on them again.  Currently set to 15 minutes.  Should be bigger 
    //  than logoff ghost time (currently 10 mins)
-   ATTACKED_PLAYER_WAIT = 15 * 60
+   ATTACKED_PLAYER_WAIT = 5 * 60
 
    // Damage is capped at piBase_Max_Health divided by this number.  Reduces
    //  newbie slaughter.
@@ -9767,7 +9767,6 @@ messages:
             }
             else
             {
-            
                // Grant only one fourth of the energy if the mob didn't attack the player.
                if ((piFlags & PFLAG_TOOK_DAMAGE) OR (piFlags & PFLAG_DODGED))
                {
