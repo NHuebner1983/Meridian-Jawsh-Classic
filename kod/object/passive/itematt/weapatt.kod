@@ -76,7 +76,9 @@ messages:
                                [ &MysticSword, 3 ],
                                [ &NeruditeSword, 2 ],
                                [ &BattleBow, 1 ],
-                               [ &LongBow, 1 ]
+                               [ &LongBow, 1 ],
+                               [ &NeruditeBow, 1 ],
+                               [ &MagicBow, 1 ]
                              ];
       return;
    }
