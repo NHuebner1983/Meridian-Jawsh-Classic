@@ -358,6 +358,10 @@ resources:
    servant_undressed = "~kYour servant gasps, ''You should really shave down there.''~k"
 
    servant_pvp_cant_help = "~kYour servant shrugs, ''You've recently engaged in PVP combat. I am forbidden to interfere.''~k"
+   servant_pvp_cant_help_started = "~kYour servant shrugs, ''You've engaged in PVP combat! I can't help you!''~k"
+   servant_pvp_can_help_again = "~kYour servant smiles, ''I can help you again, is there anything you need?''~k"
+
+   servant_greeting = "~kYour servant waves, ''Hello, I am %s, your %s servant.''~k"
 
 classvars:
    
@@ -497,8 +501,12 @@ properties:
    pbCanHelp = TRUE
    ptCanHelpTimer = $
 
+   // Greeting
+   ptGreetingTimer = $
+
    // Intervals for servant routines
    piCanHelpInterval = 3000
+   piGreetingInterval = 3000
 
    piResourceInterval = 1000
    piResourceIntervalNormal = 1000
@@ -518,7 +526,7 @@ properties:
 
    piTauntInterval = 1000
    piTauntIntervalNormal = 1000
-   piTauntIntervalPvp = 30000
+   piTauntIntervalPvp = 6000
 
 messages:
    
@@ -541,19 +549,18 @@ messages:
       piSpellPower = iSpellPower;
       
       // The recreate heavy work - made this way so upon imping the spell, we can increase the piSpellPower and call this.
-      Send(self,@RecalibrateServant, #iSpellNum=iSpellNum, #iSpellPower=iSpellPower);
-
-      // Start all of the servant's timers.
+      Send(self,@RecalibrateServant, #iSpellNum=iSpellNum, #iSpellPower=iSpellPower);         
+      Send(self,@PrepareServantNameAndDesc);
       Send(self,@CreateServantTimers);
-         
+
       propagate;
    }
 
-   Constructed()
-   {   
-      Send(self,@PrepareServantNameAndDesc);
-      
-      propagate;
+   Greeting()
+   {
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_greeting,#parm1=Send(self,@GetName),#parm2=Send(poSpell,@GetSchoolStr));
+
+      return;
    }
 
    RecalibrateServant(iSpellNum=$, iSpellPower=0)
@@ -688,6 +695,19 @@ messages:
       Send(self,@StartImpTimer);
       Send(self,@StartTauntTimer);
       Send(self,@StartServantResourcesTimer);
+
+      if pbCanHelp
+      {
+         // Only show a greeting if we didn't just yell "I can't help you" at the master for being in PVP.
+         Send(self,@StartGreetingTimer);
+      }
+      
+      return;
+   }
+
+   StartGreetingTimer()
+   {
+      ptGreetingTimer = CreateTimer(self,@Greeting,piGreetingInterval);
       
       return;
    }
@@ -736,12 +756,28 @@ messages:
 
    CheckCanHelp()
    {
+      local bCanHelp;
+
       if NOT Send(self, @MasterCheck)
       {
          return;
       }
 
-      pbCanHelp = Send(poMaster, @CanHelpPlayer);
+      bCanHelp = Send(poMaster, @CanHelpPlayer);
+
+      if pbCanHelp AND NOT bCanHelp
+      {
+         // PVP timer is running
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_pvp_cant_help_started);
+      }
+
+      if NOT pbCanHelp AND bCanHelp
+      {
+         // PVP timer has ended.
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_pvp_can_help_again);
+      }
+
+      pbCanHelp = bCanHelp;
 
       Send(self,@StartCanHelpTimer);
 
