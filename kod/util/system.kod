@@ -5874,6 +5874,10 @@ messages:
       plItemTemplates = cons(create(&Sapphire),plItemTemplates);
       plItemTemplates = cons(create(&Emerald),plItemTemplates);
       plItemTemplates = cons(create(&BlueDragonScale),plItemTemplates);
+      plItemTemplates = cons(create(&BlackHydraScale),plItemTemplates);
+      plItemTemplates = cons(create(&GoldenHydraScale),plItemTemplates);
+      plItemTemplates = cons(create(&GreenHydraScale),plItemTemplates);
+      plItemTemplates = cons(create(&RedHydraScale),plItemTemplates);
       plItemTemplates = cons(create(&DarkAngelFeather),plItemTemplates);
       plItemTemplates = cons(create(&Fairywing),plItemTemplates);
       plItemTemplates = cons(create(&OrcTooth),plItemTemplates);

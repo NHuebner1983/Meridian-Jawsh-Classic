@@ -16,16 +16,16 @@ constants:
 
 resources:
    
-   goldhydra_name_rsc = "gold hydra"
+   goldhydra_name_rsc = "golden hydra"
    goldhydra_icon_rsc = hydray.bgf
    goldhydra_desc_rsc = \
       "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. gold hydras are known to be much more  "
+      "who comes across it. Golden hydras are known to be much more  "
       "violent then friendly.  "
 
 
    goldhydra_dead_icon_rsc = hydrayX.bgf
-   goldhydra_dead_name_rsc = "slain gold hydra"
+   goldhydra_dead_name_rsc = "slain golden hydra"
 
    goldhydra_sound_hit = goldhydra_att.mp3
    goldhydra_sound_miss = goldhydra_att.mp3
