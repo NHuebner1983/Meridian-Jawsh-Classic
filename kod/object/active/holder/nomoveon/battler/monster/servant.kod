@@ -374,9 +374,9 @@ classvars:
    viAttack_type = ATCK_WEAP_SLASH
    viAttack_spell = 0
    
-   viDefault_behavior = AI_MOVE_FOLLOW_MASTER     | AI_FIGHT_MONSTERS \
-                      | AI_FIGHT_SWITCHALOT       | AI_MOVE_REGROUP \
-	                  | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_THROUGH_WALLS | AI_FIGHT_NEWBIESAFE
+   viDefault_behavior = AI_MOVE_FOLLOW_MASTER       | AI_FIGHT_MONSTERS \
+                      | AI_FIGHT_SWITCHALOT         | AI_MOVE_REGROUP \
+                      | AI_MOVE_WALKTHROUGH_WALLS   | AI_FIGHT_THROUGH_WALLS   | AI_FIGHT_NEWBIESAFE
 	   
    viWimpy = 2
 
