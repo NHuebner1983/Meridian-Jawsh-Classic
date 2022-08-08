@@ -357,6 +357,8 @@ resources:
    servant_outfit_saved_not_used = "~kYour servant nods, ''I had trouble preparing you in that outfit. I can only outfit you with the original items you equipped. I wouldn't dare outfit you in something you found unacceptable.''~k"
    servant_undressed = "~kYour servant gasps, ''You should really shave down there.''~k"
 
+   servant_pvp_cant_help = "~kYour servant shrugs, ''I cannot help you for some time if you have engaged in PVP comat.''~k"
+
 classvars:
    
    vrKocName = servant_koc_name_rsc
@@ -759,7 +761,7 @@ messages:
    {
       local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions, iChance, iHealth, iHealAmount, iMaxHealth, iMissing, iAverageKarmaInRoom, bQuietSpellCast;
 	  
-	  if NOT Send(self,@MasterCheck)
+	  if NOT Send(self,@MasterCheck) OR NOT Send(poMaster, @CanHelpPlayer)
 	  {
 	     return;
 	  }
@@ -1459,7 +1461,6 @@ messages:
       return FALSE;
    }
 
-
    Killed(what=$)
    {
       if (IsClass(what, &Servant) AND Send(poMaster,@GetServant) = what)
@@ -1475,28 +1476,28 @@ messages:
    {
       Send(self,@RemoveAllMinions);
 
-   	  Send(self,@ClearServantTimers);
+      Send(self,@ClearServantTimers);
 
       if Send(self,@MasterCheck) 
-	  {
+      {
          Send(self,@RemoveImportantServantEnchants);
-	     Send(poMaster,@RemoveControlledMinion,#what=self);
-		 Send(poMaster,@SetServant,#oServant=$);
-	  }
-	  
-	  poMaster = $;
-	  
-	  Send(self,@Delete);
-	  
-	  return;
+         Send(poMaster,@RemoveControlledMinion,#what=self);
+         Send(poMaster,@SetServant,#oServant=$);
+      }
+
+      poMaster = $;
+
+      Send(self,@Delete);
+
+      return;
    }
 
    Delete()
    {
       if poMaster <> $
-	  {
-	     Send(self,@GracefullyDeleteServant);
-	  }
+      {
+         Send(self,@GracefullyDeleteServant);
+      }
 	  	  
       propagate;
    }
@@ -1575,40 +1576,40 @@ messages:
       }
 
       if what = $ OR what = self 
-	  {
-	     propagate;
-	  }
-	  
-	  if Send(self,@MasterCheck) AND what = poMaster
-	  {
-	    iMasterDistance = Send(self,@SquaredDistanceTo,#what=poMaster);
-		 iServantState = Send(self,@GetState);
-		 
-		 switch (iServantState)
-		 {
-		    case STATE_ATTACK:
-			   iActionDistance = RETREAT_DISTANCE;
-			break;
-			case STATE_CHASE:
-			   iActionDistance = RETREAT_DISTANCE;
-			break; 
-			case STATE_MOVE: 
-			   iActionDistance = RETREAT_DISTANCE;
-			break;
-			case STATE_LIMBO:
-			   iActionDistance = IDLE_DISTANCE;
-			break;
-			case STATE_WAIT:
-			   iActionDistance = IDLE_DISTANCE;
-			break;
-		 }
-		 
-		 if iMasterDistance > iActionDistance
-		 {
-		    Send(self,@EnterStateLimbo);
-		    Send(self,@GotoMaster);
-		 }
-	  }
+      {
+         propagate;
+      }
+
+      if Send(self,@MasterCheck) AND what = poMaster
+      {
+         iMasterDistance = Send(self,@SquaredDistanceTo,#what=poMaster);
+         iServantState = Send(self,@GetState);
+
+         switch (iServantState)
+         {
+            case STATE_ATTACK:
+               iActionDistance = RETREAT_DISTANCE;
+            break;
+            case STATE_CHASE:
+               iActionDistance = RETREAT_DISTANCE;
+            break; 
+            case STATE_MOVE: 
+               iActionDistance = RETREAT_DISTANCE;
+            break;
+            case STATE_LIMBO:
+               iActionDistance = IDLE_DISTANCE;
+            break;
+            case STATE_WAIT:
+               iActionDistance = IDLE_DISTANCE;
+            break;
+         }
+
+         if iMasterDistance > iActionDistance
+         {
+            Send(self,@EnterStateLimbo);
+            Send(self,@GotoMaster);
+         }
+      }
 	  
       propagate;
    }
@@ -1740,39 +1741,39 @@ messages:
       local sNPCName, oNPC, lNPCForSale;
 	  
       if plNPCNames = $
-	  {
-	     plNPCNames = [
-		    npc_a, npc_b, npc_c, npc_d, npc_e, npc_f, npc_g, npc_h, npc_i, npc_j, npc_k, npc_l, npc_m, npc_n,
-		    npc_o, npc_p, npc_q, npc_r, npc_s, npc_t, npc_u, npc_v, npc_w, npc_x, npc_y, npc_z, 
-		    npc_aa, npc_ab, npc_ac, npc_ad, npc_ae, npc_af, npc_ag
-		 ];
-	  }
-	  
+      {
+         plNPCNames = [
+            npc_a, npc_b, npc_c, npc_d, npc_e, npc_f, npc_g, npc_h, npc_i, npc_j, npc_k, npc_l, npc_m, npc_n,
+            npc_o, npc_p, npc_q, npc_r, npc_s, npc_t, npc_u, npc_v, npc_w, npc_x, npc_y, npc_z, 
+            npc_aa, npc_ab, npc_ac, npc_ad, npc_ae, npc_af, npc_ag
+         ];
+      }
+
       if plNPCLibrary = $
-	  {
-		 plNPCLibrary = [];
-		 
-		 foreach sNPCName in plNPCNames
-		 {
+      {
+         plNPCLibrary = [];
+
+         foreach sNPCName in plNPCNames
+         {
             oNPC = Send(SYS,@FindNPCByString,#string=sNPCName);
-						
+
             if oNPC <> $
             {
-			   if plNPCLibrary = $
-			   {
-			      plNPCLibrary = [];
-			   }
-			   
-			   lNPCForSale = Send(oNPC, @GetForSale, #report=FALSE, #conditional=FALSE, #items=FALSE);
-			   
-			   if lNPCForSale <> $
-			   {
+               if plNPCLibrary = $
+               {
+                  plNPCLibrary = [];
+               }
+
+               lNPCForSale = Send(oNPC, @GetForSale, #report=FALSE, #conditional=FALSE, #items=FALSE);
+
+               if lNPCForSale <> $
+               {
                   plNPCLibrary = AppendListElem([oNPC, lNPCForSale], plNPCLibrary);
-			   }
+               }
             }
          }		 
-	  }
-	  
+      }
+
 	  return;
    }
    
@@ -1784,25 +1785,25 @@ messages:
 	  }
       
       switch(iSpellNum) {
-		case SID_RIIJA_SERVANT:
-		   vrDesc = servant_desc_riija;
-		break;
-		case SID_FAREN_SERVANT:
-		   vrDesc = servant_desc_faren;
-		break;
-		case SID_KRAN_SERVANT:
-		   vrDesc = servant_desc_kran;
-		break;
-		case SID_SHAL_SERVANT:
-		   vrDesc = servant_desc_shal;
-		break;
-		case SID_QOR_SERVANT:
-		   vrDesc = servant_desc_qor;
-		break;
-		case SID_JALA_SERVANT:   
-		   vrDesc = servant_desc_jala;
-		break;
-	  }
+         case SID_RIIJA_SERVANT:
+            vrDesc = servant_desc_riija;
+         break;
+         case SID_FAREN_SERVANT:
+            vrDesc = servant_desc_faren;
+         break;
+         case SID_KRAN_SERVANT:
+            vrDesc = servant_desc_kran;
+         break;
+         case SID_SHAL_SERVANT:
+            vrDesc = servant_desc_shal;
+         break;
+         case SID_QOR_SERVANT:
+            vrDesc = servant_desc_qor;
+         break;
+         case SID_JALA_SERVANT:   
+            vrDesc = servant_desc_jala;
+         break;
+      }
 	  
       return;
    }
@@ -1811,29 +1812,29 @@ messages:
    {
       local lServantNames;
 	  
-	  lServantNames = [
-	     servant_name_1, servant_name_2, servant_name_3, servant_name_4, servant_name_5,
-	     servant_name_6, servant_name_7, servant_name_8, servant_name_9, servant_name_10,
-	     servant_name_11, servant_name_12, servant_name_13, servant_name_14, servant_name_15,
-	     servant_name_16, servant_name_17, servant_name_18, servant_name_19, servant_name_20,
-	     servant_name_21, servant_name_22, servant_name_23, servant_name_24, servant_name_25,
-	     servant_name_26, servant_name_27, servant_name_28, servant_name_29, servant_name_30,
-	     servant_name_31, servant_name_32, servant_name_33, servant_name_34, servant_name_35,
-	     servant_name_36, servant_name_37, servant_name_38, servant_name_39, servant_name_40
-	  ];
-	  
-	  sServantName = Nth(lServantNames, Random(1, Length(lServantNames)));
-	  
-	  return;
+      lServantNames = [
+         servant_name_1, servant_name_2, servant_name_3, servant_name_4, servant_name_5,
+         servant_name_6, servant_name_7, servant_name_8, servant_name_9, servant_name_10,
+         servant_name_11, servant_name_12, servant_name_13, servant_name_14, servant_name_15,
+         servant_name_16, servant_name_17, servant_name_18, servant_name_19, servant_name_20,
+         servant_name_21, servant_name_22, servant_name_23, servant_name_24, servant_name_25,
+         servant_name_26, servant_name_27, servant_name_28, servant_name_29, servant_name_30,
+         servant_name_31, servant_name_32, servant_name_33, servant_name_34, servant_name_35,
+         servant_name_36, servant_name_37, servant_name_38, servant_name_39, servant_name_40
+      ];
+
+      sServantName = Nth(lServantNames, Random(1, Length(lServantNames)));
+
+      return;
    }
    
    GetName()
    {
       if sServantName = $
-	  {
-	     Send(self,@SetServantName);
-	  }
-	  
+      {
+         Send(self,@SetServantName);
+      }
+
       return sServantName;
    }
    
@@ -1869,36 +1870,36 @@ messages:
          }
          else
          {
-		    if piSpellLevel = 1
-			{
+            if piSpellLevel = 1
+            {
                AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,servant_desc_level_one,
-                         4,Send(poSpell,@GetSchoolStr));
-			}
-		    if piSpellLevel = 2
-			{
+                     4,Send(poSpell,@GetSchoolStr));
+            }
+            if piSpellLevel = 2
+            {
                AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,servant_desc_level_two,
-                         4,Send(poSpell,@GetSchoolStr));
-			}
-		    if piSpellLevel = 3
-			{
+                     4,Send(poSpell,@GetSchoolStr));
+            }
+            if piSpellLevel = 3
+            {
                AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,servant_desc_level_three,
-                         4,Send(poSpell,@GetSchoolStr));
-			}
-		    if piSpellLevel = 4
-			{
+                     4,Send(poSpell,@GetSchoolStr));
+            }
+            if piSpellLevel = 4
+            {
                AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,servant_desc_level_four,
-                         4,Send(poSpell,@GetSchoolStr));
-			}
-		    if piSpellLevel = 5
-			{
+                     4,Send(poSpell,@GetSchoolStr));
+            }
+            if piSpellLevel = 5
+            {
                AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,servant_desc_level_five,
-                         4,Send(poSpell,@GetSchoolStr));
-			}
-		    if piSpellLevel = 6
-			{
+                     4,Send(poSpell,@GetSchoolStr));
+            }
+            if piSpellLevel = 6
+            {
                AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,servant_desc_level_six,
-                         4,Send(poSpell,@GetSchoolStr));
-			}
+                     4,Send(poSpell,@GetSchoolStr));
+            }
          }
 
          return;
@@ -1927,43 +1928,43 @@ messages:
       }
       else
       {
-	     if piSpellLevel = 1
-		 {
+         if piSpellLevel = 1
+         {
             AddPacket(4,rMonster_Condition, 4,vrDesc, 4,servant_desc_level_one,
-                      4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
-                      4,Send(self,@GetName));
+                        4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
+                        4,Send(self,@GetName));
          }
-	     if piSpellLevel = 2
-		 {
+         if piSpellLevel = 2
+         {
             AddPacket(4,rMonster_Condition, 4,vrDesc, 4,servant_desc_level_two,
-                      4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
-                      4,Send(self,@GetName));
+                        4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
+                        4,Send(self,@GetName));
          }
-	     if piSpellLevel = 3
-		 {
+         if piSpellLevel = 3
+         {
             AddPacket(4,rMonster_Condition, 4,vrDesc, 4,servant_desc_level_three,
-                      4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
-                      4,Send(self,@GetName));
+                        4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
+                        4,Send(self,@GetName));
          }
-	     if piSpellLevel = 4
-		 {
+         if piSpellLevel = 4
+         {
             AddPacket(4,rMonster_Condition, 4,vrDesc, 4,servant_desc_level_four,
-                      4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
-                      4,Send(self,@GetName));
+                        4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
+                        4,Send(self,@GetName));
          }
-	     if piSpellLevel = 5
-		 {
+         if piSpellLevel = 5
+         {
             AddPacket(4,rMonster_Condition, 4,vrDesc, 4,servant_desc_level_five,
-                      4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
-                      4,Send(self,@GetName));
+                        4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
+                        4,Send(self,@GetName));
          }
-	     if piSpellLevel = 6
-		 {
+         if piSpellLevel = 6
+         {
             AddPacket(4,rMonster_Condition, 4,vrDesc, 4,servant_desc_level_six,
-                      4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
-                      4,Send(self,@GetName));
+                        4,Send(poSpell,@GetSchoolStr), 4,Send(self,@GetCapDef),
+                        4,Send(self,@GetName));
          }
-	  }
+      }
 
       return;
    }
@@ -1983,26 +1984,26 @@ messages:
    TauntEnemies()
    {
       ptTaunt = $;
-	  
-   	  if NOT Send(self,@MasterCheck)
-	  {
-	     return;
-	  }
-   
+
+      if NOT Send(self,@MasterCheck)
+      {
+         return;
+      }
+
       ptTaunt = CreateTimer(self,@TauntEnemies,1000);
-	  
-	  if NOT pbAllowTaunt
-	  {
-	     return;
-	  }
-	  
-	  if poTarget <> $ AND IsClass(poTarget,&Monster)
-	  {
-	     // Tells the target to switch to the servant
-		 // with a massive amount of hate.
-		 // Only works if you enter combat with the monster.
+
+      if NOT pbAllowTaunt
+      {
+         return;
+      }
+
+      if poTarget <> $ AND IsClass(poTarget,&Monster)
+      {
+         // Tells the target to switch to the servant
+         // with a massive amount of hate.
+         // Only works if you enter combat with the monster.
          Send(poTarget,@TargetSwitch,#what=self,#iHatred=10000);
-	  }
+      }
 	  
 	  return;
    }
@@ -2013,269 +2014,288 @@ messages:
       {
          DeleteTimer(ptTaunt);
       }
-	  
-	  return;
+
+      return;
    }
 
    GetSaidServantCommand(said_string="derpaderp")
    {
       local bIsCommand, iPlayerMissingHealth, iPlayerMissingMana, iPlayerMissingVigor, iPulledAmount, bAcknowledge, bDeleteServant;
 	  
-	  bIsCommand = FALSE;
-     bAcknowledge = FALSE;
-	  
-	  // Show the help command output to our master.
+      bIsCommand = FALSE;
+      bAcknowledge = FALSE;
+
+      // Show the help command output to our master.
       if StringEqual(said_string, servant_command_help)
       {
-	     Post(poMaster,@MsgSendUser,#message_rsc=servant_response_help);
-	     bIsCommand = TRUE;
-        bAcknowledge = TRUE;
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_response_help);
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
       }
-	  
-	  
+
+
       if StringEqual(said_string, servant_command_quiet)
       {
-	     if pbAllowTalk
-		 {
-		    pbAllowTalk = FALSE;
-		 }
-		 
-	     bIsCommand = TRUE;
-        bAcknowledge = TRUE;
-      }	  
+         if pbAllowTalk
+         {
+            pbAllowTalk = FALSE;
+         }
+
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
+      }
+
       if StringEqual(said_string, servant_command_loud)
       {
-	     if NOT pbAllowTalk
-		 {
-		    pbAllowTalk = TRUE;
-		 }
-		 
-	     bIsCommand = TRUE;
-        bAcknowledge = TRUE;
+         if NOT pbAllowTalk
+         {
+            pbAllowTalk = TRUE;
+         }
+
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
       }
+
       if StringEqual(said_string, servant_command_nodes)
       {
          Send(Send(SYS,@GetLibrary), @PlayerManaNodeList, #mob=self, #person=poMaster);
-		 
-	     bIsCommand = TRUE;
+
+         bIsCommand = TRUE;
       }
+
       if StringEqual(said_string, servant_command_no_buffs)
       {
-	     if pbAllowBuff
-		 {
-		    pbAllowBuff = FALSE;
-		 }
-		 
-	     bIsCommand = TRUE;
-        bAcknowledge = TRUE;
+         if pbAllowBuff
+         {
+            pbAllowBuff = FALSE;
+         }
+
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
       }
+
       if StringEqual(said_string, servant_command_do_buffs)
       {
-	     if NOT pbAllowBuff
-		 {
-		    pbAllowBuff = TRUE;
-		 }
-		 
-	     bIsCommand = TRUE;
-        bAcknowledge = TRUE;
+         if NOT pbAllowBuff
+         {
+            pbAllowBuff = TRUE;
+         }
+
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
       }
+
       if StringEqual(said_string, servant_command_stop_taunting)
       {
-	     if pbAllowTaunt
-		 {
-		    pbAllowTaunt = FALSE;
-		 }
-		 
-	     bIsCommand = TRUE;
-        bAcknowledge = TRUE;
+         if pbAllowTaunt
+         {
+            pbAllowTaunt = FALSE;
+         }
+
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
       }
+
       if StringEqual(said_string, servant_command_taunt)
       {
-	     if NOT pbAllowTaunt
-		 {
-		    pbAllowTaunt = TRUE;
-		 }
-		 
-	     bIsCommand = TRUE;
-        bAcknowledge = TRUE;
+         if NOT pbAllowTaunt
+         {
+            pbAllowTaunt = TRUE;
+         }
+
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
       }
+
       if StringEqual(said_string, servant_command_stop_attacking)
       {
-	     if pbAllowAttack
-		 {
-		    pbAllowAttack = FALSE;
-			pbAllowCast = FALSE;
-			plSpellBook = $;
+         if pbAllowAttack
+         {
+            pbAllowAttack = FALSE;
+            pbAllowCast = FALSE;
+            plSpellBook = $;
             Send(self,@TweakBehavior);
-			Send(self,@SetState,#bit=STATE_WAIT);
-		 }
-		 
-	     bIsCommand = TRUE;
-        bAcknowledge = TRUE;
+            Send(self,@SetState,#bit=STATE_WAIT);
+         }
+
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
       }
+
       if StringEqual(said_string, servant_command_attack)
       {
-	     if NOT pbAllowAttack
-		 {
-		    pbAllowAttack = TRUE;
-			pbAllowCast = TRUE;
-			Send(self,@SetServantSpellBook);
+         if NOT pbAllowAttack
+         {
+            pbAllowAttack = TRUE;
+            pbAllowCast = TRUE;
+            Send(self,@SetServantSpellBook);
             Send(self,@TweakBehavior);
-		 }
-		 
-	     bIsCommand = TRUE;
-        bAcknowledge = TRUE;
+         }
+
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
       }
+
       if StringEqual(said_string, servant_command_stop_casting)
       {
-	     if pbAllowCast
-		 {
-		    pbAllowCast = FALSE;
-			plSpellBook = $;
+         if pbAllowCast
+         {
+            pbAllowCast = FALSE;
+            plSpellBook = $;
             Send(self,@TweakBehavior);
-		 }
-		 
-	     bIsCommand = TRUE;
-        bAcknowledge = TRUE;
+         }
+
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
       }
+
       if StringEqual(said_string, servant_command_cast)
       {
-	     if NOT pbAllowCast
-		 {
-		    pbAllowCast = TRUE;
-			Send(self,@SetServantSpellBook);
+         if NOT pbAllowCast
+         {
+            pbAllowCast = TRUE;
+            Send(self,@SetServantSpellBook);
             Send(self,@TweakBehavior);
-		 }
-		 
-	     bIsCommand = TRUE;
-        bAcknowledge = TRUE;
+         }
+
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
       }
+
       if StringEqual(said_string, servant_command_heal_me)
       {
-	     iPlayerMissingHealth = Send(poMaster, @GetMissingHealth);
-		 
-		 if iPlayerMissingHealth <> 0
-		 {
-		    iPulledAmount = Send(poMaster, @DecrementServantResource,#what=SERVANT_RESOURCE_HP,#amount=iPlayerMissingHealth);
+         iPlayerMissingHealth = Send(poMaster, @GetMissingHealth);
 
-		    if iPulledAmount <= 0
-		    {
-		       Post(poMaster,@MsgSendUser,#message_rsc=servant_response_heal_me_empty,
-			      #parm1=Send(self,@GetName));
-		    }
-		    else
-		    {
-		       Post(poMaster,@MsgSendUser,#message_rsc=servant_response_heal_me,
-			      #parm1=Send(self,@GetName),#parm2=iPulledAmount,
-			      #parm3=Send(poMaster, @GetServantResourceAmount, #what=SERVANT_RESOURCE_HP));
-				  
-			   Send(poMaster,@GainHealth,#amount=iPulledAmount,#precision=FALSE);
-		    }
-		 }
-		 else
-		 {
-		    Post(poMaster,@MsgSendUser,#message_rsc=servant_response_heal_me_full,
-			   #parm1=Send(self,@GetName));
-		 }
-		 
-	     bIsCommand = TRUE;
+         if iPlayerMissingHealth <> 0
+         {
+            iPulledAmount = Send(poMaster, @DecrementServantResource,#what=SERVANT_RESOURCE_HP,#amount=iPlayerMissingHealth);
+
+            if iPulledAmount <= 0
+            {
+               Post(poMaster,@MsgSendUser,#message_rsc=servant_response_heal_me_empty,
+               #parm1=Send(self,@GetName));
+            }
+            else
+            {
+               Post(poMaster,@MsgSendUser,#message_rsc=servant_response_heal_me,
+               #parm1=Send(self,@GetName),#parm2=iPulledAmount,
+               #parm3=Send(poMaster, @GetServantResourceAmount, #what=SERVANT_RESOURCE_HP));
+
+               Send(poMaster,@GainHealth,#amount=iPulledAmount,#precision=FALSE);
+            }
+         }
+         else
+         {
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_response_heal_me_full,
+            #parm1=Send(self,@GetName));
+         }
+
+         bIsCommand = TRUE;
       }
+
       if StringEqual(said_string, servant_command_feed_me)
       {
-	     iPlayerMissingVigor = Send(poMaster, @GetMissingVigor);
+         iPlayerMissingVigor = Send(poMaster, @GetMissingVigor);
 
-		 if iPlayerMissingVigor <> 0
-		 {
-		    iPulledAmount = Send(poMaster, @DecrementServantResource,#what=SERVANT_RESOURCE_VIGOR,#amount=iPlayerMissingVigor);
+         if iPlayerMissingVigor <> 0
+         {
+            iPulledAmount = Send(poMaster, @DecrementServantResource,#what=SERVANT_RESOURCE_VIGOR,#amount=iPlayerMissingVigor);
 
-		    if iPulledAmount <= 0
-		    {
-		       Post(poMaster,@MsgSendUser,#message_rsc=servant_response_feed_me_empty,
-			      #parm1=Send(self,@GetName));
-		    }
-		    else
-		    {
-		       Post(poMaster,@MsgSendUser,#message_rsc=servant_response_feed_me,
-			      #parm1=Send(self,@GetName),#parm2=iPulledAmount,
-			      #parm3=Send(poMaster, @GetServantResourceAmount, #what=SERVANT_RESOURCE_VIGOR));
-				  
-			   Send(poMaster,@GainVigor,#amount=iPulledAmount);
-		    }
-		 }
-		 else
-		 {
-		    Post(poMaster,@MsgSendUser,#message_rsc=servant_response_feed_me_full,
-			   #parm1=Send(self,@GetName));
-		 }
+            if iPulledAmount <= 0
+            {
+               Post(poMaster,@MsgSendUser,#message_rsc=servant_response_feed_me_empty,
+               #parm1=Send(self,@GetName));
+            }
+            else
+            {
+               Post(poMaster,@MsgSendUser,#message_rsc=servant_response_feed_me,
+               #parm1=Send(self,@GetName),#parm2=iPulledAmount,
+               #parm3=Send(poMaster, @GetServantResourceAmount, #what=SERVANT_RESOURCE_VIGOR));
 
-	     bIsCommand = TRUE;
+               Send(poMaster,@GainVigor,#amount=iPulledAmount);
+            }
+         }
+         else
+         {
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_response_feed_me_full,
+            #parm1=Send(self,@GetName));
+         }
+
+         bIsCommand = TRUE;
       }
+
       if StringEqual(said_string, servant_command_mystify_me)
       {
-	     iPlayerMissingMana = Send(poMaster, @GetMissingMana);
+         iPlayerMissingMana = Send(poMaster, @GetMissingMana);
 
-		 if iPlayerMissingMana <> 0
-		 {
-		    iPulledAmount = Send(poMaster, @DecrementServantResource,#what=SERVANT_RESOURCE_MANA,#amount=iPlayerMissingMana);
+         if iPlayerMissingMana <> 0
+         {
+            iPulledAmount = Send(poMaster, @DecrementServantResource,#what=SERVANT_RESOURCE_MANA,#amount=iPlayerMissingMana);
 
-		    if iPulledAmount <= 0
-		    {
-		       Post(poMaster,@MsgSendUser,#message_rsc=servant_response_mystify_me_empty,
-			      #parm1=Send(self,@GetName));
-		    }
-		    else
-		    {
-		       Post(poMaster,@MsgSendUser,#message_rsc=servant_response_mystify_me,
-			      #parm1=Send(self,@GetName),#parm2=iPulledAmount,
-			      #parm3=Send(poMaster, @GetServantResourceAmount, #what=SERVANT_RESOURCE_MANA));
-				  
-			   Send(poMaster,@GainMana,#amount=iPulledAmount);
-		    }
-		 }
-		 else
-		 {
-		    Post(poMaster,@MsgSendUser,#message_rsc=servant_response_mystify_me_full,
-			   #parm1=Send(self,@GetName));
-		 }
-		 
-	     bIsCommand = TRUE;
+            if iPulledAmount <= 0
+            {
+               Post(poMaster,@MsgSendUser,#message_rsc=servant_response_mystify_me_empty,
+               #parm1=Send(self,@GetName));
+            }
+            else
+            {
+               Post(poMaster,@MsgSendUser,#message_rsc=servant_response_mystify_me,
+               #parm1=Send(self,@GetName),#parm2=iPulledAmount,
+               #parm3=Send(poMaster, @GetServantResourceAmount, #what=SERVANT_RESOURCE_MANA));
+
+               Send(poMaster,@GainMana,#amount=iPulledAmount);
+            }
+         }
+         else
+         {
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_response_mystify_me_full,
+            #parm1=Send(self,@GetName));
+         }
+
+         bIsCommand = TRUE;
       }
+
       if StringEqual(said_string, servant_command_go_away)
       {
-	     bDeleteServant = TRUE;
-	     bIsCommand = TRUE;
-        bAcknowledge = TRUE;
+         bDeleteServant = TRUE;
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
       }	  
+
       if StringEqual(said_string, servant_command_identify)
       {
-	     Send(self,@IdentifyMasterHolding);
-	     bIsCommand = TRUE;
+         Send(self,@IdentifyMasterHolding);
+         bIsCommand = TRUE;
       }
+
       if StringEqual(said_string, servant_command_reveal)
       {
-	     Send(self,@RevealMasterHolding);
-	     bIsCommand = TRUE;
+         Send(self,@RevealMasterHolding);
+         bIsCommand = TRUE;
       }
+
       if StringEqual(said_string, servant_command_mend)
       {
-	     Send(self,@MendMasterHolding);
-	     bIsCommand = TRUE;
+         Send(self,@MendMasterHolding);
+         bIsCommand = TRUE;
       }
+
       if StringEqual(said_string, servant_command_bait)
       {
-	     Send(self,@BaitMonsters);
-	     bIsCommand = TRUE;
+         Send(self,@BaitMonsters);
+         bIsCommand = TRUE;
       }
+
       if StringEqual(said_string, servant_command_disguise)
       {
-	     Send(self,@DisguiseMaster);
-	     bIsCommand = TRUE;
+         Send(self,@DisguiseMaster);
+         bIsCommand = TRUE;
       }
 
       if bAcknowledge
       {
          // Generic servant response.
-		   Post(poMaster,@MsgSendUser,#message_rsc=servant_acknowledge);
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_acknowledge);
       }
 
       if bDeleteServant
@@ -2296,18 +2316,18 @@ messages:
    {
       local bIsCursed, iItem;
 	  
-	  bIsCursed = FALSE;
+      bIsCursed = FALSE;
 	  
       foreach iItem in lItems
       {
          bIsCursed = Send(iItem,@IsCursed);
-		    
-		 if bIsCursed
-		 {
-		    Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_cursed_equipment);
-		    
-		    return;
-		 }
+
+         if bIsCursed
+         {
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_cursed_equipment);
+
+            return;
+         }
       }
       
 	  return bIsCursed;
@@ -2317,53 +2337,52 @@ messages:
    {
       local lEquipped, iItem, sItemName, bCanIdentify, bDidIdentify, bFake;
 	  
-	  bDidIdentify = FALSE;
-	  
+      bDidIdentify = FALSE;
+
       if piSpellSchool = SS_SHALILLE
-	  {
-	     lEquipped = Send(poMaster, @GetEquippedItems);
-		 
-		 if Send(self,@IsCursedCheck,#lItems=lEquipped)
-		 {
-		    // The master is holding a cursed item, we shouldn't help them until they remove it.
-		    return;
-		 }
-		 
-		 foreach iItem in lEquipped
-		 {
-		    sItemName = Send(iItem,@GetName);
-			bCanIdentify = Send(iItem,@CanIdentify) AND Send(iItem,@IsOdd) AND NOT Send(iItem,@IsFake);
-			bFake = Send(iItem,@IsFake);
-			
-			if bFake
-			{
-			   Post(poMaster,@MsgSendUser,#message_rsc=servant_response_identify_fakse, #parm1=sItemName);
-			   
-			   return;
-			}
-			
-			if bCanIdentify
-			{
-			   bDidIdentify = TRUE;
-			   
-               Post(poMaster,@MsgSendUser,#message_rsc=servant_response_identify_success, #parm1=sItemName);
-				   
-               Send(poMaster,@SendLook,#what=iItem,#bShow_All=TRUE);
-			   
-			   return;
-			}
+      {
+         lEquipped = Send(poMaster, @GetEquippedItems);
+
+         if Send(self,@IsCursedCheck,#lItems=lEquipped)
+         {
+            // The master is holding a cursed item, we shouldn't help them until they remove it.
+            return;
          }
-		 
-		 if NOT bDidIdentify
-		 {
-		    Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_nothing_equipped);
-		 }
-		 
+
+         foreach iItem in lEquipped
+         {
+            sItemName = Send(iItem,@GetName);
+            bCanIdentify = Send(iItem,@CanIdentify) AND Send(iItem,@IsOdd) AND NOT Send(iItem,@IsFake);
+            bFake = Send(iItem,@IsFake);
+
+            if bFake
+            {
+               Post(poMaster,@MsgSendUser,#message_rsc=servant_response_identify_fakse, #parm1=sItemName);
+
+               return;
+            }
+
+            if bCanIdentify
+            {
+               bDidIdentify = TRUE;
+
+               Post(poMaster,@MsgSendUser,#message_rsc=servant_response_identify_success, #parm1=sItemName);
+               Send(poMaster,@SendLook,#what=iItem,#bShow_All=TRUE);
+
+               return;
+            }
+         }
+
+         if NOT bDidIdentify
+         {
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_nothing_equipped);
+         }
+
          return;
-	  }
-	  
-	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
-	  
+      }
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
+
       return;
    }
    
@@ -2372,75 +2391,74 @@ messages:
    {
       local lEquipped, iItem, sItemName, bCanIdentify, bDidIdentify, lData, iAdvance, oItemAtt, iPower, bFake;
 	  
-	  bDidIdentify = FALSE;
-	  
-      if piSpellSchool = SS_SHALILLE
-	  {
-	     lEquipped = Send(poMaster, @GetEquippedItems);
-		 
-		 if Send(self,@IsCursedCheck,#lItems=lEquipped)
-		 {
-		    // The master is holding a cursed item, we shouldn't help them until they remove it.
-		    return;
-		 }
-		 
-		 foreach iItem in lEquipped
-		 {
-		    sItemName = Send(iItem,@GetName);
-			bCanIdentify = Send(iItem,@CanIdentify) AND Send(iItem,@IsOdd) AND NOT Send(iItem,@IsFake);
-			bFake = Send(iItem,@IsFake);
-			
-			if bFake
-			{
-			   Post(poMaster,@MsgSendUser,#message_rsc=servant_response_identify_fakse, #parm1=sItemName);
-			   
-			   return;
-			}
-			
-			if bCanIdentify
-			{
-			   bDidIdentify = TRUE;
-			   
-			   iAdvance = Send(iItem,@RevealHiddenAttributes);
+      bDidIdentify = FALSE;
 
-			   // Show newly revealed color
-			   if iAdvance
-			   {
-				  Send(iItem,@RevealHiddenColor);
-				  Send(Send(iItem,@GetOwner),@SomethingChanged,#what=iItem);
-			   }
+      if piSpellSchool = SS_SHALILLE
+      {
+         lEquipped = Send(poMaster, @GetEquippedItems);
+
+         if Send(self,@IsCursedCheck,#lItems=lEquipped)
+         {
+            // The master is holding a cursed item, we shouldn't help them until they remove it.
+            return;
+         }
+
+         foreach iItem in lEquipped
+         {
+            sItemName = Send(iItem,@GetName);
+            bCanIdentify = Send(iItem,@CanIdentify) AND Send(iItem,@IsOdd) AND NOT Send(iItem,@IsFake);
+            bFake = Send(iItem,@IsFake);
+
+            if bFake
+            {
+               Post(poMaster,@MsgSendUser,#message_rsc=servant_response_identify_fakse, #parm1=sItemName);
+
+               return;
+            }
+
+            if bCanIdentify
+            {
+               bDidIdentify = TRUE;
+
+               iAdvance = Send(iItem,@RevealHiddenAttributes);
+
+               // Show newly revealed color
+               if iAdvance
+               {
+                  Send(iItem,@RevealHiddenColor);
+                  Send(Send(iItem,@GetOwner),@SomethingChanged,#what=iItem);
+               }
 
                Post(poMaster,@MsgSendUser,#message_rsc=servant_response_reveal_success, #parm1=sItemName);
-				   
                Send(poMaster,@SendLook,#what=iItem,#bShow_All=TRUE);
 
-			   lData = Send(iItem,@GetAttributeData,#ItemAtt=IA_MISDIRECTION);
+               lData = Send(iItem,@GetAttributeData,#ItemAtt=IA_MISDIRECTION);
 
-			   if (lData <> $)
-			   {
-				  oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
-				  iPower = Send(oItemAtt,@TranslatePowerFromCompound,#iCompound=First(lData));
+               if (lData <> $)
+               {
+                  oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
+                  iPower = Send(oItemAtt,@TranslatePowerFromCompound,#iCompound=First(lData));
 
-				  if (iPower*2) < piSpellPower
-				  {
-					 Send(iItem,@RemoveAttribute,#ItemAtt=IA_MISDIRECTION);
-				  }
-			   }
+                  if (iPower*2) < piSpellPower
+                  {
+                     Send(iItem,@RemoveAttribute,#ItemAtt=IA_MISDIRECTION);
+                  }
+               }
 
-			   return;
-			}
+               return;
+            }
          }
-		 
-		 if NOT bDidIdentify
-		 {
-		    Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_nothing_equipped);
-		 }
-		 
+
+         if NOT bDidIdentify
+         {
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_nothing_equipped);
+         }
+
          return;
-	  }
-	  
-	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
-	  
+      }
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
+
       return;
    }
 
@@ -2448,69 +2466,69 @@ messages:
    {
       local lEquipped, iItem, sItemName, bCanMend, bDidMend, bHasMendables, bIsCursed, iMaxHits, iHits;
 	  
-	  bDidMend = FALSE;
-	  bHasMendables = FALSE;
+      bDidMend = FALSE;
+      bHasMendables = FALSE;
 	  
       if piSpellSchool = SS_KRAANAN
-	  {
-	     lEquipped = Send(poMaster, @GetEquippedItems);
-		 
-		 if Send(self,@IsCursedCheck,#lItems=lEquipped)
-		 {
-		    // The master is holding a cursed item, we shouldn't help them until they remove it.
-		    return;
-		 }
-		 
-		 foreach iItem in lEquipped
-		 {
-		    sItemName = Send(iItem,@GetName);
-			bCanMend = Send(iItem,@CanMend);
-			
-			if bCanMend
-			{
-			   bHasMendables = TRUE;
+	   {
+         lEquipped = Send(poMaster, @GetEquippedItems);
+         
+         if Send(self,@IsCursedCheck,#lItems=lEquipped)
+         {
+            // The master is holding a cursed item, we shouldn't help them until they remove it.
+            return;
+         }
+         
+         foreach iItem in lEquipped
+         {
+            sItemName = Send(iItem,@GetName);
+            bCanMend = Send(iItem,@CanMend);
+            
+            if bCanMend
+            {
+               bHasMendables = TRUE;
                iHits = Send(iItem,@GetHits);
                iMaxHits = Send(iItem,@GetMaxHits) - 15;
-			   
-			   if iMaxHits < 100
-			   {
-			      iMaxHits = 100;
-			   }
+               
+               if iMaxHits < 100
+               {
+                  iMaxHits = 100;
+               }
 
-			   Debug(sItemName,iHits,Send(iItem,@GetMaxHits));
-			   
-			   if iHits < Send(iItem,@GetMaxHits)
-			   {
-			      // Mend this item
-				  bDidMend = TRUE;
-				  
+               Debug(sItemName,iHits,Send(iItem,@GetMaxHits));
+               
+               if iHits < Send(iItem,@GetMaxHits)
+               {
+                  // Mend this item
+                  bDidMend = TRUE;
+
                   Send(iItem,@SetMaxHits,#number=iMaxHits);
                   Send(iItem,@SetHits,#number=iMaxHits);
 
-				  Post(poMaster,@MsgSendUser,#message_rsc=servant_response_mend_success, #parm1=sItemName);
-			   }
-			}
-		 }
-		 
-		 if NOT bHasMendables
-		 {
-	        Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_nothing_equipped);
-			
-		    return;
-		 }
-		 
-		 if NOT bDidMend
-		 {
-	        Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_perfect_items);
-			
-		    return;
-		 }
-		 
+                  Post(poMaster,@MsgSendUser,#message_rsc=servant_response_mend_success, #parm1=sItemName);
+               }
+            }
+         }
+         
+         if NOT bHasMendables
+         {
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_nothing_equipped);
+            
+            return;
+         }
+         
+         if NOT bDidMend
+         {
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_perfect_items);
+            
+            return;
+         }
+         
          return;
-	  }
-	  
-	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
-	  
+      }
+
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
+
       return;
    }
    
@@ -2519,34 +2537,34 @@ messages:
       local oSpell;
 	  
       if piSpellSchool = SS_RIIJA
-	  {
+      {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_ILLUSIONARY_FORM);
-		 
+         
          Send(oSpell,@CastSpell,#who=poMaster,#lTargets=[poMaster],#iSpellPower=piSpellPower);
-		 
+         
          return;
-	  }
+      }
 	  
-	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
-	  
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
+      
       return;
    }
    
    BaitMonsters()
    {
       local oSpell;
-	  
+      
       if piSpellSchool = SS_RIIJA
-	  {
+      {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_BAIT);
-		 
+         
          Send(oSpell,@CastSpell,#who=poMaster,#lTargets=[self],#iSpellPower=piSpellPower);
 
          return;
-	  }
-	  
-	  Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
-	  
+      }
+      
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_tells_you_rsc, #parm1=servant_response_wrong_school);
+      
       return;
    }
 
