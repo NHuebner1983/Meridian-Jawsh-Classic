@@ -1187,6 +1187,11 @@ properties:
    // Number of monsters killed as NPCPlayer
    piMonstersKilledAsNPC = 0
    
+   // When the player goofs up, like jumping off a cliff in Pog King Layer.
+   pbKillingPlayer = FALSE
+   ptKillPlayer = $
+   poKillPlayerCredit = $
+   
 messages:
 
    Constructor()
@@ -1197,7 +1202,79 @@ messages:
 
       propagate;
    }
-   
+
+   KillPlayer(real_death=TRUE, wait_time=0, rscMistakeMessage=$, oRoomOrPlayerWhoKilledMe=$)
+   "This will kill the player (#real_death=TRUE default), but can be delayed for dramatic effect."
+   "Comes with a warning RSC and a customized death message RSC."
+   "Timer is useful for falling and hitting the ground..."
+   {
+      local oKillerCredit;
+
+      if oRoomOrPlayerWhoKilledMe <> $
+      {
+         oKillerCredit = oRoomOrPlayerWhoKilledMe;
+      }
+      else
+      {
+         oKillerCredit = poKillPlayerCredit;   
+      }
+
+      poKillPlayerCredit = oKillerCredit;
+
+      if oKillerCredit = $
+      {
+         Debug("[Failed] KillPlayer",Send(self,@GetName),"without someone or something taking credit.");
+
+         return FALSE;
+      }
+
+      if (pbKillingPlayer AND wait_time <> $ AND wait_time > 0)
+      {
+         // We're already killing or killed the player.
+         //Debug("Already killing",Send(self,@GetName));
+         return;
+      }
+
+      if wait_time <> $ AND wait_time > 0
+      {
+         pbKillingPlayer = TRUE;
+
+         // We will kill the player, but not yet.
+         // Let's create a timer, and recall this function.
+         if rscMistakeMessage <> $
+         {
+            // You've made a mistake message.
+            Send(self,@MsgSendUser,#message_rsc=rscMistakeMessage);
+         }
+
+         // "Dramatic Effect" (such as falling to your death).
+         ptKillPlayer = CreateTimer(self, @KillPlayer, wait_time);
+
+         return;
+      }
+
+      // Kill the player here.
+      Send(self, @Killed, #what=oKillerCredit);
+
+      if oKillerCredit <> $
+      {
+         // Let the caller know the player was killed.
+         // Helps remove them from any lists for accidental repeat deaths.
+         Send(oKillerCredit, @RemoveKilledPlayer, #who=self);
+      }
+
+      pbKillingPlayer = FALSE;
+      poKillPlayerCredit = $;
+
+      return;
+   }
+
+   RemoveKilledPlayer()
+   {
+      // Only supported for rooms or objects right now. Add code here to support it from the function above.
+      return;
+   }
+
    ResetNPCPlayerProfile()
    {
       plNPCProfile = $;
@@ -7189,11 +7266,11 @@ messages:
    "Find the first instance of 'class' that player has equipped. "
    "Returns $ if nothing is found."
    {
-      if IsList(plUsing)
-	  {
+      if IsList(plUsing) AND class <> $
+      {
          return GetListElemByClass(plUsing,class);
-	  }
-	  
+      }
+
 	  return $;
    }
 
