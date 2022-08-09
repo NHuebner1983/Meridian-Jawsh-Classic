@@ -420,6 +420,17 @@ messages:
 
    ArenaBeginFight(lCombatants=$)
    {
+      local who;
+
+      foreach who in lCombatants
+      {
+         if IsClass(who, &Player) AND Send(who, @GetServant) <> $
+         {
+            // No servants allowed in the arena.
+            Send(Send(who, @GetServant), @Delete);
+         }
+      }
+
       if Length(lCombatants) = 2
       {
          // Teleport to boxes
