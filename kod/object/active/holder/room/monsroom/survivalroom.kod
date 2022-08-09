@@ -84,7 +84,7 @@ resources:
       "You now have %i lives."
    wall_blitz_activated = "~BA surge of ethereal fury overcomes the horde!"
    fixed_reward_msg = \
-      "It seems one of the fallen enemies has dropped one %s on the battlefield!"
+      "Your persistence in the battlefield has encouraged the gods to bestow you a %s, neatly wrapped in a gift box!"
    your_lives_remain = "You have %i lives remaining."
    spectator_only_msg = \
       "Combat has already begun. You may spectate until all participants "
@@ -149,6 +149,8 @@ properties:
    plAllMonsters = $
 
    plFixedRewards = $
+   plRandomFinalRewardsGG = $
+   plRandomFinalRewardsMasks = $
    piSpawnedBossThisRound = FALSE
    ptReportGoalsTimer = $
    ptRespawnMiniBossTimer = $
@@ -389,7 +391,7 @@ messages:
 
       plMinibosses = [&GroundWormQueen,
                       &OrcPitBoss,
-					  &GiantDaemonSkeleton,
+                      &GiantDaemonSkeleton,
                       &DragonFlyQueen,
                       &Shadowbeast,
                       &SpiderQueen,
@@ -411,12 +413,18 @@ messages:
                         [&ShrunkenHeadMask,35],
                         [&DaemonMask,40],
                         [&FeyMask,50],
-                        [&XeoMask,60],
-                        [&FarenCharm,100],
-                        [&RiijaCharm,100],
-                        [&ShalilleCharm,100],
-                        [&QorCharm,100],
-                        [&KraananCharm,100]];
+                        [&XeoMask,60]];
+      
+      plRandomFinalRewardsGG = [&FarenCharm,
+                                &RiijaCharm,
+                                &ShalilleCharm,
+                                &QorCharm,
+                                &KraananCharm];
+
+      plRandomFinalRewardsMasks = [&DaemonMask,
+                                   &ShrunkenHeadMask,
+                                   &MummyMask];
+
 
       Send(self,@RecalcLightAndWeather);
 
@@ -652,34 +660,60 @@ messages:
          ptRespawnMiniBossTimer = $;
       }
 
+      if piLevel = 100
+      {
+         // Give out final rewards
+         foreach i in plActive
+         {
+            if IsClass(First(i),&User)
+            {
+               // Random GG to each player for making it to level 100!
+               oReward = Create(Nth(plRandomFinalRewardsGG, Random(1, Length(plRandomFinalRewardsGG))));
+               Send(First(i),@NewHold,#what=Create(&Gift,#contents=oReward,#giver=$));
+               Send(First(i),@MsgSendUser,#message_rsc=fixed_reward_msg,
+                                    #parm1=Send(oReward,@GetName));
+
+               // Random rare mask to each player
+               oReward = Create(Nth(plRandomFinalRewardsMasks, Random(1, Length(plRandomFinalRewardsMasks))));
+               Send(First(i),@NewHold,#what=Create(&Gift,#contents=oReward,#giver=$));
+               Send(First(i),@MsgSendUser,#message_rsc=fixed_reward_msg,
+                                    #parm1=Send(oReward,@GetName));
+            }
+         }
+      }
+
       foreach lFixedReward in plFixedRewards
       {
          if Nth(lFixedReward,2) = piLevel
          {
             oReward = Create(First(lFixedReward));
+
             foreach i in plActive
             {
                if IsClass(First(i),&User)
                {
                   Send(First(i),@MsgSendUser,#message_rsc=fixed_reward_msg,
                                       #parm1=Send(oReward,@GetName));
+
+                  // Random mask to each player
+                  Send(First(i),@NewHold,#what=Create(&Gift,#contents=oReward,#giver=$));
                }
             }
             
-            if plGenerators <> $
-            {
-               lRandomSpawnPoint = Nth(plGenerators,
-                                       Random(1,Length(plGenerators)));
-            }
-            else
-            {
-               lRandomSpawnPoint = [Send(self,@GetTeleportRow),
-                                    Send(self,@GetTeleportCol)];
-            }
+            // if plGenerators <> $
+            // {
+            //    lRandomSpawnPoint = Nth(plGenerators,
+            //                            Random(1,Length(plGenerators)));
+            // }
+            // else
+            // {
+            //    lRandomSpawnPoint = [Send(self,@GetTeleportRow),
+            //                         Send(self,@GetTeleportCol)];
+            // }
 
-            Send(self,@NewHold,#what=oReward,
-                  #new_row=First(lRandomSpawnPoint),
-                  #new_col=Nth(lRandomSpawnPoint,2));
+            // Send(self,@NewHold,#what=oReward,
+            //       #new_row=First(lRandomSpawnPoint),
+            //       #new_col=Nth(lRandomSpawnPoint,2));
             iRewardTime = iRewardTime + 75000;
          }
       }
