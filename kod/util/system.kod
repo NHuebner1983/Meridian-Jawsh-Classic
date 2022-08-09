@@ -5893,6 +5893,10 @@ messages:
       plItemTemplates = cons(create(&EntrootBerry),plItemTemplates);
       plItemTemplates = cons(create(&Elderberry),plItemTemplates);
       plItemTemplates = cons(create(&Herbs),plItemTemplates);
+      plItemTemplates = cons(create(&BlackHydraHead),plItemTemplates);
+      plItemTemplates = cons(create(&GreenHydraHead),plItemTemplates);
+      plItemTemplates = cons(create(&GoldHydraHead),plItemTemplates);
+      plItemTemplates = cons(create(&RedHydraHead),plItemTemplates);
 
       // Edibles
       plItemTemplates = cons(create(&KocatanMug),plItemTemplates);
