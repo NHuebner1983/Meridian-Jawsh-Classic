@@ -5874,6 +5874,7 @@ messages:
       plItemTemplates = cons(create(&Sapphire),plItemTemplates);
       plItemTemplates = cons(create(&Emerald),plItemTemplates);
       plItemTemplates = cons(create(&BlueDragonScale),plItemTemplates);
+      plItemTemplates = cons(create(&BrownDragonScale),plItemTemplates);
       plItemTemplates = cons(create(&BlackHydraScale),plItemTemplates);
       plItemTemplates = cons(create(&GoldenHydraScale),plItemTemplates);
       plItemTemplates = cons(create(&GreenHydraScale),plItemTemplates);
