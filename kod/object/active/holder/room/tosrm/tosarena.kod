@@ -102,6 +102,10 @@ resources:
    TosArena_doors_unlocked = \
       "You unlock the doors to the Arena, so that all may enter once again."
 
+   TosArena_summon_servant_cant_cast_here = "This place forbids you to summon a servant."
+
+   TosArena_purge_message = "~B~r~IThe Watcher purges you to participate in a fair battle.~B~r~I"
+
    TosArena_Fanfare_Sound = fanfare1.ogg
    TosArena_Combat_Sound = arena1.ogg
    TosArena_Huzzah_Sound = huzzah.ogg
@@ -477,9 +481,43 @@ messages:
       return;
    }
 
+   PurgeCombatants(lCombatants=$)
+   {
+      local who;
+
+      if lCombatants = $ OR NOT Length(lCombatants)
+      {
+         return;
+      }
+
+      foreach who in lCombatants
+      {
+         if IsClass(who, &Player)
+         {
+            Send(Send(SYS,@FindSpellByNum,#num=SID_PURGE),@DoPurge,#who=who,#iSpellPower=$);
+            Send(who,@MsgSendUser,#message_rsc=TosArena_purge_message);
+         }
+      }
+
+      return;
+   }
+
    ArenaBeginFight(lCombatants=$)
    {
-      local maze;
+      local maze, who;
+
+      foreach who in lCombatants
+      {
+         if IsClass(who, &Player) AND Send(who, @GetServant) <> $
+         {
+            // No servants allowed in the arena.
+            Send(Send(who, @GetServant), @Delete);
+            Post(who,@MsgSendUser,#message_rsc=TosArena_summon_servant_cant_cast_here);
+         }
+      }
+
+      // Purge the combatants, make them buff.
+      Send(self,@PurgeCombatants,#lCombatants=lCombatants);
 
       maze = Random(1,14);
 
