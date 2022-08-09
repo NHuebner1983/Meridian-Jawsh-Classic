@@ -558,6 +558,11 @@ messages:
 
    Greeting()
    {
+      if NOT Send(self, @MasterCheck)
+      {
+         return;
+      }
+
       Post(poMaster,@MsgSendUser,#message_rsc=servant_greeting,#parm1=Send(self,@GetName),#parm2=Send(poSpell,@GetSchoolStr));
 
       return;

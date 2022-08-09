@@ -210,12 +210,28 @@ messages:
 
    GetWaitTime(who=$)
    {
-      local iWaitTime, iIntellect;
+      local iWaitTime, iIntellect, iWaitFactor;
 
       if who = $
          OR NOT IsClass(who,&User)
       {
          return 0;
+      }
+
+      // PVE
+      iWaitFactor = 3;
+
+      if (Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+           OR Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW))
+      {
+         // Player is a PKer
+         iWaitFactor = 600;
+      }
+
+      if NOT Send(who, @CanHelpPlayer)
+      {
+         // Player is engaged in PVP
+         iWaitFactor = 1000;
       }
 
       iIntellect = Send(self,@GetRequisiteStat,#who=who);
@@ -225,7 +241,7 @@ messages:
                               #spell_num=SID_CRYSTALIZE_MANA) * 2);
 
       // 30% of original timer, was 1000
-	  return iWaitTime * 10;
+	  return iWaitTime * iWaitFactor;
    }
 
    SuccessChance(who=$)
