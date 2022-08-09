@@ -29,6 +29,7 @@ resources:
    summon_servant_class_cast_self = "You cannot make yourself a servant."
    summon_servant_low_vigor = "You are too tired to cast that spell."
    summon_servant_low_mana = "You need more mana to cast that spell."
+   summon_servant_cant_cast_here = "This place forbids you to summon a servant."
    
    summon_servant_class_sound = rperappr.ogg
 
@@ -93,47 +94,68 @@ messages:
       return TRUE;
    }
 
+   CanPayCosts(who = $)
+   {
+      if IsClass(who, &Player) AND Send(Send(who, @GetOwner), @IsArena)
+      {
+         Post(who,@MsgSendUser,#message_rsc=summon_servant_cant_cast_here);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
    CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
       local oServant, bExistingServant, playerRoom, iGenRow, iGenCol, oServantType;
-	  
-	  // Only players can have servants.
-	  if IsClass(who, &Player) {
-	      bExistingServant = Send(who, @GetServant);
-		  
-	      if bExistingServant <> $ AND IsClass(bExistingServant, &Servant)
-		  {
-		     // Before creating a new servant, delete the old one.
-		     Send(bExistingServant, @Delete);
-		  }
-		  
-		  oServantType = Send(self, @GetServantType, #iSpellNum=viSpell_num);
-		  oServant = Create(oServantType,#who=who,#oSpell=self,#iSpellNum=viSpell_num,#iSpellPower=iSpellPower);
+      
+      // Only players can have servants.
+      if IsClass(who, &Player) {
 
-		  iGenRow = Send(who,@GetRow);
-		  iGenCol = Send(who,@GetCol);
+         if Send(Send(who, @GetOwner), @IsArena)
+         {
+            // No servants allowed in the arena.
+            Post(who,@MsgSendUser,#message_rsc=summon_servant_cant_cast_here);
 
-          playerRoom = Send(who, @GetOwner);
-          
-		  // -----
-		  // Summon the servant!
-		  // -----
-		  if Send(playerRoom,@ReqNewHold,#what=oServant,
-				   #new_row=iGenRow,#new_col=iGenCol)
-			 AND Send(playerRoom,@ReqSomethingMoved,#what=oServant,
-					  #new_row=iGenRow,#new_col=iGenCol)
-		  {
-		     // Make the servant appear.
-			 Send(playerRoom,@NewHold,#what=oServant,#new_row=iGenRow,#new_col=iGenCol);
-			 
-			 // Attach the servant to the player + player to the servant.
-			 Send(who,@SetServant,#oServant=oServant);
-			 Send(oServant,@SetMaster,#oMaster=who);
+            return FALSE;
+         }
 
-			 // Tell the player about their servant being summoned.
-			 Post(who,@MsgSendUser,#message_rsc=summon_servant_arrived,#parm1=Send(oServant,@GetName));
-		  }	  
-	  }
+         bExistingServant = Send(who, @GetServant);
+         
+         if bExistingServant <> $ AND IsClass(bExistingServant, &Servant)
+         {
+            // Before creating a new servant, delete the old one.
+            Send(bExistingServant, @Delete);
+         }
+         
+         oServantType = Send(self, @GetServantType, #iSpellNum=viSpell_num);
+         oServant = Create(oServantType,#who=who,#oSpell=self,#iSpellNum=viSpell_num,#iSpellPower=iSpellPower);
+
+         iGenRow = Send(who,@GetRow);
+         iGenCol = Send(who,@GetCol);
+
+            playerRoom = Send(who, @GetOwner);
+            
+         // -----
+         // Summon the servant!
+         // -----
+         if Send(playerRoom,@ReqNewHold,#what=oServant,
+               #new_row=iGenRow,#new_col=iGenCol)
+            AND Send(playerRoom,@ReqSomethingMoved,#what=oServant,
+                  #new_row=iGenRow,#new_col=iGenCol)
+         {
+            // Make the servant appear.
+            Send(playerRoom,@NewHold,#what=oServant,#new_row=iGenRow,#new_col=iGenCol);
+            
+            // Attach the servant to the player + player to the servant.
+            Send(who,@SetServant,#oServant=oServant);
+            Send(oServant,@SetMaster,#oMaster=who);
+
+            // Tell the player about their servant being summoned.
+            Post(who,@MsgSendUser,#message_rsc=summon_servant_arrived,#parm1=Send(oServant,@GetName));
+         }	  
+      }
 
       propagate;
    }
