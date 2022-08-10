@@ -8,7 +8,7 @@
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Slime is Monster
+NapalmSlime is Monster
 
 constants:
 
@@ -16,32 +16,27 @@ constants:
 
 resources:
 
-   include slime.lkod
+   nap_slime_koc_name_rsc = "napkinachot"
+   nap_slime_name_rsc = "napalm slime"
+   nap_slime_icon_rsc = amoeba.bgf
+   nap_slime_desc_rsc = \
+   "A mass of quivering goo, the ooz has a strange "
+   "scent stinging my nose.  The smell seems familiar "
+   "yet im unable to decipher what it is."
 
-   slime_koc_name_rsc = "kinachot"
-   slime_name_rsc = "slime"
-   slime_icon_rsc = amoeba.bgf
-   slime_desc_rsc = \
-   "A mass of quivering goo, the slime inches forward "
-   "leaving a sickly trail behind.  The remains of its last "
-   "victim are visible within its transparent innards."
+   nap_slime_dead_icon_rsc = amoebaX.bgf
 
-   slime_dead_icon_rsc = amoebaX.bgf
-   slime_dead_name_rsc = "dead slime"
-
-   slime_sound_hit = slm_atkh.wav
-   slime_sound_miss = slm_atkm.wav
-   slime_sound_death = slm_dth.wav
-   slime_sound_aware = slm_awr.wav
+   nap_slime_sound_hit = slm_atkh.wav
+   nap_slime_sound_miss = slm_atkm.wav
+   nap_slime_sound_death = NapalmSlime_Death.wav
+   nap_slime_sound_aware = slm_awr.wav
 
 classvars:
 
-   vrKocName = slime_koc_name_rsc
-   vrName = slime_name_rsc
-   vrIcon = slime_icon_rsc
-   vrDesc = slime_desc_rsc
-   vrDead_icon = slime_dead_icon_rsc
-   vrDead_name = slime_dead_name_rsc
+   vrKocName = nap_slime_koc_name_rsc
+   vrName = nap_slime_name_rsc
+   vrIcon = nap_slime_icon_rsc
+   vrDesc = nap_slime_desc_rsc
 
    viTreasure_type = TID_WIMPY_MEDIUM
    viSpeed = SPEED_SLOW
@@ -52,12 +47,12 @@ classvars:
    viVisionDistance = 10
    viKarma = 0
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SINGLEMINDED
-   viCashmin = 125
-   viCashmax = 300
-   vrSound_hit = slime_sound_hit
-   vrSound_miss = slime_sound_miss
-   vrSound_aware = slime_sound_aware
-   vrSound_death = slime_sound_death
+   viCashmin = 1000
+   viCashmax = 3000
+   vrSound_hit = nap_slime_sound_hit
+   vrSound_miss = nap_slime_sound_miss
+   vrSound_aware = nap_slime_sound_aware
+   vrSound_death = nap_slime_sound_death
    viDead_drawfx = DRAWFX_TRANSLUCENT_75
    
    viBaseBleedPercentage = 20
@@ -67,7 +62,6 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   piDrawfx = DRAWFX_TRANSLUCENT_75
 
 messages:
 
@@ -79,7 +73,7 @@ messages:
                         [-ATCK_SPELL_ACID, 45 ],
                         [ATCK_WEAP_ALL, 45 ],
                         [ATCK_WEAP_BLUDGEON, 10 ],
-                        [-ATCK_SPELL_COLD, -25 ] ];
+                        [-ATCK_SPELL_COLD, -45 ] ];
 	  
 	  Send(self,@ChangeColor);
       
@@ -141,7 +135,7 @@ messages:
    ChangeColor()
    {
 
-      piColor_translation = (PT_GRAY_TO_BGREEN);
+         piColor_translation = (PT_GRAY_TO_ORANGE);
 	  
       if poOwner <> $
       {
@@ -149,6 +143,25 @@ messages:
       }
 
       return;
+   }
+   
+   Killed(what=$)
+   {
+      local oSpell, lFinalTargets, oTrance, oActive, lActive;
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_RING_OF_FLAMES);
+      lFinalTargets = Send(oSpell,@GetTargets,#who=self);
+      Send(oSpell,@CastSpell,#who=self,#iSpellPower=99,
+            #lTargets=lFinalTargets);
+			
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_EARTHQUAKE);
+      lFinalTargets = Send(oSpell,@GetTargets,#who=self);
+      Send(oSpell,@CastSpell,#who=self,#iSpellPower=99,
+            #lTargets=lFinalTargets);
+  			
+	  Send(poOwner,@Rumble,#duration=750,#disruption=100);
+	
+      propagate;
    }
    
 end
