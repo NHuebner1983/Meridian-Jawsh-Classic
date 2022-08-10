@@ -143,6 +143,10 @@ properties:
 
    // The outfits this item is part of for the player
    plOutfit = $
+
+   // This item can be gift wrapped and automatically put in the player's inventory regardless of weight.
+   // Mainly used for events.
+   pbWrapAndLoot = FALSE
    
 messages:
 
@@ -726,6 +730,25 @@ messages:
       }
 
       return;
+   }
+
+   DoNotWrapAgain()
+   {
+      pbWrapAndLoot = FALSE;
+
+      return;
+   }
+
+   MakeWrappedAndAutoLooted()
+   {
+      pbWrapAndLoot = TRUE;
+
+      return;
+   }
+
+   IsWrappedAndAutoLooted()
+   {
+      return pbWrapAndLoot;
    }
 
    GetMinDamageWithOwnerStats()
