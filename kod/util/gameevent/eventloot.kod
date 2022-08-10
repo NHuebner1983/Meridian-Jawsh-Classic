@@ -138,6 +138,9 @@ messages:
 							
 							if oMonster <> $
 							{
+								// The item will be wrapped in a gift box
+								Send(c, @MakeWrappedAndAutoLooted);
+								
 								Send(oMonster, @NewHold, #what=c);
 								Debug("Gave", Send(c, @GetName),"to",Send(oMonster, @GetName));
 								Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
