@@ -5248,7 +5248,7 @@ messages:
       return;
    }
 
-   GenerateMonster(oMonster=$, iRow=0, iCol=0, bStack=FALSE, bRandom=FALSE, bWalkThroughWalls=FALSE, iCountRetry=0, iRelativeHeight=0)
+   GenerateMonster(oMonster=$, iRow=0, iCol=0, bStack=FALSE, bRandom=FALSE, bWalkThroughWalls=FALSE, iRelativeHeight=$)
    "Pulled outside the function to be callable outside of the function. "
    "Can generate a monster at a specific location, or you can let it be "
    "put at a gen point.  This is now in Room, as all rooms can use it for "
@@ -5256,13 +5256,6 @@ messages:
    {
       local oOldOwner, iMRow, iMCol, iMRowFine, iMColFine, lPos, iRoll, iCount, lPatrolPath,
             iQflags, iRflags, iHeightF, iHeightFWD, iHeightC, iServerID, iCheck, iHeightWhereSpawned;
-
-      if iCountRetry > 100
-      {
-         // We tried to generate this monster in a "good place" 100 times, let's give up on this monster.
-         Debug("Giving up on spawning monster, too many iCountRetry 100");
-         return FALSE;
-      }
 
       iMRow = iRow;
       iMCol = iCol;
@@ -5366,10 +5359,6 @@ messages:
          {
             // Walk through wall mobs needs to be really scary.
             Send(oMonster,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS);
-            Send(oMonster,@SetBehaviorFlag,#flag=AI_FIGHT_HYPERAGGRESSIVE);
-            Send(oMonster,@SetBehaviorFlag,#flag=AI_FIGHT_KARMA_AGGRESSIVE);
-            Send(oMonster,@SetBehaviorFlag,#flag=AI_FIGHT_SWITCHALOT);
-            Send(oMonster,@SetBehaviorFlag,#flag=AI_MOVE_RANDOM);
          }
 
          Send(self,@NewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol,
@@ -5383,18 +5372,10 @@ messages:
             if iHeightWhereSpawned <> $ AND iHeightWhereSpawned <> 0
                AND (iHeightWhereSpawned - iRelativeHeight) > 50 
             {
-               // This is a big height difference while in a town.
-               // Let's respawn this monster.
+               // Monster is too high up from where we want them.
+               Send(oMonster,@Delete);
 
-               return Send(self, @GenerateMonster, 
-                  #oMonster=oMonster, 
-                  #iRow=iRow, 
-                  #iCol=iCol, 
-                  #bStack=bStack, 
-                  #bRandom=bRandom, 
-                  #iCountRetry=(iCountRetry + 1), 
-                  #iRelativeHeight=iRelativeHeight,
-                  #bWalkThroughWalls=bWalkThroughWalls);
+               return FALSE;
             }
          }
 

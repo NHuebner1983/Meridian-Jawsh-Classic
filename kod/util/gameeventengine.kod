@@ -612,8 +612,11 @@ messages:
             #parm6=parm6,#parm7=parm7,#parm8=parm8,#parm9=parm9,#parm10=parm10,
             #parm11=parm11,#parm12=parm12,#parm13=parm13,#parm14=parm14,
             #parm15=parm15);
-            
-         plActiveEvents = DelListElem(plActiveEvents,parm1);
+         
+         if plActiveEvents <> $ AND IsList(plActiveEvents) AND Length(plActiveEvents) > 0
+         {
+            plActiveEvents = DelListElem(plActiveEvents,parm1);
+         }
       
          if(GetClass(parm1)=&ChaosNight)
          {

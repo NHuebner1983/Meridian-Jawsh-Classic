@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-SpiderInvasion is Invasion
+DragonInvasion is Invasion
 
 constants:
 
@@ -16,31 +16,31 @@ constants:
 
 resources:
 
-   SpiderInvasion_start_location_msg = "~B~k[Event]~n ~B~v You sense a disturbance in %s!"
+   DragonInvasion_start_location_msg = "~B~k[Event]~n ~B~v You sense a disturbance in %s!"
 
-   SpiderInvasion_end_location_msg = "~B~k[Event]~n ~B~v Spiders have been driven from %s!"
+   DragonInvasion_end_location_msg = "~B~k[Event]~n ~B~v Dragons have been chased away from %s!"
 
-   SpiderInvasion_start_msg = \
-      "~B~k[Event]~n ~B~v Baby Spiders have started to hatch."
+   DragonInvasion_start_msg = \
+      "~B~k[Event]~n ~B~v Dragon Flies have started to swarm."
 
-   SpiderInvasion_end_msg = \
+   DragonInvasion_end_msg = \
       "~B~k[Event]~n ~B~v All hail who have protected this land!"
 
-   SpiderInvasion_phase2_msg = \
-      "~B~k[Event]~n ~B~v Spiders have left the nest and are beginning to invade."
+   DragonInvasion_phase2_msg = \
+      "~B~k[Event]~n ~B~v Queen Dragon Flies have started to mate."
 
-   SpiderInvasion_phase3_msg = \
-      "~B~k[Event]~n ~B~v Black Spiders have crawled down from webs and begin to invade."
+   DragonInvasion_phase3_msg = \
+      "~B~k[Event]~n ~B~v Earth Dragons have come to feed on the Queen Dragon Flies."
 
-   SpiderInvasion_finalphase_msg = \
-      "~B~k[Event]~n ~B~v You have upset the Mother Spider."
+   DragonInvasion_finalphase_msg = \
+      "~B~k[Event]~n ~B~v Black Dragons have come to avenge their dragon kin."
 
-   SpiderInvasion_attack_sound_rsc = ndanger.ogg
+   DragonInvasion_attack_sound_rsc = ndanger.ogg
 
 classvars:
 
-   vrStartMessage = SpiderInvasion_start_msg
-   vrEndMessage = SpiderInvasion_end_msg
+   vrStartMessage = DragonInvasion_start_msg
+   vrEndMessage = DragonInvasion_end_msg
 
    vbAnnounce = TRUE
 
@@ -49,8 +49,8 @@ properties:
    plEventRooms = $
    piMonsterA = 50
    piMonsterB= 50
-   piMonsterC = 50
-   piMonsterBoss = 10
+   piMonsterC = 10
+   piMonsterBoss = 5
    piActiveRoom = RID_TOS
    poActiveRoom = $
    piPhase = 0
@@ -67,10 +67,10 @@ messages:
 
    Constructor(who=$)
    {
-      pcMonsterA = &SpiderBaby;
-      pcMonsterB = &Spider;
-      pcMonsterC = &DeathSpider;
-      pcMonsterBoss = &SpiderQueen;
+      pcMonsterA = &DragonFly;
+      pcMonsterB = &DragonFlyQueen;
+      pcMonsterC = &EarthDragon;
+      pcMonsterBoss = &BlackDragon;
 
       if who <> $ AND IsClass(who, &DM)
       {
@@ -90,13 +90,13 @@ messages:
    {
       local oUser, lUsersLoggedOn;
 
-      Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=SpiderInvasion_start_location_msg,#parm1=Send(poActiveRoom,@GetName));
+      Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=DragonInvasion_start_location_msg,#parm1=Send(poActiveRoom,@GetName));
 
       lUsersLoggedOn = Send(SYS,@GetUsersLoggedOn);
 
       foreach oUser in lUsersLoggedOn
       {
-         Send(oUser,@WaveSendUser,#wave_rsc=SpiderInvasion_attack_sound_rsc);
+         Send(oUser,@WaveSendUser,#wave_rsc=DragonInvasion_attack_sound_rsc);
       }
 
       piPhase = 0;
@@ -148,7 +148,7 @@ messages:
       {
          if Send(poActiveRoom,@CountMonsters,#class=pcMonsterBoss) = 0
          {
-            Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=SpiderInvasion_end_location_msg,#parm1=Send(poActiveRoom,@GetName));
+            Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=DragonInvasion_end_location_msg,#parm1=Send(poActiveRoom,@GetName));
 
             Send(self,@NotifyEngineEndEvent);
 
@@ -189,7 +189,7 @@ messages:
       if vbAnnounce
       {
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
-               #string=SpiderInvasion_phase2_msg);
+               #string=DragonInvasion_phase2_msg);
       }
 
       i = piMonsterA;
@@ -224,7 +224,7 @@ messages:
       if vbAnnounce
       {
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
-               #string=SpiderInvasion_phase3_msg);
+               #string=DragonInvasion_phase3_msg);
       }
 
       i = piMonsterA;
@@ -269,7 +269,7 @@ messages:
       if vbAnnounce
       {
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
-               #string=SpiderInvasion_finalphase_msg);
+               #string=DragonInvasion_finalphase_msg);
       }
 
       i = piMonsterBoss;
