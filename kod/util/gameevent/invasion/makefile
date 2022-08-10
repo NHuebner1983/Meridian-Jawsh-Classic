@@ -6,6 +6,6 @@
 
 DEPEND = ..\invasion.bof
 BOFS = ratinvasion.bof orcinvasion.bof easterinvasion.bof spiderinvasion.bof skeletoninvasion.bof \
-       dragoninvasion.bof
+       dragoninvasion.bof elementalinvasion.bof
 
 !include $(KODDIR)\kod.mak

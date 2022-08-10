@@ -161,6 +161,7 @@ resources:
    dm_invasion_skeleton = "skeleton invasion"
    dm_invasion_rat = "rat invasion"
    dm_invasion_dragon = "dragon invasion"
+   dm_invasion_elemental = "elemental invasion"
    
    dm_hidden_command = "hidden"
    dm_blank_command = "blank"
@@ -1099,6 +1100,14 @@ messages:
       {
          Send(&DragonInvasion, @Delete);
          Create(&DragonInvasion, #who=self);
+
+         return;
+      }
+
+      if StringContain(string, dm_invasion_elemental)
+      {
+         Send(&ElementalInvasion, @Delete);
+         Create(&ElementalInvasion, #who=self);
 
          return;
       }
