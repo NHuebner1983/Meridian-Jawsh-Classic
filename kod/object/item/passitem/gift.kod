@@ -86,7 +86,8 @@ messages:
    {
       if poContents <> $
       {
-         return Send(poContents,@GetBulk) + 1;
+         // Gifts should have no bulk.
+         return 0; //Send(poContents,@GetBulk) + 1;
       }
 
       propagate;
@@ -96,7 +97,8 @@ messages:
    {
       if poContents <> $
       {
-         return Send(poContents,@GetWeight) + 1;
+         // Gifts should be weightless.
+         return 0; //Send(poContents,@GetWeight) + 1;
       }
 
       propagate;
