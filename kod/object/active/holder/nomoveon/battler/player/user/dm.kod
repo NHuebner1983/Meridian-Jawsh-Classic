@@ -155,6 +155,12 @@ resources:
    dm_clear_floor = "clean"
    dm_animate = "animate"
 
+   // Invasions that can be started by DM
+   dm_invasion_orc = "orc invasion"
+   dm_invasion_spider = "spider invasion"
+   dm_invasion_skeleton = "skeleton invasion"
+   dm_invasion_rat = "rat invasion"
+   
    dm_hidden_command = "hidden"
    dm_blank_command = "blank"
 
@@ -1052,6 +1058,38 @@ messages:
          }
 
          ptGenerateMonstersAndDieTimer = CreateTimer(self, @GenerateMonstersAndDie, 100);
+
+         return;
+      }
+
+      if StringContain(string, dm_invasion_orc)
+      {
+         Send(&OrcInvasion, @Delete);
+         Create(&OrcInvasion, #who=self);
+
+         return;
+      }
+
+      if StringContain(string, dm_invasion_spider)
+      {
+         Send(&SpiderInvasion, @Delete);
+         Create(&SpiderInvasion, #who=self);
+
+         return;
+      }
+
+      if StringContain(string, dm_invasion_skeleton)
+      {
+         Send(&SkeletonInvasion, @Delete);
+         Create(&SkeletonInvasion, #who=self);
+
+         return;
+      }
+
+      if StringContain(string, dm_invasion_rat)
+      {
+         Send(&RatInvasion, @Delete);
+         Create(&RatInvasion, #who=self);
 
          return;
       }
