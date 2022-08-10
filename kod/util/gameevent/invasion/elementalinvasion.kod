@@ -291,6 +291,8 @@ messages:
          i = i - 1;
       }
 
+      i = piMonsterBoss;
+
       while (i > 0)
       {
          Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterBossB),
@@ -299,6 +301,8 @@ messages:
          i = i - 1;
       }
 
+      i = piMonsterBoss;
+
       while (i > 0)
       {
          Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterBossC),
@@ -306,6 +310,8 @@ messages:
             #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
          i = i - 1;
       }
+
+      i = piMonsterBoss;
 
       while (i > 0)
       {
