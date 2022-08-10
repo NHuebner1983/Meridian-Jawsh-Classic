@@ -8073,7 +8073,7 @@ messages:
          return;
       }
 
-      if pbLogged_on
+      if pbLogged_on AND what <> $ AND IsList(lPos) AND Length(lPos) >= 2
       {
          AddPacket(1,BP_CREATE);
          Send(self,@ToCliObject,#what=what);
