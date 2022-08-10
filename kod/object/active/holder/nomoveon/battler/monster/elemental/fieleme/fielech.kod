@@ -34,7 +34,7 @@ classvars:
    viIndefinite = ARTICLE_NONE
    viDefinite = ARTICLE_NONE
 
-   viTreasure_type = TID_NONE
+   viTreasure_type = TID_LUPOGG_KING
    viSpeed = SPEED_FAST
 
    viLevel = 250

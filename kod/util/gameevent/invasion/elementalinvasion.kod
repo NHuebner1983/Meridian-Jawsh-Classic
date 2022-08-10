@@ -50,7 +50,7 @@ properties:
    piMonsterA = 50
    piMonsterB= 50
    piMonsterC = 10
-   piMonsterBoss = 1
+   piMonsterBoss = 3
    piActiveRoom = RID_TOS
    poActiveRoom = $
    piPhase = 0
@@ -286,7 +286,7 @@ messages:
       while (i > 0)
       {
          Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterBossA),
-            #piSurvivalLevel=95,#bStack=TRUE, #iRow=Nth(plBlinkCoords, 1) + Random(1, 8), #iCol=Nth(plBlinkCoords, 2) + Random(1, 8),
+            #piSurvivalLevel=95,#bStack=TRUE, #iRow=(Nth(plBlinkCoords, 1) + Random(1, 4)), #iCol=(Nth(plBlinkCoords, 2) + Random(1, 4)),
             #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
          i = i - 1;
       }
@@ -296,7 +296,7 @@ messages:
       while (i > 0)
       {
          Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterBossB),
-            #piSurvivalLevel=95,#bStack=TRUE, #iRow=Nth(plBlinkCoords, 1) + Random(1, 8), #iCol=Nth(plBlinkCoords, 2) + Random(1, 8),
+            #piSurvivalLevel=95,#bStack=TRUE, #iRow=(Nth(plBlinkCoords, 1) + Random(1, 4)), #iCol=(Nth(plBlinkCoords, 2) + Random(1, 4)),
             #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
          i = i - 1;
       }
@@ -306,7 +306,7 @@ messages:
       while (i > 0)
       {
          Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterBossC),
-            #piSurvivalLevel=95,#bStack=TRUE, #iRow=Nth(plBlinkCoords, 1) + Random(1, 8), #iCol=Nth(plBlinkCoords, 2) + Random(1, 8),
+            #piSurvivalLevel=95,#bStack=TRUE, #iRow=(Nth(plBlinkCoords, 1) + Random(1, 4)), #iCol=(Nth(plBlinkCoords, 2) + Random(1, 4)),
             #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
          i = i - 1;
       }
@@ -316,7 +316,7 @@ messages:
       while (i > 0)
       {
          Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterBossD),
-            #piSurvivalLevel=95,#bStack=TRUE, #iRow=Nth(plBlinkCoords, 1) + Random(1, 8), #iCol=Nth(plBlinkCoords, 2) + Random(1, 8),
+            #piSurvivalLevel=95,#bStack=TRUE, #iRow=(Nth(plBlinkCoords, 1) + Random(1, 4)), #iCol=(Nth(plBlinkCoords, 2) + Random(1, 4)),
             #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
          i = i - 1;
       }
