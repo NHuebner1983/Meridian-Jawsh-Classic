@@ -16,20 +16,26 @@ constants:
 
 resources:
 
+   SpiderInvasion_start_location_msg = "~B~k[Event]~n ~B~v You sense a disturbance in %s!"
+
+   SpiderInvasion_end_location_msg = "~B~k[Event]~n ~B~v Spiders have been driven away out of %s!"
+
    SpiderInvasion_start_msg = \
-      "~B~k[Event]~n ~B~v Baby Spiders have started to hatch in Tos."
+      "~B~k[Event]~n ~B~v Baby Spiders have started to hatch."
 
    SpiderInvasion_end_msg = \
-      "~B~k[Event]~n ~B~v Spiders have been driven away from Tos."
+      "~B~k[Event]~n ~B~v Spiders have been driven away."
 
    SpiderInvasion_phase2_msg = \
-      "~B~k[Event]~n ~B~v Spiders are taking over Tos."
+      "~B~k[Event]~n ~B~v Spiders are taking over."
 
    SpiderInvasion_phase3_msg = \
-      "~B~k[Event]~n ~B~v Black Spiders are taking over Tos."
+      "~B~k[Event]~n ~B~v Black Spiders are taking over."
 
    SpiderInvasion_finalphase_msg = \
       "~B~k[Event]~n ~B~v You have upset the Mother Spider."
+
+   SpiderInvasion_attack_sound_rsc = ndanger.ogg
 
 classvars:
 
@@ -44,134 +50,152 @@ classvars:
 properties:
 
    plEventRooms = $
-   piBabySpiders = 50
-   piSpiders = 50
-   piBlackSpiders = 50
-   piMotherSpiders = 10
+   piMonsterA = 50
+   piMonsterB= 50
+   piMonsterC = 50
+   piMonsterBoss = 10
    piActiveRoom = RID_TOS
+   poActiveRoom = $
    piPhase = 0
+   piRelativeHeight = 0
+   ptEventUpdateTimer = $
+   plBlinkCoords = $
+
+   pcMonsterA = $
+   pcMonsterB = $
+   pcMonsterC = $
+   pcMonsterBoss = $
 
 messages:
 
-   Constructor()
+   Constructor(who=$)
    {
-      plEventRooms = [ RID_TOS, RID_BAR_NORTH ];
-      if piActiveRoom = RID_TOS
+      pcMonsterA = &SpiderBaby;
+      pcMonsterB = &Spider;
+      pcMonsterC = &DeathSpider;
+      pcMonsterBoss = &SpiderQueen;
+
+      if who <> $ AND IsClass(who, &DM)
       {
-         plSpawnRects = [ [[54,5],[61,13]], [[49,11],[62,27]],
-                          [[54,29],[59,40]], [[14,16],[49,21]] ];
+         piRelativeHeight = Send(who, @GetHeightAtObject);
+         piActiveRoom = Send(Send(who, @GetOwner), @GetRoomNum);
       }
-      else
-      {
-         if piActiveRoom = RID_BAR_NORTH
-         {
-            plSpawnRects = [ [[54,5],[61,13]], [[49,11],[62,27]],
-                             [[54,29],[59,40]], [[14,16],[49,21]] ];
-         }
-      }
+
+      poActiveRoom = Send(SYS, @FindRoomByNum, #num=piActiveRoom);
+      plBlinkCoords = [Send(poActiveRoom, @GetTeleportRow), Send(poActiveRoom, @GetTeleportCol)];
+      
+      Send(self,@StartEvent);
 
       propagate;
    }
 
    MonsterKilled(dead_monster=$,killing_player=$,corpse=$)
    {
+      Debug("Monster killed, updating");
+      
       Send(self,@Update);
 	  
       return;
    }
 
-
-   // OPTIONAL, DO NOT CALL DIRECTLY!  The engine will call this after it ends
-   // your event
    Delete()
    {
       propagate;
    }
 
-   // OPTIONAL but a good idea to put cleanup stuff in here, the event engine
-   // calls this when ending an event, DO NOT CALL DIRECTLY!  If you want to end
-   // your event call Send(self,@NotifyEngineEndEvent)
    EndEvent()
    {
       propagate;
    }
    
-   // REQUIRED for every game event.  The engine calls this when it is time to
-   // start your event.  DO NOT CALL DIRECTLY.  Launch events from the game event
-   // engine with Send(<engine object>,EventStart,#parm1=&<event type>) or using
-   // the event sceduling system
    StartEvent()
    {
-      Send(self,@PhaseOne);
+      local oUser, lUsersLoggedOn;
+
+      Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=SpiderInvasion_start_location_msg,#parm1=Send(poActiveRoom,@GetName));
+
+      lUsersLoggedOn = Send(SYS,@GetUsersLoggedOn);
+
+      foreach oUser in lUsersLoggedOn
+      {
+         Send(oUser,@WaveSendUser,#wave_rsc=SpiderInvasion_attack_sound_rsc);
+      }
+
+      piPhase = 0;
+
+      ptEventUpdateTimer = CreateTimer(self, @Update, 5000);
 
       propagate;
    }
 
-   //// The rest is up to you!
-   
    Update()
    {
-      local oRoom;
-
-      oRoom = Send(SYS,@FindRoomByNum,#num=piActiveRoom);
-
-      if (oRoom = $)
+      if (poActiveRoom = $)
       {
          propagate;
       }
 
-      if piPhase = 1
+      if piPhase = 0
       {
-         if Send(oRoom,@CountMonsters,#class=&SpiderBaby) = 0
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterA) = 0
+         {
+            Send(self,@PhaseOne);
+         }
+      }
+      else if piPhase = 1
+      {
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterA) = 0
          {
             Send(self,@PhaseTwo);
          }
       }
       else if piPhase = 2
       {
-         if Send(oRoom,@CountMonsters,#class=&Spider) = 0
-            AND Send(oRoom,@CountMonsters,#class=&SpiderBaby) = 0
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterB) = 0
+            AND Send(poActiveRoom,@CountMonsters,#class=pcMonsterA) = 0
          {
             Send(self,@PhaseThree);
          }
       }
       else if piPhase = 3
       {
-         if Send(oRoom,@CountMonsters,#class=&DeathSpider) = 0
-            AND Send(oRoom,@CountMonsters,#class=&Spider) = 0
-            AND Send(oRoom,@CountMonsters,#class=&SpiderBaby) = 0
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterC) = 0
+            AND Send(poActiveRoom,@CountMonsters,#class=pcMonsterB) = 0
+            AND Send(poActiveRoom,@CountMonsters,#class=pcMonsterA) = 0
          {
             Send(self,@FinalPhase);
          }
       }
       else if piPhase = 4
       {
-         if Send(oRoom,@CountMonsters,#class=&SpiderQueen) = 0
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterBoss) = 0
          {
-            // Call NotifyEngineEndEvent to handle ending the event properly. 
-            // This deletes the event from the GameEventEngine. It also calls
-            // EndEvent in this class, which handles your end of event cleanup
-            Send(self,@NotifyEngineEndEvent);
+            Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=SpiderInvasion_end_location_msg,#parm1=Send(poActiveRoom,@GetName));
+
+            Send(self,@Delete);
+
+            return;
          }
       }
+
+      ptEventUpdateTimer = CreateTimer(self, @Update, 5000);
 
       propagate;
    }
 
    PhaseOne()
    {
-      local i,lSpawnPoint;
+      local i;
 
       piPhase = 1;
 
-      i = piBabySpiders;
+      i = piMonsterA;
 
       while (i > 0)
       {
-         lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-               @NewHold,#what=Create(&SpiderBaby),
-               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterA),
+            #piSurvivalLevel=25,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
          i = i - 1;
       }
 
@@ -180,7 +204,7 @@ messages:
 
    PhaseTwo()
    {
-      local i,lSpawnPoint;
+      local i;
 
       piPhase = 2;
 
@@ -190,25 +214,23 @@ messages:
                #string=SpiderInvasion_phase2_msg);
       }
 
-      i = piBabySpiders;
+      i = piMonsterA;
 
       while (i > 0)
       {
-         lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-               @NewHold,#what=Create(&SpiderBaby),
-               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterA),
+            #piSurvivalLevel=50,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
          i = i - 1;
       }
 
-      i = piSpiders;
+      i = piMonsterB;
 
       while (i > 0)
       {
-         lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-               @NewHold,#what=Create(&Spider),
-               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterB),
+            #piSurvivalLevel=50,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
          i = i - 1;
       }
 
@@ -217,7 +239,7 @@ messages:
 
    PhaseThree()
    {
-      local i,lSpawnPoint;
+      local i;
 
       piPhase = 3;
 
@@ -227,36 +249,33 @@ messages:
                #string=SpiderInvasion_phase3_msg);
       }
 
-      i = piBabySpiders;
+      i = piMonsterA;
 
       while (i > 0)
       {
-         lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-               @NewHold,#what=Create(&SpiderBaby),
-               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterA),
+            #piSurvivalLevel=75,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
          i = i - 1;
       }
 
-      i = piSpiders;
+      i = piMonsterB;
 
       while (i > 0)
       {
-         lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-               @NewHold,#what=Create(&Spider),
-               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterB),
+            #piSurvivalLevel=75,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
          i = i - 1;
       }
 
-      i = piBlackSpiders;
+      i = piMonsterC;
       
       while (i > 0)
       {
-         lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-               @NewHold,#what=Create(&DeathSpider),
-               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterC),
+            #piSurvivalLevel=75,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
          i = i - 1;
       }
 
@@ -265,7 +284,7 @@ messages:
 
    FinalPhase()
    {
-      local oKing, i;
+      local i, oKing;
 
       piPhase = 4;
 
@@ -275,13 +294,13 @@ messages:
                #string=SpiderInvasion_finalphase_msg);
       }
 
-      i = piMotherSpiders;
+      i = piMonsterBoss;
       
       while (i > 0)
       {
-		  oKing = Create(&SpiderQueen);
-		  Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
-				@NewHold,#what=oKing,#new_row=(51+i),#new_col=(18+i));
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterBoss),
+            #piSurvivalLevel=95,#bStack=TRUE, #iRow=Nth(plBlinkCoords, 1) + Random(1, i), #iCol=Nth(plBlinkCoords, 2) + Random(1, i),
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
          i = i - 1;
       }
 
