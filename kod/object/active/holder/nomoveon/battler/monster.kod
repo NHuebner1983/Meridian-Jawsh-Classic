@@ -6601,6 +6601,13 @@ messages:
       // Now drop all the treasure.
       foreach oTreasure in lTreasureItems
       {
+         if Send(oTreasure, @IsWrappedAndAutoLooted)
+         {
+            // Let's wrap this in a box.
+            Send(oTreasure, @DoNotWrapAgain);
+            oTreasure = Create(&Gift,#contents=oTreasure,#giver=$);
+         }
+
          if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,
                  #new_col=piCol)
          {
@@ -6613,14 +6620,15 @@ messages:
                ++iNumberOfItemsDropped;
             }
 
-            if IsClass(oTreasure,&NumberItem)
-               AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)
-               AND Send(oTreasure,@GetPos) <> $
-               AND IsClass(who,&User)
-               AND Send(who,@CheckPlayerPreference,#flag=CF_AUTOLOOT)
-               AND (IsClass(oTreasure,&Money)
-                       OR (NOT bRangeFailure
-                           AND NOT bCapacityFailure))
+            if IsClass(oTreasure,&Gift)
+               OR (IsClass(oTreasure,&NumberItem)
+                  AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)
+                  AND Send(oTreasure,@GetPos) <> $
+                  AND IsClass(who,&User)
+                  AND Send(who,@CheckPlayerPreference,#flag=CF_AUTOLOOT)
+                  AND (IsClass(oTreasure,&Money)
+                        OR (NOT bRangeFailure
+                              AND NOT bCapacityFailure)))
             {
                iGetResult = Send(who,@UserGet,#what=oTreasure,#report=FALSE);
                if NOT IsClass(oTreasure,&Money)
