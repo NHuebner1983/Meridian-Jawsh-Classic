@@ -1,0 +1,119 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+MountainGolem is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+   
+   MountainGolem_name_rsc = "mountain golem"
+   MountainGolem_icon_rsc = mountgolem.bgf
+   MountainGolem_desc_rsc = \
+      "MountainGolem"
+   
+   MountainGolem_dead_icon_rsc = mountgolemX.bgf
+   MountainGolem_dead_name_rsc = "dead mountain golem"
+
+   MountainGolem_sound_hit = elem_atkh.ogg
+   MountainGolem_sound_miss = elem_atkm.ogg
+   MountainGolem_sound_death = elem_dth.ogg
+   MountainGolem_sound_aware = elem_awr.ogg
+
+classvars:
+
+   vrName = MountainGolem_name_rsc
+   vrIcon = MountainGolem_icon_rsc
+   vrDesc = MountainGolem_desc_rsc
+   vrDead_icon = MountainGolem_dead_icon_rsc
+   vrDead_name = MountainGolem_dead_name_rsc
+
+   viTreasure_type = TID_NONE
+   viSpeed = SPEED_AVERAGE
+   viAttributes = 0
+   viLevel = 200
+   viDifficulty = 8
+   viVisionDistance = 28
+
+   // Attack range of 192, or 3 row/col.
+   viAttackRange = 192
+
+   viKarma = 0
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE
+   viCashmin = 1100
+   viCashmax = 2000
+   vrSound_hit = MountainGolem_sound_hit
+   vrSound_miss = MountainGolem_sound_miss
+   vrSound_aware = MountainGolem_sound_aware
+   vrSound_death = MountainGolem_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      if plResistances = $
+      {
+         plResistances = [ [-ATCK_SPELL_ALL, 90 ],
+                           [ATCK_WEAP_ALL, 90 ] ];
+      }
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_ONCE);
+      AddPacket(4,400,2,4,2,7,2,1);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,200,2,2,2,3);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,200,2,4,2,7,2,1);
+
+         return;
+      }
+
+      // If no body animation.
+      propagate;
+   }
+   
+   CanMorphTo()
+   {
+      return FALSE;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////
