@@ -2122,6 +2122,8 @@
    SID_QOR_SERVANT = 205
    SID_JALA_SERVANT = 206
    
+   SID_CAMP = 207
+
    // Maximum number of pets our servant can have
    MAX_SERVANT_MINIONS = 2
 

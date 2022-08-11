@@ -3260,17 +3260,18 @@ messages:
             iSchool = Send(oSpell,@GetSchool);
             if (iSchool >= SS_SHALILLE AND iSchool <= SS_JALA)
             {
-			    // Do not allow the new character to purchase these.
-				// They are automatically given upon creation.
-				if num <> SID_RIIJA_SERVANT
-				   AND num <> SID_KRAN_SERVANT
-				   AND num <> SID_SHAL_SERVANT
-				   AND num <> SID_FAREN_SERVANT
-				   AND num <> SID_QOR_SERVANT
-				   AND num <> SID_JALA_SERVANT
-			   {
-			      plNewCharSpells = Cons(oSpell,plNewCharSpells);
-			   }
+               // Do not allow the new character to purchase these.
+               // They are automatically given upon creation.
+               if num <> SID_RIIJA_SERVANT
+                  AND num <> SID_KRAN_SERVANT
+                  AND num <> SID_SHAL_SERVANT
+                  AND num <> SID_FAREN_SERVANT
+                  AND num <> SID_QOR_SERVANT
+                  AND num <> SID_JALA_SERVANT
+                  AND num <> SID_CAMP
+               {
+                  plNewCharSpells = Cons(oSpell,plNewCharSpells);
+               }
             }
          }
       }
@@ -3490,7 +3491,7 @@ messages:
 
       Send(self,@CreateOneSpellIfNew,#num=SID_MIRTH,#class=&Mirth);
       Send(self,@CreateOneSpellIfNew,#num=SID_MELANCHOLY,#class=&Melancholy);
-	  Send(self,@CreateOneSpellIfNew,#num=SID_WOLFPACK,#class=&Wolfpack);
+      Send(self,@CreateOneSpellIfNew,#num=SID_WOLFPACK,#class=&Wolfpack);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_CRYSTALIZE_MANA,#class=&CrystalizeMana);
       
@@ -3500,9 +3501,9 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_SET,#class=&Set);
       Send(self,@CreateOneSpellIfNew,#num=SID_LOADOUT,#class=&Loadout);
       Send(self,@CreateOneSpellIfNew,#num=SID_CONVEYANCE,#class=&Conveyance);
-	  Send(self,@CreateOneSpellIfNew,#num=SID_TRANSFERENCE,#class=&Transference);
+      Send(self,@CreateOneSpellIfNew,#num=SID_TRANSFERENCE,#class=&Transference);
       Send(self,@CreateOneSpellIfNew,#num=SID_PHASE,#class=&Phase);
-	  
+      
       Send(self,@CreateOneSpellIfNew,#num=SID_VAULT_LOADOUT,#class=&VaultLoadout);
 
       // Servant Spells
@@ -3512,6 +3513,9 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_FAREN_SERVANT,#class=&FarenServant);
       Send(self,@CreateOneSpellIfNew,#num=SID_QOR_SERVANT,#class=&QorServant);
       Send(self,@CreateOneSpellIfNew,#num=SID_JALA_SERVANT,#class=&JalaServant);
+
+      // Camp spell
+      Send(self,@CreateOneSpellIfNew,#num=SID_CAMP,#class=&Camp);
 
       // Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);

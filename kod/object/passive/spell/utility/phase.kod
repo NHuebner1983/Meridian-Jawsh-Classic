@@ -207,6 +207,7 @@ messages:
       if Send(who,@CheckPlayerFlag,#flag=PFLAG_PHASED)
       {
          Send(who,@RemoveEnchantment,#what=self);
+         Send(who,@StopCamping);
       }
       else
       {
@@ -276,6 +277,7 @@ messages:
          // Post so it gets processed after enchantment is fully removed
          // from the player.
          Post(oRoom,@SomethingPhasedIn,#what=who);
+         Send(who,@StopCamping);
       }
 
       Send(who,@LogonDelay);
@@ -397,6 +399,11 @@ messages:
       else
       {
          iDuration = iDuration / 1000;
+      }
+
+      if Send(who, @IsCamped)
+      {
+         iDuration = 8630000; // Should say 24 hours always while camped.
       }
 
       Send(self,@SendTimeRemaining,#iTime=iDuration);

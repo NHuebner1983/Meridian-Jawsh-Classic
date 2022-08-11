@@ -1,0 +1,135 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Camp is Spell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   //include camp.lkod
+
+   camp_cast_rsc = "~B~kYou sense it is safe to leave your body now.~k~B"
+   camp_already_rsc = "~B~IRushing will not build your campfire any faster.~I~B"
+   camp_trance_rsc = "~B~r~IEntranced by the campfire, you slowly drift into a deep sleep.~I~r~B"
+   camp_name_rsc = "camp"
+   camp_icon_rsc = icampfire.bgf
+   camp_desc_rsc = \
+      "Prepares a campfire for you to rest your tired bones. "
+      "Allows you to enter a deep sleep, preventing the gods from returning your body to a safe location. "
+      "Requires a short period of time and some foliage nearby to prepare your campfire. "
+      
+   camp_sound = fbrit.ogg
+
+classvars:
+
+   vrName = camp_name_rsc
+   vrIcon = camp_icon_rsc
+   vrDesc = camp_desc_rsc
+
+   viSpell_num = SID_CAMP
+   viSchool = SS_KRAANAN
+   viSpell_level = 1
+   viMana = 15
+   viCast_time = 30000
+   viMeditate_ratio = 300
+   
+   vrSucceed_wav = camp_sound
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   BeginCastingTrance(who = $, lTargets = $, iSpellPower = 0)
+   {
+      // Drift off to sleep.
+      Send(who, @MsgSendUser, #message_rsc=camp_trance_rsc);
+
+      Send(who, @StartCamping);
+
+      propagate;
+   }
+
+   TranceBroken(oCaster=$)
+   {
+      Send(oCaster, @StopCamping);
+
+      propagate;
+   }
+
+   CanPayCosts(who=$,lTargets=$,iSpellPower=0,bItemCast=FALSE,bFreeCast=FALSE)
+   {
+      if Send(who,@IsCamped)
+      {
+         // We shouldn't be casting spells while we're camped.
+         return FALSE;
+      }
+
+      if Send(who,@IsCamping)
+      {
+         Send(who, @MsgSendUser, #message_rsc=camp_already_rsc);
+
+         return FALSE;
+      }
+
+      // Check if we can phase here
+      if NOT Send(Send(SYS,@FindSpellByNum,#num=SID_PHASE), @CanPayCosts, #who=who)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who=$,lTargets=$,iSpellPower=$)
+   {
+      // Create fire pit if there's not one within a square away.
+      Send(self, @CreateCampfire, #who=who);
+
+      // Set the player camped
+      Send(who, @SetCamped);
+
+      // Reset logoff penalties
+      Send(who, @ResetLogoffPenaltyTime);
+
+      // Begin phase on caster.
+      Send(Send(SYS,@FindSpellByNum,#num=SID_PHASE),@CastSpell,#who=who,#lTargets=[who],#iSpellPower=99);
+
+      Send(who, @MsgSendUser, #message_rsc=camp_cast_rsc);
+
+      propagate;
+   }
+
+   CreateCampfire(who=$)
+   {
+      local lPos;
+
+      lPos = Send(who, @GetPos);
+
+      Send(Send(who,@GetOwner),@NewHold,#what=Create(&Firepit,#iSoundRadius=2),#new_row=Nth(lPos, 1),#new_col=Nth(lPos, 2));
+
+      return;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

@@ -833,6 +833,7 @@ resources:
    bad_line_of_sight = \
       "Your hindered line of sight makes a successful hit more difficult."
 
+   player_camp_return_rsc = "~B~I~bYou wake up from a deep sleep, let out a loud yawn and begin to stretch your legs. How long was I asleep?~b~I~B"
       
    pvp_notify_wav = gong.ogg
 
@@ -1191,6 +1192,12 @@ properties:
    pbKillingPlayer = FALSE
    ptKillPlayer = $
    poKillPlayerCredit = $
+
+   // Player is resting at a campfire, prevent their ghost from penalties / inns.
+   pbCamped = FALSE
+
+   // Player is building a campfire to pbCamped = TRUE next.
+   pbCamping = FALSE
    
 messages:
 
@@ -1201,6 +1208,52 @@ messages:
       piReward_timestamp = GetTime();
 
       propagate;
+   }
+
+   IsCamping()
+   "Is the player trying to camp."
+   {
+      return pbCamping;
+   }
+
+   IsCamped()
+   "Is the player camped (should be a logoff ghost + campfire)."
+   {
+      return pbCamped;
+   }
+
+   StopCamping()
+   "Stops a camping attempt but also pulls the player out of a Camped state."
+   {
+      if pbCamped
+      {
+         Send(self, @MsgSendUser, #message_rsc=player_camp_return_rsc);
+      }
+
+      pbCamped = FALSE;
+      pbCamping = FALSE;
+
+      return;
+   }
+
+   StartCamping()
+   "Player is concentrating on building a campfire."
+   {
+      pbCamping = TRUE;
+      pbCamped = FALSE;
+
+      return;
+   }
+
+   SetCamped()
+   "Player has camped successfully and can now log off safely."
+   {
+      local oSpell;
+
+      pbCamped = TRUE;
+      pbCamping = FALSE;
+
+      return;
    }
 
    KillPlayer(real_death=TRUE, wait_time=0, rscMistakeMessage=$, oRoomOrPlayerWhoKilledMe=$)
@@ -2701,16 +2754,18 @@ messages:
       SendList(plPassive, 0, @UserLogon);
       SendList(plActive, 0, @UserLogon);
 
-	  if Send(self, @IsRoamingNPCPlayer)
-	  {
-	     pbRoamingNPCPlayerInitialized = FALSE;
-		  Send(Send(SYS,@GetLore),@ExcludePlayer,#who=self);
-	     Send(self, @SetupRoamingNPCPlayer);
-	  }
-	  else
-	  {
-	     piLastMoved = GetTime();
-	  }
+      Send(self, @StopCamping);
+
+      if Send(self, @IsRoamingNPCPlayer)
+      {
+         pbRoamingNPCPlayerInitialized = FALSE;
+         Send(Send(SYS,@GetLore),@ExcludePlayer,#who=self);
+         Send(self, @SetupRoamingNPCPlayer);
+      }
+      else
+      {
+         piLastMoved = GetTime();
+      }
 	  
       // Restart Unbound Energy, Health and Mana timers
       Send(self,@NewUnboundEnergy);
@@ -3374,6 +3429,7 @@ messages:
    "Add the spells a player is given when creating a character"
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_CAMP,#initial=TRUE,#iability=1);
       Send(self,@AddSpell,#num=SID_RIIJA_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_KRAN_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_SHAL_SERVANT,#initial=TRUE);
@@ -3737,11 +3793,19 @@ messages:
 
             // TODO: i no longer exists at this point?
             // EndEnchantment removing it?
-            plEnchantments = DelListElem(plEnchantments,i);
+            if plPassiveImprovement <> $ AND IsList(plPassiveImprovement) AND Length(plPassiveImprovement)
+            {
+               plEnchantments = DelListElem(plEnchantments,i);
+            }
 
             // Also remove from passive improvement list.
             foreach j in plPassiveImprovement
             {
+               if plPassiveImprovement = $ OR NOT IsList(plPassiveImprovement) OR NOT Length(plPassiveImprovement)
+               {
+                  break;
+               }
+
                if First(j) = oSpell
                {
                   plPassiveImprovement = DelListElem(plPassiveImprovement,j);
@@ -3761,6 +3825,11 @@ messages:
 
       foreach i in plRadiusEnchantments
       {
+         if plRadiusEnchantments = $ OR NOT IsList(plRadiusEnchantments) OR NOT Length(plRadiusEnchantments)
+         {
+            break;
+         }
+
          oSpell = Nth(i,2);
          if First(i) = timer
          {
@@ -16078,6 +16147,12 @@ messages:
          ptPhaseVisualEffectTimer = $;
       }
       
+      if pbCamped
+      {
+         // We're camped.
+         return;
+      }
+
       oPhase = Send(SYS,@FindSpellByNum,#num=SID_PHASE);
       Send(self,@RemoveEnchantment,#what=oPhase);
       Send(oPhase,@InflictPenalties,#who=self);
@@ -16091,6 +16166,18 @@ messages:
 
    GetRemainingPhaseTime()
    {
+      if pbCamped
+      {
+         // We're camped.
+         if ptPhaseTimer <> $
+         {
+            DeleteTimer(ptPhaseTimer);
+            ptPhaseTimer = $;
+
+            return 8640000;
+         }
+      }
+
       if ptPhaseTimer <> $
       {
          return GetTimeRemaining(ptPhaseTimer);

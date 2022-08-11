@@ -1007,6 +1007,7 @@ messages:
       // they can normally enter (but not just in the foyer), create a ghost.
       if (NOT Send(poOwner,@CheckDefaultRoomFlag,#flag=ROOM_SAFELOGOFF))
          AND NOT (IsClass(self,&DM) OR IsClass(self,&EscapedConvict))
+         AND NOT Send(self,@IsCamped)
          AND Send(SYS,@GetLogoffPenaltyEnable)
          AND piLogoffPenaltyCount >= 0
          AND NOT (IsClass(poOwner,&GuildHall)
@@ -8121,8 +8122,11 @@ messages:
          // Delete evil twins we created.
          Send(self,@RemoveAllCreatedEvilTwins);
 
-         Send(self,@MsgSendUser,#message_rsc=user_self_phase_out,
-               #parm1=(Send(self,@GetRemainingPhaseTime)/1000));
+         if NOT Send(self, @IsCamped)
+         {
+            Send(self,@MsgSendUser,#message_rsc=user_self_phase_out,
+                  #parm1=(Send(self,@GetRemainingPhaseTime)/1000));
+         }
       }
       else if iHealth <= 1
       {
@@ -8160,8 +8164,11 @@ messages:
             Send(poEvilTwin,@OriginalUnphased,#who=self);
          }
 
-         Send(self,@MsgSendUser,#message_rsc=user_self_phase_in,
-               #parm1=(Send(self,@GetRemainingPhaseTime)/1000));
+         if NOT Send(self, @IsCamped)
+         {
+            Send(self,@MsgSendUser,#message_rsc=user_self_phase_in,
+                  #parm1=(Send(self,@GetRemainingPhaseTime)/1000));
+         }
       }
       else
       {
