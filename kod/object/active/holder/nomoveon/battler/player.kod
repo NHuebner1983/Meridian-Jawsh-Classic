@@ -833,8 +833,8 @@ resources:
    bad_line_of_sight = \
       "Your hindered line of sight makes a successful hit more difficult."
 
-   player_camp_return_rsc = "~B~I~bYou wake up from a deep sleep, let out a loud yawn and begin to stretch your legs. How long was I asleep?~b~I~B"
-      
+   player_camp_return_rsc = "~B~I~rYou wake up from a deep sleep, let out a loud yawn and begin to stretch your legs. How long was I asleep?~r~I~B"
+
    pvp_notify_wav = gong.ogg
 
 classvars:
