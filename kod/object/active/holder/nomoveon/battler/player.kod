@@ -3793,19 +3793,11 @@ messages:
 
             // TODO: i no longer exists at this point?
             // EndEnchantment removing it?
-            if plPassiveImprovement <> $ AND IsList(plPassiveImprovement) AND Length(plPassiveImprovement)
-            {
-               plEnchantments = DelListElem(plEnchantments,i);
-            }
+            plEnchantments = DelListElem(plEnchantments,i);
 
             // Also remove from passive improvement list.
             foreach j in plPassiveImprovement
             {
-               if plPassiveImprovement = $ OR NOT IsList(plPassiveImprovement) OR NOT Length(plPassiveImprovement)
-               {
-                  break;
-               }
-
                if First(j) = oSpell
                {
                   plPassiveImprovement = DelListElem(plPassiveImprovement,j);
@@ -3825,11 +3817,6 @@ messages:
 
       foreach i in plRadiusEnchantments
       {
-         if plRadiusEnchantments = $ OR NOT IsList(plRadiusEnchantments) OR NOT Length(plRadiusEnchantments)
-         {
-            break;
-         }
-
          oSpell = Nth(i,2);
          if First(i) = timer
          {
