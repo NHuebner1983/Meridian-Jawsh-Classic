@@ -57,9 +57,9 @@ resources:
    servant_command_help = "help"
    servant_command_no_buffs = "stop buffing me"
    servant_command_do_buffs = "buff me"
-   servant_command_taunt = "taunt"
+   servant_command_taunt = "taunt more"
    servant_command_stop_taunting = "stop taunting"
-   servant_command_attack = "attack"
+   servant_command_attack = "attack again"
    servant_command_stop_attacking = "stop attacking"
    servant_command_cast = "cast spells"
    servant_command_stop_casting = "stop casting spells"
@@ -313,6 +313,7 @@ resources:
    npc_ae = "Lady Aftyn"
    npc_af = "Colhorr"
    npc_ag = "Frisconar"
+   npc_ah = "Captain of the Seaborn Legend"
    
    servant_desc_riija = "I am the servant of riija. I will play tricks on your enemy. If you need help controlling me, say help."
    servant_desc_faren = "I am the servant of faren. I will burn your enemy to a crisp and protect you from the elements. If you need help controlling me, say help."
@@ -524,7 +525,7 @@ properties:
    piImpIntervalNormal = 1000
    piImpIntervalPvp = 120000
 
-   piTauntInterval = 1000
+   piTauntInterval = 3000
    piTauntIntervalNormal = 1000
    piTauntIntervalPvp = 6000
 
@@ -1870,7 +1871,7 @@ messages:
          plNPCNames = [
             npc_a, npc_b, npc_c, npc_d, npc_e, npc_f, npc_g, npc_h, npc_i, npc_j, npc_k, npc_l, npc_m, npc_n,
             npc_o, npc_p, npc_q, npc_r, npc_s, npc_t, npc_u, npc_v, npc_w, npc_x, npc_y, npc_z, 
-            npc_aa, npc_ab, npc_ac, npc_ad, npc_ae, npc_af, npc_ag
+            npc_aa, npc_ab, npc_ac, npc_ad, npc_ae, npc_af, npc_ag, npc_ah
          ];
       }
 
@@ -2115,7 +2116,7 @@ messages:
          return;
       }
 
-      ptTaunt = CreateTimer(self,@TauntEnemies,1000);
+      ptTaunt = CreateTimer(self,@TauntEnemies,piTauntInterval);
 
       if NOT pbAllowTaunt
       {
@@ -2127,7 +2128,7 @@ messages:
          // Tells the target to switch to the servant
          // with a massive amount of hate.
          // Only works if you enter combat with the monster.
-         Send(poTarget,@TargetSwitch,#what=self,#iHatred=10000);
+         Send(poTarget,@TargetSwitch,#what=self,#iHatred=500);
       }
 	  
 	  return;

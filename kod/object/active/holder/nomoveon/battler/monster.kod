@@ -5941,21 +5941,23 @@ messages:
             lSchools, bIsRequestedByServant;
 
       bIsRequestedByServant = FALSE;
-	  
-	  if IsClass(oRequester,&Servant)
-	  {
-	     bIsRequestedByServant = TRUE;
-	  }
-	  
-	  if oRequester = $
-	  {
-	     if (piAttributes & MOB_TEACHER) AND Send(who,@HasServant)
-		 {
-		    return;
-		 }
-	  }
-	  
-	  if sid = 0 OR who = $
+            
+      if oRequester = $
+      {
+         if (piAttributes & MOB_TEACHER) AND Send(who,@HasServant)
+         {
+            return;
+         }
+      }
+      else
+      {
+         if IsClass(oRequester,&Servant)
+         {
+            bIsRequestedByServant = TRUE;
+         }
+      }
+      
+      if sid = 0 OR who = $
       { 
          Debug("Invalid data sent to CanDoTeach!");
 
@@ -5991,11 +5993,11 @@ messages:
          // Player needs to do a quest for the priestess to gain this spell or
          //  skill.
          
-	     // Private
-	     //Send(who, @MsgSendUser, #message_rsc=vrTeach_quest_needed,
-		 //	  #parm1=Send(oAbility,@GetName));
-			  
-// Room say	     
+         // Private
+         //Send(who, @MsgSendUser, #message_rsc=vrTeach_quest_needed,
+         //	  #parm1=Send(oAbility,@GetName));
+            
+   // Room say	     
       //   Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
       //        #string=vrTeach_quest_needed,#parm1=Send(oAbility,@GetName));
 
@@ -6005,19 +6007,19 @@ messages:
       // KLUDGE: This should be handled in the individual subclasses.
       //         This makes baby Jesus cry.
       if (IsClass(self,&JasperBlacksmith) OR IsClass(self,&JasperElder)
-          OR IsClass(self,&BarloqueApothecary) OR IsClass(self,&Minstrel))
+            OR IsClass(self,&BarloqueApothecary) OR IsClass(self,&Minstrel))
          AND NOT Send(self,@HasDoneLearnQuest,#who=who)
       {
          // Player needs to do a quest for the seller to gain this spell or
          //  skill.
          
-	     // Private
-	     Post(who, @MsgSendUser, #message_rsc=vrTeach_quest_needed,
-			  #parm1=Send(self,@GetName), #parm2=Send(oAbility,@GetName));
-			  
-// Room say	     
-//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-//              #string=vrTeach_quest_needed,#parm1=Send(oAbility,@GetName));
+         // Private
+         Post(who, @MsgSendUser, #message_rsc=vrTeach_quest_needed,
+            #parm1=Send(self,@GetName), #parm2=Send(oAbility,@GetName));
+            
+   // Room say	     
+   //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+   //              #string=vrTeach_quest_needed,#parm1=Send(oAbility,@GetName));
 
          return FALSE;
       }
@@ -6038,64 +6040,64 @@ messages:
 
       if iVal = PLAYER_LEARN_SUCCESS
       {
-	     // Private
-	     Post(who, @MsgSendUser, #message_rsc=monster_teach_success,
-			  #parm1=Send(self,@GetName), #parm2=Send(oAbility,@GetName));
-			  
-// Room say	     
-//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-//              #string=monster_teach_success,#parm1=Send(oAbility,@GetName));
+         // Private
+         Post(who, @MsgSendUser, #message_rsc=monster_teach_success,
+            #parm1=Send(self,@GetName), #parm2=Send(oAbility,@GetName));
+            
+   // Room say	     
+   //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+   //              #string=monster_teach_success,#parm1=Send(oAbility,@GetName));
 
          return TRUE;
       }
 
       if iVal = PLAYER_LEARN_ALREADY
       {
-	     // Private
-	     Post(who, @MsgSendUser, #message_rsc=monster_teach_already,
-			  #parm1=Send(self,@GetName), #parm2=Send(oAbility,@GetName));
-			  
-// Room say	     
-//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-//              #string=monster_teach_already,#parm1=Send(oAbility,@GetName));
+         // Private
+         Post(who, @MsgSendUser, #message_rsc=monster_teach_already,
+            #parm1=Send(self,@GetName), #parm2=Send(oAbility,@GetName));
+            
+   // Room say	     
+   //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+   //              #string=monster_teach_already,#parm1=Send(oAbility,@GetName));
 
          return FALSE;
       }
 
       if iVal = PLAYER_LEARN_NOBASE
       {
-	     // Private
-	     Post(who, @MsgSendUser, #message_rsc=monster_teach_nobase,
-			  #parm1=Send(self,@GetName), #parm2=Send(oAbility,@GetName));
-			  
-// Room say	     
-//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-//              #string=monster_teach_nobase,#parm1=Send(oAbility,@GetName));
+         // Private
+         Post(who, @MsgSendUser, #message_rsc=monster_teach_nobase,
+            #parm1=Send(self,@GetName), #parm2=Send(oAbility,@GetName));
+            
+   // Room say	     
+   //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+   //              #string=monster_teach_nobase,#parm1=Send(oAbility,@GetName));
 
          return FALSE;
       }
 
       if iVal = PLAYER_LEARN_KARMA 
       {
-	     // Private
-	     Post(who, @MsgSendUser, #message_rsc=monster_teach_karma,
-			  #parm1=Send(self,@GetName),#parm2=Send(oAbility,@GetName));
-			  
-// Room say	     
-//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-//              #string=monster_teach_karma,#parm1=Send(oAbility,@GetName));
+         // Private
+         Post(who, @MsgSendUser, #message_rsc=monster_teach_karma,
+            #parm1=Send(self,@GetName),#parm2=Send(oAbility,@GetName));
+            
+   // Room say	     
+   //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+   //              #string=monster_teach_karma,#parm1=Send(oAbility,@GetName));
 
          return FALSE;
       }
 
       if iVal = PLAYER_LEARN_IMPOSSIBLE 
       {
-	     // Private
-	     Post(who, @MsgSendUser, #message_rsc=monster_teach_impossible, #parm1=Send(self,@GetName));
-			  
-// Room say	     
-//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-//              #string=monster_teach_impossible);
+         // Private
+         Post(who, @MsgSendUser, #message_rsc=monster_teach_impossible, #parm1=Send(self,@GetName));
+            
+   // Room say	     
+   //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+   //              #string=monster_teach_impossible);
 
          return FALSE;
       }
@@ -6109,18 +6111,18 @@ messages:
       
       if iReason = PLAYER_LEARN_BASE
       {
-	     // Private
-	     Post(who, @MsgSendUser, #message_rsc=monster_teach_base,
-			  #parm1=Send(self,@GetName),
-			  #parm2=rAmount,
-              #parm3=Send(oAbility,@GetSchoolStr),
-              #parm4=Send(oAbility,@GetName));
+         // Private
+         Post(who, @MsgSendUser, #message_rsc=monster_teach_base,
+            #parm1=Send(self,@GetName),
+            #parm2=rAmount,
+               #parm3=Send(oAbility,@GetSchoolStr),
+               #parm4=Send(oAbility,@GetName));
 
-// Room say			  
-//         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-//              #string=monster_teach_base,#parm1=rAmount,
-//              #parm2=Send(oAbility,@GetSchoolStr),
-//              #parm3=Send(oAbility,@GetName));
+   // Room say			  
+   //         Send(Send(who, @GetOwner),@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+   //              #string=monster_teach_base,#parm1=rAmount,
+   //              #parm2=Send(oAbility,@GetSchoolStr),
+   //              #parm3=Send(oAbility,@GetName));
 
          return FALSE;
       }
@@ -6131,7 +6133,7 @@ messages:
 
       return FALSE;
    }
-   
+
    CanAttackPlayer(who=$)
    {
       return NOT Send(self,@IsMinionOf,#who=who);
@@ -6393,7 +6395,7 @@ messages:
       {
          return Send(self,@AssembleVaultList,#who=who);
       }
-    
+      
       if plFor_sale = $
       {
          return;
@@ -6411,8 +6413,8 @@ messages:
       }
 
       // now do spells
-	  if spells
-	  {
+      if spells
+      {
          foreach i in Nth(plFor_sale,3)
          {
             if (who = $ OR Send(self,@CanAddSpell,#who=who,#num=i))
@@ -6421,11 +6423,11 @@ messages:
                lForSale = cons(Send(SYS,@FindSpellByNum,#num=i),lForSale);
             }
          }
-	  }
+      }
 
       // now do skills
-	  if skills
-	  {
+      if skills
+      {
          foreach i in Nth(plFor_sale,2)
          {
             if (who = $ OR Send(self,@CanAddSkill,#who=who,#num=i))
@@ -6434,16 +6436,16 @@ messages:
                lForSale = cons(Send(SYS,@FindSkillByNum,#num=i),lForSale);
             }
          }
-	  }
+      }
 
       // now do the items
-	  if items
-	  {
+      if items
+      {
          foreach i in First(plFor_sale)
          {
             lForSale = cons(i,lForSale);
          }
-	  }
+      }
 
       if report AND lForSale=$ AND who <> $ AND poOwner <> $
       {

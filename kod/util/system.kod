@@ -3741,6 +3741,7 @@ messages:
 
        Send(self,@CreateOneSKillIfNew,#num=SKID_SECOND_WIND,#class=&SecondWind);
        Send(self,@CreateOneSKillIfNew,#num=SKID_DISARM,#class=&Disarm);
+       Send(self,@CreateOneSKillIfNew,#num=SKID_TAUNT,#class=&Taunt);
 
        return;
    }

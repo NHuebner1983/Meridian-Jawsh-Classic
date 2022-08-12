@@ -107,6 +107,11 @@ messages:
       return piRange;
    }
 
+   GetTauntBonus()
+   {
+      return 0;
+   }
+
    GetDisarmBonus()
    {
       return piDisarmBonus;

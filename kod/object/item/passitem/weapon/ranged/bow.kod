@@ -297,6 +297,12 @@ messages:
       return HS_SW;
    }
 
+   GetTauntBonus()
+   {
+      // Just like Disarm, taunting with a bow is a really low chance.
+      return -90;
+   }
+
    GetDisarmBonus()
    {
       // Keep this a big negative.  Disarming with a bow is possible, just not likely. ;)

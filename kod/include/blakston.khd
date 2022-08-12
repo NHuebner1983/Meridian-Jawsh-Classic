@@ -2085,7 +2085,8 @@
    SKID_BLOCK = 404
    SKID_SECOND_WIND = 405
    SKID_DISARM = 406
-
+   SKID_TAUNT = 407
+   
    // Melee weapon strokes start here.
    SKID_DEFAULT = 420
    SKID_SLASH = 421

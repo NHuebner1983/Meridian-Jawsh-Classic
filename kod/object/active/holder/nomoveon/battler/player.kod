@@ -6439,6 +6439,17 @@ messages:
                #oTarget=what,#oWeapon=oWeapon);
       }
 
+      if Send(self,@GetSkillAbility,#Skill_num=SKID_TAUNT) > 0
+      {
+         if oWeapon <> $ AND IsClass(oWeapon,&Spell)
+         {
+            oWeapon = $;
+         }
+
+         Send(Send(SYS,@FindSkillByNum,#num=SKID_TAUNT),@DoSkill,#who=self,
+               #oTarget=what,#oWeapon=oWeapon);
+      }
+
       if amount > 0
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
