@@ -103,7 +103,7 @@ resources:
       "~r~B''say stop buffing me'' ~r~B~kand I will stop casting beneficial spells...your loss pal.~k\n"
       "~r~B''say buff me'' ~r~B~kand I will resume casting beneficial spells.~k\n"
       "~r~B''say stop taunting'' ~r~B~kand I will stop trying to steal your aggro.~k\n"
-      "~r~B''say taunt'' ~r~B~kand it will send me into a rage, stealing your aggro, but it will hurt me a lot.~k\n"
+      "~r~B''say taunt more'' ~r~B~kand it will send me into a rage, stealing your aggro, but it will hurt me a lot.~k\n"
       "~r~B''say stop attacking'' ~r~B~kand I will let you do all of the hard work.~k\n"
       "~r~B''say attack'' ~r~B~kand I will attack your enemies.~k\n"
       "~r~B''say stop casting spells'' ~r~B~kand I will stop casting harmful spells on your enemies.~k\n"

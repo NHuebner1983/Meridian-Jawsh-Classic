@@ -321,7 +321,7 @@ messages:
 	  
       if mob <> $ AND what <> $ AND victim <> $
       {
-         if IsClass(mob, &Monster) AND IsClass(victim, &Player) AND IsClass(mob, &Reflection) AND Send(mob, @CanMinionAttackPlayer, #who=victim)
+         if IsClass(mob, &Monster) AND IsClass(victim, &Player) AND IsClass(mob, &Reflection) AND Send(mob, @CanMinionAttackPlayer, #who=victim) AND NOT Send(mob, @IsMinionOf, #who=victim)
          {
             //Debug("Minion attacked player, pvp gong", GetClass(mob), Send(mob,@GetName),"vs",Send(victim,@GetName));
             // Flag the victim for pvp
