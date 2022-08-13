@@ -1452,7 +1452,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0, bItemCast=FALSE, quiet=FALSE)
    {
-      local oTarget, oRoom;
+      local oTarget, oRoom, oWho;
 
       if IsClass(who,&DM)
       {
@@ -1516,10 +1516,29 @@ messages:
                }
 
                // Notify the target that they've been attacked
-               // by another player.
-               if viHarmful
+               // by another player - Apparently Orc Wizards were counting, that should be fixed now.
+               if viHarmful AND (IsClass(who, &Reflection) OR IsClass(who, &Player))
                {
+                  // Flag target for PVP
                   Send(oTarget,@DoPvpNotify);
+
+                  oWho = who;
+                  
+                  if IsClass(who, &Monster) AND Send(who, @GetMaster) <> $
+                  {
+                     oWho = Send(who, @GetMaster);
+
+                     if IsClass(oWho, &Monster)
+                     {
+                        oWho = Send(oWho, @GetMaster);
+                     }
+                  }
+
+                  if oWho <> $ AND IsClass(oWho, &Player)
+                  {
+                     // Flag caster for PVP.
+                     Send(who,@DoPvpNotify);
+                  }
                }
             }
          }

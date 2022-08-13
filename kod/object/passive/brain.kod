@@ -163,21 +163,48 @@ messages:
       {
          return;
       }
-	  
-	  if what <> $ AND IsClass(what, &Player) AND NOT IsClass(mob, &Reflection) AND NOT IsClass(mob, &Servant)
-	  {
-        //Debug(Send(mob,@GetName),"detected",Send(what,@GetName));
-        
-        Send(what,@RecalibrateAggro);
 
-	     if Send(what,@GetAggroCount) >= MAX_AGGRO AND NOT Send(what,@HasAggro,#what=mob)
-		  {
-		    // Ignore the user, they are already being aggro'd by too many things.
-         //Debug("But the player has too much aggro.");
-			return;
-		 }
-	  }
-	  
+      if what <> $ AND mob <> $
+      {
+         if IsClass(mob, &Monster) AND IsClass(what, &Player) AND NOT Send(mob, @CanMinionAttackPlayer, #who=what)
+         {
+            return FALSE;
+         }
+
+         if IsClass(mob, &Monster) AND IsClass(what, &Monster) AND NOT Send(mob, @CanMinionAttackMonster, #what=what)
+         {
+            return FALSE;
+         }
+      }
+      
+      // If my master or master's master is what moved, let's not reset our behavior - let's keep on our existing.
+      if what <> $ AND IsClass(what, &Player) AND IsClass(mob, &Monster) AND Send(mob, @IsMinionOf, #who=what)
+      {
+         //Debug(Send(mob,@GetName),"Something moved is relative master",Send(what,@GetName));
+         return;
+      }
+
+      if what <> $ AND IsClass(what, &Player) AND NOT IsClass(mob, &Reflection) AND NOT IsClass(mob, &Servant) AND NOT Send(what,@HasAggro,#what=mob)
+      {
+         //Debug(Send(mob,@GetName),"detected",Send(what,@GetName));
+         
+         Send(what,@RecalibrateAggro);
+
+         if Send(what,@GetAggroCount) >= MAX_AGGRO AND NOT Send(what,@HasAggro,#what=mob)
+         {
+            // Ignore the user, they are already being aggro'd by too many things.
+            //Debug(Send(what,@GetName),"The player has too much aggro.",Send(mob,@GetName));
+            return;
+         }
+      }
+
+      if Send(mob, @GetTarget) = what
+      {
+         // Let's stay on our target.
+         //Debug(Send(mob,@GetName),"is already targeting",Send(what,@GetName));
+         return;
+      }
+      
       /// We now process all SomethingMoved calls for fluidity.
       //if (ignoreWait = FALSE)
       //   AND Random(1,5) <> 5
@@ -200,7 +227,7 @@ messages:
       if state & STATE_WAIT
          AND (ignoreWait = FALSE)
       {
-            //Debug(Send(mob,@GetName),"is waiting");
+         //Debug(Send(mob,@GetName),"is waiting",Send(what,@GetName));
          return;
       }
 
@@ -208,16 +235,19 @@ messages:
       // us in general, do nothing.
       if NOT Send(self,@AttemptTargetSwitch,#what=what,#event=TS_MOVE,#mob=mob)
       {
-            //Debug(Send(mob,@GetName),"could not switch targets");
+         //Debug(Send(mob,@GetName),"could not switch targets",Send(what,@GetName));
          return;
       }
 
       oTarget = Send(mob,@GetTarget);
 
+      //Debug(Send(mob,@GetName),"targetted",Send(what,@GetName));
+
       // Some other monster may have already killed this target on the same
       // SomethingMoved.  If so, this don't fly no more, do it?
       if Send(mob,@GetOwner) <> Send(what,@GetOwner)
       {
+        // Debug(Send(mob,@GetName),"rooms are different",Send(what,@GetName));
          return;
       }
 	  
@@ -232,12 +262,10 @@ messages:
          if Send(mob,@CanReachLocation,#row=new_row,#col=new_col,
                   #fine_row=fine_row,#fine_col=fine_col)
          {
-		      //Debug("AttackNow232",GetClass(mob),GetClass(what));
+		      //Debug(Send(mob,@GetName),"is attacking (259)",Send(what,@GetName));
             Send(mob,@EnterStateAttack,#actnow=True);   // Used to be post.
 
             return;
-         } else {
-           //Debug(Send(mob,@GetName),"is too far, chasing now");
          }
 
          Send(mob,@EnterStateChase,#target=what,#actnow=True); // Used to be post.
@@ -250,7 +278,7 @@ messages:
          if Send(mob,@CanReachLocation,#row=new_row,#col=new_col,
                   #fine_row=fine_row,#fine_col=fine_col)
          {
-		    //Debug("AttackNow237",GetClass(mob),GetClass(what));
+		      //Debug(Send(mob,@GetName),"is attacking (275)",Send(what,@GetName));
             Send(mob,@EnterStateAttack,#target=what,#actnow=True); // Used to be post.
          }
 
@@ -262,6 +290,7 @@ messages:
          if NOT Send(mob,@CanReachLocation,#row=new_row,#col=new_col,
                      #fine_row=fine_row,#fine_col=fine_col)
          {
+            //Debug(Send(mob,@GetName),"is chasing",Send(what,@GetName));
             Send(mob,@EnterStateChase,#target=what,#actnow=True); // Used to be post.
 
             return;
@@ -275,10 +304,10 @@ messages:
 
    SomethingAttacked(mob=$, state=$, what=$, victim=$, use_weapon=$)
    {
-      local oTarget, iType, bSwitch;
+      local oTarget, iType, bSwitch, oMaster;
 
       oTarget = Send(mob,@GetTarget);
-	  
+
       //// Sanity check
       if what=$
       {
@@ -290,14 +319,56 @@ messages:
          return;
       }
 	  
-	  if IsClass(what, &Monster) AND IsClass(victim, &Player) AND NOT IsClass(what, &Servant)
+      if mob <> $ AND what <> $ AND victim <> $
+      {
+         if IsClass(mob, &Monster) AND IsClass(victim, &Player) AND IsClass(mob, &Reflection) AND Send(mob, @CanMinionAttackPlayer, #who=victim)
+         {
+            //Debug("Minion attacked player, pvp gong", GetClass(mob), Send(mob,@GetName),"vs",Send(victim,@GetName));
+            // Flag the victim for pvp
+            Send(victim, @DoPvpNotify);
+
+            // Flag the minion's master for pvp
+            oMaster = Send(mob, @GetMaster);
+
+            if oMaster <> $ AND IsClass(oMaster, &Servant)
+            {
+               oMaster = Send(oMaster, @GetMaster);
+            }
+
+            if oMaster <> $ AND IsClass(oMaster, &Player)
+            {
+               //Debug("Minion Master pvp gong", GetClass(oMaster),Send(oMaster,@GetName));
+               Send(oMaster, @DoPvpNotify);
+            }
+         }
+
+         if IsClass(mob, &Monster) AND IsClass(victim, &Player) AND NOT Send(mob, @CanMinionAttackPlayer, #who=victim)
+         {
+            return FALSE;
+         }
+
+         if IsClass(mob, &Monster) AND IsClass(victim, &Monster) AND NOT Send(mob, @CanMinionAttackMonster, #what=victim)
+         {
+            return FALSE;
+         }
+      }
+            
+      if what <> $ AND mob <> $ 
+         AND (IsClass(what, &Reflection) AND IsClass(mob, &Reflection))
+         OR IsClass(what, &Servant) AND IsClass(mob, &Servant)
+      {
+         // Prevent any kind of target switching if the enemies are servants or reflections.
+         return;
+      }
+
+	  if IsClass(what, &Monster) AND IsClass(victim, &Player) AND NOT IsClass(what, &Servant) AND NOT IsClass(what, &Reflection)
 	  {
 	     // Monster attacked player
 		 // Make sure the monster is known as an aggressor.
 		 Send(victim,@AddAggro,#what=what);
 	  }
 	  
-	  if IsClass(what, &Player) AND IsClass(victim, &Monster) AND NOT IsClass(victim, &Servant)
+	  if IsClass(what, &Player) AND IsClass(victim, &Monster) AND NOT IsClass(victim, &Servant) AND NOT IsClass(victim, &Reflection)
 	  {
 	    // Player attacked monster
 		 // Make sure the monster is known as an aggressor.
@@ -1325,32 +1396,50 @@ messages:
          return FALSE;
       }
 
-      oTarget = Send(mob,@GetTarget);
-      if what = oTarget
+      if mob <> $ ANd what <> $
       {
-         return FALSE;
+         if IsClass(mob, &Monster) AND IsClass(what, &Player) AND NOT Send(mob, @CanMinionAttackPlayer, #who=what)
+         {
+            return FALSE;
+         }
+
+         if IsClass(mob, &Monster) AND IsClass(what, &Monster) AND NOT Send(mob, @CanMinionAttackMonster, #what=what)
+         {
+            return FALSE;
+         }
       }
 
-      if NOT IsClass(what,&Battler)
+      oTarget = Send(mob, @GetTarget);
+
+      if NOT IsClass(what,&Battler) OR IsClass(what, &Servant)
       {
+         //Debug("AttemptTargetSwitch Not Battler");
          return FALSE;
       }
 
       if NOT Send(what,@IsLikelyVictim)
       {
+         //Debug("AttemptTargetSwitch Not Likely Victim");
          return FALSE;
       }
 
-      if IsClass(mob,&Revenant)
+      if IsClass(mob,&Revenant) AND NOT IsClass(what,&Servant) AND NOT IsClass(what,&Reflection)
       {
+         //Debug("AttemptTargetSwitch Is Revenant");
          return FALSE;
       }
 
-	  if what <> $ AND IsClass(what, &Player)
+	  if what <> $ AND IsClass(what, &Player) AND NOT Send(what,@HasAggro,#what=mob)
 	  {
-	     if Send(what,@GetAggroCount) >= MAX_AGGRO AND NOT Send(what,@HasAggro,#what=mob)
+      //Debug("AttemptTargetSwitch Target Has Room for Aggro");
+	     if Send(what,@GetAggroCount) >= MAX_AGGRO 
+            AND NOT IsClass(mob, &Reflection) 
+            AND NOT IsClass(mob, &EvilTwin) 
+            AND NOT IsClass(mob, &Player)
 		 {
 		    // Ignore the user, they are already being aggro'd by too many things.
+          // But allow reflections and evil twin to bypass aggro limits.
+          //Debug("AttemptTargetSwitch", Send(mob, @GetName),"max aggro",Send(what,@GetName));
 			return FALSE;
 		 }
 	  }
@@ -1372,8 +1461,15 @@ messages:
 
       if iHatred > oldHatred
       {
-         Send(mob,@TargetSwitch,#what=what,#iHatred=iHatred);
+         //Debug("TargetSwitch Called", GetClass(mob), Send(mob, @GetName),"HATRED",GetClass(what),Send(what,@GetName));
+         return Send(mob,@TargetSwitch,#what=what,#iHatred=iHatred);
+      }
 
+      //Debug("AttemptTargetSwitch FAILED", Send(mob, @GetName),"returned false",Send(what,@GetName), oldHatred,iHatred);
+
+      if oTarget = what
+      {
+         // Stay on the same target.
          return TRUE;
       }
 

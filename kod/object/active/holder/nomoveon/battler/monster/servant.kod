@@ -775,6 +775,12 @@ messages:
       {
          // PVP timer is running
          Post(poMaster,@MsgSendUser,#message_rsc=servant_pvp_cant_help_started);
+
+         // Remove jala / other radius spells beneficial from servant.
+         Send(self, @RemoveImportantServantEnchants);
+
+         // Remove reflections of the servant
+         Send(self,@RemoveAllMinions);
       }
 
       if NOT pbCanHelp AND bCanHelp

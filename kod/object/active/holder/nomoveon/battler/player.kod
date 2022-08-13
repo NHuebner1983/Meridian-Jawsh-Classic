@@ -5319,10 +5319,13 @@ messages:
             AND Send(oSoldierShield,@IsEnemyAttack,#what=victim))
       {
          // Okay, attack is against a player, so record the time
-         if actual = TRUE
-         {
-            piTimeAttackedPlayer = GetTime();
-         }
+         //if actual = TRUE
+         //{
+            // Why would we engage in PVP without an actual attack?
+            // This needs to be put somewhere else.
+            //Send(self, @DoPvpNotify);
+            //Send(victim, @DoPvpNotify);
+         //}
 
          return TRUE;
       }
@@ -5630,6 +5633,7 @@ messages:
       // initially, but then not again until PVP_NOTIFY_DECAY has passed
       if IsClass(what,&User)
       {
+         Send(self,@DoPvpNotify);
          Send(what,@DoPvpNotify);
       }
 
@@ -16266,6 +16270,9 @@ messages:
 
       // Set our attacked-by time here.
       piTimeAttackedByPlayer = iTime;
+      
+      // New update, both parties are PVP flagged when PVP engages!
+      piTimeAttackedPlayer = iTime;
 
       return;
    }
