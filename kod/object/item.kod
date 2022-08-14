@@ -732,6 +732,11 @@ messages:
       return;
    }
 
+   WrapMe(from=$)
+   {
+      return Create(&Gift,#contents=self,#giver=from);
+   }
+
    DoNotWrapAgain()
    {
       pbWrapAndLoot = FALSE;

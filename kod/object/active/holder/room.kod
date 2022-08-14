@@ -1335,6 +1335,41 @@ messages:
       return (Send(self,@GetPermanentFlags) & flag);
    }
 
+   CountHolding(class=$)
+   "Count how many we have in the room by class."
+   {
+      local i, oObj, iCount;
+
+      iCount = 0;
+
+      if class = $
+      {
+         return 0;
+      }
+
+      foreach i in plActive
+      {
+         oObj = Send(self, @HolderExtractObject, #data=i);
+
+         if oObj <> $ AND IsClass(oObj, class)
+         {
+            iCount = iCount + 1;
+         }
+      }
+
+      foreach i in plPassive
+      {
+         oObj = Send(self, @HolderExtractObject, #data=i);
+
+         if oObj <> $ AND IsClass(oObj, class)
+         {
+            iCount = iCount + 1;
+         }
+      }
+
+      return iCount;      
+   }
+
    CountMonsters(class = $,mastered = FALSE)
    {
       local n,i,each_obj;

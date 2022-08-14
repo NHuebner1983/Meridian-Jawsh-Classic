@@ -165,9 +165,17 @@ messages:
       return TRUE;
    }
 
-   AdjustVisualEffectBasedOnTimeRemaining(who = $)
+   AdjustVisualEffectBasedOnTimeRemaining(who = $, bJustStarted=FALSE)
    {
       local iTimeLeft, iBrightnessLevel;
+
+      if NOT bJustStarted AND NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PHASED)
+      {
+         // We're not phased, let's adjust the light to normal
+         Send(who,@EffectSendUserXlat,#xlat=0);
+
+         return;
+      }
 
       iTimeLeft = Send(who,@GetRemainingPhaseTime) / 1000;
       iBrightnessLevel = 0;
@@ -206,12 +214,19 @@ messages:
 
       if Send(who,@CheckPlayerFlag,#flag=PFLAG_PHASED)
       {
+         if Send(who,@IsCamped)
+         {
+            Send(who,@StopCamping,#caller=self);
+         }
+
          Send(who,@RemoveEnchantment,#what=self);
-         Send(who,@StopCamping);
+         
+         // Helps remove the brightness.
+         Send(who,@PhaseVisualEffect);
       }
       else
       {
-         Send(self,@AdjustVisualEffectBasedOnTimeRemaining,#who=who);
+         Send(self,@AdjustVisualEffectBasedOnTimeRemaining,#who=who,#bJustStarted=TRUE);
          Send(who,@BreakTrance,#event=EVENT_STEER);
          Send(who,@FreezeAllEnchantments);
          Send(who,@SetPlayerFlag,#flag=PFLAG_PHASED,#value=TRUE);

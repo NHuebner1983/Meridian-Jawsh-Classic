@@ -1222,16 +1222,25 @@ messages:
       return pbCamped;
    }
 
-   StopCamping()
+   StopCamping(caller=$)
    "Stops a camping attempt but also pulls the player out of a Camped state."
    {
       if pbCamped
       {
          Send(self, @MsgSendUser, #message_rsc=player_camp_return_rsc);
+
+         if caller = $ OR NOT IsClass(caller, &Phase)
+         {
+            Send(self, @PhaseTimerEnd);
+
+            piRemainingPhaseTime = Send(self,@GetBasePhaseTime);
+         }
       }
 
       pbCamped = FALSE;
       pbCamping = FALSE;
+
+      Send(Send(SYS,@FindSpellByNum,#num=SID_PHASE),@AdjustVisualEffectBasedOnTimeRemaining,#who=self);
 
       return;
    }
@@ -1252,6 +1261,8 @@ messages:
 
       pbCamped = TRUE;
       pbCamping = FALSE;
+
+      Send(self, @RefreshPhaseTimeToBase);
 
       return;
    }
@@ -2754,7 +2765,10 @@ messages:
       SendList(plPassive, 0, @UserLogon);
       SendList(plActive, 0, @UserLogon);
 
-      Send(self, @StopCamping);
+      if pbCamped
+      {
+         Send(self, @StopCamping);
+      }
 
       if Send(self, @IsRoamingNPCPlayer)
       {
@@ -16149,14 +16163,18 @@ messages:
          ptPhaseVisualEffectTimer = $;
       }
       
+      oPhase = Send(SYS,@FindSpellByNum,#num=SID_PHASE);
+      Send(self,@RemoveEnchantment,#what=oPhase);
+      
+      // Helps remove the brightness.
+      Send(self,@PhaseVisualEffect);
+      
       if pbCamped
       {
          // We're camped.
          return;
       }
-
-      oPhase = Send(SYS,@FindSpellByNum,#num=SID_PHASE);
-      Send(self,@RemoveEnchantment,#what=oPhase);
+      
       Send(oPhase,@InflictPenalties,#who=self);
 
       Post(self,@AdminGoToLastSafeRoom);
@@ -16175,9 +16193,9 @@ messages:
          {
             DeleteTimer(ptPhaseTimer);
             ptPhaseTimer = $;
-
-            return 8640000;
          }
+
+         return 86400;
       }
 
       if ptPhaseTimer <> $

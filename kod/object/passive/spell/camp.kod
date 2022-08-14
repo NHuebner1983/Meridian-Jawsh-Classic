@@ -11,7 +11,10 @@
 Camp is Spell
 
 constants:
+
    include blakston.khd
+
+   MAX_CAMPFIRES = 10
 
 resources:
 
@@ -39,7 +42,7 @@ classvars:
    viSchool = SS_KRAANAN
    viSpell_level = 1
    viMana = 15
-   viCast_time = 30000
+   viCast_time = 20000
    viMeditate_ratio = 300
    
    vrSucceed_wav = camp_sound
@@ -72,7 +75,7 @@ messages:
 
    TranceBroken(oCaster=$)
    {
-      Debug("Trance Broken called on camp");
+      //Debug("Trance Broken called on camp");
       Send(oCaster, @StopCamping);
 
       propagate;
@@ -124,6 +127,12 @@ messages:
    CreateCampfire(who=$)
    {
       local lPos;
+
+      if Send(Send(who, @GetOwner), @CountHolding, #class=&Firepit)  >= MAX_CAMPFIRES
+      {
+         // Too many campfires!
+         return;
+      }
 
       lPos = Send(who, @GetPos);
 
