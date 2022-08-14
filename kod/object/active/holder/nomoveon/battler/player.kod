@@ -7632,32 +7632,44 @@ messages:
    
    GainVigor(amount=$)
    {
+      if piFlags & PFLAG_PHASED
+      {
+         // You can't gain vigor while phased.
+         return FALSE;
+      }
+
       if amount = $ OR amount <= 0
-	  {
-	     return FALSE;
-	  }
-	  
-	  piVigor = piVigor + amount;
-	  piVigor = Bound(piVigor, 1, viMax_vigor);
+      {
+         return FALSE;
+      }
+      
+      piVigor = piVigor + amount;
+      piVigor = Bound(piVigor, 1, viMax_vigor);
 
       Send(self,@NewVigor);
-	  
-	  return TRUE;
+      
+      return TRUE;
    }
    
    GainMana(amount=$)
    {
+      if piFlags & PFLAG_PHASED
+      {
+         // You can't gain mana while phased.
+         return FALSE;
+      }
+
       if amount = $ OR amount <= 0
-	  {
-	     return FALSE;
-	  }
-	  
-	  piMana = piMana + amount;
-	  piMana = Bound(piMana, 1, piMax_Mana);
+      {
+         return FALSE;
+      }
+      
+      piMana = piMana + amount;
+      piMana = Bound(piMana, 1, piMax_Mana);
 
       Send(self,@NewMana);
-	  
-	  return TRUE;
+      
+      return TRUE;
    }
 
    NewUnboundEnergy(bDelay = FALSE)
@@ -9956,6 +9968,12 @@ messages:
    "taken from it, then divided by 5 before being bound between 1 and 10."
    {
       local bGainHP, iMaxHealth, oShrunken, iStamina;
+
+      if piFlags & PFLAG_PHASED
+      {
+         // You can't gain health while phased.
+         return FALSE;
+      }
 
       bGainHP = FALSE;
 
