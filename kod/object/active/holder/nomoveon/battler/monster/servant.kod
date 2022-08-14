@@ -1013,7 +1013,7 @@ messages:
 
                   iMissing = Send(poMaster, @GetMana);
 
-                  if iMissing > 75
+                  if iMissing > 50
                   {
                      // We cannot mystic touch past this point.
                      continue;
@@ -1037,7 +1037,7 @@ messages:
                   // Only relay if the player needs vigor
                   iMissing = Send(poMaster, @GetVigor);
 
-                  if iMissing >= 135
+                  if iMissing >= 90
                   {
                      // We cannot relay past this point.
                      continue;

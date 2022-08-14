@@ -2567,15 +2567,17 @@ messages:
       }
 
       bFound = FALSE;
+      bAllowed = FALSE;
+
       lTemplate = Send(SYS,@GetMonsterTemplates);
       
       foreach i in lTemplate
       {
-	     sName = Send(i,@GetName);
-		 
+         sName = Send(i,@GetName);
+         
          if StringEqual(sName, string)
          {
-		    bFound = TRUE;
+            bFound = TRUE;
             bAllowed = FALSE;
 
             // Two levels of mob creation abilities:
