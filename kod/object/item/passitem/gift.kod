@@ -82,6 +82,11 @@ messages:
       propagate;
    }
 
+   CanBeStoredInVault()
+   {
+      return TRUE;
+   }
+
    GetBulk()
    {
       if poContents <> $

@@ -1198,7 +1198,7 @@ properties:
 
    // Player is building a campfire to pbCamped = TRUE next.
    pbCamping = FALSE
-   
+
 messages:
 
    Constructor()
@@ -2761,9 +2761,12 @@ messages:
    UserLogonHook()
    {
       local i, oObj, iBonus, iDefaultBonus, iTimespan;
-	  
+
       SendList(plPassive, 0, @UserLogon);
       SendList(plActive, 0, @UserLogon);
+
+      // You login without a servant, your autoloot should be inventory by default.
+      Send(self, @SetAutolootMethod);
 
       if pbCamped
       {

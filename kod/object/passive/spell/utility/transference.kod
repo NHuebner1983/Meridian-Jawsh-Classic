@@ -106,7 +106,7 @@ messages:
       propagate;
    }
    
-   CastSpell(who = $, lTargets = $)
+   CastSpell(who = $, lTargets = $, bAutolooted = FALSE)
    {
       local i, oTarget, oGuild, oGuildHall, oBox, cClass, bSuccess, lBoxes, iBoxIndex, lBoxPatterns, lBoxSplit, lBoxSplitItems, bUseThisBox;
 
@@ -118,14 +118,14 @@ messages:
 
       if (lTargets = $)
       {
-         return;
+         return FALSE;
       }
 
       oTarget = First(lTargets);
 
       if (oTarget = $)
       {
-         return;
+         return FALSE;
       }
 
       if NOT Send(oTarget,@CanBeStoredInVault)
@@ -134,14 +134,14 @@ messages:
          Send(who,@MsgSendUser,#message_rsc=Transference_cant,
                #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
-         return;
+         return FALSE;
       }
 
-      if NOT Send(who,@IsHolding,#what=oTarget)
+      if NOT bAutolooted AND NOT Send(who,@IsHolding,#what=oTarget)
       {
          Send(who,@MsgSendUser,#message_rsc=Transference_not_holding);
 
-         return;
+         return FALSE;
       }
 
 	  // Get the player's guild
@@ -261,11 +261,15 @@ messages:
       {
          Send(who,@MsgSendUser,#message_rsc=Transference_cast,
             #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+
+         return TRUE;
       }
       else
       {
          Send(who,@MsgSendUser,#message_rsc=Transference_cant,
             #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));		  
+            
+         return FALSE;
       }
       
       propagate;

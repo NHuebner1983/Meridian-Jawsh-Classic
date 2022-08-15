@@ -922,16 +922,16 @@ messages:
 
    ReqUseGuildChest(who=$)
    {
-      if Send(self,@InFoyer,#who=who)
-      {
-         Debug("ALERT!  ",Send(who,@GetTrueName),who,
-               "tried to use Guild Hall chest in GH ",
-               Send(self,@GetName)," player coordinates ",
-               Send(who,@GetRow),Send(who,@GetCol),
-               Send(who,@GetFineRow),Send(who,@GetFineCol));
+      // if Send(self,@InFoyer,#who=who)
+      // {
+      //    Debug("ALERT!  ",Send(who,@GetTrueName),who,
+      //          "tried to use Guild Hall chest in GH ",
+      //          Send(self,@GetName)," player coordinates ",
+      //          Send(who,@GetRow),Send(who,@GetCol),
+      //          Send(who,@GetFineRow),Send(who,@GetFineCol));
 
-         return FALSE;
-      }
+      //    return FALSE;
+      // }
 
       return TRUE;
    }

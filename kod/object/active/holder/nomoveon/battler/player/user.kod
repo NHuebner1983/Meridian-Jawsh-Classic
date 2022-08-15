@@ -590,6 +590,10 @@ properties:
    plLastDrawnResistance = $
    pbLightingSent = FALSE
 
+   // The servant can make the player's autoloot items go to vault or hall.
+   pbTransferAutoloot = FALSE
+   pbConveyAutoloot = FALSE
+
 messages:
 
    Constructor(name = $,icon = $)
@@ -611,6 +615,47 @@ messages:
       Send(self,@AdminGoToSafety);
 
       propagate;
+   }
+
+   SetAutolootMethod(method=AUTOLOOT_METHOD_INVENTORY)
+   {
+      pbTransferAutoloot = FALSE;
+      pbConveyAutoloot = FALSE;
+
+      switch (method)
+      {
+         case AUTOLOOT_METHOD_INVENTORY:
+            // Default.
+         break;
+         case AUTOLOOT_METHOD_CONVEY:
+            pbConveyAutoloot = TRUE;
+         break;
+         case AUTOLOOT_METHOD_TRANSFER:
+            pbTransferAutoloot = TRUE;
+         break;
+      }
+
+      return;
+   }
+
+   GetAutolootMethod()
+   {
+      if NOT pbConveyAutoloot AND NOT pbTransferAutoloot
+      {
+         return AUTOLOOT_METHOD_INVENTORY;
+      }
+
+      if pbConveyAutoloot
+      {
+         return AUTOLOOT_METHOD_CONVEY;
+      }
+
+      if pbTransferAutoloot
+      {
+         return AUTOLOOT_METHOD_TRANSFER;
+      }
+
+      return AUTOLOOT_METHOD_INVENTORY;
    }
 
    Delete()
@@ -6945,7 +6990,7 @@ messages:
          }
       }
 
-      Debug("player has none of this class!");
+      //Debug("player has none of this class!");
 
       return FALSE;
     }

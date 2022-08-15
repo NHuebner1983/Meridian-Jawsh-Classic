@@ -142,7 +142,7 @@ messages:
 								Send(c, @MakeWrappedAndAutoLooted);
 								
 								Send(oMonster, @NewHold, #what=c);
-								Debug("Gave", Send(c, @GetName),"to",Send(oMonster, @GetName));
+								//Debug("Gave", Send(c, @GetName),"to",Send(oMonster, @GetName));
 								Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
                						#string=EventLoot_stolen,#parm1=Send(c, @GetName),#parm2=Send(oMonster,@GetName),#parm3=Send(Send(oMonster,@GetOwner),@GetName));
 							}

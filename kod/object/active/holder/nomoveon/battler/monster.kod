@@ -6654,7 +6654,7 @@ messages:
       local i, j, oReagent, iNumberItems, oTreasure, oTreasure_type,
             lTreasureItems, iNumberOfItemsDropped, iNumberOfItemsLooted,
             iRandomCashAmount, oMoney, iGetResult, bCapacityFailure,
-            bRangeFailure, iSurvivalLoot;
+            bRangeFailure, iSurvivalLoot, iAutolootMethod;
 
       // Apparitions, etc, provide no treasure
       if pbIllusion
@@ -6671,6 +6671,10 @@ messages:
 
          return;
       }
+
+      // Inventory = 0, Convey = 1, Transference = 2
+      // Mainly used with servants.
+      iAutolootMethod = Send(who, @GetAutolootMethod);
 
       // TreasureType now handles putting together the treasure list.
       // Returns a list of items to drop, or $.
@@ -6735,7 +6739,10 @@ messages:
          {
             // Let's wrap this in a box.
             Send(oTreasure, @DoNotWrapAgain);
-            oTreasure = Create(&Gift,#contents=oTreasure,#giver=$);
+            if NOT IsClass(oTreasure, &Gift)
+            {
+               oTreasure = Create(&Gift,#contents=oTreasure,#giver=$);
+            }
          }
 
          if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,
@@ -6756,11 +6763,51 @@ messages:
                   AND Send(oTreasure,@GetPos) <> $
                   AND IsClass(who,&User)
                   AND Send(who,@CheckPlayerPreference,#flag=CF_AUTOLOOT)
-                  AND (IsClass(oTreasure,&Money)
-                        OR (NOT bRangeFailure
-                              AND NOT bCapacityFailure)))
+                  AND (IsClass(oTreasure,&Money) OR (NOT bRangeFailure AND NOT bCapacityFailure)))
             {
-               iGetResult = Send(who,@UserGet,#what=oTreasure,#report=FALSE);
+               iGetResult = FALSE;
+
+               if NOT IsClass(oTreasure,&Money)
+               {
+                  switch(iAutolootMethod)
+                  {
+                     case AUTOLOOT_METHOD_INVENTORY:
+                        // Default action.
+                     break;
+                     case AUTOLOOT_METHOD_CONVEY:
+                        if Send(
+                              Send(SYS,@FindSpellByNum,#num=SID_CONVEYANCE),
+                              @CastSpell,
+                              #who=who,#lTargets=[oTreasure],#iSpellPower=99,#bAutolooted=TRUE
+                           )
+                           {
+                              iGetResult = AUTOLOOT_GOT_ITEM;
+
+                              if NOT IsClass(oTreasure, &Gift)
+                              {
+                                 Send(oTreasure, @Delete); // Deleting the item prevents it from being on the ground
+                              }
+                           }
+                     break;
+                     case AUTOLOOT_METHOD_TRANSFER:
+                        if Send(
+                              Send(SYS,@FindSpellByNum,#num=SID_TRANSFERENCE),
+                              @CastSpell,
+                              #who=who,#lTargets=[oTreasure],#iSpellPower=99,#bAutolooted=TRUE
+                           )
+                           {
+                              iGetResult = AUTOLOOT_GOT_ITEM;
+                              //Send(oTreasure, @Delete); // Deleting the item delets it from the chest.
+                           }
+                     break;
+                  }
+               }
+
+               if NOT (iGetResult = AUTOLOOT_GOT_ITEM)
+               {
+                  iGetResult = Send(who,@UserGet,#what=oTreasure,#report=FALSE);
+               }
+
                if NOT IsClass(oTreasure,&Money)
                   AND (iGetResult = AUTOLOOT_GOT_ITEM
                          OR iGetResult = AUTOLOOT_GOT_PARTIAL_STACK)

@@ -67,8 +67,12 @@ resources:
    servant_command_feed_me = "feed me"
    servant_command_mystify_me = "mystify me"
    servant_command_go_away = "go away"
-   servant_command_transference = "transfer new loot to my guild hall"
-   servant_command_conveyance = "convey new loot to my vault"
+   servant_command_fetch = "fetch my loot"
+   servant_command_stop_fetch = "stop fetching my loot"
+   servant_command_transference = "send new loot to my hall"
+   servant_command_stop_transference = "stop sending new loot to my hall"
+   servant_command_conveyance = "send new loot to my vault"
+   servant_command_stop_conveyance = "stop sending new loot to my vault"
    
    // School spells your servant might know
    servant_command_identify = "identify this"
@@ -270,12 +274,15 @@ resources:
    servant_rant_aaax = "I have 400,000 health and can hit for 100,000 hit points. Oh that was before you summoned me."
    servant_rant_aaay = "There's literally nobody else I would rather bother than you."
    servant_rant_aaaz = "Free hug!"
+
+   servant_rant_aaaaa = "For the right price you might have a happy ending."
    
    servant_tells_you_rsc = "~kYour servant whispers, ''%s~n''~k"
    
    servant_already_learned = "~kYour servant whispers, ''You're dumb, you already know %s~n''~k"
 
    servant_acknowledge = "~kYour servant nods, ''As you wish, master.''~k"
+   servant_deny = "~kYour servant shakes their head, ''You can't do that.''~k"
 
    // This could be moved up to monster.kod
    // We'll just use it here for now.
@@ -456,6 +463,7 @@ properties:
    ptTalk = $
    ptImp = $
    ptTaunt = $
+   ptLootHandling = $
    ptServantResources = $
    
    // For use when we need to interact with NPCs from afar.
@@ -477,6 +485,7 @@ properties:
    pbAllowFollow = TRUE
    pbAllowWalkThroughWalls = TRUE
    pbAllowAttackThroughWalls = TRUE
+   pbAutoFetchLoot = FALSE
    pbAutoTransference = FALSE
    pbAutoConveyance = FALSE
    
@@ -528,6 +537,8 @@ properties:
    piTauntInterval = 3000
    piTauntIntervalNormal = 1000
    piTauntIntervalPvp = 6000
+
+   piLootHandlingInterval = 3000
 
 messages:
    
@@ -701,6 +712,7 @@ messages:
       Send(self,@StartImpTimer);
       Send(self,@StartTauntTimer);
       Send(self,@StartServantResourcesTimer);
+      Send(self,@StartLootHandlingTimer);
 
       if pbCanHelp
       {
@@ -757,6 +769,30 @@ messages:
    {
       ptTaunt = CreateTimer(self,@TauntEnemies,piTauntInterval);
       
+      return;
+   }
+
+   StartLootHandlingTimer()
+   {
+      ptLootHandling = CreateTimer(self,@LootHandling,piLootHandlingInterval);
+
+      return;
+   }
+
+   LootHandling()
+   {
+      if NOT Send(self, @MasterCheck)
+      {
+         return;
+      }
+
+      if pbAutoTransference OR pbAutoConveyance
+      {
+         // All new things autolooted get sent somewhere, except money of course.
+      }
+
+      Send(self,@StartLootHandlingTimer);
+
       return;
    }
 
@@ -868,6 +904,11 @@ messages:
       {
          DeleteTimer(ptTaunt);
          ptTaunt = $;
+      }
+      if ptLootHandling <> $ AND IsTimer(ptLootHandling) AND GetTimeRemaining(ptLootHandling) > 0
+      {
+         DeleteTimer(ptLootHandling);
+         ptLootHandling = $;
       }
 
       return;
@@ -1613,6 +1654,7 @@ messages:
       if Send(self,@MasterCheck) 
       {
          Send(self,@RemoveImportantServantEnchants);
+         Send(poMaster,@SetAutolootMethod);
          Send(poMaster,@RemoveControlledMinion,#what=self);
          Send(poMaster,@SetServant,#oServant=$);
       }
@@ -2152,7 +2194,7 @@ messages:
 
    GetSaidServantCommand(said_string="derpaderp")
    {
-      local bIsCommand, iPlayerMissingHealth, iPlayerMissingMana, iPlayerMissingVigor, iPulledAmount, bAcknowledge, bDeleteServant;
+      local bIsCommand, iPlayerMissingHealth, iPlayerMissingMana, iPlayerMissingVigor, iPulledAmount, bAcknowledge, bDeny, bDeleteServant;
 	  
       bIsCommand = FALSE;
       bAcknowledge = FALSE;
@@ -2168,22 +2210,14 @@ messages:
 
       if NOT bIsCommand AND StringEqual(said_string, servant_command_quiet)
       {
-         if pbAllowTalk
-         {
-            pbAllowTalk = FALSE;
-         }
-
+         pbAllowTalk = FALSE;
          bIsCommand = TRUE;
          bAcknowledge = TRUE;
       }
 
       if NOT bIsCommand AND StringEqual(said_string, servant_command_loud)
       {
-         if NOT pbAllowTalk
-         {
-            pbAllowTalk = TRUE;
-         }
-
+         pbAllowTalk = TRUE;
          bIsCommand = TRUE;
          bAcknowledge = TRUE;
       }
@@ -2197,58 +2231,40 @@ messages:
 
       if NOT bIsCommand AND StringEqual(said_string, servant_command_no_buffs)
       {
-         if pbAllowBuff
-         {
-            pbAllowBuff = FALSE;
-         }
-
+         pbAllowBuff = FALSE;
          bIsCommand = TRUE;
          bAcknowledge = TRUE;
       }
 
       if NOT bIsCommand AND StringEqual(said_string, servant_command_do_buffs)
       {
-         if NOT pbAllowBuff
-         {
-            pbAllowBuff = TRUE;
-         }
-
+         pbAllowBuff = TRUE;
          bIsCommand = TRUE;
          bAcknowledge = TRUE;
       }
 
       if NOT bIsCommand AND StringEqual(said_string, servant_command_stop_taunting)
       {
-         if pbAllowTaunt
-         {
-            pbAllowTaunt = FALSE;
-         }
-
+         pbAllowTaunt = FALSE;
          bIsCommand = TRUE;
          bAcknowledge = TRUE;
       }
 
       if NOT bIsCommand AND StringEqual(said_string, servant_command_taunt)
       {
-         if NOT pbAllowTaunt
-         {
-            pbAllowTaunt = TRUE;
-         }
-
+         pbAllowTaunt = TRUE;
          bIsCommand = TRUE;
          bAcknowledge = TRUE;
       }
 
       if NOT bIsCommand AND StringEqual(said_string, servant_command_stop_attacking)
       {
-         if pbAllowAttack
-         {
-            pbAllowAttack = FALSE;
-            pbAllowCast = FALSE;
-            plSpellBook = $;
-            Send(self,@TweakBehavior);
-            Send(self,@SetState,#bit=STATE_WAIT);
-         }
+         pbAllowAttack = FALSE;
+         pbAllowCast = FALSE;
+         plSpellBook = $;
+
+         Send(self,@TweakBehavior);
+         Send(self,@SetState,#bit=STATE_WAIT);
 
          bIsCommand = TRUE;
          bAcknowledge = TRUE;
@@ -2256,13 +2272,11 @@ messages:
 
       if NOT bIsCommand AND StringEqual(said_string, servant_command_attack)
       {
-         if NOT pbAllowAttack
-         {
-            pbAllowAttack = TRUE;
-            pbAllowCast = TRUE;
-            Send(self,@SetServantSpellBook);
-            Send(self,@TweakBehavior);
-         }
+         pbAllowAttack = TRUE;
+         pbAllowCast = TRUE;
+
+         Send(self,@SetServantSpellBook);
+         Send(self,@TweakBehavior);
 
          bIsCommand = TRUE;
          bAcknowledge = TRUE;
@@ -2270,12 +2284,10 @@ messages:
 
       if NOT bIsCommand AND StringEqual(said_string, servant_command_stop_casting)
       {
-         if pbAllowCast
-         {
-            pbAllowCast = FALSE;
-            plSpellBook = $;
-            Send(self,@TweakBehavior);
-         }
+         pbAllowCast = FALSE;
+         plSpellBook = $;
+
+         Send(self,@TweakBehavior);
 
          bIsCommand = TRUE;
          bAcknowledge = TRUE;
@@ -2283,12 +2295,10 @@ messages:
 
       if NOT bIsCommand AND StringEqual(said_string, servant_command_cast)
       {
-         if NOT pbAllowCast
-         {
-            pbAllowCast = TRUE;
-            Send(self,@SetServantSpellBook);
-            Send(self,@TweakBehavior);
-         }
+         pbAllowCast = TRUE;
+
+         Send(self,@SetServantSpellBook);
+         Send(self,@TweakBehavior);
 
          bIsCommand = TRUE;
          bAcknowledge = TRUE;
@@ -2459,10 +2469,72 @@ messages:
          bIsCommand = TRUE;
       }
 
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_fetch)
+      {
+         pbAutoFetchLoot = TRUE;
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
+      }
+
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_stop_fetch)
+      {
+         pbAutoFetchLoot = FALSE;
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
+      }
+
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_transference)
+      {
+         pbAutoTransference = TRUE;
+         bIsCommand = TRUE;
+         bAcknowledge = FALSE;
+         bDeny = TRUE;
+
+         if Send(Send(SYS,@FindSpellByNum,#num=SID_TRANSFERENCE),@CanPayCosts,#who=poMaster)
+         {
+            Send(poMaster, @SetAutolootMethod, #method=AUTOLOOT_METHOD_TRANSFER);
+            bDeny = FALSE;
+            bAcknowledge = TRUE;
+         }
+      }
+
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_stop_transference)
+      {
+         pbAutoTransference = FALSE;
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
+
+         Send(poMaster, @SetAutolootMethod);
+      }
+
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_conveyance)
+      {
+         pbAutoConveyance = TRUE;
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
+
+         Send(poMaster, @SetAutolootMethod, #method=AUTOLOOT_METHOD_CONVEY);
+      }
+
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_stop_conveyance)
+      {
+         pbAutoConveyance = FALSE;
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
+
+         Send(poMaster, @SetAutolootMethod);
+      }
+
       if bAcknowledge
       {
          // Generic servant response.
          Post(poMaster,@MsgSendUser,#message_rsc=servant_acknowledge);
+      }
+
+      if bDeny
+      {
+         // Generic servant response.
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_deny);
       }
 
       if bDeleteServant
