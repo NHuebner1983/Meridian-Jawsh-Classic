@@ -96,16 +96,16 @@ messages:
       return poQuester;
    }
 
-   SetMaster(quester=$)
+   SetMaster(who=$)
    "Alias in case we forgot."
    {
-      return Send(self,@SetQuester,#quester=quester);
+      return Send(self,@SetQuester,#who=who);
    }
 
-   SetQuester(quester=$)
+   SetQuester(who=$)
    "Sets the owner of the sword."
    {
-      poQuester = quester;
+      poQuester = who;
 
       return;
    }
