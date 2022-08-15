@@ -873,10 +873,10 @@ messages:
       //   }
       //}
 
-      if (IsClass(self, &Wolfpack)) 
-	  {
-		return false;
-	  }
+      // if (IsClass(self, &Wolfpack))
+      // {
+      //    return false;
+      // }
 
       bRecheck = (event = EVENT_REST);
 

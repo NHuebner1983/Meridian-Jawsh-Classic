@@ -983,7 +983,7 @@ messages:
                   OR iSpellNum = SID_BREATH_OF_LIFE
                   OR iSpellNum = SID_HOSPICE
                {
-                  // Only heal if the player needs mana.
+                  // Only heal if the player needs health.
                   iMissing = Send(poMaster, @GetMissingHealth);
 
                   if iMissing < 20
@@ -993,7 +993,7 @@ messages:
 
                   if Send(Send(poMaster, @GetOwner), @ReqSpellCast, #who=self, #oSpell=oSpell)
                   {
-                     Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+                     Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=Bound(75, 99, iBuffPower));
 
                      continue;
                   }
@@ -1021,7 +1021,7 @@ messages:
 
                   if Send(Send(poMaster, @GetOwner), @ReqSpellCast, #who=self, #oSpell=oSpell)
                   {
-                     Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+                     Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=99);
 
                      continue;
                   }
@@ -1029,7 +1029,7 @@ messages:
                   // Restore servant's mana so mystic touch is less annoying.
                   Send(self,@NewMaxMana,#amount=200);
 
-                  continue;                  
+                  continue;
                }
 
                if iSpellNum = SID_RELAY
@@ -1045,7 +1045,7 @@ messages:
 
                   if Send(Send(poMaster, @GetOwner), @ReqSpellCast, #who=self, #oSpell=oSpell)
                   {
-                     Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=iBuffPower);
+                     Send(oSpell,@CastSpell,#who=self,#lTargets=[poMaster],#iSpellPower=99);
 
                      continue;
                   }
