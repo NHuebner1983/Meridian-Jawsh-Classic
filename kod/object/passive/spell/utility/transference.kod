@@ -262,13 +262,13 @@ messages:
          Send(who,@MsgSendUser,#message_rsc=Transference_cast,
             #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
-         return TRUE;
+         propagate;
       }
       else
       {
          Send(who,@MsgSendUser,#message_rsc=Transference_cant,
             #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));		  
-            
+
          return FALSE;
       }
       

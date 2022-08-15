@@ -138,8 +138,6 @@ messages:
          {
             Send(oMoney,@SubtractNumber,#number=iFee);
          }
-
-         return TRUE;
       }
       else
       {

@@ -1450,9 +1450,14 @@ messages:
       return TRUE;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0, bItemCast=FALSE, quiet=FALSE)
+   CastSpell(who = $, lTargets = $, iSpellPower = 0, bItemCast=FALSE, quiet=FALSE, bAutolooted=FALSE)
    {
       local oTarget, oRoom, oWho;
+
+      if NOT quiet AND bAutolooted
+      {
+         quiet = TRUE;
+      }
 
       if IsClass(who,&DM)
       {
@@ -1604,7 +1609,7 @@ messages:
                      " while hidden.");
             }
 
-            return;
+            return TRUE;
          }
 
          if NOT quiet
@@ -1673,7 +1678,7 @@ messages:
       // Count that this spell was cast successfully
       Send(Send(SYS,@GetStatistics),@SpellCast,#oSpell=self,#who=who);
 
-      return;
+      return TRUE;
    }
 
    PlaySpellSound(room_obj = $,what = $)
