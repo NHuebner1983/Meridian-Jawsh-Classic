@@ -732,9 +732,26 @@ messages:
       return;
    }
 
+   SetOwner(who=$)
+   "Really, this has never existed?"
+   {
+      poOwner = who;
+
+      return;
+   }
+
    WrapMe(from=$)
    {
-      return Create(&Gift,#contents=self,#giver=from);
+      local oObj;
+
+      if NOT IsClass(self, &Gift)
+      {
+         return Create(&Gift,#contents=self,#giver=from);
+      }
+
+      pbWrapAndLoot = FALSE;
+
+      return self;
    }
 
    DoNotWrapAgain()
