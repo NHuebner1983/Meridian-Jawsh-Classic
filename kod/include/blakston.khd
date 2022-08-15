@@ -127,6 +127,11 @@
    SERVANT_RESOURCE_MANA = 2
    SERVANT_RESOURCE_VIGOR = 3
 
+   // Autoloot Methods
+   AUTOLOOT_METHOD_INVENTORY = 0
+   AUTOLOOT_METHOD_CONVEY = 1
+   AUTOLOOT_METHOD_TRANSFER = 2
+   
    // Player name color sent as hex RGB value. Define constants
    // for ease of use as needed. Requires OF_PLAYER boolean flag
    // to be set to draw a name.
