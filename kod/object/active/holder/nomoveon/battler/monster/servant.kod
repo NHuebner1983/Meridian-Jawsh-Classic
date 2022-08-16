@@ -1746,7 +1746,7 @@ messages:
 	  
       if poOwner <> $ AND Send(self,@MasterCheck)
       {
-         Send(poOwner,@DeleteWallsAroundBattler,#who=self);
+         Send(poOwner,@DeleteWallsAroundBattler,#who=self,#includePassive=FALSE);
       }
 
       if what = $ OR what = self 

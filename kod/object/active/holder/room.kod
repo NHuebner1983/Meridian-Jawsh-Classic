@@ -5480,7 +5480,7 @@ messages:
       return FALSE;
    }
 
-   DeleteWallsAroundBattler(who=$)
+   DeleteWallsAroundBattler(who=$,includePassive=TRUE)
    "Deletes walls in a small radius around target battler."
    {
       local i, each_obj;
@@ -5500,6 +5500,8 @@ messages:
             or IsClass(each_obj,&Brambles))
             AND NOT IsClass(each_obj,&ActiveSporeCloud)
             AND NOT IsClass(each_obj,&Web)
+            AND NOT (NOT includePassive AND IsClass(each_obj,&WallOfFire))
+            AND NOT (NOT includePassive AND IsClass(each_obj,&PassiveWallofFire))
          {
             if Send(who,@SquaredDistanceTo,#what=each_obj)
                <= (WALL_DELETE_RADIUS * WALL_DELETE_RADIUS)
@@ -5513,8 +5515,9 @@ messages:
       foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
-         if IsClass(each_obj,&PassiveWallofFire)
-            OR IsClass(each_obj,&PassiveWallofLightning)
+         if includePassive 
+            AND (IsClass(each_obj,&PassiveWallofFire)
+               OR IsClass(each_obj,&PassiveWallofLightning))
          {
             if Send(who,@SquaredDistanceTo,#what=each_obj)
                <= (WALL_DELETE_RADIUS * WALL_DELETE_RADIUS)

@@ -844,7 +844,7 @@ messages:
 
    BreakTrance(who = $, event = $, state = $)
    {
-      local bRecheck;
+      local bRecheck, oRoom;
 
       // The spell keeps going if you get damaged, move, cast, use an item,
       // or make an attack. Players must rest to end most radius spells.
@@ -858,20 +858,23 @@ messages:
          return FALSE;
       }
 
-      //oRoom = Send(who,@GetOwner);
+      // --------------------------------------------------
+      // NOTE: COMMENT OUT THE NEXT 10 LINES IF YOU WANT RADIUS ENCHANTS TO END WHEN CHANGING ROOMS
+      // --------------------------------------------------
+      oRoom = Send(who,@GetOwner);
 
       // Only cancel Persist spells if they are offensive & caster is
       // entering a non-combat room
-      //if (event = EVENT_NEWOWNER
-      //   OR event = EVENT_REQNEWOWNER)
-      //{
-      //   if oRoom <> $
-      //      AND NOT (viHarmful
-      //         AND Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT))
-      //   {
-      //      return FALSE;
-      //   }
-      //}
+      if (event = EVENT_NEWOWNER
+         OR event = EVENT_REQNEWOWNER)
+      {
+         if oRoom <> $
+            AND NOT (viHarmful
+               AND Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT))
+         {
+            return FALSE;
+         }
+      }
 
       // if (IsClass(self, &Wolfpack))
       // {

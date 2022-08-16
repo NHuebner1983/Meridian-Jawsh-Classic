@@ -54,7 +54,7 @@ classvars:
    viNumElements = 9
    vrSummonLimitMsg = RingOfFlames_failed_rsc
    // If TRUE, can target others with this spell.
-   vbCanCastOnOthers = TRUE
+   vbCanCastOnOthers = FALSE
 
 properties:
 

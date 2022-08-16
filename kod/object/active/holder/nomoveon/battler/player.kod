@@ -2662,99 +2662,99 @@ messages:
    SetupRoamingNPCPlayer()
    {
       local oObj, bHasTotem;
-	   
+      
       Send(Send(SYS,@GetLore),@ExcludePlayer,#who=self);
 
       if pbRoamingNPCPlayerInitialized OR NOT Send(self, @IsRoamingNPCPlayer)
-	   {
-	      return;
-	   }
-	  
-	  pbRoamingNPCPlayerInitialized = TRUE;
-	  
-	  Debug("Roaming NPC-Player ONLINE",Send(self,@GetName));
-	  
-	  // Leave the name color alone until population returns to normal.
-	  //Send(self,@SetNameColor,#red=130,#green=130,#blue=130);
-	  
-	  // Adjust stats
-	  piMight = 50;
-	  piIntellect = 50;
-	  piStamina = 50;
-	  piAgility = 50;
-	  piMysticism = 50;
-	  piAim = 50;
-	  
-	  // Stat mods
-	  piMightMod = 20;
-	  piIntellectMod = 20;
-	  piStaminaMod = 20;
-	  piAgilityMod = 20;
-	  piMysticismMod = 20;
-	  piAimMod = 20;
-	  
-	  // Hp, Mana, Vigor
-	  piMana = 200;
-	  piVigor = 200;
+      {
+         return;
+      }
+      
+      pbRoamingNPCPlayerInitialized = TRUE;
+      
+      Debug("Roaming NPC-Player ONLINE",Send(self,@GetName));
+      
+      // Leave the name color alone until population returns to normal.
+      //Send(self,@SetNameColor,#red=130,#green=130,#blue=130);
+      
+      // Adjust stats
+      piMight = 50;
+      piIntellect = 50;
+      piStamina = 50;
+      piAgility = 50;
+      piMysticism = 50;
+      piAim = 50;
+      
+      // Stat mods
+      piMightMod = 0;
+      piIntellectMod = 0;
+      piStaminaMod = 0;
+      piAgilityMod = 0;
+      piMysticismMod = 0;
+      piAimMod = 0;
+      
+      // Hp, Mana, Vigor
+      piMana = 200;
+      piVigor = 200;
       piHealth = 150 * 100; // 150 HP.
       
-	  // Set HP
-	  Send(self,@NewHealth);
+      // Set HP
+      Send(self,@NewHealth);
       
-	  piBase_Max_Health = 150;
+      piBase_Max_Health = 150;
       piMax_health = piBase_max_health;
-	  
-	  // Gain HP
+      
+      // Gain HP
       Send(self,@GainBaseMaxHealth);
-      	  
-	  // Set XP to Max Health
-	  Send(self, @ResetXPToLevel);
-	  
-	  // Skills
-	  Send(self, @GivePlayerAllSkills, #level=6, #iability=99, #override=TRUE);
-	  
-	  // Spells
-	  Send(self, @GivePlayerAllSpells, #level=6, #iability=99, #override=TRUE);
-	  
+            
+      // Set XP to Max Health
+      Send(self, @ResetXPToLevel);
+      
+      // Skills
+      Send(self, @GivePlayerAllSkills, #level=6, #iability=75, #override=TRUE);
+      
+      // Spells
+      Send(self, @GivePlayerAllSpells, #level=6, #iability=75, #override=TRUE);
+      
       // Make sure the NPC has the NPC Totem.
-	  // The totem is basically the entire NPC system!
-	  bHasTotem = Send(self,@PossessesA,#class=&NPCTotem);
+      // The totem is basically the entire NPC system!
+      bHasTotem = Send(self,@PossessesA,#class=&NPCTotem);
 
-	  if bHasTotem
-	  {
-	     oObj = Send(self,@FindHaving,#class=&NPCTotem);
-		 
-		 if oObj <> $
-		 {
-		    Send(self,@LeaveHold,#what=oObj);
-		    Send(oObj,@Delete);
-		 }
-	  }
-	  
-	  bHasTotem = Send(self,@PossessesA,#class=&NPCTotem);
+      if bHasTotem
+      {
+         oObj = Send(self,@FindHaving,#class=&NPCTotem);
+         
+         if oObj <> $
+         {
+            Send(self,@LeaveHold,#what=oObj);
+            Send(oObj,@Delete);
+         }
+      }
+      
+      bHasTotem = Send(self,@PossessesA,#class=&NPCTotem);
 
-	  if NOT bHasTotem
-	  {
+      if NOT bHasTotem
+      {
          Send(self,@NewHold,#what=Create(&NPCTotem));
-	  }
-	  else
-	  {
-	     Debug("UNABLE TO REMOVE NPCTOTEM");
-	  }
-	  
-	  // Do not empty the inventory.
-	  // If there are items already, do not add anything.
-	  if (plActive = $ OR Length(plActive) <= 0) AND (plPassive = $ OR Length(plPassive) <= 0)
-	  {
+      }
+      else
+      {
+         Debug("UNABLE TO REMOVE NPCTOTEM");
+      }
+      
+      // Do not empty the inventory.
+      // If there are items already, do not add anything.
+      if (plActive = $ OR Length(plActive) <= 0) AND (plPassive = $ OR Length(plPassive) <= 0)
+      {
          Send(self,@NewHold,#what=Create(&Money,#number=35000));
          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=35000);
          Send(self,@AddReagentsForSpells,#iNumCasts=3);
-	  }
-	  
-	  // Make the NPC Player PKable
-	  Send(self,@SetAge,#age=100);
-	  Send(self,@PKillEnable);
-	  
+      }
+      
+      // Make the NPC Player PKable
+      Send(self,@SetAge,#age=100);
+      Send(self,@PKillEnable);
+      
       return;
    }
 
