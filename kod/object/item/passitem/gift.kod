@@ -72,8 +72,9 @@ messages:
          }
          if Send(contents,@GetOwner) <> $
          {
-            Send(Send(contents,@GetOwner),@LeaveHold,#what=contents);
-            Send(contents,@NewOwner,#what=$);
+            // This is deleting the item?
+            //Send(Send(contents,@GetOwner),@LeaveHold,#what=contents);
+            //Send(contents,@NewOwner,#what=$);
          }
       }
       poGiftGiver = giver;
