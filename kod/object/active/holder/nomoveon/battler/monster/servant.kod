@@ -109,7 +109,7 @@ resources:
       "~r~B''say stop taunting'' ~r~B~kand I will stop trying to steal your aggro.~k\n"
       "~r~B''say taunt more'' ~r~B~kand it will send me into a rage, stealing your aggro, but it will hurt me a lot.~k\n"
       "~r~B''say stop attacking'' ~r~B~kand I will let you do all of the hard work.~k\n"
-      "~r~B''say attack'' ~r~B~kand I will attack your enemies.~k\n"
+      "~r~B''say attack again'' ~r~B~kand I will attack your enemies.~k\n"
       "~r~B''say stop casting spells'' ~r~B~kand I will stop casting harmful spells on your enemies.~k\n"
       "~r~B''say cast spells'' ~r~B~kand I will cast harmful spells I've learned on your enemies.~k\n"
       "~r~B''say mend this'' ~r~B~k in my Kraanan form and I will mend whatever you are wearing.~k\n"
@@ -123,6 +123,9 @@ resources:
       "~r~B''say go away'' ~r~B~kand I will leave your side until you summon me for more adventures.~k\n"
       "~r~B''say save outfit 1'' ~r~B~kand I will remember what you're wearing. I can do 1 and 2.~k\n"
       "~r~B''say use outfit 1'' ~r~B~kand I will try to dress you what you were wearing before. I can do 1 and 2.~k\n"
+      "~r~B''say undress me'' ~r~B~kand I will strip you of your equipment so you can relax.~k\n"
+      "~r~B''say send new loot to my hall'' ~r~B~kand I will use transference on autolooted items.~k\n"
+      "~r~B''say send new loot to my vault'' ~r~B~kand I will use conveyance on autolooted items.~k\n"
    
    // RPG Random Names
    servant_name_1 = "Eimmilth, The Mammoth"
@@ -561,11 +564,79 @@ messages:
       piSpellPower = iSpellPower;
       
       // The recreate heavy work - made this way so upon imping the spell, we can increase the piSpellPower and call this.
+      Send(self,@GetSettingsFromPlayer);
       Send(self,@RecalibrateServant, #iSpellNum=iSpellNum, #iSpellPower=iSpellPower);         
       Send(self,@PrepareServantNameAndDesc);
       Send(self,@CreateServantTimers);
 
       propagate;
+   }
+
+   GetSettingsFromPlayer()
+   {
+      local lSettings;
+
+      if NOT Send(self, @MasterCheck)
+      {
+         return;
+      }
+
+      lSettings = Send(poMaster, @GetServantSettings);
+
+      if lSettings <> $ AND IsList(lSettings)
+      {
+         pbAllowTalk = Nth(lSettings, 1);
+         pbAllowBuff = Nth(lSettings, 2);
+         pbAllowAttack = Nth(lSettings, 3);
+         pbAllowCast = Nth(lSettings, 4);
+         pbAllowTaunt = Nth(lSettings, 5);
+         pbAllowFollow = Nth(lSettings, 6);
+         pbAllowWalkThroughWalls = Nth(lSettings, 7);
+         pbAllowAttackThroughWalls = Nth(lSettings, 8);
+         pbAutoFetchLoot = Nth(lSettings, 9);
+         pbAutoTransference = Nth(lSettings, 10);
+         pbAutoConveyance = Nth(lSettings, 11);
+
+         if pbAutoTransference
+         {
+            Send(poMaster, @SetAutolootMethod, #method=AUTOLOOT_METHOD_TRANSFER);
+         }
+
+         if pbAutoConveyance
+         {
+            Send(poMaster, @SetAutolootMethod, #method=AUTOLOOT_METHOD_CONVEY);
+         }
+      }
+
+      return;
+   }
+
+   SaveServantSettings()
+   {
+      local lSettings;
+
+      if NOT Send(self, @MasterCheck)
+      {
+         return;
+      }
+
+      lSettings = [
+         pbAllowTalk,
+         pbAllowBuff,
+         pbAllowAttack,
+         pbAllowCast,
+         pbAllowTaunt,
+         pbAllowFollow,
+         pbAllowWalkThroughWalls,
+         pbAllowAttackThroughWalls,
+         pbAutoFetchLoot,
+         pbAutoTransference,
+         pbAutoConveyance
+      ];
+
+      Send(poMaster, @SaveServantSettings, #lSettings=lSettings);
+
+      return;
    }
 
    Greeting()
@@ -1114,6 +1185,12 @@ messages:
                // Only cast Mirth/Melancholy if the surrounding monster karma match the spell benefits.
                if iSpellNum = SID_MELANCHOLY OR iSpellNum = SID_MIRTH
                {
+                  if Send(poMaster,@SinceLastAttack) = 0 OR Send(poMaster,@SinceLastAttack) > 5
+                  {
+                     // Only use these spells if we've attacked something in the last 5 seconds.
+                     continue;
+                  }
+
                   iAverageKarmaInRoom = Send(Send(poMaster, @GetOwner), 
                      @GetAverageKarma, 
                      #lObjIgnore=[poMaster, self], 
@@ -2541,6 +2618,13 @@ messages:
       {
          // We delete afterwards so the poMaster is still set.
          Send(self,@GracefullyDeleteServant);
+      }
+      else
+      {
+         if bIsCommand
+         {
+            Send(self, @SaveServantSettings);
+         }
       }
       
 	  return bIsCommand;
