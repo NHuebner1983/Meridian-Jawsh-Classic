@@ -63,7 +63,10 @@ messages:
 
       oNews = Create(&Newslink,#nid=NID_TOS_HALL,
                      #name=news_jas_hall,#desc=news_jas_hall_desc);
+
       Send(self,@NewHold,#what=oNews,#new_row=7,#new_col=7);
+
+      Send(self,@NewHold,#what=Create(&Chest,#receivesDonations=TRUE),#new_row=13,#new_col=11);
 
       propagate;
    }

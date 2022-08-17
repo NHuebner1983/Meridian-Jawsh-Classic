@@ -34,8 +34,24 @@ classvars:
 
 properties:
 
+   pbReceivesDonations = FALSE
+
 messages:
 
+   Constructor(receivesDonations=FALSE)
+   {
+      if receivesDonations <> $
+      {
+         pbReceivesDonations = receivesDonations;
+      }
+
+      propagate;
+   }
+
+   CanDonate()
+   {
+      return pbReceivesDonations;
+   }
 
 end
 ////////////////////////////////////////////////////////////////////////////////
