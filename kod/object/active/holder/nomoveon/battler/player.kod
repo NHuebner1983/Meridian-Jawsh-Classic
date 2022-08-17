@@ -1153,6 +1153,9 @@ properties:
    // Player's summoned servant
    poServant = $
 
+   // Remember's your servant's settings (such as last commands you gave them).
+   plServantSettings = $
+
    // Player's list of resources that build up over time (but have a maximum).
    // Resources, such as "heal me", "feed me", "mystify me"
    // If the player can receive the whole amount, they will.
@@ -1208,6 +1211,18 @@ messages:
       piReward_timestamp = GetTime();
 
       propagate;
+   }
+
+   GetServantSettings()
+   {
+      return plServantSettings;
+   }
+
+   SaveServantSettings(lSettings=$)
+   {
+      plServantSettings = lSettings;
+
+      return;
    }
 
    IsCamping()
@@ -1363,11 +1378,21 @@ messages:
          return 9999;
       }
 
+      if piLastMoved = $ OR piLastMoved <= 0
+      {
+         piLastMoved = GetTime();
+      }
+
       return GetTime() - piLastMoved;
    }
 
    SinceLastAttack()
    {
+      if piLastAttack = $ OR piLastAttack <= 0
+      {
+         piLastAttack = GetTime();
+      }
+
       return GetTime() - piLastAttack;
    }
 
