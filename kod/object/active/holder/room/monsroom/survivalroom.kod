@@ -385,7 +385,6 @@ messages:
                   &Yeti,
                   &DarkAngel,
                   &EarthDragon,
-                  &Mimic,
                   &Thrasher,
                   &Ghost];
 
@@ -397,8 +396,6 @@ messages:
                       &SpiderQueen,
                       &GiantRatKing,
                       &EarthElemental,
-                      &Minotaur,
-                      &BlackDragon,
                       &FireElemental,
                       &IceElemental,
                       &NeruElemental];

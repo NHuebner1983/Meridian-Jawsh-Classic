@@ -6249,6 +6249,11 @@ messages:
       local i, j, iResistance, oSoldierShield, gainchance, color_rsc,
             iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken;
 
+      if what <> $ AND IsClass(what, &Monster)
+      {
+         Send(self,@JoinBuilderGroup);
+      }
+      
       if NOT precision
       {
          damage = damage * 100;
