@@ -147,6 +147,10 @@ properties:
    // This item can be gift wrapped and automatically put in the player's inventory regardless of weight.
    // Mainly used for events.
    pbWrapAndLoot = FALSE
+
+   // Wearing this item buffs the wearer with a spell
+   piBuffSpellNum = $
+   ptBuffTimer = $
    
 messages:
 
@@ -182,6 +186,81 @@ messages:
       }
 
       propagate;
+   }
+
+   SetBuffSpell(num=$)
+   {
+      if num <> $
+      {
+         piBuffSpellNum = num;
+
+         if Send(self, @InUse)
+         {
+            Send(self,@TryBuff);
+         }
+      }
+
+      return;
+   }
+
+   TryBuff()
+   {
+      local oSpell;
+      
+      if piBuffSpellNum <> $ AND poOwner <> $ AND IsClass(poOwner, &Player) AND Send(self,@InUse) AND Send(poOwner, @IsLoggedOn)
+      {
+         oSpell = Send(SYS,@FindSpellByNum,#num=piBuffSpellNum);
+
+         if oSpell <> $ AND NOT Send(poOwner,@IsEnchanted,#what=oSpell)
+         {
+            Send(oSpell,@CastSpell,#who=poOwner,#lTargets=[poOwner],#iSpellPower=99,#bItemCast=TRUE);
+         }
+
+         Send(self, @StartBuffTimer);
+      }
+
+      return;
+   }
+
+   TryUnbuff()
+   {
+      local oSpell;
+      
+      if piBuffSpellNum <> $ AND poOwner <> $ AND IsClass(poOwner, &Player)
+      {
+         oSpell = Send(SYS,@FindSpellByNum,#num=piBuffSpellNum);
+
+         if oSpell <> $ AND Send(poOwner,@IsEnchanted,#what=oSpell)
+         {
+            Send(poOwner,@RemoveEnchantment,#what=oSpell);
+         }
+      }
+
+      Send(self,@StopBuffTimer);
+
+      return;
+   }
+
+   StartBuffTimer()
+   {
+      if ptBuffTimer <> $
+      {
+         Send(self,@StopBuffTimer);
+      }
+
+      if piBuffSpellNum <> $
+      {
+         ptBuffTimer = CreateTimer(self, @TryBuff, 5000);
+      }
+
+      return;
+   }
+
+   StopBuffTimer()
+   {
+      ptBuffTimer = $;
+
+      return;
    }
 
    InOutfit(outfitNum=0)
@@ -1211,18 +1290,30 @@ messages:
          Send(poOwner,@SetPlayerFlag,#flag=iSpecial,#value=TRUE);
       }
 
+      Send(self,@TryBuff);
+
       return;
    }
 
    UserLogoff()
    "Called when we're used by someone, and they logoff."
    {
+      if Send(self,@InUse)
+      {
+         Send(self,@TryUnbuff);
+      }
+      
       return;
    }
 
    UserLogon()
    "Called when we're used by someone, and they logon."
    {
+      if Send(self,@InUse)
+      {
+         Send(self,@StartBuffTimer);
+      }
+      
       return;
    }
 
@@ -1260,6 +1351,13 @@ messages:
             return FALSE;
          }
       }
+
+      if ptBuffTimer <> $
+      {
+         DeleteTimer(ptBuffTimer);
+      }
+      
+      Send(self,@TryUnbuff);
       
       return TRUE;
    }
@@ -1299,6 +1397,12 @@ messages:
          }
       }
 
+      if ptBuffTimer <> $
+      {
+         DeleteTimer(ptBuffTimer);
+      }
+
+      Send(self,@TryUnbuff);
       Send(self,@ClearOutfit);
 
       propagate;
@@ -1520,6 +1624,7 @@ messages:
    
    Delete()
    {
+      Send(self,@TryUnbuff);
       Send(self,@ClearOutfit);
       Send(self,@ClearAllItemAttributes);
       

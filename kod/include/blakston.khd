@@ -2129,6 +2129,7 @@
    SID_JALA_SERVANT = 206
    
    SID_CAMP = 207
+   SID_DONATE = 208
 
    // Maximum number of pets our servant can have
    MAX_SERVANT_MINIONS = 2

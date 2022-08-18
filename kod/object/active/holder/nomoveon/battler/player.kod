@@ -1388,7 +1388,7 @@ messages:
 
    SinceLastAttack()
    {
-      if piLastAttack = $ OR piLastAttack <= 0
+      if piLastAttack = $
       {
          piLastAttack = GetTime();
       }
@@ -3471,17 +3471,18 @@ messages:
    "Add the spells a player is given when creating a character"
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
-      Send(self,@AddSpell,#num=SID_CAMP,#initial=TRUE,#iability=1);
+      Send(self,@AddSpell,#num=SID_PHASE,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_TRANSFERENCE,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_RIIJA_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_KRAN_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_SHAL_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_FAREN_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_QOR_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_JALA_SERVANT,#initial=TRUE);
-      Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
-      Send(self,@AddSpell,#num=SID_TRANSFERENCE,#initial=TRUE);
-      Send(self,@AddSpell,#num=SID_PHASE,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_MEDITATE,#initial=TRUE,#iability=1);
+      Send(self,@AddSpell,#num=SID_CAMP,#initial=TRUE,#iability=1);
+      Send(self,@AddSpell,#num=SID_DONATE,#initial=TRUE,#iability=1);
 
       return;
    }
@@ -3499,17 +3500,25 @@ messages:
 
       // Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
-      Send(self,@NewHold,#what=Create(&Money,#number=50));
-      Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=50);
-      Send(self,@AddReagentsForSpells,#iNumCasts=10);
+      Send(self,@NewHold,#what=Create(&Shirt));
+      Send(self,@NewHold,#what=Create(&Pants));
+      Send(self,@NewHold,#what=Create(&Gauntlet));
+      Send(self,@NewHold,#what=Create(&LeatherArmor));
+      Send(self,@NewHold,#what=Create(&MetalShield));
+      Send(self,@NewHold,#what=Create(&Money,#number=500));
+      Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
+      Send(self,@AddReagentsForSpells,#iNumCasts=5);
 
       // If player hasn't suicided in last 5 hours, give them cash and prizes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=35000));
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=35000);
-         Send(self,@AddReagentsForSpells,#iNumCasts=15);
+         Send(self,@NewHold,#what=Create(&Money,#number=50000));
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=50000);
+         Send(self,@AddReagentsForSpells,#iNumCasts=10);
       }
+
+      // Start them off with a Kraanan servant
+      Send(Send(SYS,@FindSpellByNum,#num=SID_KRAN_SERVANT),@CastSpell,#who=self,#lTargets=[self],#iSpellPower=25);
 
       return;
    }

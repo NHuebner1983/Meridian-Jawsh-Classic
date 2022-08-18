@@ -56,6 +56,7 @@ BOFS = animate.bof \
        teleportspell.bof \
        utility.bof \
        walspell.bof \
-       camp.bof
+       camp.bof \
+       donate.bof
 
 !include $(KODDIR)\kod.mak

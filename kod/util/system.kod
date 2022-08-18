@@ -3514,8 +3514,12 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_QOR_SERVANT,#class=&QorServant);
       Send(self,@CreateOneSpellIfNew,#num=SID_JALA_SERVANT,#class=&JalaServant);
 
-      // Camp spell
+      // Camp
       Send(self,@CreateOneSpellIfNew,#num=SID_CAMP,#class=&Camp);
+
+      // Donate
+      Send(self,@CreateOneSpellIfNew,#num=SID_DONATE,#class=&Donate);
+
 
       // Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);

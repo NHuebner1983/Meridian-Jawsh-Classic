@@ -1,0 +1,211 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Donate is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   //include donate.lkod
+
+   donate_cast_rsc = "~B~IYour donation has been sent to %s.~I~B"
+   donate_shal_follower_rsc = "~B~IYour karma has increased by %i for being so kind.~I~B"
+   donate_generous_rsc = "~B~IShillings are much appreciated, bless your soul!~I~B"
+   donate_cursed_rsc = "~B~IDonating a cursed item is forbidden.~I~B"
+   donate_cant_rsc = "~B~IYou can't donate that!~B~I"
+   donate_name_rsc = "donate"
+   donate_icon_rsc = idonate.bgf
+   donate_desc_rsc = \
+      "Your donation will be sent to a random chest found "
+      "in an one of the many adventurer halls. Some donations "
+      "will be sent to The Underworld to help poor unfortunate souls. "
+      "Shal'ille followers will receive good karma for their donation. "
+      "Requires a kind heart."
+
+      donate_sound = shalille.ogg
+      
+classvars:
+
+   vrName = donate_name_rsc
+   vrIcon = donate_icon_rsc
+   vrDesc = donate_desc_rsc
+
+   viSpell_num = SID_DONATE
+   viSchool = SS_SHALILLE
+   viSpell_level = 1
+   viMana = 1
+   viCast_time = 300
+   viMeditate_ratio = 300
+   viChance_To_Increase = 30
+
+   vrSucceed_wav = donate_sound
+   
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who=$,lTargets=$,iSpellPower=0,bItemCast=FALSE,bFreeCast=FALSE)
+   {
+      local oTarget;
+
+      oTarget = First(lTargets);
+
+      if NOT IsClass(oTarget, &Item) OR NOT Send(oTarget,@CanBeStoredInVault) OR NOT Send(who,@ReqLeaveHold,#what=oTarget)
+      {
+         Send(who, @MsgSendUser, #message_rsc=donate_cant_rsc);
+         //Debug("Not Item or Cant Store in Vault or Cant Leave Hold");
+         return FALSE;
+      }
+
+      if Send(oTarget, @IsCursed)
+      {
+         Send(who, @MsgSendUser, #message_rsc=donate_cursed_rsc);
+         //Debug("Cursed");
+         return FALSE;
+      }
+
+      //Debug("Can Pay Costs!");
+      return TRUE;
+   }
+
+   CastSpell(who=$,lTargets=$,iSpellPower=$)
+   {
+      local oTarget, iKarmaChange;
+
+      oTarget = First(lTargets);
+
+      if NOT Send(self,@CanPayCosts,#who=who,#lTargets=[oTarget],#iSpellPower=iSpellPower)
+      {
+         //Debug("Tried to pay costs again, couldn't");
+         return FALSE;
+      }
+
+      if IsClass(oTarget, &Money)
+      {
+         Send(who, @MsgSendUser, #message_rsc=donate_generous_rsc);
+         //Debug("Generous!");
+      }
+
+      // Pick a random chest to donate the item
+      if Send(self,@DonateToRandomChest, #who=who, #what=oTarget)
+      {
+         iKarmaChange = Send(self,@GetKarmaChange,#who=who,#oTarget=oTarget);
+
+         if iKarmaChange > 0
+         {
+            // Give player positive karma.
+            //Debug("Karma Increase", iKarmaChange);
+            Send(who,@AddKarma,#amount=iKarmaChange * 100);
+            Send(who, @MsgSendUser, #message_rsc=donate_shal_follower_rsc, #parm1=iKarmaChange);
+         }
+      }
+
+      propagate;
+   }
+
+   DonateToRandomChest(who=$, what=$)
+   {
+      local oChest, lChests, lRooms, iRoom, oEngrave, sEngraveMessage;
+
+      lRooms = [
+         RID_JAS_HALL,
+         RID_MAR_HALL,
+         RID_UNDERWORLD,
+         RID_RAZA_INN,
+         RID_TOS_HALL
+      ];
+
+      lChests = [];
+
+      foreach iRoom in lRooms
+      {
+         oChest = Send(Send(SYS,@FindRoomByNum,#num=iRoom),@FindHoldingActive,#class=&Chest);
+         lChests = AppendListElem(oChest, lChests);
+      }
+
+      if Length(lChests) <= 0
+      {
+         return FALSE;
+      }
+
+      oChest = Nth(lChests, Random(1, Length(lChests)));
+
+      if oChest = $
+      {
+         return FALSE;
+      }
+
+      oEngrave = Send(SYS,@FindSpellByNum,#num=SID_ENGRAVE);
+
+      if Send(oEngrave, @CanPayCosts, #who=who, #lTargets=[what], #Report=FALSE)
+      {
+         // Engrave the item as being donated
+         ClearTempString();
+         AppendTempString("Donated by ");
+         AppendTempString(Send(who,@GetTrueName));
+         AppendTempString(" to a fellow adventurer in need. I hope you find this useful!");
+         sEngraveMessage = SetString($,GetTempString());
+         
+         Send(oEngrave, @PerformEngrave, #caster=who, #oTarget=what,#sMessage=sEngraveMessage,#Report=FALSE);
+
+         //Debug("Engraved",sEngraveMessage);
+      }
+
+      // Send the item to the chest
+      Send(oChest,@NewHold,#what=what);
+
+      // Notify giver where their donation was sent to.
+      Send(who, @MsgSendUser, #message_rsc=donate_cast_rsc, #parm1=Send(Send(oChest, @GetOwner), @GetName));
+
+      return TRUE;
+   }
+
+   GetKarmaChange(who=$, oTarget=$)
+   {
+      local oSpellDeathLink, iAmount;
+
+      if who = $ OR oTarget = $
+      {
+         return 0;
+      }
+
+      oSpellDeathLink = Send(SYS,@FindSpellByNum,#num=SID_DEATH_LINK);
+
+      if Send(who,@IsEnchanted,#what=oSpellDeathLink)
+      {
+         // Deathlink prevents any karma loss.
+         return 0;
+      }
+
+      if IsClass(oTarget, &Money)
+      {
+         return Bound(Send(oTarget, @GetNumber) / 5000, 1, 100);
+      }
+
+      return 1;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

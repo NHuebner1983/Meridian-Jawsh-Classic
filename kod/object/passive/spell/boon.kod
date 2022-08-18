@@ -76,12 +76,20 @@ messages:
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   CastSpell(who = $, lTargets = $, iSpellPower = 0, days = 0, amount = 0)
    {
       local iAmount, iNumEnchantHours, iState, oTarget;
 
-      iNumEnchantHours = Send(self,@DecodeDuration,#Compound=iSpellPower);
-      iAmount = Send(self,@DecodeAmount,#Compound=iSpellPower);
+      if days > 0 AND amount > 0
+      {
+         iNumEnchantHours = days * 24;
+         iAmount = amount;
+      }
+      else
+      {
+         iNumEnchantHours = Send(self,@DecodeDuration,#Compound=iSpellPower);
+         iAmount = Send(self,@DecodeAmount,#Compound=iSpellPower);
+      }
 
       oTarget = First(lTargets);
 
@@ -95,6 +103,7 @@ messages:
       }
 
       iState = (iNumEnchantHours * 100) + Abs(iAmount);
+
       if iAmount < 0
       {
          iState = -iState;
@@ -103,6 +112,7 @@ messages:
       Send(self,@DoSpellEffect,#who=oTarget,#amount=iAmount);
 
       Send(oTarget,@StartEnchantment,#what=self,#time=BOON_HOUR,#state=iState);
+
       if who <> $
       {
          if IsClass(who,&DM)
@@ -151,21 +161,23 @@ messages:
 
    DecodeAmount(Compound = $)
    {
-      return Compound / 10;
+      return Bound(Compound / 10, 1, 10);
    }
 
    AddBoon(target = $, days = $, amount = $)
    {
       local iSpellPower;
 
-      iSpellPower = days;
-      iSpellPower += Abs(amount * 10);
+      iSpellPower = 99;
+
       if amount < 0
       {
+         iSpellPower = days;
+         iSpellPower += Abs(amount * 10);
          iSpellPower = -iSpellPower;
       }
 
-      Send(self,@CastSpell,#lTargets=[target],#iSpellPower=iSpellPower);
+      Send(self,@CastSpell,#lTargets=[target],#iSpellPower=iSpellPower,#days=days,#amount=amount);
 
       return;
    }
