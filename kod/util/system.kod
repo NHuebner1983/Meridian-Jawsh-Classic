@@ -5904,6 +5904,7 @@ messages:
       plItemTemplates = cons(create(&RedHydraHead),plItemTemplates);
       plItemTemplates = cons(create(&TyrantHorns),plItemTemplates);
       plItemTemplates = cons(create(&VialOfVenom),plItemTemplates);
+      plItemTemplates = cons(create(&Qorcite),plItemTemplates);
 
       // Edibles
       plItemTemplates = cons(create(&KocatanMug),plItemTemplates);
