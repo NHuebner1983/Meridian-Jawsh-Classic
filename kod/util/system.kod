@@ -4145,6 +4145,11 @@ messages:
 
       //Ores
       Create(&QorciteVeinTreasure);
+      Create(&SapphireVeinTreasure);
+      Create(&EmeraldVeinTreasure);
+      Create(&DiamondVeinTreasure);
+      Create(&RubyVeinTreasure);
+      Create(&UncutVeinTreasure);
 
       return;
    }
@@ -5594,7 +5599,12 @@ messages:
 
       //Ore
       plMonsterTemplates = cons(create(&Ore),plMonsterTemplates);
-      plMonsterTemplates = cons(create(&QorciteVein),plItemTemplates);
+      plMonsterTemplates = cons(create(&QorciteVein),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&SapphireVein),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&RubyVein),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DiamondVein),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&EmeraldVein),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&UncutVein),plMonsterTemplates);
 
       return;
    }

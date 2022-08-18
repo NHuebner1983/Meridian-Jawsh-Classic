@@ -1924,6 +1924,11 @@
    TID_OGRE = 81
 
    TID_QORCITE = 82
+   TID_RUBY = 83
+   TID_SAPPHIRE = 85
+   TID_DIAMOND = 86
+   TID_UNCUT = 87
+   TID_EMERALD = 88
    
    // English articles
 

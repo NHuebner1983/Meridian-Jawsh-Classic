@@ -46,6 +46,8 @@ messages:
 
    SendLookAnimation()
    {
+      AddPacket(1,ANIMATE_ONCE);
+      AddPacket(4,400,2,1,2,1,2,1);
 
       return;
    }

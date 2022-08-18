@@ -30,7 +30,6 @@ classvars:
    vrIcon = PickAxe_icon_rsc
    vrDesc = PickAxe_desc_rsc
 
-   // PickAxes are low quality bludugeoning weapons
    viWeaponType = WEAPON_TYPE_SLASH
    viWeaponQuality = WEAPON_QUALITY_LOW
 
