@@ -28,7 +28,7 @@ classvars:
 
    vrName_plural = Qorcite_name_plural_rsc
 
-   viValue_average = 10
+   viValue_average = 200
    viWeight = 8
    viBulk = 5
 
