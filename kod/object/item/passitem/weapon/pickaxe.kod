@@ -16,10 +16,10 @@ constants:
 
 resources:
 
-   PickAxe_name_rsc = "pick axe"
+   PickAxe_name_rsc = "pickaxe"
    PickAxe_icon_rsc = PickAxe.bgf
    PickAxe_desc_rsc = \
-   "Crafted by Quintor this old pick axe is still sturdy.  "
+   "Crafted by Quintor this old pickaxe is still sturdy.  "
 
    PickAxe_window_overlay_rsc = povPickAxe.bgf
    PickAxe_player_overlay = PickAxeov.bgf
