@@ -236,7 +236,7 @@ resources:
    servant_rant_aaj = "Tell your girlfriend I said thanks."
    servant_rant_aak = "I'm here, so you can be lazy."
    servant_rant_aal = "What would you do without me?"
-   servant_rant_aam = "That Marianna is one hot piece of ace."
+   servant_rant_aam = "That Mariana is one hot piece of ace. Wait, she's like 13 still. What kind of magic is this!"
    servant_rant_aan = "When you die, you go to hell, then you get spit back out with a mace."
    servant_rant_aao = "This spell never works, just die already!"
    servant_rant_aap = "When you die, I'm stealing your loot and selling it on the black market."
@@ -1185,9 +1185,14 @@ messages:
                // Only cast Mirth/Melancholy if the surrounding monster karma match the spell benefits.
                if iSpellNum = SID_MELANCHOLY OR iSpellNum = SID_MIRTH
                {
-                  if Send(poMaster,@SinceLastAttack) = 0 OR Send(poMaster,@SinceLastAttack) > 5
+                  if Send(poMaster,@SinceLastAttack) <> $ AND Send(poMaster,@SinceLastAttack) > 5
                   {
                      // Only use these spells if we've attacked something in the last 5 seconds.
+                     if Send(poMaster,@IsEnchanted,#what=oSpell) OR Send(self,@IsEnchanted,#what=oSpell)
+                     {
+                        Send(oSpell, @RemoveRadiusEnchant, #who=poMaster, #iSpellNum=iSpellNum);
+                     }
+
                      continue;
                   }
 
