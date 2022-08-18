@@ -39,7 +39,7 @@ properties:
 
    viFilling = 1
    viNutrition = 1
-   piNumber = 1
+   piNumber = 3
 
 messages:
 

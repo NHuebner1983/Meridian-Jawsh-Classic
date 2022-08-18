@@ -4143,6 +4143,9 @@ messages:
       Create(&KnightTreasure);
       Create(&OgreTreasure);
 
+      //Ores
+      Create(&QorciteVeinTreasure);
+
       return;
    }
 
@@ -5591,6 +5594,7 @@ messages:
 
       //Ore
       plMonsterTemplates = cons(create(&Ore),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&QorciteVein),plItemTemplates);
 
       return;
    }
@@ -5620,6 +5624,7 @@ messages:
 
       plItemTemplates = cons(create(&NeruditeOreChunk),plItemTemplates);
       plItemTemplates = cons(create(&OreChunk),plItemTemplates);
+      plItemTemplates = cons(create(&Qorcite),plItemTemplates);
       plItemTemplates = cons(create(&AvarShamanFeather),plItemTemplates);
       plItemTemplates = cons(create(&OrcPitBossHead),plItemTemplates);
       plItemTemplates = cons(create(&FormulaScroll),plItemTemplates);
@@ -5904,7 +5909,6 @@ messages:
       plItemTemplates = cons(create(&RedHydraHead),plItemTemplates);
       plItemTemplates = cons(create(&TyrantHorns),plItemTemplates);
       plItemTemplates = cons(create(&VialOfVenom),plItemTemplates);
-      plItemTemplates = cons(create(&Qorcite),plItemTemplates);
 
       // Edibles
       plItemTemplates = cons(create(&KocatanMug),plItemTemplates);

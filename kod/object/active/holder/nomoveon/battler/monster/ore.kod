@@ -32,7 +32,7 @@ classvars:
 
    viTreasure_type = TID_TOUGH
    viAttributes = 0
-   viLevel = 300
+   viLevel = 50
    viKarma = 0
    viDefault_behavior = MOB_NOMOVE
    viCashmin = 0
