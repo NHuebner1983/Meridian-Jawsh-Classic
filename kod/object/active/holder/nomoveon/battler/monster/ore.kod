@@ -1,0 +1,81 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Ore is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Ore_name_rsc = "Ore"
+   Ore_icon_rsc = guildcrystal.bgf
+   Ore_desc_rsc = \
+      "A giant hunk of rock, possibly containing usefull ore. "
+
+   Ore_cannot_hit = \
+      "Your weapon is not suitable for mining. "
+
+classvars:
+
+   vrName = Ore_name_rsc
+   vrIcon = Ore_icon_rsc
+   vrDesc = Ore_desc_rsc
+
+   viTreasure_type = TID_TOUGH
+   viAttributes = 0
+   viLevel = 300
+   viKarma = 0
+   viDefault_behavior = MOB_NOMOVE
+   viCashmin = 0
+   viCashmax = 0
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   SendLookAnimation()
+   {
+
+      return;
+   }
+
+   CanMonsterFight(who=$, oStroke = $, use_weapon = $)
+   {
+      if (oStroke <> $)
+         AND (IsClass(oStroke,&DMSpell) OR IsClass(oStroke,&Smite))
+      {
+         return TRUE;
+      }
+
+      if use_weapon = $
+         OR NOT (
+               IsClass(use_weapon,&PickAxe)
+               OR IsClass(who, &DM)
+            )
+      {
+         Send(who,@MsgSendUser,#message_rsc=Ore_cannot_hit);
+
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

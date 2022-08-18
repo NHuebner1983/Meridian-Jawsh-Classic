@@ -5,9 +5,9 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\weapon.bof
-BOFS = shrtswrd.bof mystswrd.bof mace.bof bkdagger.bof spirhamm.bof\
+BOFS =  shrtswrd.bof mystswrd.bof mace.bof bkdagger.bof spirhamm.bof\
         scimitar.bof longswrd.bof hammer.bof ranged.bof axe.bof goldswrd.bof \
         riijaswd.bof neruswd.bof huntsw.bof unique.bof testswrd.bof basewand.bof \
-        neruaxe.bof twinblade.bof lightsword.bof maul.bof bersaxe.bof
+        neruaxe.bof twinblade.bof lightsword.bof maul.bof bersaxe.bof pickaxe.bof 
 
 !include $(KODDIR)\kod.mak

@@ -38,7 +38,7 @@ BGFS = neeleme.bgf neelemeX.bgf iunholyt.bgf xeoneru.bgf xeoneruX.bgf \
 	   seekeraX.bgf seekerb.bgf seekerbX.bgf neruaxe.bgf neruaxeov.bgf povneruaxe.bgf khelm.bgf khelmb.bgf \
 	   scale.bgf blkhyhead.bgf goldhyhead.bgf grnhyhead.bgf redhyhead.bgf tyranthorns.bgf venom.bgf \
 	   twnbladov.bgf twnblad.bgf povtwnblad.bgf mountgolem.bgf mountgolemX.bgf amoeba.bgf amoebaX.bgf \
-	   steakmeal.bgf masterwand.bgf masterwandov.bgf povmastwand.bgf
+	   steakmeal.bgf masterwand.bgf masterwandov.bgf povmastwand.bgf pickaxe.bgf pickaxeov.bgf povpickaxe.bgf \
 
 !include $(RESOURCEDIR)\copy.mak
 

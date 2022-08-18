@@ -1,0 +1,60 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+PickAxe is Weapon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   PickAxe_name_rsc = "pick axe"
+   PickAxe_icon_rsc = PickAxe.bgf
+   PickAxe_desc_rsc = \
+   "Crafted by Quintor this old pick axe is still sturdy.  "
+
+   PickAxe_window_overlay_rsc = povPickAxe.bgf
+   PickAxe_player_overlay = PickAxeov.bgf
+
+classvars:
+
+   vrName = PickAxe_name_rsc
+   vrIcon = PickAxe_icon_rsc
+   vrDesc = PickAxe_desc_rsc
+
+   // PickAxes are low quality bludugeoning weapons
+   viWeaponType = WEAPON_TYPE_SLASH
+   viWeaponQuality = WEAPON_QUALITY_LOW
+
+   viProficiency_Needed = SKID_PROFICIENCY_HAMMER
+
+   viValue_average = 50
+   viWeight = 60
+   viBulk = 60
+   viHits_init_min = 300
+   viHits_init_max = 1000
+
+   vrWeapon_window_overlay = PickAxe_window_overlay_rsc
+
+   vrWeapon_overlay = PickAxe_player_overlay
+
+   viGround_group = 1
+   viInventory_group = 3
+   viBroken_group = 2
+
+properties:
+
+   piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_PIERCE
+
+messages:
+
+end
+////////////////////////////////////////////////////////////////////////////////

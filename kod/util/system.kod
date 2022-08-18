@@ -5589,6 +5589,9 @@ messages:
       plMonsterTemplates = cons(create(&IceReaver),plMonsterTemplates);
       plMonsterTemplates = cons(create(&ObsidianReaver),plMonsterTemplates);
 
+      //Ore
+      plMonsterTemplates = cons(create(&Ore),plMonsterTemplates);
+
       return;
    }
 
@@ -6009,6 +6012,7 @@ messages:
       plItemTemplates = cons(create(&Hammer),plItemTemplates);
       plItemTemplates = cons(create(&Maul),plItemTemplates);
       plItemTemplates = cons(create(&Mace),plItemTemplates);
+      plItemTemplates = cons(create(&PickAxe),plItemTemplates);
 
       plItemTemplates = cons(create(&ShieldRod),plItemTemplates);
       plItemTemplates = cons(create(&DamageRod),plItemTemplates);
