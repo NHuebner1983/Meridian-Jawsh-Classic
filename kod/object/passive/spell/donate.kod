@@ -18,11 +18,12 @@ resources:
 
    //include donate.lkod
 
-   donate_cast_rsc = "~B~IYour donation has been sent to %s.~I~B"
-   donate_shal_follower_rsc = "~B~IYour karma has increased by %i for being so kind.~I~B"
-   donate_generous_rsc = "~B~IShillings are much appreciated, bless your soul!~I~B"
-   donate_cursed_rsc = "~B~IDonating a cursed item is forbidden.~I~B"
-   donate_cant_rsc = "~B~IYou can't donate that!~B~I"
+   donate_cast_rsc = "~BYour donation has been sent to %s.~B"
+   donate_shal_follower_rsc = "~BYour karma has increased by %i for being so kind.~B"
+   donate_generous_rsc = "~BYou are so generous! May Shal'ille bless you!~B"
+   donate_cursed_rsc = "~B~rDonating a cursed item is forbidden.~r~B"
+   donated_junk_rsc = "~B~rWe only accept donations that serve a purpose, but it's the thought that counts.~r~B"
+   donate_cant_rsc = "~BYou can't donate that!~B"
    donate_name_rsc = "donate"
    donate_icon_rsc = idonate.bgf
    donate_desc_rsc = \
@@ -86,6 +87,13 @@ messages:
          return FALSE;
       }
 
+      if IsClass(oTarget, &Junk) OR Send(oTarget, @IsBroken)
+      {
+         Send(who, @MsgSendUser, #message_rsc=donated_junk_rsc);
+         //Debug("Junk");
+         return FALSE;
+      }
+
       //Debug("Can Pay Costs!");
       return TRUE;
    }
@@ -102,7 +110,7 @@ messages:
          return FALSE;
       }
 
-      if IsClass(oTarget, &Money)
+      if IsClass(oTarget, &Money) OR (IsClass(oTarget, &Necklace) AND NOT IsClass(oTarget, &JalaNecklace))
       {
          Send(who, @MsgSendUser, #message_rsc=donate_generous_rsc);
          //Debug("Generous!");
@@ -197,6 +205,11 @@ messages:
       {
          // Deathlink prevents any karma loss.
          return 0;
+      }
+
+      if IsClass(oTarget, &Necklace) AND NOT IsClass(oTarget, &JalaNecklace)
+      {
+         return 100;
       }
 
       if IsClass(oTarget, &Money)

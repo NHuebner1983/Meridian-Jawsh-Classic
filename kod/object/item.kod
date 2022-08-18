@@ -1316,6 +1316,16 @@ messages:
       
       return;
    }
+   
+   IsBroken()
+   {
+      if viBroken_group = $
+      {
+         return FALSE;
+      }
+
+      return piHits <= 0;
+   }
 
    ReqUse()
    "Called when the player tries to use the item"
