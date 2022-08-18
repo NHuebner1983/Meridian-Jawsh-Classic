@@ -110,7 +110,8 @@ messages:
             Create(&GoldShield),
             Create(&ShortSword),
             Create(&Hammer),
-            Create(&Mace)
+            Create(&Mace),
+            Create(&PickAxe)
          ],
          [
             SKID_PROFICIENCY_SCIMITAR
