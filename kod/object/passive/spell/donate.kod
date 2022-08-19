@@ -61,6 +61,12 @@ messages:
 
       return;
    }
+   
+   SuccessChance(who=$)
+   "Starter spell will always work."
+   {
+      return TRUE;
+   }
 
    GetNumSpellTargets()
    {
