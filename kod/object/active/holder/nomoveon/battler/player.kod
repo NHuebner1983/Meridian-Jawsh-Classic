@@ -3501,7 +3501,7 @@ messages:
       // Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
       Send(self,@NewHold,#what=Create(&Shirt));
-      Send(self,@NewHold,#what=Create(&Pants));
+      Send(self,@NewHold,#what=Create(&PantsC,#translation=PT_GRAY_TO_BLACK));
       Send(self,@NewHold,#what=Create(&Gauntlet));
       Send(self,@NewHold,#what=Create(&LeatherArmor));
       Send(self,@NewHold,#what=Create(&MetalShield));
@@ -3516,9 +3516,6 @@ messages:
          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=50000);
          Send(self,@AddReagentsForSpells,#iNumCasts=10);
       }
-
-      // Start them off with a Kraanan servant
-      Send(Send(SYS,@FindSpellByNum,#num=SID_KRAN_SERVANT),@CastSpell,#who=self,#lTargets=[self],#iSpellPower=25);
 
       return;
    }
