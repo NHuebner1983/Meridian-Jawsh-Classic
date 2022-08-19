@@ -42,6 +42,10 @@ constants:
    // Starts when Miniboss is killed
    RESPAWN_MINIBOSS_TIME = 60000
 
+   // To go over 100, set this higher. 
+   // You will need to adjust rewards though.
+   MAX_SURVIVAL_LEVEL = 100
+
 resources:
 
    include survivalroom.lkod
@@ -93,7 +97,8 @@ resources:
       "You must wait at least %i seconds after the creation of a Survival "
       "Arena before you may exit."
    survivalroom_user_say_leave = "leave survival"
-   survivalroom_public_waves_until_lockout = "~IPublic survival complete wave %i. In %i waves you will not be able to join. To join, visit an inn and type say join public survival.~I"
+   survivalroom_public_waves_until_lockout = "~IPublic survival completed wave %i. You have %i more waves until public survival is locked. To join, visit an inn and type ~Bsay join public survival~B.~I"
+   survivalroom_public_complete = "~IPublic survival has completed the maximum level, ~Bcongratulations~B to the champions!~I"
 
    round_begin_wav = gong.ogg
 
@@ -130,7 +135,7 @@ properties:
 
    piInit_count_min = 0
    piInit_count_max = 0
-   piMonster_count_max = 30
+   piMonster_count_max = 120
 
    pbSpawnWaves = FALSE
    piAllowJoins = TRUE
@@ -172,6 +177,9 @@ properties:
    // after the room is made. Stops survival arena spam or large amounts
    // of rooms being created and deleted.
    piCreationTime = $
+
+   // When we reach 100, it's over with.
+   ptFinalFoundBoot = $
 
 messages:
 
@@ -657,8 +665,12 @@ messages:
          ptRespawnMiniBossTimer = $;
       }
 
-      if piLevel = 100
+      if piLevel = MAX_SURVIVAL_LEVEL
       {
+         // Boot everyone in 2 minutes.
+         Send(&Player,@MsgSendUser,#message_rsc=survivalroom_public_complete);
+         ptFinalFoundBoot = CreateTimer(self, @Delete, 120000);
+
          // Give out final rewards
          foreach i in plActive
          {
@@ -842,6 +854,18 @@ messages:
 
       if IsClass(victim,&User)
       {
+         if Send(victim, @HasBecomeMonster) 
+            AND NOT Send(victim, @IsRoamingNPCPlayer)
+         {
+            // While being a monster, you get a riija servant cuz they rock.
+            Send(Send(SYS,@FindSpellByNum,#num=SID_RIIJA_SERVANT),
+               @CastSpell,#who=victim,#lTargets=[victim],#iSpellPower=99);
+         }
+
+         // AOG the player so they can withstand a bit more damage...
+         Send(Send(SYS,@FindSpellByNum,#num=SID_ARMOR_OF_GORT),
+            @CastSpell,#who=victim,#lTargets=[victim],#iSpellPower=99);
+
          propagate;
       }
 
@@ -1099,6 +1123,8 @@ messages:
 
          if piHasBegun
             AND piLevel > piLastJoinLevel
+            AND NOT IsClass(what, &DM)
+            AND NOT Send(what,@HasBecomeMonster)
          {
             Send(self,@SpectateUser,#who=what);
             Post(what,@MsgSendUser,#message_rsc=spectator_only_msg);
