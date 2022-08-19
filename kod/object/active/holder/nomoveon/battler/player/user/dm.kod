@@ -154,6 +154,9 @@ resources:
    dm_sweep = "sweep"
    dm_clear_floor = "clean"
    dm_animate = "animate"
+   dm_adventurer_kit_pf = "adventurer kit fighter"
+   dm_adventurer_kit_mage = "adventurer kit mage"
+   dm_adventurer_kit_hybrid = "adventurer kit hybrid"
 
    // Invasions that can be started by DM
    dm_invasion_orc = "orc invasion"
@@ -995,7 +998,7 @@ messages:
 
    UserSay(string=$,type=$)
    {
-      local i, j, k, l, m, n, bBool, iInt, sString, oObj, oObject, rResource, lList, lSecondlist, lThirdlist;
+      local i, j, k, l, m, n, bBool, iInt, iInteger, sString, oObj, oObject, rResource, lList, lSecondlist, lThirdlist;
 
       if type <> SAY_DM
       {
@@ -1128,6 +1131,95 @@ messages:
          return;
       }
 
+      if StringContain(string, dm_adventurer_kit_pf)
+         OR StringContain(string, dm_adventurer_kit_mage)
+         OR StringContain(string, dm_adventurer_kit_hybrid)
+      {
+         // This prepares some loot for a character.
+         lList = [
+            [Create(&WeaponWand,#school=1),$,$],
+            [Create(&WeaponWand,#school=2),$,$],
+            [Create(&WeaponWand,#school=3),$,$],
+            [Create(&WeaponWand,#school=4),$,$],
+            [Create(&WeaponWand,#school=5),$,$],
+            [Create(&Wizardhat,#school=1),SID_HOLY_RESOLVE,$],
+            [Create(&Wizardhat,#school=2),SID_UNHOLY_RESOLVE,$],
+            [Create(&Wizardhat,#school=3),SID_DEFLECT,$],
+            [Create(&Wizardhat,#school=4),SID_RESIST_FIRE,$],
+            [Create(&Wizardhat,#school=5),SID_RESIST_COLD,$],
+            [Create(&Wizardhat,#school=6),SID_RESIST_ACID,$],
+            [Create(&RiijaCharm),SID_RESIST_MAGIC,$],
+            [Create(&JalaNecklace),SID_RESTORATE,$],
+            [Create(&TrueLute),SID_WOLFPACK,$],
+            [Create(&DiscipleRobe,#school=3),SID_RESIST_MAGIC,$],
+            [Create(&DiscipleRobe,#school=5),SID_RESIST_MAGIC,$],
+            [Create(&RiijaSword),SID_WOLFPACK,$],
+            [Create(&RoyalShirt),SID_EAGLE_EYES,$],
+            [Create(&PantsC,#translation=PT_GRAY_TO_BLACK),SID_SUPER_STRENGTH,$],
+            [Create(&PlateArmor),SID_ARMOR_OF_GORT,$],
+            [Create(&DaemonHelm),SID_NIGHT_VISION,23],
+            [Create(&Gauntlet),SID_FREE_ACTION,$],
+            [Create(&IvyCirclet),SID_DETECT_INVISIBLE,$],
+            [Create(&Circlet),SID_REJUVENATE,$],
+            [Create(&RingDefense),SID_GAZE_OF_THE_BASILISK,$],
+            [Create(&FireRing),SID_RESIST_FIRE,$]
+         ];
+         
+         if StringContain(string, dm_adventurer_kit_pf) OR StringContain(string, dm_adventurer_kit_hybrid)
+         {
+            lList = AppendListElem([Create(&GoldShield),SID_MAGIC_SHIELD,$], lList);
+            lList = AppendListElem([Create(&NeruditeSword),SID_BLESS,$], lList);
+            lList = AppendListElem([Create(&BattleBow),SID_BLESS,$], lList);
+         }
+
+         if StringContain(string, dm_adventurer_kit_mage) OR StringContain(string, dm_adventurer_kit_hybrid)
+         {
+            lList = AppendListElem([Create(&JewelOfFroz),SID_ICY_FINGERS,78], lList);
+            lList = AppendListElem([Create(&JewelOfFroz),SID_BLESS,78], lList);
+         }
+
+         foreach oObj in lList
+         {
+            iInt = Nth(oObj, 2);     // Buff
+            iInteger = Nth(oObj, 3); // Color
+            oObj = Nth(oObj, 1);     // Object
+
+            if iInt <> $
+            {
+               // Add buff to the item
+               Send(oObj, @SetBuffSpell, #num=iInt);
+            }
+
+            if iInteger <> $
+            {
+               // Color the item
+               Send(oObj, @SetItemColor, #flags=iInteger);
+            }
+
+            // Add hits to the item
+            Send(oObj,@SetMaxHits,#number=10000);
+            Send(oObj,@SetHits,#number=10000);
+
+            // Add XP to the item
+            Send(Send(SYS, @FindItemAttByNum, #num=IA_XP_KILL_BONUS), @AddToItem, #oItem=oObj, #iPower=2000);
+
+            // Put in DM inventory
+            Send(self,@NewHold,#what=oObj);
+
+            // Bond the item
+            Send(Send(SYS,@FindItemAttByNum,#Num=IA_TRANSCENDANT),@AddToItem,#oItem=oObj);
+
+            // Reveal the item
+            if Send(oObj,@RevealHiddenAttributes)
+            {
+               Send(oObj,@RevealHiddenColor);
+               Send(self,@SomethingChanged,#what=oObj);
+            }
+         }
+
+         return;
+      }
+
       if StringContain(string, dm_animate)
       {
          // Animate all dead bodies on the floor
@@ -1138,7 +1230,6 @@ messages:
 
       if StringContain(string, dm_move_forward)
       {
-         Debug("Moving forward",(Nth(Send(self,@GetPos),1)+1),(Nth(Send(self,@GetPos),2)+1));
          Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)+1),#new_col=(Nth(Send(self,@GetPos),2)+1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
          Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)+1), #new_col=(Nth(Send(self,@GetPos),2)+1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
          return;
@@ -1146,7 +1237,6 @@ messages:
 
       if StringContain(string, dm_move_back)
       {
-         Debug("Moving back",(Nth(Send(self,@GetPos),1)-1),(Nth(Send(self,@GetPos),2)-1));
          Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)-1),#new_col=(Nth(Send(self,@GetPos),2)-1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
          Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)-1), #new_col=(Nth(Send(self,@GetPos),2)-1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
          return;
@@ -1154,7 +1244,6 @@ messages:
 
       if StringContain(string, dm_move_left)
       {
-         Debug("Moving left",(Nth(Send(self,@GetPos),1)+1),(Nth(Send(self,@GetPos),2)-1));
          Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)+1),#new_col=(Nth(Send(self,@GetPos),2)-1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
          Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)+1), #new_col=(Nth(Send(self,@GetPos),2)-1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
          return;
@@ -1162,7 +1251,6 @@ messages:
 
       if StringContain(string, dm_move_right)
       {
-         Debug("Moving right",(Nth(Send(self,@GetPos),1)-1),(Nth(Send(self,@GetPos),2)+1));
          Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)-1),#new_col=(Nth(Send(self,@GetPos),2)+1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
          Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)-1), #new_col=(Nth(Send(self,@GetPos),2)+1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
          return;
