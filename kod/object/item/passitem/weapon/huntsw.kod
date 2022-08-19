@@ -712,6 +712,8 @@ messages:
 
          Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_holding_damage_using);
 
+         Send(poOwner,@GainKarma,#amount=(1 + (pbIn_Use*3)));
+
          if Send(poOwner,@AssessDamage,#what=self,
                   #damage=(Random(1,3)),#report=FALSE) = $
          {
@@ -1058,5 +1060,5 @@ messages:
       return TRUE;
    }
 
-   end
-   ////////////////////////////////////////////////////////////////////////////////
+end
+////////////////////////////////////////////////////////////////////////////////
