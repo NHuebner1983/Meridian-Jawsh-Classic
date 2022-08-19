@@ -19,11 +19,11 @@ constants:
 
    include blakston.khd
 
-//   HUNGER_1 = 2   // one session (assuming 3-4 hours of play per day)
-//   HUNGER_2 = 4   // one to two sessions
-//   HUNGER_3 = 6   // two sessions
-//   HUNGER_4 = 8   // two to three sessions
-//   HUNGER_5 = 10  // three sessions
+   //   HUNGER_1 = 2   // one session (assuming 3-4 hours of play per day)
+   //   HUNGER_2 = 4   // one to two sessions
+   //   HUNGER_3 = 6   // two sessions
+   //   HUNGER_4 = 8   // two to three sessions
+   //   HUNGER_5 = 10  // three sessions
 
    // BASE_HUNGER_GAIN = 2 in units of FineHunger.
    // Gain should be equivalent to one 60hp neutral player solo-kill
@@ -161,22 +161,22 @@ messages:
    {
       return 0;
    }
-   
+
    // If the SOTH does not have an owner, let's remove it from the system.
    Reset()
    {
-   	  if poOwner <> $ AND IsClass(poOwner, &Player)
-	  {
-	     Debug("SOTH held by",Send(poOwner,@GetName));
-	  }
+         if poOwner <> $ AND IsClass(poOwner, &Player)
+      {
+         Debug("SOTH held by",Send(poOwner,@GetName));
+      }
 
-	  if poOwner <> $ AND NOT IsClass(poOwner, &Player)
-	  {
-	     Debug("SOTH Orphan Removed", poOwner);
-	     Send(self, @Delete);
-	  }
-	  	  
-	  return;
+      if poOwner <> $ AND NOT IsClass(poOwner, &Player)
+      {
+         Debug("SOTH Orphan Removed", poOwner);
+         Send(self, @Delete);
+      }
+         
+      return;
    }
 
    NewOwner(what = $)
@@ -205,7 +205,7 @@ messages:
          // Post these so that they happen after 'what' actually becomes our owner.
          Post(self,@AdjustStats);
          Post(self,@AdjustColor);
-		 Post(self,@BecomeHolySoldier);
+         Post(self,@BecomeHolySoldier);
 
          ptHungerTimer = CreateTimer(self,@HungerTrigger,Send(Send(SYS,@GetNecromancerBalance),
                               @GetHungerInterval));
@@ -228,35 +228,35 @@ messages:
 
       propagate;
    }
-   
+
    // We will obtain a Holy Soldier Shield &HolyShield
    // and become part of Shal'ille's faction.
    BecomeHolySoldier()
    {
       local oShield;
-	  
+      
       if poOwner <> $ AND IsClass(poOwner, &Battler)
-	  {
-	     oShield = Create(&HolyShield);
-		 
-	     Send(poOwner, @ResetFaction, #faction=FACTION_HOLY);
+      {
+         oShield = Create(&HolyShield);
+         
+         Send(poOwner, @ResetFaction, #faction=FACTION_HOLY);
          Send(poOwner, @RemoveFromInventory, #class=&HolyShield);
-		 Send(poOwner, @NewHold, #what=oShield);
-		 Send(poOwner, @TryUseItem, #what=oShield);
-		 Send(poOwner, @TryUseItem, #what=self);
-	  }
-	  
+         Send(poOwner, @NewHold, #what=oShield);
+         Send(poOwner, @TryUseItem, #what=oShield);
+         Send(poOwner, @TryUseItem, #what=self);
+      }
+      
       return;
    }
-   
+
    LoseHolySoldier()
    {
       if poOwner <> $ AND IsClass(poOwner, &Battler)
-	  {
+      {
          Send(poOwner, @RemoveFromInventory, #class=&HolyShield);
-		 Send(poOwner, @ResetFaction, #faction=FACTION_NEUTRAL);
-	  }
-	  
+         Send(poOwner, @ResetFaction, #faction=FACTION_NEUTRAL);
+      }
+      
       return;
    }
 
@@ -347,7 +347,7 @@ messages:
 
          return FALSE;
       }
-	  
+      
       propagate;
    }
 
@@ -785,9 +785,9 @@ messages:
       }
       else
       {
-	      // Lose the Holy Shield.
-		   Send(self,@LoseHolySoldier);
-		 
+         // Lose the Holy Shield.
+         Send(self,@LoseHolySoldier);
+         
          // Instead of deleting the sword, we put it back in circulation.
          //Post(self,@Delete);
          Post(Send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
@@ -827,11 +827,11 @@ messages:
    Delete()
    {
       if poOwner = $
-	   {
-	      return;
-	   }
-	  
-	   Send(self,@LoseHolySoldier);
+      {
+         return;
+      }
+      
+      Send(self,@LoseHolySoldier);
       Send(self,@NewOwner,#what=$);
 
       if pbCounted
@@ -949,10 +949,10 @@ messages:
       return;
    }
 
-//////////////////////
-// ActiveItem Stuff: //
-//////////////////////
-//
+   //////////////////////
+   // ActiveItem Stuff: //
+   //////////////////////
+   //
    GetObjectType()
    {
       return ACTIVE;
@@ -972,8 +972,8 @@ messages:
                #damage=(Send(poOwner,@GetHealth)*2/3),#report=FALSE);
       }
       
-	  Debug("SOTH-DELETE-FROM", Send(poOwner,@GetName));
-	  
+      Debug("SOTH-DELETE-FROM", Send(poOwner,@GetName));
+      
       Send(self,@Delete);
 
       return;
@@ -1058,5 +1058,5 @@ messages:
       return TRUE;
    }
 
-end
-////////////////////////////////////////////////////////////////////////////////
+   end
+   ////////////////////////////////////////////////////////////////////////////////
