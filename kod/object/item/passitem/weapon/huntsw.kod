@@ -137,7 +137,7 @@ properties:
    ptHungerTimer = $
    ptHoldingDamage = $
    piHoldingDamageInterval = 10 * 1000     // Ten seconds.
-   piHpWorthyThreshold = 60
+   piHpWorthyThreshold = 50
    piKarmaWorthyThreshold = -30
 
    piAttack_type = ATCK_WEAP_SLASH
