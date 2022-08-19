@@ -1929,7 +1929,8 @@
    TID_DIAMOND = 86
    TID_UNCUT = 87
    TID_EMERALD = 88
-   TID_ORE = 88
+   TID_ORE = 89
+   TID_NERUORE = 90
    
    // English articles
 

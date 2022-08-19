@@ -4151,6 +4151,7 @@ messages:
       Create(&DiamondVeinTreasure);
       Create(&RubyVeinTreasure);
       Create(&UncutVeinTreasure);
+      Create(&NeruditeOreVeinTreasure);
 
       return;
    }
@@ -5606,6 +5607,7 @@ messages:
       plMonsterTemplates = cons(create(&DiamondVein),plMonsterTemplates);
       plMonsterTemplates = cons(create(&EmeraldVein),plMonsterTemplates);
       plMonsterTemplates = cons(create(&UncutVein),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&NeruditeVein),plMonsterTemplates);
 
       return;
    }

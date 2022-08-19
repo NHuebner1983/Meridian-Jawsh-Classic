@@ -6,6 +6,6 @@
 
 DEPEND = ..\ore.bof
 BOFS  = qorcitevein.bof diamondvein.bof emeraldvein.bof rubyvein.bof \
-		uncutvein.bof sapphirevein.bof
+		uncutvein.bof sapphirevein.bof neruorevein.bof
 
 !include $(KODDIR)\kod.mak
