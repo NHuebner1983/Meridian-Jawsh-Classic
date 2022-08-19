@@ -89,7 +89,7 @@ properties:
    plSwordLocations = $
 
    // Item hunger interval, default one minute.
-   piHungerInterval = 60 * 1000
+   piHungerInterval = 5 * 1000
 
    // In units of FineHunger.
    piNecBaseHungerGain = 2

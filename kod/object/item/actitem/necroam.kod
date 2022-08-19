@@ -170,9 +170,9 @@ properties:
    piFineHunger = 0
    ptHungerTimer = $
    ptHoldingDamage = $
-   piHoldingDamageInterval = 10 * 1000     // ten seconds
+   piHoldingDamageInterval = 5 * 1000     // ten seconds
    piHpWorthyThreshold = 50
-   piKarmaWorthyThreshold = -30
+   piKarmaWorthyThreshold = -40
 
    pbIllusioned = TRUE
    piSavedSkinColor = $
