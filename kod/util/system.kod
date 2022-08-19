@@ -4144,6 +4144,7 @@ messages:
       Create(&OgreTreasure);
 
       //Ores
+      Create(&OreVeinTreasure);
       Create(&QorciteVeinTreasure);
       Create(&SapphireVeinTreasure);
       Create(&EmeraldVeinTreasure);

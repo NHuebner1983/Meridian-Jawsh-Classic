@@ -16,10 +16,13 @@ constants:
 
 resources:
 
-   Ore_name_rsc = "Ore"
-   Ore_icon_rsc = guildcrystal.bgf
+   Ore_name_rsc = "ore vein"
+   Ore_icon_rsc = orevein.bgf
    Ore_desc_rsc = \
       "A giant hunk of rock, possibly containing usefull ore. "
+
+   ore_dead_icon_rsc = dirtpile.bgf
+   ore_dead_name_rsc = "empty vein"
 
    Ore_cannot_hit = \
       "Your weapon is not suitable for mining. "
@@ -29,8 +32,10 @@ classvars:
    vrName = Ore_name_rsc
    vrIcon = Ore_icon_rsc
    vrDesc = Ore_desc_rsc
+   vrDead_icon = ore_dead_icon_rsc
+   vrDead_name = ore_dead_name_rsc
 
-   viTreasure_type = TID_TOUGH
+   viTreasure_type = TID_ORE
    viAttributes = 0
    viLevel = 50
    viKarma = 0
