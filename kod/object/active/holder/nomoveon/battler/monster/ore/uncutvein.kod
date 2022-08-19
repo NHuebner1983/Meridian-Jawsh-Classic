@@ -28,6 +28,7 @@ classvars:
    vrDesc = UncutVein_desc_rsc
 
    viTreasure_type = TID_UNCUT
+   viDifficulty = 30
 
 properties:
 

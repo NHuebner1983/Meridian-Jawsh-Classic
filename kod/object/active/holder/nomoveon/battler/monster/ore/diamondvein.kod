@@ -28,6 +28,7 @@ classvars:
    vrDesc = DiamondVein_desc_rsc
 
    viTreasure_type = TID_DIAMOND
+   viDifficulty = 30
 
 properties:
 

@@ -28,6 +28,7 @@ classvars:
    vrDesc = QorciteVein_desc_rsc
 
    viTreasure_type = TID_QORCITE
+   viDifficulty = 25
 
 properties:
 

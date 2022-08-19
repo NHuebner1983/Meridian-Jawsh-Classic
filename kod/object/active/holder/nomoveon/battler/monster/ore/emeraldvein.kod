@@ -28,6 +28,7 @@ classvars:
    vrDesc = EmeraldVein_desc_rsc
 
    viTreasure_type = TID_EMERALD
+   viDifficulty = 30
 
 properties:
 

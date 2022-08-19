@@ -28,6 +28,7 @@ classvars:
    vrDesc = SaphireVein_desc_rsc
 
    viTreasure_type = TID_SAPPHIRE
+   viDifficulty = 30
 
 properties:
 

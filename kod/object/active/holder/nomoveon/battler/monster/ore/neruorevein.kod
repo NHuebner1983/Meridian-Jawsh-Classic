@@ -28,6 +28,7 @@ classvars:
    vrDesc = NeruditeOreVein_desc_rsc
 
    viTreasure_type = TID_NERUORE
+   viDifficulty = 40
 
 properties:
 
