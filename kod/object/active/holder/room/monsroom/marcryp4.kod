@@ -27,6 +27,9 @@ resources:
    Ritual_1        = "Hear me Qor, accept my offer. Open your realm and lend me your strength.  " 
    portal_DR       = "Through the portal, you see...darkness..and a red sky.."
 
+   death_realm_book_name = "The Ritual"
+   death_realm_book_text = "Put the shit where it goes dumbass."
+
    room_mar_crypt4 = marcrypt4.roo
 
    mar_crypt4_music = castle2.ogg
@@ -68,6 +71,27 @@ messages:
 		#fine_row=16,#fine_col=50,#new_angle=ANGLE_NORTH);
 
       propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local lObjCoords1, oObj;
+
+      lObjCoords1 = [ [25,30,0,31, OO_SKULL7], [27,29,49,13, OO_BONES],
+                      [30,29,54,20, OO_MUMMY], [25,3,22,44, OO_BONES],
+                      [25,1,22,44, OO_SKULL7], [25,7,22,55, OO_SKULL7],
+                      [26,6,16,48, OO_SKULL7], [20,2,20,18, OO_BONES]
+                    ];
+
+      Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
+      
+      oObj = Create(&BookPedestal,#Name=death_realm_book_name,
+                  #Text=death_realm_book_text);
+
+      Send(self,@NewHold,#what=oObj,#new_row=15,#new_col=11,
+            #fine_row=48,#fine_col=34,#new_angle=ANGLE_SOUTH_WEST);
+
+      return;
    }
 
    CreateStandardExits()
@@ -305,11 +329,6 @@ messages:
          }
       }
 
-      return;
-   }
-
-   CreateStandardObjects()
-   {
       return;
    }
 
