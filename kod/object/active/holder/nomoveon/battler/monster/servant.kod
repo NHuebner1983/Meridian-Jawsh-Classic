@@ -951,32 +951,31 @@ messages:
 
    ClearServantTimers()
    {
-      if NOT Send(self,@MasterCheck)
-      {
-         return;
-      }
-
-      if ptBuffs <> $ AND IsTimer(ptBuffs) AND GetTimeRemaining(ptBuffs) > 0
+      if ptBuffs <> $
       {
          DeleteTimer(ptBuffs);
          ptBuffs = $;
       }
-      if ptTalk <> $ AND IsTimer(ptTalk) AND GetTimeRemaining(ptTalk) > 0
+
+      if ptTalk <> $
       {
          DeleteTimer(ptTalk);
          ptTalk = $;
       }
-      if ptImp <> $ AND IsTimer(ptImp) AND GetTimeRemaining(ptImp) > 0
+
+      if ptImp <> $
       {
          DeleteTimer(ptImp);
          ptImp = $;
       }
-      if ptTaunt <> $ AND IsTimer(ptTaunt) AND GetTimeRemaining(ptTaunt) > 0
+
+      if ptTaunt <> $
       {
          DeleteTimer(ptTaunt);
          ptTaunt = $;
       }
-      if ptLootHandling <> $ AND IsTimer(ptLootHandling) AND GetTimeRemaining(ptLootHandling) > 0
+
+      if ptLootHandling <> $
       {
          DeleteTimer(ptLootHandling);
          ptLootHandling = $;
@@ -1692,7 +1691,7 @@ messages:
    GetProjectileLightIntensity()
    {
       // Fairly small light radius for projectile.  Out of 255 levels.
-      return 255;
+      return 150;
    }
 
    GetProjectileLightColor()
@@ -1705,7 +1704,7 @@ messages:
    {
       AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
       // Intensity (out of 255)
-      AddPacket(1,13);
+      AddPacket(1,1);
       // Color
       AddPacket(2,poAura);
 
@@ -2266,7 +2265,7 @@ messages:
    
    ClearTauntTimer()
    {
-      if ptTaunt <> $ AND IsTimer(ptTaunt)
+      if ptTaunt <> $
       {
          DeleteTimer(ptTaunt);
       }
