@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-Donate is Spell
+Donate is UtilitySpell
 
 constants:
 
@@ -33,7 +33,7 @@ resources:
       "Shal'ille followers will receive good karma for their donation. "
       "Requires a kind heart."
 
-      donate_sound = shalille.ogg
+   donate_sound = shalille.ogg
       
 classvars:
 
@@ -44,10 +44,10 @@ classvars:
    viSpell_num = SID_DONATE
    viSchool = SS_SHALILLE
    viSpell_level = 1
-   viMana = 1
-   viCast_time = 300
-   viMeditate_ratio = 300
-   viChance_To_Increase = 30
+   viMana = 0
+   viCast_time = 0
+   viMeditate_ratio = 0
+   viChance_To_Increase = 35
 
    vrSucceed_wav = donate_sound
    
