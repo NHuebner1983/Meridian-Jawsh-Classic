@@ -106,10 +106,15 @@ messages:
    {
       local oSpell, iDuration, oWeapon;
 
+      if state = $ OR state = 0
+      {
+         state = 1;
+      }
+
       if what <> $
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
-         iDuration = Bound(state * Random(20,45),1300,4500);
+         iDuration = Bound(Bound(state, 1, 10000) * Random(20,45),1300,4500);
 
          // TODO: Make chance to paralyze based on if caster is facing opponent?
 
