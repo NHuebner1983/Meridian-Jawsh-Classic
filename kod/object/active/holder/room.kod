@@ -2893,6 +2893,37 @@ messages:
       return;
    }
 
+   ClearDeadBodies(animated=FALSE)
+   {
+      local i, j, k, l, m, n, bBool, iInt, sString, oObj, oObject, rResource, lList, lSecondlist, lThirdlist, oSpell;
+
+      // Clear all the dead bodies
+      lList = Send(self, @GetHolderPassive);
+
+      foreach i in lList
+      {
+         oObj = First(i);
+
+         bBool = FALSE;
+
+         if oObj <> $ AND IsClass(oObj, &DeadBody)
+         {
+            if animated
+            {
+               oSpell = Send(SYS,@FindSpellByNum,#num=SID_ANIMATE);
+               Send(oSpell,@CastSpell,#who=self,#lTargets=[oObj],
+               #iSpellPower=Random(1,99));
+            }
+            else
+            {
+               Send(oObj, @Delete);
+            }
+         }
+      }
+
+      return;
+   }
+
    SomethingSpectatedOut(what=$)
    "Faster override for Room, don't need to propagate to Holder."
    {
