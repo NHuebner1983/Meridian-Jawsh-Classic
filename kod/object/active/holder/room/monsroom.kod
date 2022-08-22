@@ -223,6 +223,9 @@ messages:
    NewHold(what = $)
    {
       if IsClass(what,&Monster)
+         AND NOT IsClass(what,&Reflection)
+         AND NOT IsClass(what,&EvilTwin)
+         AND NOT IsClass(what,&Servant)
       {
          piMonster_count = piMonster_count + 1;
       }
@@ -233,6 +236,9 @@ messages:
    LeaveHold(what = $)
    {
       if IsClass(what,&Monster)
+         AND NOT IsClass(what,&Reflection)
+         AND NOT IsClass(what,&EvilTwin)
+         AND NOT IsClass(what,&Servant)
       {
          piMonster_count = piMonster_count - 1;
       }
@@ -270,6 +276,9 @@ messages:
          oMonster = Send(self,@HolderExtractObject,#data=i);
          // Count monsters, but not NPCs.
          if IsClass(oMonster,&Monster)
+            AND NOT IsClass(oMonster,&Reflection)
+            AND NOT IsClass(oMonster,&EvilTwin)
+            AND NOT IsClass(oMonster,&Servant)
             AND NOT Send(oMonster,@HasAttribute,#mask=MOB_NOFIGHT)
          {
             bFound = TRUE;
