@@ -443,175 +443,181 @@ messages:
 	  return;
    }
    
-   Next()
-   {
-      local iShouldFight, iNext, iLast, iSpeech, iSay, iSpeechItem, iRoomTeleport, iRoomTeleportEntryCoords, iTimeWait, sMsg;
-	  
-	  iShouldFight = TRUE;
-	  
-	  if pbIsDormant AND Send(self,@RoomHasPlayers) AND pbShouldBeMonster
-	  {
-	     pbIsDormant = FALSE;
-		 
-		 Send(poPlayer,@BecomeMonster);
-	  }
-	  
-	  if poPlayer <> $ AND Send(poPlayer,@GetOwner) <> $ AND Send(Send(poPlayer,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
-	  {
-	     // It looks like our NPC bit the dust.
-		 Send(poPlayer,@StopBeingMonster);
-		 
-		 plProgress = $;
-		 
-		 // Let's reset the story and everything, we're in the UW.
-		 Send(self,@SetupNPCPlayerProfile);
-		 
-		 return FALSE;
-	  }
-	  
-	  Send(self,@TryToRest);
-	  
-	  if pbIsResting AND NOT pbIsHunter
-	  {
-	     // We're resting, we are low on health.
-	     return FALSE;
-	  }
-	  
-	  if NOT pbIsHunter AND NOT Send(self,@RoomHasPlayers)
-	  {
-	     // A player must be present at each map we zone into.
-		 Send(poPlayer, @StopBeingMonster);
-		 
-		 pbIsDormant = TRUE;
-		 
-		 return FALSE;
-	  }
-	  
-	  if NOT pbCanGoNext
-	  {
-	     // We are waiting for a timer to finish before going to the next step.
-	     return FALSE;
-	  }
-	  
-      iSpeech = Nth(Nth(plProfile, 2), 2);
-	  
-      if plProgress = $ OR Length(plProgress) <= 0
-	  {
-	     plProgress = [];
-		 
-		 // First item in the speech list.
-		 iNext = Nth(iSpeech, 1);
-		 iLast = $;
-	  }
-	  else
-	  {
-	     if (Length(plProgress) + 1) < Length(iSpeech)
-		 {
-		    // Next item in the speech list.
-	        iNext = Nth(iSpeech, Length(plProgress) + 1);
-		 }
-		 else
-		 {
-		    // Last item in the speech list.
-	        iNext = Nth(iSpeech, Length(iSpeech));
-		 }
-		 
-	     iLast = Last(plProgress);
-	  }
-	  
-	  if piOnNextTeleportTo <> $
-	  {
-	     // Teleport to this RID
-		 Send(self,@TeleportToMap,#iRID=piOnNextTeleportTo);
-	  }
-      
-	  piOnNextTeleportTo = $;
-	  
-	  if iNext <> $ AND Length(plProgress) < Length(iSpeech)
-	  {
-	     // Keep track of the step we're on.
-		 plProgress = AppendListElem(iNext, plProgress);
-		 
-	     // Progressing to the next part of the storyline.
-		 // TODO: Uncomment iTimeWait, we'll use 3 seconds for now to test.
-		 iSay = Nth(iNext,1);
-		 
-         // Time to wait before moving to the next step.
-		 iTimeWait = Nth(iNext,4);
-		 
-		 // Prevent moving forward to the next step until we've waiting iTimeWait.
-		 Send(self,@WaitUntil,#iSeconds=iTimeWait);
-		 
-		 // Perform speech in say.
-		 if iSay <> $
-		 {
-		    piMonstersKilled = Send(poPlayer,@GetMonstersKilledAsNPC);
+	Next()
+	{
+		local iShouldFight, iNext, iLast, iSpeech, iSay, iSpeechItem, iRoomTeleport, iRoomTeleportEntryCoords, iTimeWait, sMsg;
+		
+		iShouldFight = TRUE;
+		
+		if pbIsDormant AND Send(self,@RoomHasPlayers) AND pbShouldBeMonster
+		{
+			pbIsDormant = FALSE;
 			
-			if piMonstersKilled > 0
+			Send(poPlayer,@BecomeMonster);
+		}
+		
+		if poPlayer <> $ AND Send(poPlayer,@GetOwner) <> $ AND Send(Send(poPlayer,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
+		{
+			// It looks like our NPC bit the dust.
+			Send(poPlayer,@StopBeingMonster);
+			
+			plProgress = $;
+			
+			// Let's reset the story and everything, we're in the UW.
+			Send(self,@SetupNPCPlayerProfile);
+			
+			return FALSE;
+		}
+		
+		Send(self,@TryToRest);
+		
+		if pbIsResting AND NOT pbIsHunter
+		{
+			// We're resting, we are low on health.
+			return FALSE;
+		}
+		
+		if NOT pbIsHunter AND NOT Send(self,@RoomHasPlayers)
+		{
+			// A player must be present at each map we zone into.
+			Send(poPlayer, @StopBeingMonster);
+			
+			pbIsDormant = TRUE;
+			
+			return FALSE;
+		}
+		
+		if NOT pbCanGoNext
+		{
+			// We are waiting for a timer to finish before going to the next step.
+			return FALSE;
+		}
+		
+		iSpeech = Nth(Nth(plProfile, 2), 2);
+		
+		if plProgress = $ OR Length(plProgress) <= 0
+		{
+			plProgress = [];
+			
+			// First item in the speech list.
+			iNext = Nth(iSpeech, 1);
+			iLast = $;
+		}
+		else
+		{
+			if (Length(plProgress) + 1) < Length(iSpeech)
 			{
-			   ClearTempString();
-			   AppendTempString(piMonstersKilled);
-			   AppendTempString(" samples collected so far!");
-			   sMsg = SetString($,GetTempString());
-			   
-			   Send(self,@Say,#msg=sMsg);
+				// Next item in the speech list.
+				iNext = Nth(iSpeech, Length(plProgress) + 1);
+			}
+			else
+			{
+				// Last item in the speech list.
+				iNext = Nth(iSpeech, Length(iSpeech));
 			}
 			
-		    Send(self,@Say,#msg=iSay,#type=Nth(iNext, 6));
-		 }
-		 
-         // Coordinates to move towards before teleporting
-		 iRoomTeleportEntryCoords = Nth(iNext,3);
-		 
-		 if iRoomTeleportEntryCoords <> $
-		 {
-            Send(poPlayer, @MoveTowardsCoords, 
-			   #iRow=Nth(iRoomTeleportEntryCoords, 1), 
-			   #iCol=Nth(iRoomTeleportEntryCoords, 2),
-			   #face_target=TRUE,
-			   #face_away=FALSE,
-			   #to_master=FALSE);
-		 }
-		 
-		 // Room to teleport to
-         iRoomTeleport = Nth(iNext,2);
-		 
-		 if iRoomTeleport <> $
-		 {
-		    piOnNextTeleportTo = iRoomTeleport;
-		 }
-		 
-		 if iShouldFight
-		 {
-		    // Whether or not we should be hunting monsters...
-		    iShouldFight = Nth(iNext, 5);
-					 
-		    if iShouldFight
-		    {
-		       Send(poPlayer,@BecomeMonster);
-		    }
-		    else
-		    {
-		       Send(poPlayer,@StopBeingMonster);
-		    }
-		 }
-		 
-         pbShouldBeMonster = iShouldFight;
-		 
-	  }
-	  else
-	  {
-	     // STORY HAS ENDED.
-		 // We should teleport back to our starting point, we'll start over from the beginning.
-		 plProgress = $;
-	     
-		 // Let's reset the story and everything.
-		 Send(self,@SetupNPCPlayerProfile);
-	  }
-	  
-	  return;
-   }
-   
+			iLast = Last(plProgress);
+		}
+		
+		if piOnNextTeleportTo <> $ AND NOT IsClass(Send(poPlayer,@GetOwner), &SurvivalRoom)
+		{
+			// Teleport to this RID
+			Send(self,@TeleportToMap,#iRID=piOnNextTeleportTo);
+		}
+		
+		piOnNextTeleportTo = $;
+		
+		if iNext <> $ AND Length(plProgress) < Length(iSpeech)
+		{
+			// Keep track of the step we're on.
+			plProgress = AppendListElem(iNext, plProgress);
+			
+			// Progressing to the next part of the storyline.
+			// TODO: Uncomment iTimeWait, we'll use 3 seconds for now to test.
+			iSay = Nth(iNext,1);
+			
+			// Time to wait before moving to the next step.
+			iTimeWait = Nth(iNext,4);
+			
+			// Prevent moving forward to the next step until we've waiting iTimeWait.
+			Send(self,@WaitUntil,#iSeconds=iTimeWait);
+			
+			// Perform speech in say.
+			if iSay <> $ AND NOT IsClass(Send(poPlayer,@GetOwner), &SurvivalRoom)
+			{
+				piMonstersKilled = Send(poPlayer,@GetMonstersKilledAsNPC);
+				
+				if piMonstersKilled > 0
+				{
+					ClearTempString();
+					AppendTempString(piMonstersKilled);
+					AppendTempString(" samples collected so far!");
+					sMsg = SetString($,GetTempString());
+					
+					Send(self,@Say,#msg=sMsg);
+				}
+				
+				Send(self,@Say,#msg=iSay,#type=Nth(iNext, 6));
+			}
+			
+			// Coordinates to move towards before teleporting
+			iRoomTeleportEntryCoords = Nth(iNext,3);
+			
+			if iRoomTeleportEntryCoords <> $
+			{
+				Send(poPlayer, @MoveTowardsCoords, 
+					#iRow=Nth(iRoomTeleportEntryCoords, 1), 
+					#iCol=Nth(iRoomTeleportEntryCoords, 2),
+					#face_target=TRUE,
+					#face_away=FALSE,
+					#to_master=FALSE);
+			}
+			
+			// Room to teleport to
+			iRoomTeleport = Nth(iNext,2);
+			
+			if iRoomTeleport <> $
+			{
+				piOnNextTeleportTo = iRoomTeleport;
+			}
+			
+			if iShouldFight
+			{
+				// Whether or not we should be hunting monsters...
+				iShouldFight = Nth(iNext, 5);
+							
+				if iShouldFight
+				{
+					Send(poPlayer,@BecomeMonster);
+				}
+				else
+				{
+					Send(poPlayer,@StopBeingMonster);
+				}
+			}
+			
+			pbShouldBeMonster = iShouldFight;
+			
+		}
+		else
+		{
+			if IsClass(Send(poPlayer,@GetOwner), &SurvivalRoom)
+			{
+				// Prevent leaving Survival Room
+				return;
+			}
+
+			// STORY HAS ENDED.
+			// We should teleport back to our starting point, we'll start over from the beginning.
+			plProgress = $;
+			
+			// Let's reset the story and everything.
+			Send(self,@SetupNPCPlayerProfile);
+		}
+		
+		return;
+	}
+
    WaitUntil(iSeconds=$)
    {
       ptWaitUntil = $;
@@ -736,11 +742,12 @@ messages:
 				  [ancient_speech_o,$,$, 60000, TRUE, SAY_YELL]
 			   ]],
 			   [NPC_EQUIPMENT, [
-			      &NeruditeArmor, 
-				  &NeruditeShield, 
-				  &NeruditeSword, 
-				  &Gauntlet, 
-				  &DaemonHelm
+			      [&NeruditeArmor, SID_BLESS],  
+				  [&NeruditeShield, SID_MAGIC_SHIELD], 
+				  [&NeruditeSword, SID_GAZE_OF_THE_BASILISK],
+				  [&Gauntlet, SID_SUPER_STRENGTH], 
+				  [&DaemonHelm, SID_ARMOR_OF_GORT],
+				  [&BerserkerRing, SID_KARAHOLS_CURSE]
 			   ]]
 			];
 		 break;
@@ -769,11 +776,12 @@ messages:
 				  [aquatic_speech_p,$,$, 60000, TRUE, SAY_YELL] 
 			   ]],
 			   [NPC_EQUIPMENT, [
-			      &PlateArmor,
-				  &GoldShield, 
-				  &Scimitar, 
-				  &Gauntlet, 
-				  &DaemonHelm
+			      [&PlateArmor, SID_BLESS],  
+				  [&GoldShield, SID_MAGIC_SHIELD], 
+				  [&Scimitar, SID_GAZE_OF_THE_BASILISK],
+				  [&Gauntlet, SID_SUPER_STRENGTH], 
+				  [&DaemonHelm, SID_ARMOR_OF_GORT],
+				  [&BerserkerRing, SID_KARAHOLS_CURSE]
 			   ]]
 			];
 		 break;
@@ -800,11 +808,12 @@ messages:
 				  [arch_speech_l,$,$,  60000, TRUE, SAY_YELL] 
 			   ]],
 			   [NPC_EQUIPMENT, [
-			      &NeruditeArmor, 
-				  &KnightShield, 
-				  &Hammer, 
-				  &Gauntlet, 
-				  &DaemonHelm
+			      [&NeruditeArmor, SID_BLESS],  
+				  [&KnightShield, SID_MAGIC_SHIELD], 
+				  [&Scimitar, SID_GAZE_OF_THE_BASILISK],
+				  [&Gauntlet, SID_SUPER_STRENGTH], 
+				  [&DaemonHelm, SID_ARMOR_OF_GORT],
+				  [&BerserkerRing, SID_KARAHOLS_CURSE]
 			   ]]
 			];
 		 break;
@@ -831,11 +840,12 @@ messages:
 				  [castle_speech_m,$,$, 60000, TRUE, SAY_YELL]
 			   ]],
 			   [NPC_EQUIPMENT, [
-			      &PlateArmor, 
-				  &KnightShield, 
-				  &Scimitar, 
-				  &Gauntlet, 
-				  &DaemonHelm
+			      [&PlateArmor, SID_BLESS],  
+				  [&KnightShield, SID_MAGIC_SHIELD], 
+				  [&Scimitar, SID_GAZE_OF_THE_BASILISK],
+				  [&Gauntlet, SID_SUPER_STRENGTH], 
+				  [&DaemonHelm, SID_ARMOR_OF_GORT],
+				  [&BerserkerRing, SID_KARAHOLS_CURSE]
 			   ]]
 			];
 		 break;
@@ -864,11 +874,12 @@ messages:
 				  [crypt_speech_p,$,$, 90000, TRUE, SAY_YELL]
 			   ]],
 			   [NPC_EQUIPMENT, [
-			      &PlateArmor, 
-				  &KnightShield, 
-				  &MysticSword, 
-				  &Gauntlet, 
-				  &DaemonHelm
+			      [&PlateArmor, SID_BLESS],  
+				  [&KnightShield, SID_MAGIC_SHIELD], 
+				  [&MysticSword, SID_GAZE_OF_THE_BASILISK],
+				  [&Gauntlet, SID_SUPER_STRENGTH], 
+				  [&DaemonHelm, SID_ARMOR_OF_GORT],
+				  [&BerserkerRing, SID_KARAHOLS_CURSE]
 			   ]]
 			];
 		 break;
@@ -886,25 +897,33 @@ messages:
 			     [$,$,$,8640000,TRUE,SAY_YELL]
 			 ]],
 			 [NPC_EQUIPMENT, [
-			     &NeruditeArmor, 
-				 &NeruditeShield, 
-				 &Hammer, 
-				 &Gauntlet, 
-				 &DaemonHelm
+				[&NeruditeArmor, SID_BLESS], 
+				[&NeruditeShield, SID_MAGIC_SHIELD], 
+				[&Hammer, SID_GAZE_OF_THE_BASILISK], 
+				[&Gauntlet, SID_SUPER_STRENGTH], 
+				[&DaemonHelm, SID_ARMOR_OF_GORT],
+				[&BerserkerRing, SID_KARAHOLS_CURSE]
 			 ]]
 			];
 			
 			ClearTempString();
-			AppendTempString("join public survival");
-			Send(poPlayer, @UserSaySurvival, #string = GetTempString());
-
-			ClearTempString();
-			AppendTempString("start public survival");
+			AppendTempString("start public survival The Antechamber of Victoria Castle");
 			Send(poPlayer, @UserSaySurvival, #string = GetTempString());
 
 			ClearTempString();
 			AppendTempString("join public survival");
 			Send(poPlayer, @UserSaySurvival, #string = GetTempString());
+
+			ClearTempString();
+			AppendTempString("start public survival The Antechamber of Victoria Castle");
+			Send(poPlayer, @UserSaySurvival, #string = GetTempString());
+
+			ClearTempString();
+			AppendTempString("join public survival");
+			Send(poPlayer, @UserSaySurvival, #string = GetTempString());
+
+			// Let's empty out the survival NPC inventory, they stack too many things.
+			Send(poPlayer, @ClearInventory, #preventAccidentalClear=TRUE);
 		 break;
 	  }
 	  
@@ -922,7 +941,7 @@ messages:
    
    EquipNPC()
    {
-      local cItem, lEquipment, oItem;
+      local cItem, lEquipment, oItem, iItemBuff;
 	  
 	  if plProfile <> $
 	  {
@@ -930,8 +949,10 @@ messages:
 		 
 	  	 foreach cItem in lEquipment
 		 {
-		    Send(poPlayer, @RemoveFromInventory, #class=cItem);
-			oItem = Create(cItem);
+			iItemBuff = Nth(cItem, 2);
+			
+		    Send(poPlayer, @RemoveFromInventory, #class=First(cItem));
+			oItem = Create(First(cItem));
 			Send(poPlayer, @NewHold, #what=oItem);
 			Send(poPlayer, @TryUseItem, #what=oItem);
 			Send(oItem,@SetMaxHits,#number=99999);
@@ -940,6 +961,11 @@ messages:
 			// Bond their gear so it isn't farmed.
 			Send(Send(SYS,@FindItemAttByNum,#Num=IA_TRANSCENDANT),@AddToItem,
               #oItem=oItem);
+
+			if iItemBuff <> $
+			{
+				Send(oItem, @SetBuffSpell, #num=iItemBuff);
+			}
 		 }
       }
 	  	  
