@@ -196,7 +196,7 @@ messages:
 
          if Send(self, @InUse)
          {
-            Send(self,@TryBuff);
+            Send(self, @StartBuffTimer);
          }
       }
 
@@ -1290,7 +1290,7 @@ messages:
          Send(poOwner,@SetPlayerFlag,#flag=iSpecial,#value=TRUE);
       }
 
-      Send(self,@TryBuff);
+      Send(self, @StartBuffTimer);
 
       return;
    }
