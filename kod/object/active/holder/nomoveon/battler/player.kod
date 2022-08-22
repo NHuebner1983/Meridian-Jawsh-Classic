@@ -5560,6 +5560,42 @@ messages:
       return TRUE;
    }
 
+   ClearInventory(preventAccidentalClear=FALSE)
+   "You should really only use this carefully. It will literally delete everything in the player's inventory."
+   {
+      local i;
+
+      if NOT preventAccidentalClear
+      {
+         // Whew.
+         return FALSE;
+      }
+
+      foreach i in plActive
+      {
+         if NOT IsClass(i, &NPCTotem)
+            AND NOT IsClass(i, &SoldierShield)
+            AND NOT IsClass(i, &HunterSword)
+            AND NOT IsClass(i, &NecromancerAmulet)
+         {
+            Send(i,@Delete);
+         }
+      }
+
+      foreach i in plPassive
+      {
+         if NOT IsClass(i, &NPCTotem)
+            AND NOT IsClass(i, &SoldierShield)
+            AND NOT IsClass(i, &HunterSword)
+            AND NOT IsClass(i, &NecromancerAmulet)
+         {
+            Send(i,@Delete);
+         }
+      }
+
+      return TRUE;
+   }
+
    TryAttack(what = $,use_weapon = $,stroke_obj=$)
    {
       local i, iRange, oSpell, state;
@@ -5574,7 +5610,6 @@ messages:
 
       // Check attack time.
       if NOT Send(self,@IsOkayAttackTime)
-         AND NOT Send(self,@HasBecomeMonster)
       {
          return FALSE;
       }
@@ -5597,6 +5632,7 @@ messages:
       // Can pay costs?  Only check for skills, spells have already been cast.
       if IsClass(stroke_obj,&Skill)
          AND NOT Send(stroke_obj,@CanPayCosts,#who=self,#oTarget=what)
+         AND NOT Send(self, @HasBecomeMonster)
       {
          return FALSE;
       }
@@ -5649,13 +5685,13 @@ messages:
          }
       }
 
-	 if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
-	 {
-		Send(self,@MsgSendUser,#message_rsc=Jig_cannot_attack,
-			  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
+      {
+      Send(self,@MsgSendUser,#message_rsc=Jig_cannot_attack,
+            #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
 
-		return FALSE;
-	 }
+      return FALSE;
+      }
 
       if IsClass(what,&Monster)
       {
@@ -5681,6 +5717,7 @@ messages:
       // initially, but then not again until PVP_NOTIFY_DECAY has passed
       if IsClass(what,&User)
       {
+         Debug("PVP Notify",Send(self,@GetName),"vs",Send(what,@GetName));
          Send(self,@DoPvpNotify);
          Send(what,@DoPvpNotify);
       }
@@ -5749,58 +5786,58 @@ messages:
             Send(First(i),@ImproveAbility,#who=self,#target=what);
          }
       }
-	  
-	  Send(self,@AddAttacked,#victim=what);
+      
+      Send(self,@AddAttacked,#victim=what);
 
       propagate;
    }
-   
+
    AddAttacked(victim=$)
    {
       if plAttacked = $ OR Length(plAttacked) >= 39
-	  {
-	     plAttacked = [];
-	  }
-	  
-	  plAttacked = AppendListElem(victim, plAttacked);
-	  
-	  return;
+      {
+         plAttacked = [];
+      }
+      
+      plAttacked = AppendListElem(victim, plAttacked);
+      
+      return;
    }
-   
+
    RemoveAttacked(victim=$)
    {
       if plAttacked = $ OR Length(plAttacked) >= 39
-	  {
-	     plAttacked = [];
-		 
-		 return;
-	  }
-	  
-	  if Send(self, @HasAttacked, #victim=victim)
-	  {
-	     plAttacked = DelListElem(plAttacked, victim);
-	  }
-	  
-	  return;
+      {
+         plAttacked = [];
+         
+         return;
+      }
+      
+      if Send(self, @HasAttacked, #victim=victim)
+      {
+         plAttacked = DelListElem(plAttacked, victim);
+      }
+      
+      return;
    }
    
    HasAttacked(victim=$)
    {
       if plAttacked = $
-	  {
-	     plAttacked = [];
-		 
-		 return FALSE;
-	  }
+      {
+         plAttacked = [];
+         
+         return FALSE;
+      }
       
-	  return FindListElem(plAttacked, victim);
+      return FindListElem(plAttacked, victim);
    }
-   
+
    ClearAttacked()
    {
       plAttacked = [];
-	  
-	  return;
+      
+      return;
    }
 
    // Determines if target is within attacking range, and within sight.
@@ -5815,6 +5852,7 @@ messages:
       // We are always in range of ourselves or anything we carry.
       if oTarget = self
          OR oTargetOwner = self
+         OR Send(self,@HasBecomeMonster)
       {
          return TRUE;
       }
