@@ -37,10 +37,10 @@ constants:
    DEFLT_START_TIME = 15000
    
    // Report goals every 1 minute
-   REPORT_TIME = 60000
+   REPORT_TIME = 15000
 
    // Starts when Miniboss is killed
-   RESPAWN_MINIBOSS_TIME = 60000
+   RESPAWN_MINIBOSS_TIME = 15000
 
    // To go over 100, set this higher. 
    // You will need to adjust rewards though.
@@ -130,12 +130,12 @@ properties:
    ptNextLevelTimer = $
    piWallBlitzTime = 300000
 
-   piGen_time = 5000
-   piGen_percent = 100
+   piGen_time = 1000
+   piGen_percent = 20
 
    piInit_count_min = 0
    piInit_count_max = 0
-   piMonster_count_max = 120
+   piMonster_count_max = 20
 
    pbSpawnWaves = FALSE
    piAllowJoins = TRUE
@@ -180,6 +180,12 @@ properties:
 
    // When we reach 100, it's over with.
    ptFinalFoundBoot = $
+
+   // Dispose of everything
+   piDispose_delay = 30000
+
+   // Remove bodies
+   piDisposeDeadBodiesInterval = 5000
 
 messages:
 
@@ -464,6 +470,9 @@ messages:
    {
       local i, n, p;
 
+      // Remove all of the bodies before we bring more monsters in.
+      Send(self,@ClearDeadBodies);
+
       piHasBegun = TRUE;
       ptNextLevelTimer = $;
       pbSpawnWaves = TRUE;
@@ -557,11 +566,13 @@ messages:
             else if iGoal = GOAL_BOSS
             {
                Send(each_obj,@MsgSendUser,#message_rsc=boss_goal_msg);
+               Send(self,@NeedBosses,#num=1);
             }
             else if iGoal = GOAL_MINIBOSSES
             {
                Send(each_obj,@MsgSendUser,#message_rsc=minibosses_goal_msg,
                      #parm1=Nth(n,2));
+               Send(self,@NeedMiniBosses,#num=Nth(n,2));
             }
          }
 
@@ -586,6 +597,52 @@ messages:
                Send(each_obj,@MsgSendUser,#message_rsc=kill_friendly_msg);
             }
          }
+      }
+
+      return;
+   }
+
+   NeedMiniBosses(num=2)
+   "If our goal says we need these, we need to make sure they are spawned"
+   {
+      local i, iCount;
+
+      iCount = 0;
+
+      foreach i in plActive
+      {
+         if IsClass(First(i),&Monster) AND Send(self,@IsMiniBoss,#what=First(i))
+         {
+            iCount = iCount + 1;
+         }
+      }
+
+      if iCount < num
+      {
+         Send(self,@SpawnMiniboss);
+      }
+
+      return;
+   }
+
+   NeedBosses(num=1)
+   "If our goal says we need these, we need to make sure they are spawned"
+   {
+      local i, iCount;
+
+      iCount = 0;
+
+      foreach i in plActive
+      {
+         if IsClass(First(i),&Monster) AND Send(self,@IsBoss,#what=First(i))
+         {
+            iCount = iCount + 1;
+         }
+      }
+
+      if iCount < num
+      {
+         Send(self,@SpawnBoss);
       }
 
       return;
@@ -727,8 +784,7 @@ messages:
          }
       }
 
-      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,
-                              piRegroupTime + iRewardTime);
+      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,piRegroupTime);
       
       foreach i in plActive
       {
@@ -747,7 +803,7 @@ messages:
                }
             }
             Send(each_obj,@MsgSendUser,#message_rsc=next_level_in_seconds,
-                  #parm1=piLevel,#parm2=(piRegroupTime + iRewardTime) / 1000);
+                  #parm1=piLevel,#parm2=(piRegroupTime) / 1000);
          }
       }
 
