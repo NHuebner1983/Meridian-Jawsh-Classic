@@ -2375,7 +2375,9 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_TAN,#class=&TosTan);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_GREY,#class=&TosGrey);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_FORGOTTEN,#class=&TosForgottenLovers);
-
+      Send(self,@CreateOneRoomIfNew,#num=RID_MALEVAL,#class=&MalevalDarkStudy);
+      Send(self,@CreateOneRoomIfNew,#num=RID_TOS_TRAINING,#class=&TosTraining);
+      
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_GRAVEYARD,#class=&TosGraveYard);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_APOTH,#class=&TosApoth);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_EAST,#class=&EastTos);

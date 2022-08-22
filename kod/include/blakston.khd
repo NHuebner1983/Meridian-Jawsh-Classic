@@ -951,6 +951,12 @@
    // Ogre Caves
    RID_OGRE_CAVE1 = 2603
 
+   // Maleval's Dark Study in Tos.
+   RID_MALEVAL = 2604
+   
+   // Tos Training Room
+   RID_TOS_TRAINING = 2605
+
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia
    //  reasons.
