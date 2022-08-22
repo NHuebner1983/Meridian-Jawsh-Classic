@@ -21,7 +21,7 @@ BGFS = neeleme.bgf neelemeX.bgf iunholyt.bgf xeoneru.bgf xeoneruX.bgf \
        ogre.bgf ogreX.bgf wizardhat.bgf wizardhatF.bgf \
        farenservantspell.bgf jalaservantspell.bgf kranservantspell.bgf qorservantspell.bgf \
        riijaservantspell.bgf shalservantspell.bgf captain.bgf riijafol.bgf riijafolX.bgf \
-       shalliege.bgf
+       shalliege.bgf minotaur.bgf
 
 !include $(RESOURCEDIR)\copy.mak
 
