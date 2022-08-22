@@ -893,7 +893,7 @@ messages:
 
       ptGenerateMonstersAndDieTimer = CreateTimer(self, @GenerateMonstersAndDie, 100);
 
-      Send(self, @ClearDeadBodies);
+      Send(poOwner, @ClearDeadBodies);
       Send(self, @CleanFloor);
 
       return;
@@ -963,37 +963,6 @@ messages:
       }
 
       return;      
-   }
-
-   ClearDeadBodies(animated=FALSE)
-   {
-      local i, j, k, l, m, n, bBool, iInt, sString, oObj, oObject, rResource, lList, lSecondlist, lThirdlist, oSpell;
-
-      // Clear all the dead bodies
-      lList = Send(poOwner, @GetHolderPassive);
-
-      foreach i in lList
-      {
-         oObj = First(i);
-
-         bBool = FALSE;
-
-         if oObj <> $ AND IsClass(oObj, &DeadBody)
-         {
-            if animated
-            {
-               oSpell = Send(SYS,@FindSpellByNum,#num=SID_ANIMATE);
-               Send(oSpell,@CastSpell,#who=self,#lTargets=[oObj],
-               #iSpellPower=Random(1,99));
-            }
-            else
-            {
-               Send(oObj, @Delete);
-            }
-         }
-      }
-
-      return;
    }
 
    UserSay(string=$,type=$)
@@ -1118,7 +1087,7 @@ messages:
       if StringContain(string, dm_sweep)
       {
          Send(self, @SweepRoom);
-         Send(self, @ClearDeadBodies);
+         Send(poOwner, @ClearDeadBodies);
 
          return;
       }
@@ -1126,7 +1095,7 @@ messages:
       if StringContain(string, dm_clear_floor)
       {
          Send(self, @CleanFloor);
-         Send(self, @ClearDeadBodies);
+         Send(poOwner, @ClearDeadBodies);
 
          return;
       }
@@ -1223,7 +1192,7 @@ messages:
       if StringContain(string, dm_animate)
       {
          // Animate all dead bodies on the floor
-         Send(self, @ClearDeadBodies, #animated=TRUE);
+         Send(poOwner, @ClearDeadBodies, #animated=TRUE);
 
          return;
       }
