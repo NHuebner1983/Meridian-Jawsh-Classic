@@ -579,9 +579,9 @@ void VerifyLogin(session_node *s)
          && s->rsb_hash[0] != 0
          && strcmp(s->rsb_hash, str) != 0)
       {
-         if (s->version_major == 50)
+         if (s->version_major < 90)
             SynchedSendClientPatchClassic(s);
-         else if (s->version_major == 90)
+         else
             SynchedSendClientPatchOgre(s);
          InterfaceUpdateSession(s);
          /* set timeout real long, since they're downloading */
@@ -679,6 +679,10 @@ void SynchedSendClientPatchOgre(session_node *s)
    UnlockConfigStr();
 
    str = LockConfigStr(UPDATE_OGRE_PATCH_TXT);
+   AddStringToPacket(strlen(str), str);
+   UnlockConfigStr();
+
+   str = LockConfigStr(UPDATE_OGRE_PATCH_UPDATER);
    AddStringToPacket(strlen(str), str);
    UnlockConfigStr();
 

@@ -182,6 +182,7 @@ config_table_type config_table[] =
 { UPDATE_OGRE_PATCH_PATH, T, "OgrePatchPath" ,CONFIG_STR, "" },
 { UPDATE_OGRE_PATCH_CACHE_PATH,T, "OgrePatchCachePath", CONFIG_STR, "" },
 { UPDATE_OGRE_PATCH_TXT, T, "OgrePatchTxt" ,CONFIG_STR, "" },
+{ UPDATE_OGRE_PATCH_UPDATER, T, "OgreUpdaterFile" ,CONFIG_STR, "" },
 { UPDATE_OGRE_CLUB_EXE, T,  "OgreClubExe"  ,CONFIG_STR, "" },
 
 { CONSOLE_GROUP,          F, "[Console]",     CONFIG_GROUP, "" },
