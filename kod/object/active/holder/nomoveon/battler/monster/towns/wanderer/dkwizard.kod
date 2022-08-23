@@ -25,7 +25,8 @@ resources:
       "Invasive magic weighs heavily in the air surrounding this wandering "
       "sorcerer.  His knowledge of the intricacies of spell learning is "
       "unsurpassed, though his public dislike for the temples has made him an "
-      "outcast of the Royal Court."
+      "outcast of the Royal Court. He has found a nice home in Tos which he "
+      "refers to as his Dark Study."
 
    DarkWizard_already_have_spell = \
       "You already have knowledge of the %s spell.  You waste my time, fool."
