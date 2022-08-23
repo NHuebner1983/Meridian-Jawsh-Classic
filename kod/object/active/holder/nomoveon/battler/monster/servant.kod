@@ -395,12 +395,12 @@ classvars:
 	   
    viWimpy = 2
 
-   viLevel = 200
-   viDifficulty = 10
+   viLevel = 250
+   viDifficulty = 12
    
    // Attack range of 192, or 3 row/col.
-   viAttackRange = 192
-   viVisionDistance = 5
+   viAttackRange = 220
+   viVisionDistance = 15
    viCashmin = 1
    viCashmax = 2
    viAttributes = MOB_LISTEN | MOB_RECEIVE
@@ -430,8 +430,8 @@ properties:
    plSpellBook = $
 
    // Monsters primary stats
-   piAim = 50
-   piAgility = 50
+   piAim = 70
+   piAgility = 70
    
    // Spell object
    poSpell = $
@@ -666,7 +666,15 @@ messages:
       // Set damage this servant can do to players & monsters based on spell power.
       // They are the same, but I made two versions in case we want to balance PVP and PVE.
       piPlayerDamage = Bound(iSpellPower / 4, 1, 25) * 100;
-      piMonsterDamage = Bound(iSpellPower / 4, 1, 25) * 100;
+
+      if Send(poMaster, @IsRoamingNPCPlayer)
+      {
+         piMonsterDamage = Bound(iSpellPower / 4, 1, 50) * 100;
+      }
+      else
+      {
+         piMonsterDamage = Bound(iSpellPower / 4, 1, 25) * 100;
+      }
 
       // Stats based on spell power.
       iStats = Bound(iSpellPower / 2, 1, 50);
@@ -878,7 +886,7 @@ messages:
 
       bCanHelp = Send(poMaster, @CanHelpPlayer);
 
-      if pbCanHelp AND NOT bCanHelp
+      if pbCanHelp AND NOT bCanHelp AND NOT Send(poMaster, @IsRoamingNPCPlayer)
       {
          // PVP timer is running
          Post(poMaster,@MsgSendUser,#message_rsc=servant_pvp_cant_help_started);
@@ -890,7 +898,7 @@ messages:
          Send(self,@RemoveAllMinions);
       }
 
-      if NOT pbCanHelp AND bCanHelp
+      if NOT pbCanHelp AND bCanHelp AND NOT Send(poMaster, @IsRoamingNPCPlayer)
       {
          // PVP timer has ended.
          Post(poMaster,@MsgSendUser,#message_rsc=servant_pvp_can_help_again);
@@ -900,7 +908,7 @@ messages:
 
       Send(self,@StartCanHelpTimer);
 
-      if NOT pbCanHelp
+      if NOT pbCanHelp AND NOT Send(poMaster, @IsRoamingNPCPlayer)
       {
          // Player is involved in PVP.
          piImpInterval = piImpIntervalPvp;
@@ -1005,11 +1013,25 @@ messages:
       // Check servant health and try to heal self.
       if piSpellSchool = SS_SHALILLE
       {
-         iChance = 35;
+         if Send(poMaster, @IsRoamingNPCPlayer)
+         {
+            iChance = 100;
+         }
+         else
+         {
+            iChance = 35;
+         }
       }
       else
       {
-         iChance = 30;
+         if Send(poMaster, @IsRoamingNPCPlayer)
+         {
+            iChance = 100;
+         }
+         else
+         {
+            iChance = 30;
+         }
       }
       
       if iHealth < iMaxHealth AND Random(1, 80) <= iChance

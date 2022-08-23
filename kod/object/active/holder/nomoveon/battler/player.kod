@@ -5611,7 +5611,7 @@ messages:
       // Check attack time.
       if NOT Send(self,@IsOkayAttackTime)
       {
-         return FALSE;
+         return $;
       }
 
       // Is it in the same room?

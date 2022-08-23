@@ -408,7 +408,7 @@ messages:
 			   
                pbIsResting = TRUE;
 			   ClearTempString();
-			   AppendTempString("I am losing too much health, I need to rest for a moment.");
+			   AppendTempString("Ouch! That really hurt.");
 			   sMsg = SetString($,GetTempString());
 			   Send(self,@Say,#msg=sMsg);
 			}
@@ -425,15 +425,15 @@ messages:
 			   
 			   if NOT pbIsHunter
 			   {
-			      // EXPEDITION TEAM RECEIVES HELP FROM A RANDOM SERVANT
-				  iRand = Random(SID_RIIJA_SERVANT, SID_JALA_SERVANT);
+			      // EXPEDITION TEAM RECEIVES HELP FROM A SHALLY SERVANT
+				  iRand = SID_SHAL_SERVANT;
 			      oSpell = Send(SYS,@FindSpellByNum,#num=iRand);
 			      Send(oSpell,@CastSpell,#who=poPlayer,#lTargets=[poPlayer],#iSpellPower=99);
 			   }
 			   
                pbIsResting = FALSE;
 			   ClearTempString();
-			   AppendTempString("I feel much better now.");
+			   AppendTempString("That's better.");
 			   sMsg = SetString($,GetTempString());
 			   Send(self,@Say,#msg=sMsg);
 			}
@@ -893,8 +893,36 @@ messages:
 		    plProfile = [
 			 [NPC_PROFILE_LOGON, survival_logon],
 			 [NPC_PROFILE_SPEECH, [
-			     [$,$,$,8640000,TRUE,SAY_YELL], 
-			     [$,$,$,8640000,TRUE,SAY_YELL]
+			     [$,$,$,60 * 30 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 30 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 30 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 30 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 30 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 30 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 30 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 30 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL], 
+			     [$,$,$,60 * 5 * 100,TRUE,SAY_YELL]
 			 ]],
 			 [NPC_EQUIPMENT, [
 				[&NeruditeArmor, SID_BLESS], 

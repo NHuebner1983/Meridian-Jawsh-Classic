@@ -1157,10 +1157,12 @@ messages:
 
    NewHoldObject(what=$)
    {
-      local oTarget, i, count;
+      local oTarget, i, count, lPos;
 
       if IsClass(what,&User)
       {
+         lPos = Send(what, @GetPos);
+
          foreach i in plCrashProtection
          {
             if what = First(i)
@@ -1180,8 +1182,11 @@ messages:
          if piHasBegun
             AND piLevel > piLastJoinLevel
             AND NOT IsClass(what, &DM)
+            AND NOT Send(what,@IsRoamingNPCPlayer)
             AND NOT Send(what,@HasBecomeMonster)
+            AND Nth(lPos, 1) = viTeleport_row AND Nth(lPos, 2) = viTeleport_col
          {
+            // Users brought in by DM will not be in blink spot, they should not be spectating.
             Send(self,@SpectateUser,#who=what);
             Post(what,@MsgSendUser,#message_rsc=spectator_only_msg);
 
