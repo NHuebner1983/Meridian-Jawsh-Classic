@@ -105,7 +105,7 @@ messages:
 
       propagate;
    }
-   
+
    CastSpell(who = $, lTargets = $, bAutolooted = FALSE)
    {
       local i, oTarget, oGuild, oGuildHall, oBox, cClass, bSuccess, lBoxes, iBoxIndex, lBoxPatterns, lBoxSplit, lBoxSplitItems, bUseThisBox;
@@ -144,15 +144,27 @@ messages:
          return FALSE;
       }
 
-	  // Get the player's guild
+      // Get the player's guild
       oGuild = Send(who,@GetGuild);
-	  
-	  // Get the player's hall
-	  oGuildHall = Send(oGuild,@GetGuildHall);
-	  
-	  // Whether or not the conveyance was successful...
-	  bSuccess = FALSE;
-	  lBoxes = [];
+
+      if oGuild = $
+      {
+         // Player has no guild
+         return FALSE;
+      }
+
+      // Get the player's hall
+      oGuildHall = Send(oGuild,@GetGuildHall);
+
+      if oGuildHall = $
+      {
+         // Guild has no hall
+         return FALSE;
+      }
+
+      // Whether or not the conveyance was successful...
+      bSuccess = FALSE;
+      lBoxes = [];
 
       foreach i in Send(oGuildHall,@GetHolderActive)
       {
@@ -251,7 +263,7 @@ messages:
 
       if bUseThisBox
       {
-        // Debug("Placed", GetClass(oTarget),"in box",iBoxIndex);
+         // Debug("Placed", GetClass(oTarget),"in box",iBoxIndex);
          Send(oBox,@NewHold,#what=oTarget);
 
          bSuccess = TRUE;
