@@ -361,6 +361,9 @@ resources:
    servant_warn_enemy_nearby = "~kYour servant ~Iscreeches~I, ''I sense an enemy named ~B~r%s~B~k near us, be prepared for battle''~k"
    servant_warn_enemies_nearby = "~kYour servant ~Iscreeches~I, ''I sense ~B~r%i enemies~B~k near us, be prepared for battle''~k"
 
+   servant_response_missing_spells = "~kYour servant responds, ''You are missing %q from that school.''~k"
+   servant_response_missing_spells_none = "~kYour servant responds, ''Captain know-it-all, you have learned everything in that school.''~k"
+
    servant_tougher = "~IYour servant suddenly feels a little tougher!~I"
 
    servant_outfit_qor = "qor outfit"
@@ -2062,82 +2065,82 @@ messages:
    GetSaidProgress(said_string="derpaderp")
    {
       local lNPCLibraryItem, oAbility, oAbilityName, iAbilityNum, oNPC, iLearnedAlready, bCanLearn, oSpell, oSkill;
-	  
+      
       // When we finally determine the NPC, we should check if the NPC is already in the room with us.
-	  // We don't want duplicate messages appearing.
-	  // Let's first see if what they said is in our ability library (spells & skills).
-	  
-	  Send(self,@PrepareNPCList);
-	  
-	  if plNPCLibrary <> $
-	  {
-	     // Iterate the NPC objects and see if they teach what we said...
-		 foreach lNPCLibraryItem in plNPCLibrary
-		 {
-		    oNPC = Nth(lNPCLibraryItem, 1);
-			
-			if oNPC = $
-			{
-			   continue;
-			}
-			
-		    foreach oAbility in Nth(lNPCLibraryItem, 2)
-			{
-			   iLearnedAlready = FALSE;
-			   oAbilityName = $;
-			   
-			   if oAbility <> $ AND IsClass(oAbility, &Spell)
-			   {
-			      // Spell name
-			      oAbilityName = Send(oAbility,@GetName);
-				  iAbilityNum = Send(oAbility,@GetSpellNum);
-			   }
+      // We don't want duplicate messages appearing.
+      // Let's first see if what they said is in our ability library (spells & skills).
+      
+      Send(self,@PrepareNPCList);
+      
+      if plNPCLibrary <> $
+      {
+         // Iterate the NPC objects and see if they teach what we said...
+         foreach lNPCLibraryItem in plNPCLibrary
+         {
+            oNPC = Nth(lNPCLibraryItem, 1);
+            
+            if oNPC = $
+            {
+               continue;
+            }
+         
+            foreach oAbility in Nth(lNPCLibraryItem, 2)
+            {
+               iLearnedAlready = FALSE;
+               oAbilityName = $;
+               
+               if oAbility <> $ AND IsClass(oAbility, &Spell)
+               {
+                  // Spell name
+                  oAbilityName = Send(oAbility,@GetName);
+                  iAbilityNum = Send(oAbility,@GetSpellNum);
+               }
 
-			   if oAbility <> $ AND IsClass(oAbility, &Skill)
-			   {
-			      // Skill name
-			      oAbilityName = Send(oAbility,@GetName);
-				  iAbilityNum = Send(oAbility,@GetSkillNum);
-			   }
-			   
-			   if oAbilityName <> $
-			   {
-			      // Check if this matches what we said...
-				  if NOT StringEqual(oAbilityName, said_string)
-				  {
-				     continue;
-				  }
-				  
-			      // Check if we know this spell or skill already.
-				  if IsClass(oAbility, &Spell)
-				  {
-				     iLearnedAlready = Send(poMaster, @GetSpellAbility, #spell_num=Send(oAbility,@GetSpellNum));
-				  }
-				  
-				  if IsClass(oAbility, &Skill)
-				  {
-				     iLearnedAlready = Send(poMaster, @GetSkillAbility, #Skill_num=Send(oAbility,@GetSkillNum));
-				  }
-				  
-				  if iLearnedAlready > 0
-				  {
-				     // We have already learned this.
-					 // Tell the master!
-					 Post(poMaster,@MsgSendUser,#message_rsc=servant_already_learned,#parm1=oAbilityName);
-					 
-					 return TRUE;
-				  }
-				  
-				  // Let's reach out to this NPC and see if we can learn it...
-				  Send(oNPC, @CanDoTeach, #who=poMaster, #sid=iAbilityNum, 
-				      #bSkill=IsClass(oAbility, &Skill), #oRequester=self);
-              return TRUE;
-			   }
-			}
-		 }
-	  }
-	  
-	  return FALSE;
+               if oAbility <> $ AND IsClass(oAbility, &Skill)
+               {
+                  // Skill name
+                  oAbilityName = Send(oAbility,@GetName);
+                  iAbilityNum = Send(oAbility,@GetSkillNum);
+               }
+               
+               if oAbilityName <> $
+               {
+                  // Check if this matches what we said...
+                  if NOT StringEqual(oAbilityName, said_string)
+                  {
+                     continue;
+                  }
+                  
+                  // Check if we know this spell or skill already.
+                  if IsClass(oAbility, &Spell)
+                  {
+                     iLearnedAlready = Send(poMaster, @GetSpellAbility, #spell_num=Send(oAbility,@GetSpellNum));
+                  }
+                  
+                  if IsClass(oAbility, &Skill)
+                  {
+                     iLearnedAlready = Send(poMaster, @GetSkillAbility, #Skill_num=Send(oAbility,@GetSkillNum));
+                  }
+                  
+                  if iLearnedAlready > 0
+                  {
+                     // We have already learned this.
+                     // Tell the master!
+                     Post(poMaster,@MsgSendUser,#message_rsc=servant_already_learned,#parm1=oAbilityName);
+                     
+                     return TRUE;
+                  }
+                  
+                  // Let's reach out to this NPC and see if we can learn it...
+                  Send(oNPC, @CanDoTeach, #who=poMaster, #sid=iAbilityNum, 
+                     #bSkill=IsClass(oAbility, &Skill), #oRequester=self);
+                  return TRUE;
+               }
+            }
+         }
+      }
+      
+      return FALSE;
    }
    
    PrepareNPCList()
@@ -2180,13 +2183,13 @@ messages:
 
 	  return;
    }
-   
+
    SetServantDesc(iSpellNum=$)
    {
       if iSpellNum = $
-	  {
-	     return;
-	  }
+      {
+         return;
+      }
       
       switch(iSpellNum) {
          case SID_RIIJA_SERVANT:
@@ -2208,7 +2211,7 @@ messages:
             vrDesc = servant_desc_jala;
          break;
       }
-	  
+      
       return;
    }
 
@@ -2769,6 +2772,55 @@ messages:
          bAcknowledge = TRUE;
       }
 
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_missing_spells_shalille)
+      {
+         Send(self, @MissingSpells, #school=SS_SHALILLE);
+
+         bIsCommand = TRUE;
+         bAcknowledge = FALSE;
+      }
+
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_missing_spells_qor)
+      {
+         Send(self, @MissingSpells, #school=SS_QOR);
+         
+         bIsCommand = TRUE;
+         bAcknowledge = FALSE;
+      }
+
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_missing_spells_faren)
+      {
+         Send(self, @MissingSpells, #school=SS_FAREN);
+         
+         bIsCommand = TRUE;
+         bAcknowledge = FALSE;
+      }
+
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_missing_spells_kraanan)
+      {
+         Send(self, @MissingSpells, #school=SS_KRAANAN);
+         
+         bIsCommand = TRUE;
+         bAcknowledge = FALSE;
+      }
+
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_missing_spells_riija)
+      {
+         Send(self, @MissingSpells, #school=SS_RIIJA);
+         
+         bIsCommand = TRUE;
+         bAcknowledge = FALSE;
+      }
+
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_missing_spells_jala)
+      {
+         Send(self, @MissingSpells, #school=SS_JALA);
+         
+         bIsCommand = TRUE;
+         bAcknowledge = FALSE;
+      }
+
+
       if bAcknowledge
       {
          // Generic servant response.
@@ -2795,6 +2847,134 @@ messages:
       }
       
 	  return bIsCommand;
+   }
+
+   MissingSpells(school=$)
+   "Player wants to know which spells they are missing from a school."
+   {
+      local lNPCLibraryItem, iSchool, oAbility, oAbilityName, iAbilityNum, oNPC, iLearnedAlready, bCanLearn, oSpell, oSkill, lMissing, i, sString;
+      
+      if school = $ OR NOT Send(self, @MasterCheck)
+      {
+         return;
+      }
+
+      Send(self,@PrepareNPCList);
+      
+      if plNPCLibrary <> $
+      {
+         // Iterate the NPC objects and see if they teach something we do not already know.
+         foreach lNPCLibraryItem in plNPCLibrary
+         {
+            oNPC = Nth(lNPCLibraryItem, 1);
+         
+            if oNPC = $
+            {
+               continue;
+            }
+         
+            foreach oAbility in Nth(lNPCLibraryItem, 2)
+            {
+               iLearnedAlready = FALSE;
+               oAbilityName = $;
+               iSchool = $;
+               
+               if oAbility <> $ AND IsClass(oAbility, &Spell)
+               {
+                  // Spell name
+                  oAbilityName = Send(oAbility,@GetName);
+                  iAbilityNum = Send(oAbility,@GetSpellNum);
+                  iSchool = Send(oAbility,@GetSchool);
+               }
+
+               if oAbility <> $ AND IsClass(oAbility, &Skill)
+               {
+                  // Skill name
+                  oAbilityName = Send(oAbility,@GetName);
+                  iAbilityNum = Send(oAbility,@GetSkillNum);
+                  iSchool = Send(oAbility,@GetSchool);
+               }
+
+               if iSchool = school AND oAbilityName <> $
+               {
+                  // Check if we know this spell or skill already.
+                  if IsClass(oAbility, &Spell)
+                  {
+                     iLearnedAlready = Send(poMaster, @GetSpellAbility, #spell_num=Send(oAbility,@GetSpellNum));
+                  }
+                  
+                  if IsClass(oAbility, &Skill)
+                  {
+                     iLearnedAlready = Send(poMaster, @GetSkillAbility, #Skill_num=Send(oAbility,@GetSkillNum));
+                  }
+                  
+                  if iLearnedAlready > 0
+                  {
+                     // We have already learned this.
+                     continue;
+                  }
+
+                  lMissing = AppendListElem(oAbility, lMissing);
+
+                  if Length(lMissing) >= 5
+                  {
+                     break;
+                  }
+               }
+            }
+
+            if Length(lMissing) >= 5
+            {
+               break;
+            }
+         }
+      }
+
+      if Length(lMissing) > 0
+      {
+         // We have some missing spells or skills.
+         ClearTempString();
+
+         i = 0;
+
+         while i <= 5
+         {
+            i = i + 1;
+
+            if i <= Length(lMissing)
+            {
+               if i = Length(lMissing) AND Length(lMissing) > 1
+               {
+                  AppendTempString("and ");
+               }
+
+               AppendTempString(Send(Nth(lMissing, i), @GetName));
+
+               if i < Length(lMissing)
+               {
+                  AppendTempString(", ");
+               }
+            }
+         }
+
+         if Length(lMissing) > 5
+         {
+            AppendTempString(" along with ");
+            AppendTempString(Length(lMissing) - 5);
+            AppendTempString(" other abilities");
+         }
+
+         // Send the string to master.
+         sString = SetString($, GetTempString());
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_response_missing_spells,#parm1=sString,#type1=STRING_RESOURCE);
+      }
+      else
+      {
+         // Master knows everything in that school.
+         Post(poMaster,@MsgSendUser,#message_rsc=servant_response_missing_spells_none);
+      }
+
+      return;
    }
 
    DMCanArmageddon()
