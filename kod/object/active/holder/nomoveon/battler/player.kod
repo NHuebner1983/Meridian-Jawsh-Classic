@@ -16527,7 +16527,7 @@ messages:
       return iSavedNum;
    }
 
-   UseOutfit(num=$)
+   UseOutfit(num=$, retry=0)
    {
       local i, ap, c, oObj, lInventory, lCantUnequip, bSkip, iOutfit;
 
@@ -16587,6 +16587,14 @@ messages:
                continue;
             }
 
+            if NOT Send(oObj,@IsCursed) 
+               AND Send(oObj,@InUse)
+               AND NOT Send(oObj,@InOutfit,#outfitNum=num)
+            {
+               // Unequip things that weren't saved!
+               Send(self,@TryUnuseItem,#what=oObj);
+            }
+
             if NOT Send(oObj,@InUse) 
                AND NOT Send(oObj,@IsCursed) 
                AND Send(oObj,@InOutfit,#outfitNum=num)
@@ -16594,17 +16602,12 @@ messages:
                // Let's use this item
                Send(self,@TryUseItem,#what=oObj);
             }
-            else
-            {
-               if NOT Send(oObj,@IsCursed) 
-                  AND Send(oObj,@InUse)
-                  AND NOT Send(oObj,@InOutfit,#outfitNum=num)
-               {
-                  // Unequip things that weren't saved!
-                  Send(self,@TryUnuseItem,#what=oObj);
-               }
-            }
          }
+      }
+
+      if retry = 0
+      {
+         return Send(self, @UseOutfit, #num=num, #retry=1);
       }
 
       return TRUE;
