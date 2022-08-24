@@ -942,7 +942,7 @@ messages:
                
                if oObject <> $
                {
-                  if NOT StringEqual("special %s", Send(oObject, @GetName))
+                  if Send(oObj, @CanIdentify) OR NOT StringEqual("special %s", Send(oObject, @GetName))
                   {
                      // Put the "odd" item in our inventory
                      Send(self,@NewHold,#what=oObj);
