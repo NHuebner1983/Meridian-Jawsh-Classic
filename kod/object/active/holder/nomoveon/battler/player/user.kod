@@ -11366,17 +11366,17 @@ messages:
                // Let's not fight Revenants, Reflections or Servants.
                continue;
             }
+         }
+         
+         if IsClass(First(i),&Monster) AND Send(First(i),@GetCurrentState) <> 1
+         {
 
             if IsClass(First(i), &OrcWizard) OR IsClass(First(i), &EvilEnt) OR IsClass(First(i), &Ent) OR IsClass(First(i), &AvarShaman) OR IsClass(First(i), &LupoggKing)
             {
                // These monsters kick our ass the most.
                oPreferTarget = First(i);
             }
-         }
-         
-         if IsClass(First(i),&Monster) AND Send(First(i),@GetCurrentState) <> 1
-         {
-
+            
             // if First(i) = poTarget AND (poIgnoreLastTarget = $ OR First(i) <> poIgnoreLastTarget)
             // {
             //    // Do not change targets, we're already on the one from before...
