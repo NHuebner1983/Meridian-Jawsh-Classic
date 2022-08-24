@@ -78,7 +78,7 @@ resources:
    ShrunkenHead_win3 = "Doooshh!"
    ShrunkenHead_win4 = "ka-powza!"
    ShrunkenHead_win5 = "Nicely done sir. I won't tell Shal'ille if you don't!"
-   ShrunkenHead_win6 = "Hail!  Another %s bites the dust!"
+   ShrunkenHead_win6 = "Another %s bites the dust!"
 
    ShrunkenHead_dealt1 = "Ouch!!"
    ShrunkenHead_dealt2 = "Stop hitting us!"
@@ -93,9 +93,9 @@ resources:
    ShrunkenHead_cheer1 = "Well Done!"
    ShrunkenHead_cheer2 = "Your patience really paid off...."
 
-   ShrunkenHead_tougher1 = "Woooooooooooot!!!%s"
-   ShrunkenHead_tougher2 = "Master is sooooo strong!!!%s"
-   ShrunkenHead_tougher3 = "Oh Master!!! Congratulations!!!!%s"
+   ShrunkenHead_tougher1 = "Tougher!%s"
+   ShrunkenHead_tougher2 = "Nice one!%s"
+   ShrunkenHead_tougher3 = "You're doing great!%s"
    shrunken_divulge_hp = "  Master now has %i hitpoints! hee hee hee"
 
    ShrunkenHead_check = "Shrunken head, status report!"

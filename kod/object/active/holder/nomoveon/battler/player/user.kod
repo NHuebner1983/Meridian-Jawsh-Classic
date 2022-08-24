@@ -3251,14 +3251,14 @@ messages:
       return;
    }
 
-   BuildMinimapDotFlag(what=$)
+   BuildMinimapDotFlag(what=$, force=FALSE)
    "This message builds the minimap dot flags for each object we can see, "
    "which is then sent to our client for drawing objects on the map/minimap."
    {
       local iBehavior, iFlags, oIllusion, oOtherGuild;
 
       if what = $
-         OR poOwner <> Send(what,@GetOwner)
+         OR (NOT force AND poOwner <> Send(what,@GetOwner))
       {
          return MM_NONE;
       }
@@ -11521,15 +11521,15 @@ messages:
             {
                // Probably can't see target
                // Try some different angles...
-               Debug("Monster Not Attacked", iDistance, Send(self,@GetName),Send(poTarget,@GetName));
+               //Debug("Monster Not Attacked", iDistance, Send(self,@GetName),Send(poTarget,@GetName));
                Send(self,@MoveTowards, #oTarget=poTarget, #face_target=TRUE, 
                   #face_away=FALSE,#to_master=FALSE, 
                   #row_offset=Nth(Send(poTarget,@GetPos), 1), 
                   #col_offset=Nth(Send(poTarget,@GetPos), 2),
                   #row_fine=Random(1, 60),
                   #col_fine=Random(1, 60));
-            } else {
-               Debug("Monster ATTACKED", iDistance, Send(self,@GetName),Send(poTarget,@GetName));
+            //} else {
+               //Debug("Monster ATTACKED", iDistance, Send(self,@GetName),Send(poTarget,@GetName));
             }
          }
          

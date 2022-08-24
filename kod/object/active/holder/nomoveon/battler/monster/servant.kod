@@ -73,6 +73,8 @@ resources:
    servant_command_stop_transference = "stop sending new loot to my hall"
    servant_command_conveyance = "send new loot to my vault"
    servant_command_stop_conveyance = "stop sending new loot to my vault"
+   servant_command_warn_enemies = "tell me when enemies are nearby"
+   servant_command_stop_warn_enemies = "stop telling me when enemies are nearby"
    
    // School spells your servant might know
    servant_command_identify = "identify this"
@@ -81,9 +83,9 @@ resources:
    servant_command_bait = "throw bait"
    servant_command_disguise = "disguise me"
    
-   servant_response_wrong_school = "~B~rBlasphemy.~B~r ~kI can't perform miracles. Maybe one of the other servants of magic will know how to help you.~k"
+   servant_response_wrong_school = "~B~rBlasphemy.~B~r ~kI can't perform miracles. Maybe one of your other servants will know how to help you.~k"
    servant_response_nothing_equipped = \
-      "~B~rYou're testing my patience.~B~r ~kIf you want me to perform this spell, you will need to have it equipped first.~k"
+      "~B~rYou're testing my patience.~B~r ~kIf you want me to perform this spell, you will need to have something equipped first.~k"
    servant_response_perfect_items = \
       "~B~rMy patience is growing thin.~B~r ~kEverything equipped is in perfect condition, what more do you want from me.~k"
    servant_response_cursed_equipment = \
@@ -96,7 +98,15 @@ resources:
       "~bThe servant concentrates on the %s to reveal its truth.~b"
    servant_response_identify_fakse = \
       "~bThe servant has revealed your %s to be fake, perhaps a trickery of Riija.~b"
-   
+
+   // Your servant can help you with spells you might be missing
+   servant_command_missing_spells_kraanan = "missing kraanan spells"
+   servant_command_missing_spells_shalille = "missing shal'ille spells"
+   servant_command_missing_spells_qor = "missing qor spells"
+   servant_command_missing_spells_faren = "missing faren spells"
+   servant_command_missing_spells_jala = "missing jala spells"
+   servant_command_missing_spells_riija = "missing riija spells"
+
    // Servant help response
    servant_response_help = \
       "~b~BYour servant clears their throat to begin a long-winded speech...~B~b\n"
@@ -126,6 +136,8 @@ resources:
       "~r~B''say undress me'' ~r~B~kand I will strip you of your equipment so you can relax.~k\n"
       "~r~B''say send new loot to my hall'' ~r~B~kand I will use transference on autolooted items.~k\n"
       "~r~B''say send new loot to my vault'' ~r~B~kand I will use conveyance on autolooted items.~k\n"
+      "~r~B''say tell me when enemies are nearby'' ~r~B~kand I will get your attention when enemies are close.~k\n"
+      "~r~B''say stop telling me when enemies are nearby'' ~r~B~kand I will stop telling you when enemies are close.~k\n"
    
    // RPG Random Names
    servant_name_1 = "Eimmilth, The Mammoth"
@@ -212,7 +224,7 @@ resources:
    servant_rant_am = "We really need a new King and Queen of Meridian."
    servant_rant_an = "Can you believe you have spent half of your life on this game?"
    servant_rant_ao = "There's a good reason Izzio is never inside...he can't fit through the doors."
-   servant_rant_ap = "Xaero and Eva are officially known as Meridian's wallflowers."
+   servant_rant_ap = "Jawwwwwwsh... Jawsh Jawsh Jawsh."
    servant_rant_aq = "I was going to say something, but I was too busy playing the game for you."
    servant_rant_ar = "I wish my designer made me a sit-down animation."
    servant_rant_as = "Phil is dangerous, do not give him a command line interface."
@@ -236,7 +248,7 @@ resources:
    servant_rant_aaj = "Tell your girlfriend I said thanks."
    servant_rant_aak = "I'm here, so you can be lazy."
    servant_rant_aal = "What would you do without me?"
-   servant_rant_aam = "That Mariana is one hot piece of ace. Wait, she's like 13 still. What kind of magic is this!"
+   servant_rant_aam = "That Miriana is one hot piece of ace. Wait, she's like 13 still. What kind of magic is this!"
    servant_rant_aan = "When you die, you go to hell, then you get spit back out with a mace."
    servant_rant_aao = "This spell never works, just die already!"
    servant_rant_aap = "When you die, I'm stealing your loot and selling it on the black market."
@@ -346,6 +358,9 @@ resources:
    servant_talk_max_feed_me = "~k%s whispers, ''Our food reserves are full again. If you need additional vigor, just ~rsay feed me~r.''~k"
    servant_talk_max_mystify_me = "~k%s whispers, ''Our mana reserves are full again. If you need additional mana, just ~rsay mystify me~r.''~k"
    
+   servant_warn_enemy_nearby = "~kYour servant ~Iscreeches~I, ''I sense an enemy named ~B~r%s~B~k near us, be prepared for battle''~k"
+   servant_warn_enemies_nearby = "~kYour servant ~Iscreeches~I, ''I sense ~B~r%i enemies~B~k near us, be prepared for battle''~k"
+
    servant_tougher = "~IYour servant suddenly feels a little tougher!~I"
 
    servant_outfit_qor = "qor outfit"
@@ -467,6 +482,7 @@ properties:
    ptImp = $
    ptTaunt = $
    ptLootHandling = $
+   ptWarnEnemiesNearby = $
    ptServantResources = $
    
    // For use when we need to interact with NPCs from afar.
@@ -491,6 +507,7 @@ properties:
    pbAutoFetchLoot = FALSE
    pbAutoTransference = FALSE
    pbAutoConveyance = FALSE
+   pbWarnEnemiesNearby = FALSE
    
    // Servant PVP flags
    // TODO: Enable PVP defensive!
@@ -517,9 +534,11 @@ properties:
    // Greeting
    ptGreetingTimer = $
 
+   // Number of enemies we last warned about
+   piWarnEnemiesNearbyLastCount = 0
+
    // Intervals for servant routines
-   piCanHelpInterval = 3000
-   piGreetingInterval = 3000
+   piDefaultInterval = 3000
 
    piResourceInterval = 1000
    piResourceIntervalNormal = 1000
@@ -540,9 +559,7 @@ properties:
    piTauntInterval = 3000
    piTauntIntervalNormal = 1000
    piTauntIntervalPvp = 6000
-
-   piLootHandlingInterval = 3000
-
+   
 messages:
    
    // Send these values when you use the Create(&Servant, #...) function.
@@ -597,6 +614,16 @@ messages:
          pbAutoTransference = Nth(lSettings, 10);
          pbAutoConveyance = Nth(lSettings, 11);
 
+         // We add this because we've added a new setting and need to make sure new ones get put into the list.
+         if Length(lSettings) < 12
+         {
+            lSettings = AppendListElem(FALSE, lSettings); // pbWarnEnemiesNearby
+         }
+         else
+         {
+            pbWarnEnemiesNearby = Nth(lSettings, 12);
+         }
+
          if pbAutoTransference
          {
             Send(poMaster, @SetAutolootMethod, #method=AUTOLOOT_METHOD_TRANSFER);
@@ -631,7 +658,8 @@ messages:
          pbAllowAttackThroughWalls,
          pbAutoFetchLoot,
          pbAutoTransference,
-         pbAutoConveyance
+         pbAutoConveyance,
+         pbWarnEnemiesNearby
       ];
 
       Send(poMaster, @SaveServantSettings, #lSettings=lSettings);
@@ -792,6 +820,7 @@ messages:
       Send(self,@StartTauntTimer);
       Send(self,@StartServantResourcesTimer);
       Send(self,@StartLootHandlingTimer);
+      Send(self,@StartWarnEnemiesNearbyTimer);
 
       if pbCanHelp
       {
@@ -802,16 +831,23 @@ messages:
       return;
    }
 
+   StartWarnEnemiesNearbyTimer()
+   {
+      ptWarnEnemiesNearby = CreateTimer(self,@WarnEnemiesNearby,piDefaultInterval);
+
+      return;
+   }
+
    StartGreetingTimer()
    {
-      ptGreetingTimer = CreateTimer(self,@Greeting,piGreetingInterval);
+      ptGreetingTimer = CreateTimer(self,@Greeting,piDefaultInterval);
       
       return;
    }
 
    StartCanHelpTimer()
    {
-      ptCanHelpTimer = CreateTimer(self,@CheckCanHelp,piCanHelpInterval);
+      ptCanHelpTimer = CreateTimer(self,@CheckCanHelp,piDefaultInterval);
 
       return;
    }
@@ -853,7 +889,7 @@ messages:
 
    StartLootHandlingTimer()
    {
-      ptLootHandling = CreateTimer(self,@LootHandling,piLootHandlingInterval);
+      ptLootHandling = CreateTimer(self,@LootHandling,piDefaultInterval);
 
       return;
    }
@@ -989,6 +1025,98 @@ messages:
          ptLootHandling = $;
       }
 
+      if ptWarnEnemiesNearby <> $
+      {
+         DeleteTimer(ptWarnEnemiesNearby);
+         ptWarnEnemiesNearby = $;
+      }
+
+      return;
+   }
+
+   WarnEnemiesNearby()
+   {
+      local i, lYellZone, o, lPlayers, lEnemies, iMinimapFlags, lRoomsChecked;
+
+      Send(self,@StartWarnEnemiesNearbyTimer);
+
+      if NOT pbWarnEnemiesNearby OR NOT Send(self,@MasterCheck)
+      {
+         return;
+      }
+
+      lEnemies = [];
+
+      lYellZone = Send(Send(poMaster, @GetOwner), @GetYellZone);
+
+      if lYellZone = $ OR NOT IsList(lYellZone)
+      {
+         lYellZone = [Send(Send(poMaster,@GetOwner), @GetRoomNum)];
+      }
+      else
+      {
+         lYellZone = AppendListElem(Send(Send(poMaster,@GetOwner), @GetRoomNum), lYellZone);
+      }
+
+      lRoomsChecked = [];
+
+      foreach i in lYellZone
+      {
+         if FindListElem(lRoomsChecked, i)
+         {
+            continue;
+         }
+
+         lRoomsChecked = AppendListElem(i, lRoomsChecked);
+
+         lPlayers = Send(Send(SYS,@FindRoomByNum,#num=i),@GetPlayers);
+
+         if lPlayers <> $ AND IsList(lPlayers)
+         {
+            foreach o in lPlayers
+            {
+               if o = poMaster OR NOT IsClass(o, &Player) OR IsClass(o, &DM)
+               {
+                  continue;
+               }
+
+               iMinimapFlags = Send(poMaster, @BuildMinimapDotFlag, #what=o, #force=TRUE);
+
+               if iMinimapFlags = MM_PLAYER | MM_PLAYER_IS_ENEMY
+               {
+                  lEnemies = AppendListElem(o, lEnemies);
+               }
+            }
+         }
+      }
+   
+      if Length(lEnemies)
+      {
+         // We have some enemies nearby.
+         if piWarnEnemiesNearbyLastCount <> Length(lEnemies)
+         {
+            // We should warn master!
+            piWarnEnemiesNearbyLastCount = Length(lEnemies);
+            
+            if piWarnEnemiesNearbyLastCount = 1
+            {
+               Send(poMaster,@MsgSendUser,#message_rsc=servant_warn_enemy_nearby,#parm1=Send(First(lEnemies),@GetName));
+            }
+            else
+            {
+               Send(poMaster,@MsgSendUser,#message_rsc=servant_warn_enemies_nearby,#parm1=piWarnEnemiesNearbyLastCount);
+            }
+         }
+      }
+      else
+      {
+         // Whew, no enemies nearby.
+         piWarnEnemiesNearbyLastCount = 0;
+      }
+
+      // Memory cleanup or does that even matter.
+      lEnemies = [];
+
       return;
    }
 
@@ -998,7 +1126,6 @@ messages:
 	  
       if NOT Send(self,@MasterCheck)
       {
-         // Servant may not have a master or can't help you while in PVP Combat.
          return;
       }
       
@@ -2628,6 +2755,20 @@ messages:
          Send(poMaster, @SetAutolootMethod);
       }
 
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_warn_enemies)
+      {
+         pbWarnEnemiesNearby = TRUE;
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
+      }
+
+      if NOT bIsCommand AND StringEqual(said_string, servant_command_stop_warn_enemies)
+      {
+         pbWarnEnemiesNearby = FALSE;
+         bIsCommand = TRUE;
+         bAcknowledge = TRUE;
+      }
+
       if bAcknowledge
       {
          // Generic servant response.
@@ -2701,9 +2842,9 @@ messages:
          foreach iItem in lEquipped
          {
             sItemName = Send(iItem,@GetName);
-            bCanIdentify = Send(iItem,@CanIdentify) AND Send(iItem,@IsOdd) AND NOT Send(iItem,@IsFake);
             bFake = Send(iItem,@IsFake);
-
+            bCanIdentify = Send(iItem,@CanIdentify) AND NOT bFake;
+            
             if bFake
             {
                Post(poMaster,@MsgSendUser,#message_rsc=servant_response_identify_fakse, #parm1=sItemName);
@@ -2755,9 +2896,9 @@ messages:
          foreach iItem in lEquipped
          {
             sItemName = Send(iItem,@GetName);
-            bCanIdentify = Send(iItem,@CanIdentify) AND Send(iItem,@IsOdd) AND NOT Send(iItem,@IsFake);
             bFake = Send(iItem,@IsFake);
-
+            bCanIdentify = Send(iItem,@CanIdentify) AND NOT bFake;
+            
             if bFake
             {
                Post(poMaster,@MsgSendUser,#message_rsc=servant_response_identify_fakse, #parm1=sItemName);
@@ -2918,6 +3059,7 @@ messages:
    }
 
    Outfit(iSchool=$, iExampleSpell=$)
+   "Resists were commented out. This is now purely designed for Spell Power maximizing."
    {
       local c, i, r, ap, w, s, lInventory, lResists, lSchoolResists, lWeaponResists, lKeep, bKeep, bReplace, lUnequip, lKeepTypesUsed, lAllowDuplicateTypes, oObj, iSpellPower, bHasSpellPower, bHasResists, lCantUnequip, lGoodItemTypes, bSkip, iResistTotal, bHasWeapon, bHasJof;
 
@@ -3100,12 +3242,12 @@ messages:
             // Check item resistances
             // We do not want resistance against our school.
 
-            lResists = Send(oObj,@GetCurrentResistances);
+            // lResists = Send(oObj,@GetCurrentResistances);
 
-            if lResists <> $
-            {
-               bHasResists = TRUE;
-            }
+            // if lResists <> $
+            // {
+            //    bHasResists = TRUE;
+            // }
 
             // Check if our school has spellpower on this item
             iSpellPower = Send(oObj,@GetSpellModifier,#oSpell=Send(SYS,@FindSpellByNum,#num=iExampleSpell));
@@ -3139,42 +3281,42 @@ messages:
 
             // We will build our own list with as much information above as possible.
             // Then we will figure out the best items after we've collected everything.
-            if bHasSpellPower OR bHasResists
+            if bHasSpellPower //OR bHasResists
             {
                //Debug("Inventory: ",Send(oObj,@GetName));
 
-               iResistTotal = 0;
+               // iResistTotal = 0;
 
-               if bHasResists
-               {
-                  foreach r in lResists
-                  {
-                     foreach s in lSchoolResists
-                     {
-                        if First(s) = iSchool
-                        {
-                           foreach w in Nth(s, 2)
-                           {
-                              if First(r) = w
-                              {
-                                 iResistTotal = iResistTotal + Nth(r, 2);
-                              }
-                           }
-                        }
-                     }
+               // if bHasResists
+               // {
+               //    foreach r in lResists
+               //    {
+               //       foreach s in lSchoolResists
+               //       {
+               //          if First(s) = iSchool
+               //          {
+               //             foreach w in Nth(s, 2)
+               //             {
+               //                if First(r) = w
+               //                {
+               //                   iResistTotal = iResistTotal + Nth(r, 2);
+               //                }
+               //             }
+               //          }
+               //       }
 
-                     foreach w in lWeaponResists
-                     {
-                        if First(r) = w
-                        {
-                           iResistTotal = iResistTotal + Nth(r, 2);
-                        }
-                     }
-                     //Debug(Send(SYS,@GetResistanceName,#type=First(r)),Nth(r,2));
-                  }
+               //       foreach w in lWeaponResists
+               //       {
+               //          if First(r) = w
+               //          {
+               //             iResistTotal = iResistTotal + Nth(r, 2);
+               //          }
+               //       }
+               //       //Debug(Send(SYS,@GetResistanceName,#type=First(r)),Nth(r,2));
+               //    }
                   
-                  //Debug("Total Resists:", iResistTotal);
-               }
+               //    //Debug("Total Resists:", iResistTotal);
+               // }
 
                if bHasSpellPower
                {
