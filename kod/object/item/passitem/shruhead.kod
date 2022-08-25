@@ -709,6 +709,9 @@ messages:
    {
       local iNum, oKiller, oLocation;
 
+      // DISABLED
+      return;
+
       oKiller = Send(SYS,@GetLastMurderer);
       if oKiller = $
       {
