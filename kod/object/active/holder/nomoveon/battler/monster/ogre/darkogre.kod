@@ -50,7 +50,7 @@ classvars:
    viKarma = -100
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE | AI_FIGHT_SWITCHALOT
    viCashmin = 5000
-   viCashmax = 10000
+   viCashmax = 15000
    vrSound_hit = DarkOgre_sound_hit
    vrSound_miss = DarkOgre_sound_miss
    vrSound_aware = DarkOgre_sound_aware

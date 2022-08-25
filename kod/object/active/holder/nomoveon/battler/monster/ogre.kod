@@ -22,7 +22,7 @@ resources:
    ogre_desc_rsc = \
       "This huge creature drives fear into the heart of anyone  "
       "who comes across it. Ogres are friendly by nature but are "
-      "known to be much more violent against evil enemies."
+      "known to be much more violent around evil entities."
 
    ogre_dead_icon_rsc = ogreX.bgf
    ogre_dead_name_rsc = "dead ogre"
@@ -51,7 +51,7 @@ classvars:
    viKarma = 100
    viDefault_behavior = AI_FIGHT_SWITCHALOT | AI_FIGHT_NEWBIESAFE
    viCashmin = 5000
-   viCashmax = 10000
+   viCashmax = 15000
    vrSound_hit = ogre_sound_hit
    vrSound_miss = ogre_sound_miss
    vrSound_aware = ogre_sound_aware
