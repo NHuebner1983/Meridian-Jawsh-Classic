@@ -19,6 +19,4 @@ BOFS  = ant.bof centip.bof cow.bof ent.bof fairy.bof fungbst.bof ghost.bof \
         evilent.bof elephant.bof bunny.bof wolf.bof chupacabra.bof minotaur.bof \
         earthdrag.bof mimic.bof blackdrag.bof knight.bof ogre.bof servant.bof
 
-
-
 !include $(KODDIR)\kod.mak

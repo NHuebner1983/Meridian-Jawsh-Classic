@@ -4059,6 +4059,7 @@ messages:
       Create(&StatueTreasure);
       Create(&KriipaTreasure);
       Create(&MolluskTreasure);
+      Create(&CorruptedMolluskTreasure);
       Create(&ShadowbeastTreasure);
       Create(&RatKingTreasure);
       Create(&EarthElementalTreasure);
@@ -5468,6 +5469,7 @@ messages:
 
       plMonsterTemplates = cons(create(&DarkAngel),plMonsterTemplates);
       plMonsterTemplates = cons(create(&MolluskMonster),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&CorruptedMollusk),plMonsterTemplates);
 
       plMonsterTemplates = cons(create(&SpectralMummy),plMonsterTemplates);
       plMonsterTemplates = cons(create(&LivingStatue),plMonsterTemplates);

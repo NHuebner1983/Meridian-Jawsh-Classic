@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-MolluskTreasure is TreasureType
+CorruptedMolluskTreasure is TreasureType
 
 constants:
 
@@ -16,7 +16,7 @@ constants:
 
 classvars:
 
-   viTreasure_num = TID_MOLLUSK
+   viTreasure_num = TID_CORRUPTED_MOLLUSK
 
 properties:
 
@@ -27,17 +27,16 @@ messages:
 
    Constructed()
    {
-      plTreasure = [ [ &YellowMushroom, 1 ],
-                     [ &CyanMushroom, 1 ],
+      plTreasure = [ [ &GreenMushroom, 1 ],
                      [ &BlueDragonScale, 12],
-                     [ &BlueMushroom, 12],
+                     [ &PurpleMushroom, 12],
                      [ &RedMushroom, 12],
-                     [ &Emerald, 12],
+                     [ &DarkAngelFeather, 12],
+                     [ &EntrootBerry, 12],
                      [ &Ruby, 12],
-                     [ &Diamond, 12],
                      [ &InkyCap, 12],
-                     [ &KnightShield, 1],
-                     [ &IvyCirclet, 1],
+                     [ &OrcShield, 1],
+                     [ &BloodCirclet, 1],
                      [ &Scimitar, 1],
                      [ &Mace, 1],
                      [ &Hammer, 1],
@@ -45,7 +44,7 @@ messages:
                      [ &MysticSword, 1],
                      [ &LongSword, 1],
                      [ &NeruditeSword, 1],
-                     [ &FireArrow, 1]
+                     [ &AcidArrow, 1]
                   ];
 
       propagate;
