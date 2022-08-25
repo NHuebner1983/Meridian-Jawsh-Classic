@@ -5824,8 +5824,9 @@ messages:
       plItemTemplates = cons(create(&SimpleHelm),plItemTemplates);
       plItemTemplates = cons(create(&QormasHelm),plItemTemplates);
       plItemTemplates = cons(create(&IvyCirclet),plItemTemplates);
+      plItemTemplates = cons(create(&BloodCirclet),plItemTemplates);
       plItemTemplates = cons(create(&Circlet),plItemTemplates);
-	  plItemTemplates = cons(create(&DaemonHelm),plItemTemplates);
+	   plItemTemplates = cons(create(&DaemonHelm),plItemTemplates);
 
       // Shields
       plItemTemplates = cons(create(&GuildShield),plItemTemplates);

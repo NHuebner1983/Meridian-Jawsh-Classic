@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<bgf version="10" shrink="21" maxindices="8">
+  <frames count="6" imageformat="bmp">
+    <frame width="171" height="67" xoffset="-30" yoffset="1" file="C:\M59420\Classic\resource\graphics\silence\bloodcirclet\overlay\bloodcircletov-0.png">
+      <hotspots count="0" />
+    </frame>
+    <frame width="171" height="71" xoffset="-28" yoffset="-1" file="C:\M59420\Classic\resource\graphics\silence\bloodcirclet\overlay\bloodcircletov-1.png">
+      <hotspots count="0" />
+    </frame>
+    <frame width="154" height="71" xoffset="-28" yoffset="-2" file="C:\M59420\Classic\resource\graphics\silence\bloodcirclet\overlay\bloodcircletov-2.png">
+      <hotspots count="0" />
+    </frame>
+    <frame width="171" height="70" xoffset="-26" yoffset="4" file="C:\M59420\Classic\resource\graphics\silence\bloodcirclet\overlay\bloodcircletov-3.png">
+      <hotspots count="0" />
+    </frame>
+    <frame width="159" height="71" xoffset="-28" yoffset="0" file="C:\M59420\Classic\resource\graphics\silence\bloodcirclet\overlay\bloodcircletov-4.png">
+      <hotspots count="0" />
+    </frame>
+    <frame width="170" height="69" xoffset="-32" yoffset="-1" file="C:\M59420\Classic\resource\graphics\silence\bloodcirclet\overlay\bloodcircletov-5.png">
+      <hotspots count="0" />
+    </frame>
+  </frames>
+  <framesets count="1">
+    <frameset indices="0 1 2 3 3 3 4 5" />
+  </framesets>
+</bgf>

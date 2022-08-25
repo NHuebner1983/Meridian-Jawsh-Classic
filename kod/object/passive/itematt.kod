@@ -111,6 +111,9 @@ messages:
 
                [ &Gauntlet, 5],
                [ &SimpleHelm, 5],
+               [ &IvyCirclet, 5],
+               [ &BloodCirclet,5],
+               [ &Circlet, 5],
                [ &DaemonHelm, 5],
                [ &JewelOfFroz, 5],
 

@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-IvyCirclet is Helmet
+BloodCirclet is Helmet
 
 constants:
 
@@ -16,29 +16,30 @@ constants:
 
 resources:
 
-   include ivycircl.lkod
+   // TODO: Translate from Tyrant
+   //include bloodcirclet.lkod
 
-   IvyCirclet_name_rsc = "ivy circlet"
-   IvyCirclet_icon_rsc = ivycircl.bgf
-   IvyCirclet_desc_rsc = \
-      "Healthy, green leaves of ivy are wrapped around a wooden wreath.  "
-      "This looks like it would be cool and refreshing against your brow."
+   BloodCirclet_name_rsc = "blood circlet"
+   BloodCirclet_icon_rsc = bloodcirclet.bgf
+   BloodCirclet_desc_rsc = \
+      "Bloody, red leaves of poison ivy are wrapped around a splintered wreath.  "
+      "This looks like it would be unpleasant against your brow."
 
-   ivycirclet_cant = \
-      "The ivy circlet stubbornly resists your attempts to place it on your brow."
+   bloodcirclet_cant = \
+      "The blood circlet stubbornly resists your attempts to place it on your brow."
 
-   IvyCirclet_overlay_rsc = IvyCirov.bgf
+   BloodCirclet_overlay_rsc = bloodcircletov.bgf
 
 classvars:
 
-   vrName = IvyCirclet_name_rsc
-   vrIcon = IvyCirclet_icon_rsc
-   vrDesc = IvyCirclet_desc_rsc
+   vrName = BloodCirclet_name_rsc
+   vrIcon = BloodCirclet_icon_rsc
+   vrDesc = BloodCirclet_desc_rsc
 
    viHits_init_min = 255
    viHits_init_max = 450
 
-   viValue_average = 450
+   viValue_average = 1200
    viWeight = 10
    viBulk = 20
 
@@ -63,22 +64,22 @@ messages:
    GetOverlay(animation = $)
    {
       // Uses different file for the overlay.
-      return IvyCirclet_overlay_rsc;
+      return BloodCirclet_overlay_rsc;
    }
 
    GetResistanceModifiers()
    {
       return [ [-ATCK_SPELL_FIRE,-10],
-               [-ATCK_SPELL_UNHOLY,-20],
-               [-ATCK_SPELL_HOLY,20]
+               [-ATCK_SPELL_HOLY,-20],
+               [-ATCK_SPELL_UNHOLY,20]
              ];
    }
 
    ReqUse()
    {
-      if Send(poOwner,@GetKarma) < 50
+      if Send(poOwner,@GetKarma) > -50
       {
-         Send(poOwner,@MsgSendUser,#message_rsc=ivycirclet_cant);
+         Send(poOwner,@MsgSendUser,#message_rsc=bloodcirclet_cant);
 
          return FALSE;
       }
@@ -90,12 +91,12 @@ messages:
    {
       if Send(oSpell,@GetSchool) = SS_SHALILLE
       {
-         return 15;
+         return -15;
       }
 
       if Send(oSpell,@GetSchool) = SS_QOR
       {
-         return -15;
+         return 15;
       }
 
       return 0;

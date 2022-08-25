@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<bgf version="10" shrink="18" maxindices="1">
+  <frames count="2" imageformat="bmp">
+    <frame width="171" height="88" xoffset="0" yoffset="0" file="C:\M59420\Classic\resource\graphics\silence\bloodcirclet\bloodcirclet-0.png">
+      <hotspots count="0" />
+    </frame>
+    <frame width="209" height="191" xoffset="0" yoffset="0" file="C:\M59420\Classic\resource\graphics\silence\bloodcirclet\bloodcirclet-1.png">
+      <hotspots count="0" />
+    </frame>
+  </frames>
+  <framesets count="2">
+    <frameset indices="0" />
+    <frameset indices="1" />
+  </framesets>
+</bgf>
