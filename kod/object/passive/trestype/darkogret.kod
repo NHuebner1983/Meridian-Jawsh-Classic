@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-OgreTreasure is TreasureType
+DarkOgreTreasure is TreasureType
 
 constants:
 
@@ -16,7 +16,7 @@ constants:
 
 classvars:
 
-   viTreasure_num = TID_OGRE
+   viTreasure_num = TID_DARK_OGRE
 
 properties:
 
@@ -28,21 +28,20 @@ messages:
    Constructed()
    {
       plTreasure = [ [ &OrcTooth, 30 ],
-                     [ &Emerald,  10 ],
+                     [ &EntrootBerry, 8 ],
                      [ &Sapphire, 10 ],
-                     [ &Diamond,  4 ],
+                     [ &Diamond,  10 ],
                      [ &Ruby,  9 ],
-                     [ &RedMushroom, 5 ],
-                     [ &BlueMushroom, 5 ],
-                     [ &CyanMushroom, 1],
+                     [ &PurpleMushroom, 5 ],
+                     [ &CyanMushroom, 1 ],
                      [ &GrayMushroom, 1 ],
                      [ &YellowMushroom, 1 ],
                      [ &GreenMushroom, 1 ],
-					      [ &Wizardhat, 1 ],
                      [ &WeaponWand, 1 ],
+					      [ &Wizardhat, 1 ],
                      [ &TrueLute, 1 ],
-                     [ &KnightShield, 1 ],
-                     [ &IvyCirclet, 1 ],
+                     [ &OrcShield, 1 ],
+                     [ &BloodCirclet, 1 ],
                      [ &Rose, 1 ],
                      [ &PlateArmor, 1 ]
                    ];

@@ -4088,6 +4088,7 @@ messages:
       Create(&MinotaurTreasure);
       Create(&KnightTreasure);
       Create(&OgreTreasure);
+      Create(&DarkOgreTreasure);
 
       return;
    }
@@ -5494,6 +5495,7 @@ messages:
       plMonsterTemplates = cons(create(&CaptainKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&HalfKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Ogre),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DarkOgre),plMonsterTemplates);
       
 	  // Servant monster
 	  plMonsterTemplates = cons(create(&Servant),plMonsterTemplates);
