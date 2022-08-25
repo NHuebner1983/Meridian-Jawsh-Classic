@@ -136,8 +136,8 @@ resources:
       "~r~B''say undress me'' ~r~B~kand I will strip you of your equipment so you can relax.~k\n"
       "~r~B''say send new loot to my hall'' ~r~B~kand I will use transference on autolooted items.~k\n"
       "~r~B''say send new loot to my vault'' ~r~B~kand I will use conveyance on autolooted items.~k\n"
-      "~r~B''say tell me when enemies are nearby'' ~r~B~kand I will get your attention when enemies are close.~k\n"
-      "~r~B''say stop telling me when enemies are nearby'' ~r~B~kand I will stop telling you when enemies are close.~k\n"
+//      "~r~B''say tell me when enemies are nearby'' ~r~B~kand I will get your attention when enemies are close.~k\n"
+//      "~r~B''say stop telling me when enemies are nearby'' ~r~B~kand I will stop telling you when enemies are close.~k\n"
    
    // RPG Random Names
    servant_name_1 = "Eimmilth, The Mammoth"
@@ -2758,19 +2758,19 @@ messages:
          Send(poMaster, @SetAutolootMethod);
       }
 
-      if NOT bIsCommand AND StringEqual(said_string, servant_command_warn_enemies)
-      {
-         pbWarnEnemiesNearby = TRUE;
-         bIsCommand = TRUE;
-         bAcknowledge = TRUE;
-      }
+      // if NOT bIsCommand AND StringEqual(said_string, servant_command_warn_enemies)
+      // {
+      //    pbWarnEnemiesNearby = TRUE;
+      //    bIsCommand = TRUE;
+      //    bAcknowledge = TRUE;
+      // }
 
-      if NOT bIsCommand AND StringEqual(said_string, servant_command_stop_warn_enemies)
-      {
-         pbWarnEnemiesNearby = FALSE;
-         bIsCommand = TRUE;
-         bAcknowledge = TRUE;
-      }
+      // if NOT bIsCommand AND StringEqual(said_string, servant_command_stop_warn_enemies)
+      // {
+      //    pbWarnEnemiesNearby = FALSE;
+      //    bIsCommand = TRUE;
+      //    bAcknowledge = TRUE;
+      // }
 
       if NOT bIsCommand AND StringEqual(said_string, servant_command_missing_spells_shalille)
       {
