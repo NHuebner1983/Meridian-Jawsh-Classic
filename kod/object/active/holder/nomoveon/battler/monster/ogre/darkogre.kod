@@ -67,11 +67,19 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_ACID, 80 ],
-                        [-ATCK_SPELL_UNHOLY, 80 ],
-                        [-ATCK_SPELL_HOLY, -80 ],
+      plResistances = [ 
+                        [ATCK_WEAP_NONMAGIC, 80 ],
+                        [ATCK_WEAP_MAGIC, -10 ],
+                        [ATCK_WEAP_BLUDGEON, -20 ],
                         [ATCK_WEAP_NERUDITE, -10 ],
-                        [ATCK_WEAP_NONMAGIC, 80 ] ];
+                        [-ATCK_SPELL_QUAKE, 40 ],
+                        [-ATCK_SPELL_UNHOLY, -30 ],
+                        [-ATCK_SPELL_ACID, -30 ],
+                        [-ATCK_SPELL_HOLY, 80 ],
+                        [-ATCK_SPELL_COLD, 40 ],
+                        [-ATCK_SPELL_FIRE, 40 ],
+                        [-ATCK_SPELL_SHOCK, 40 ]
+                      ];
 
       return;
    }
