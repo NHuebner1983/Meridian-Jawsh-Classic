@@ -28,20 +28,21 @@ messages:
    Constructed()
    {
       plTreasure = [ [ &OrcTooth, 30 ],
-                     [ &EntrootBerry, 8 ],
+                     [ &Emerald,  10 ],
                      [ &Sapphire, 10 ],
-                     [ &Diamond,  10 ],
+                     [ &Diamond,  4 ],
                      [ &Ruby,  9 ],
-                     [ &PurpleMushroom, 5 ],
-                     [ &CyanMushroom, 1 ],
+                     [ &RedMushroom, 5 ],
+                     [ &BlueMushroom, 5 ],
+                     [ &CyanMushroom, 1],
                      [ &GrayMushroom, 1 ],
                      [ &YellowMushroom, 1 ],
                      [ &GreenMushroom, 1 ],
-                     [ &WeaponWand, 1 ],
 					      [ &Wizardhat, 1 ],
+                     [ &WeaponWand, 1 ],
                      [ &TrueLute, 1 ],
-                     [ &OrcShield, 1 ],
-                     [ &BloodCirclet, 1 ],
+                     [ &KnightShield, 1 ],
+                     [ &IvyCirclet, 1 ],
                      [ &Rose, 1 ],
                      [ &PlateArmor, 1 ]
                    ];
