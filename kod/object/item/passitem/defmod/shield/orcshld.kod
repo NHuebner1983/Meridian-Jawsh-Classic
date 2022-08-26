@@ -93,7 +93,8 @@ messages:
       return [ [ATCK_WEAP_PIERCE,20],
                [ATCK_WEAP_SLASH,10],
                [ATCK_WEAP_THRUST,5],
-               [-ATCK_SPELL_HOLY,-20]
+               [-ATCK_SPELL_HOLY,-5],
+               [-ATCK_SPELL_UNHOLY,5]
              ];
    }
 
