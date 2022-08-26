@@ -59,7 +59,8 @@ messages:
    {
       plFor_sale = [
          [
-            Create(&CastleKey)
+            Create(&CastleKey),
+            Create(&BerserkerAxe)
          ],
       $,$,$];
 

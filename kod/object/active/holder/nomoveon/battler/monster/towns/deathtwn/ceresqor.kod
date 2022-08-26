@@ -58,7 +58,8 @@ messages:
    {
       plFor_sale = [
          [
-            Create(&BarloqueKey)
+            Create(&BarloqueKey),
+            Create(&NeruditeAxe)
          ],
       $,$,$];
 

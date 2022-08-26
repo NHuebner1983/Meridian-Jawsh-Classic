@@ -57,7 +57,8 @@ messages:
    {
       plFor_sale = [
          [
-            Create(&TosKey)
+            Create(&TosKey),
+            Create(&LightSword)
          ],
       $,$,$];
 

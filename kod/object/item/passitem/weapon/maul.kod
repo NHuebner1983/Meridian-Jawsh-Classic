@@ -36,7 +36,7 @@ classvars:
 
    viProficiency_Needed = SKID_PROFICIENCY_HAMMER
 
-   viValue_average = 450
+   viValue_average = 8000
    viWeight = 80
    viBulk = 75
 

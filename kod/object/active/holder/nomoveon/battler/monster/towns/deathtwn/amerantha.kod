@@ -54,7 +54,8 @@ messages:
    {
       plFor_sale = [
          [
-            Create(&CorNothKey)
+            Create(&CorNothKey),
+            Create(&Maul)
          ],
       $,$,$];
 

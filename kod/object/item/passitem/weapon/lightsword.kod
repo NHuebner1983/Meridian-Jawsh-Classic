@@ -37,7 +37,7 @@ classvars:
 
    viProficiency_Needed = SKID_PROFICIENCY_SWORD
 
-   viValue_average = 800
+   viValue_average = 10000
    viWeight = 80
    viBulk = 60
 
