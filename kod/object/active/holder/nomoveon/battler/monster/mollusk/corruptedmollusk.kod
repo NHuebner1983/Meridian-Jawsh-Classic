@@ -73,8 +73,8 @@ properties:
    piDrawfx = DRAWFX_BLACK
 
 messages:
-
-   Constructed()
+   
+   GetBaseResistances()
    {
       plResistances = [ [ATCK_WEAP_MAGIC, -10 ],
                         [ATCK_WEAP_BLUDGEON, 30 ],
@@ -87,8 +87,8 @@ messages:
                         [-ATCK_SPELL_SHOCK, 40 ]
                       ];
 
-      propagate;
+      return plResistances;
    }
-
+   
 end
 ////////////////////////////////////////////////////////////////////////////////
