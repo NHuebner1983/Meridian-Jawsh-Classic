@@ -948,14 +948,11 @@
    RID_MAR_CRYPT2 = 2601
    RID_MAR_CRYPT3A = 2602
 
-   // Ogre Caves
+   // Latest maps from 420
    RID_OGRE_CAVE1 = 2603
-
-   // Maleval's Dark Study in Tos.
    RID_MALEVAL = 2604
-   
-   // Tos Training Room
    RID_TOS_TRAINING = 2605
+   RID_D6E7ULAKE = 2606
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia

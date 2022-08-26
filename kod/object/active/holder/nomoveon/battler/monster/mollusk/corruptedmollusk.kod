@@ -74,5 +74,21 @@ properties:
 
 messages:
 
+   Constructed()
+   {
+      plResistances = [ [ATCK_WEAP_MAGIC, -10 ],
+                        [ATCK_WEAP_BLUDGEON, 30 ],
+                        [-ATCK_SPELL_QUAKE, 40 ],
+                        [-ATCK_SPELL_HOLY, -30 ],
+                        [-ATCK_SPELL_ACID, 80 ],
+                        [-ATCK_SPELL_UNHOLY, 80 ],
+                        [-ATCK_SPELL_COLD, 40 ],
+                        [-ATCK_SPELL_FIRE, 40 ],
+                        [-ATCK_SPELL_SHOCK, 40 ]
+                      ];
+
+      propagate;
+   }
+
 end
 ////////////////////////////////////////////////////////////////////////////////
