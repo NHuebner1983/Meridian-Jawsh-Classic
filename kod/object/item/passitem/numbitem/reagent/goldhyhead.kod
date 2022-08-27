@@ -34,7 +34,7 @@ classvars:
 
 properties:
 
-   piNumber = 1
+   piNumber = 3
 
 messages:
 

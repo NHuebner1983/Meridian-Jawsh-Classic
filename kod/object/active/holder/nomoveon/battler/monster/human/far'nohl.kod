@@ -38,8 +38,8 @@ classvars:
 
    viVisionDistance = 12
 
-   viCashMin = 2000
-   viCashMax = 6000
+   viCashMin = 5000
+   viCashMax = 10000
 
    viDead_drawfx = DRAWFX_TRANSLUCENT_50
 
@@ -70,7 +70,9 @@ messages:
 
    Constructor()
    {
-      plSpellBook = [ [SID_BLIND,5,100] ];
+      plSpellBook = [ [SID_BLIND,5,100],
+                      [SID_ENFEEBLE,5,100] 
+                    ];
 
       propagate;
    }
