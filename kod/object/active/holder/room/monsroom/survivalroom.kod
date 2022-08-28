@@ -400,6 +400,10 @@ messages:
                   &DarkAngel,
                   &EarthDragon,
                   &Thrasher,
+                  &Ogre,
+                  &DarkOgre,
+                  &DarkFrogman,
+                  &BlackDragon,
                   &Ghost];
 
       plMinibosses = [&GroundWormQueen,
@@ -412,6 +416,9 @@ messages:
                       &EarthElemental,
                       &FireElemental,
                       &IceElemental,
+                      &BlackDragon,
+                      &DarkFrogman,
+                      &DarkOgre,
                       &NeruElemental];
                       
       plMonsters = plRoundOneMonsters;
