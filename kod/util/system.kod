@@ -2664,7 +2664,9 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_MAR_CRYPT2,#class=&MarionCrypt2);
       Send(self,@CreateOneRoomIfNew,#num=RID_MAR_CRYPT3A,#class=&MarionCrypt3a);
 
+      // Legends of Ograsaur Maps
       Send(self,@CreateOneRoomIfNew,#num=RID_OGRE_CAVE1,#class=&OgreCave1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_OGRE_CAVE2,#class=&OgreCave2);
 
       Send(self,@CreateOneRoomIfNew,#num=RID_OLD_JASPER,#class=&OldJasper);
       Send(self,@CreateOneRoomIfNew,#num=RID_OLD_MARION,#class=&OldMarion);
@@ -5393,6 +5395,7 @@ messages:
       plMonsterTemplates = cons(create(&guard),plMonsterTemplates);
       plMonsterTemplates = cons(create(&ent),plMonsterTemplates);
       plMonsterTemplates = cons(create(&frogman),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DarkFrogman),plMonsterTemplates);
       plMonsterTemplates = cons(create(&fungusbeast),plMonsterTemplates);
       plMonsterTemplates = cons(create(&ghost),plMonsterTemplates);
       plMonsterTemplates = cons(create(&giantrat),plMonsterTemplates);
