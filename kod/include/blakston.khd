@@ -70,6 +70,7 @@
    OF_ACTIVATABLE    = 0x00000800
    OF_APPLYABLE      = 0x00001000
    OF_NPC            = 0x00002000
+   OF_MARKETPLACE    = 0x00004000
    OF_BOUNCING       = 0x00010000
    OF_FLICKERING     = 0x00020000
    OF_FLASHING       = 0x00040000
@@ -953,6 +954,7 @@
    RID_MALEVAL = 2604
    RID_TOS_TRAINING = 2605
    RID_D6E7ULAKE = 2606
+   RID_OGRE_CAVE2 = 2607
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia
@@ -1624,6 +1626,7 @@
    MOB_KARMA_AG         = 0x04000   // Wont attack players of like karma
    MOB_FULL_TALK        = 0x08000   // Isnt affected by the say ranges
    MOB_COND_SELLER      = 0x10000   // Has things that must be asked for
+   MOB_MARKETPLACE      = 0x20000   // Marketplace mob
 
    MOB_LAWFUL           = 0x40000   // Won't publicly do business with murderers
    MOB_VAULTMAN         = 0x80000   // Can be a vaultkeeper (set Vault ID!!!)
@@ -2717,6 +2720,8 @@
    NODE_Q            = 0x0800
    NODE_AVAR         = 0x1000
    NODE_BRAX         = 0x2000
+   NODE_OGRE_CAVE    = 0x4000
+   
    // If more nodes are added, this value should go up
    //  to be at least as high as the highest node value.
    //  Extra room was consciously left.
