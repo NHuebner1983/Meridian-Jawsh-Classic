@@ -7023,6 +7023,12 @@ messages:
          iFlags = iFlags | OF_OFFERABLE;
       }
 
+      if piAttributes & MOB_MARKETPLACE
+      {
+         Debug(Send(self,@GetName),"is Marketplace");
+         iFlags = iFlags | OF_MARKETPLACE;
+      }
+
       return iFlags;
    }
 
