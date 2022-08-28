@@ -1,0 +1,159 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+DarkFrogman is Monster
+
+constants:
+
+   include blakston.khd
+
+   ANIM_ATTACK_WOUNDED1 = 2
+   ANIM_ATTACK_WOUNDED2 = 3
+
+resources:
+
+   // TODO: German translation by Tyrant
+   //include darkfrogman.lkod
+
+   DarkFrogman_koc_name_rsc = "daryozotz"
+   DarkFrogman_name_rsc = "dark frogman"
+   DarkFrogman_icon_rsc = frogman.bgf
+   DarkFrogman_desc_rsc = \
+      "This is a an evil frogman. A vicious abomination of amphibioids. They are known "
+      "for their hatred of those who follow the holy path. Do not underestimate them as "
+      "they use a powerful poison to subdue their prey."
+
+   DarkFrogman_dead_icon_rsc = frogmanX.bgf
+   DarkFrogman_dead_name_rsc = "exorcised dark frogman"
+
+   DarkFrogman_sound_hit = frg_atkh.ogg
+   DarkFrogman_sound_miss = frg_atkm.ogg
+   DarkFrogman_sound_death = frg_dth.ogg
+   DarkFrogman_sound_aware = frg_awr.ogg
+
+classvars:
+ 
+   viIndefinite = ARTICLE_A
+   vrKocName = DarkFrogman_koc_name_rsc
+   vrName = DarkFrogman_name_rsc
+   vrIcon = DarkFrogman_icon_rsc
+   vrDesc = DarkFrogman_desc_rsc
+   vrDead_icon = DarkFrogman_dead_icon_rsc
+   vrDead_name = DarkFrogman_dead_name_rsc
+
+   viTreasure_type = TID_MEDIUM_HUMAN
+
+   viSpeed = SPEED_AVERAGE
+   viAttack_type = ATCK_WEAP_PIERCE
+   viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE
+   viLevel = 300
+   viDifficulty = 9
+   viVisionDistance = 95
+   viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE | AI_FIGHT_SWITCHALOT
+   viCashmin = 5000
+   viCashmax = 15000
+   vrSound_hit = DarkFrogman_sound_hit
+   vrSound_miss = DarkFrogman_sound_miss
+   vrSound_aware = DarkFrogman_sound_aware
+   vrSound_death = DarkFrogman_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+   piReputationGroup = REP_FROGMEN
+   
+   piDrawfx = DRAWFX_BLACK
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ ATCK_WEAP_NONMAGIC, 15],
+                        [-ATCK_SPELL_UNHOLY, 50],
+                        [-ATCK_SPELL_HOLY, -50],
+                        [-ATCK_SPELL_UNHOLY, 80],
+                        [-ATCK_SPELL_ACID, 80],
+                        [-ATCK_SPELL_FIRE, -30],
+                        [-ATCK_SPELL_COLD, -30]
+                      ];
+
+      plReputationEnemies = [REP_UNDEAD];
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      if piHit_points < (200*viLevel/3)
+      {
+         piAnimation = ANIM_ATTACK_WOUNDED1;
+      }
+      if piHit_points < (100*viLevel/3)
+      {
+         piAnimation = ANIM_ATTACK_WOUNDED2;
+      }
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE);
+      AddPacket(4,300,2,2,2,3);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,2,2,3);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,200,2,4,2,5,2,1);
+
+         return;
+      }
+
+      if piAnimation = ANIM_ATTACK_WOUNDED1
+      {
+         AddPacket(1,ANIMATE_ONCE,4,250,2,6,2,7,2,1);
+
+         return;
+      }
+
+      if piAnimation = ANIM_ATTACK_WOUNDED2
+      {
+         AddPacket(1,ANIMATE_ONCE,4,300,2,8,2,9,2,1);
+
+         return;
+      }
+
+      // if no body animation
+
+      propagate;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////
