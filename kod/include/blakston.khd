@@ -1192,6 +1192,7 @@
    RID_OMAR = 9001
    RID_OBARLN = 9002
    RID_OBARLS = 9003
+   RID_NewRoom = 9090
 
    // Room flags
 

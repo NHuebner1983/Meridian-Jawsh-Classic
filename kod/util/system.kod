@@ -2749,6 +2749,7 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_DTHRONE1,#class=&DeathRealmThrone1);
       Send(self,@CreateOneRoomIfNew,#num=RID_DTHRONE2,#class=&DeathRealmThrone2);
       Send(self,@CreateOneRoomIfNew,#num=RID_DMAZE,#class=&DeathRealmMaze);
+      Send(self,@CreateOneRoomIfNew,#num=RID_NewRoom,#class=&NewRoom);
 
       if poRentableRoomMaintenance <> $  // After a clean build, for example.
       {
