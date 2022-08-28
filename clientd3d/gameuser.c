@@ -464,8 +464,15 @@ void UserMakeOffer(void)
    ObjectListDestroy(sel_list);
    
    /* Now get items user wants to offer */
-   items = DisplayLookList(hMain, GetString(hInst, IDS_OFFERITEMS), player.inventory, 
-			   LD_MULTIPLESEL | LD_AMOUNTS);
+   if (((object_node*)(sel_list->data))->flags & OF_MARKETPLACE)
+   {
+	   items = DisplayLookList(hMain, GetString(hInst, IDS_MARKETITEMS), player.inventory,
+		   LD_MULTIPLESEL | LD_AMOUNTS | LD_MARKETPLACE);
+   } else {
+	   items = DisplayLookList(hMain, GetString(hInst, IDS_OFFERITEMS), player.inventory,
+		   LD_MULTIPLESEL | LD_AMOUNTS);
+   }
+
    if (items == NULL)
       return;
 

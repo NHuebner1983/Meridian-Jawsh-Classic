@@ -157,6 +157,7 @@ BOOL LookInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    info->hwndListBox = GetDlgItem(hDlg, IDC_ITEMLIST);
    info->hwndFind = GetDlgItem(hDlg, IDC_ITEMFIND);
    info->hwndQuanList = GetDlgItem(hDlg, IDC_QUANLIST);
+   info->hwndPriceList = GetDlgItem(hDlg, IDC_PRICELIST);
 
    // Make list sorted if desired
    if (info->flags & LD_SORT)
@@ -167,8 +168,10 @@ BOOL LookInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
 
    if (!(info->flags & LD_AMOUNTS))
    {
-      ShowWindow(GetDlgItem(hDlg, IDC_STATIC1), SW_HIDE);
-      ShowWindow(GetDlgItem(hDlg, IDC_QUANLIST), SW_HIDE);
+      ShowWindow(GetDlgItem(hDlg, IDC_STATIC1), SW_HIDE); // Quantity Label
+	  ShowWindow(GetDlgItem(hDlg, IDC_STATIC2), SW_HIDE); // Sell Price Per Unit Label
+	  ShowWindow(GetDlgItem(hDlg, IDC_QUANLIST), SW_HIDE); // Quantity List
+	  ShowWindow(GetDlgItem(hDlg, IDC_PRICELIST), SW_HIDE); // Price List
    }
    
    // Draw objects in owner-drawn list box
@@ -185,8 +188,10 @@ BOOL LookInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    numItems = ListBox_GetCount(info->hwndListBox);
    for(index=0; index < numItems; index++)
    {
-      ListBox_AddString(info->hwndQuanList," ");
-      ListBox_SetItemData(info->hwndQuanList, index, 0);
+      ListBox_AddString(info->hwndQuanList," "); // Quantity List
+      ListBox_SetItemData(info->hwndQuanList, index, 0); // Quantity List
+	  ListBox_AddString(info->hwndPriceList, " "); // Sell Price Per Unit List
+	  ListBox_SetItemData(info->hwndPriceList, index, 0); // Sell Price Per Unit List
    }
       
    Edit_LimitText(info->hwndFind, MAXNAME);
@@ -623,11 +628,15 @@ list_type DisplayLookList(HWND hParent, char *title, list_type l, int flags)
    dlg_info.contents = l;
    dlg_info.flags = flags;
 
-   /* If multiple selections allowed, make list box multiple select */
-   if (flags & LD_MULTIPLESEL)
-      valid = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ITEMLISTMULTIPLE), hParent,
+   /* If marketplace object */
+   if (flags & LD_MARKETPLACE)
+      valid = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ITEMLISTMARKETPLACE), hParent,
 			     LookDialogProc, (LPARAM) &dlg_info);
-   else 
+   else if (flags & LD_MULTIPLESEL)
+	   /* If multiple selections allowed, make list box multiple select */
+	   valid = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ITEMLISTMULTIPLE), hParent,
+		   LookDialogProc, (LPARAM)&dlg_info);
+   else
       if (flags & LD_SORT)
 	 valid = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_ITEMLISTSORTED), hParent,
 				LookDialogProc, (LPARAM) &dlg_info);

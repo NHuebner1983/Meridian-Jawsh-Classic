@@ -480,6 +480,10 @@
 #define ID_HOMEPAGE                     3516
 #define ID_COLOR_QUESTHEADER            3517
 #define ID_GRAPHICS_MENU                3518
+#define IDD_ITEMLISTMARKETPLACE         3520
+#define IDC_STATIC2                     3521
+#define IDC_PRICELIST                   3522
+#define IDS_MARKETITEMS                 3523
 
 // Next default values for new objects
 // 
