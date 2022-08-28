@@ -134,10 +134,10 @@ resources:
       "~r~B''say save outfit 1'' ~r~B~kand I will remember what you're wearing. I can do 1 and 2.~k\n"
       "~r~B''say use outfit 1'' ~r~B~kand I will try to dress you what you were wearing before. I can do 1 and 2.~k\n"
       "~r~B''say undress me'' ~r~B~kand I will strip you of your equipment so you can relax.~k\n"
-      "~r~B''say send new loot to my hall'' ~r~B~kand I will use transference on autolooted items.~k\n"
       "~r~B''say send new loot to my vault'' ~r~B~kand I will use conveyance on autolooted items.~k\n"
-//      "~r~B''say tell me when enemies are nearby'' ~r~B~kand I will get your attention when enemies are close.~k\n"
-//      "~r~B''say stop telling me when enemies are nearby'' ~r~B~kand I will stop telling you when enemies are close.~k\n"
+      "~r~B''say stop sending new loot to my vault'' ~r~B~kand I will stop using conveyance.~k\n"
+      "~r~B''say send new loot to my hall'' ~r~B~kand I will use transference on autolooted items.~k\n"
+      "~r~B''say stop sending new loot to my hall'' ~r~B~kand I will stop using transference.~k\n"
    
    // RPG Random Names
    servant_name_1 = "Eimmilth, The Mammoth"
