@@ -26,7 +26,7 @@ resources:
       "can easily rip through your flesh."
 
    CorruptedMollusk_dead_icon_rsc = molX.bgf
-   CorruptedMollusk_dead_name_rsc = "slain corrupted mollusk"
+   CorruptedMollusk_dead_name_rsc = "exorcised corrupted mollusk"
 
    CorruptedMollusk_sound_miss = mol_atk.ogg
    CorruptedMollusk_sound_death = mol_dth.ogg
@@ -50,8 +50,8 @@ classvars:
    viAttack_type = ATCK_WEAP_BLUDGEON
 
    viAttributes = 0
-   viLevel = 150
-   viDifficulty = 10
+   viLevel = 300
+   viDifficulty = 9
    viVisionDistance = 20
    // Attack range of 192, or 3 row/col.
    viAttackRange = 192
