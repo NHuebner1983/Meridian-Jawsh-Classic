@@ -223,6 +223,10 @@
 
    UC_REQ_TIME  = 60
 
+   // Marketplace
+   UC_MARKETPLACE_LIST   = 61
+   UC_MARKETPLACE_UNLIST = 62
+
    // enchantment byte
    ENCHANTMENT_PLAYER = 1
    ENCHANTMENT_ROOM = 2

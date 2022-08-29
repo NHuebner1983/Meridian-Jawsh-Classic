@@ -107,6 +107,8 @@ ToServer(BP_REQ_MOVE, NULL, FinenessClientToKod(y) + KOD_FINENESS, \
 #define RequestRescue()              ToServer(BP_USERCOMMAND, user_msg_table, UC_REQ_RESCUE)
 #define RequestRoundtrip(t)          ToServer(BP_ROUNDTRIP2, NULL, t)
 #define RequestTime()                ToServer(BP_USERCOMMAND, user_msg_table, UC_REQ_TIME)
+#define MarketplaceList(obj, quantity, unit)  ToServer(BP_USERCOMMAND, user_msg_table, UC_MARKETPLACE_LIST, obj, quantity, unit)
+#define MarketplaceUnList(obj, quantity)      ToServer(BP_USERCOMMAND, user_msg_table, UC_MARKETPLACE_UNLIST, obj, quantity)
 
 M59EXPORT void Logoff(void);
 M59EXPORT void _cdecl ToServer(BYTE type, ClientMsgTable table, ...);

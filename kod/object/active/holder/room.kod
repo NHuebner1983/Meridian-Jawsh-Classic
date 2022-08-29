@@ -1123,6 +1123,19 @@ messages:
       // Free the room memory.
       FreeRoom(prmRoom);
 
+      foreach i in plActive
+      {
+         if IsClass(First(i),&Store)
+         {
+            Send(SYS,@AddStoreToList,#oStore=First(i));
+            
+            if IsClass(First(i),&StorageBox)
+            {
+               Send(First(i),@EnterLimbo,#what=First(i));
+            }
+         }
+      }
+
       propagate;
    }
 
@@ -2370,7 +2383,10 @@ messages:
       local i,each_obj;
 
       // make sure to unregister it as a blocker
-      BlockerRemoveBSP(prmRoom, what);
+      if NOT IsClass(what, &Store)
+      {
+         BlockerRemoveBSP(prmRoom, what);
+      }
 
       if NOT IsClass(what,&User)
       {
@@ -5052,6 +5068,11 @@ messages:
       local i, oTarg1, oTarg2, oTarg3, oTarg4, oTarg5,
             iHate1, iHate2, iHate3, iHate4, iHate5, oBrain,
             iHate, oTarg, iTempHate, oTempTarg;
+      
+      if IsClass(what, &Store)
+      {
+         return;
+      }
 
       // We used to reset monster chasers here, but monsters have better AI
       // now and can on occasion respond before a user makes a move. Calling
@@ -5072,7 +5093,7 @@ messages:
       foreach i in plActive
       {
          oTarg = First(i);
-         if IsClass(oTarg,&Monster)
+         if IsClass(oTarg,&Monster) AND NOT IsClass(oTarg, &Store)
          {
             if oBrain = $
             {
@@ -5151,7 +5172,7 @@ messages:
    {
       local oBrain;
 
-      if mob = $
+      if mob = $ OR IsClass(mob, &Store) OR IsClass(what, &Store)
       {
          return;
       }

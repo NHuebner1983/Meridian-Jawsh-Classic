@@ -151,6 +151,12 @@ properties:
    // Wearing this item buffs the wearer with a spell
    piBuffSpellNum = $
    ptBuffTimer = $
+
+   // Marketplace settings for each object
+   pbMarketplaceListed = FALSE
+   poMarketplaceOwner = $
+   piMarketplaceQuantity = 1
+   piMarketplaceUnitPrice = 1000
    
 messages:
 
@@ -188,7 +194,92 @@ messages:
       propagate;
    }
 
+   IsListedOnMarketplace()
+   "Is this a marketplaced item"
+   {
+      return pbMarketplaceListed;
+   }
+
+   GetMarketplaceOwner()
+   "Original owner of the item"
+   {
+      return poMarketplaceOwner;
+   }
+
+   SetMarketplaceOwner(who=$)
+   "Set the marketplace owner of this item"
+   {
+      poMarketplaceOwner = who;
+
+      return;
+   }
+
+   GetMarketplaceUnitPrice()
+   "Unit price for marketplace sale"
+   {
+      return piMarketplaceUnitPrice;
+   }
+
+   SetMarketplaceUnitPrice(amount=1000)
+   "Set the Unit Price for this item on the marketplace"
+   {
+      piMarketplaceUnitPrice = amount;
+
+      return;
+   }
+
+   GetMarketplaceQuantity()
+   "Quantity available for purchase on marketplace"
+   {
+      return piMarketplaceQuantity;
+   }
+
+   SetMarketplaceQuantity(amount=1)
+   "Set the quantity of this item on the marketplace"
+   {
+      piMarketplaceQuantity = amount;
+
+      return;
+   }
+
+   CanListOnMarketplace()
+   "Item can be listed on the marketplace"
+   {
+      return Send(self,@CanBeStoredInVault) AND NOT Send(self,@IsCursed);
+   }
+
+   ListOnMarketplace(who=$, quantity=1, unit_price=1000)
+   "List this item on the marketplace"
+   {
+      if who = $
+      {
+         return FALSE;
+      }
+
+      poMarketplaceOwner = who;
+      piMarketplaceQuantity = quantity;
+      piMarketplaceUnitPrice = unit_price;
+      pbMarketplaceListed = TRUE;
+
+      return TRUE;
+   }
+
+   UnListFromMarketplace()
+   "Unlist an item from the marketplace"
+   {
+      if poMarketplaceOwner = $
+      {
+         return FALSE;
+      }
+
+      // Owner must be able to carry the items they listed on the marketplace since they're unlisting them.
+      // TODO: Unlist item from marketplace.
+
+      return TRUE;
+   }
+
    SetBuffSpell(num=$)
+   "Makes an item have an enchantment for the wearer"
    {
       if num <> $
       {
@@ -204,6 +295,7 @@ messages:
    }
 
    TryBuff()
+   "Tries to put an enchantment on the wearer if it has a buffSpellNum"
    {
       local oSpell;
       
@@ -1160,6 +1252,12 @@ messages:
    GetValue()
    {
       local iPercent, iValue, iFinal, i, oItemAtt, iNum;
+
+      if pbMarketplaceListed AND piMarketplaceUnitPrice <> $
+      {
+         // Marketplace items do not have a degredation value calculation.
+         return piMarketplaceUnitPrice;
+      }
 
       // Okay, new way of figuring value, considering 
       // max_hits, current_max_hits, and hits.

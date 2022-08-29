@@ -1,0 +1,271 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Store is Towns
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Store_name_rsc = "Store Catalog"
+   Store_icon_rsc = jbook.bgf
+   Store_desc_rsc = \
+     "Welcome to %s's marketplace! \n\n"
+	  "Feel free to browse the list of items to purchase. The "
+	  "item will immediatly be given to you and the owner will "
+	  "receive their payment. Tthere are no refunds - all sales are final!"
+
+classvars:
+
+   vrName = Store_name_rsc
+   vrIcon = Store_icon_rsc
+   vrDesc = Store_desc_rsc
+
+   viAttributes = \
+      MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN \
+      | MOB_NOMOVE | MOB_BUYER | MOB_SELLER \
+	  | MOB_MARKETPLACE
+   viOccupation = MOB_ROLE_MERCHANT
+   viMerchant_markup = MERCHANT_RIPOFF
+
+   // We sell what other people have given us
+   vbSellFromInventory = TRUE
+
+   // Stores should be walk-through.
+   viMoveOn_type = MOVEON_YES
+
+properties:
+
+   poStoreOwner = $
+
+messages:
+
+    Recreate()
+    {
+        if poStoreOwner <> $
+        {
+            Send(poStoreOwner, @ResetStoreLocation);
+        }
+
+        return;
+    }
+
+    GetRoomName()
+    {
+        if poOwner <> $
+        {
+            return Send(poOwner, @GetName);
+        }
+
+        return Send(Send(poStoreOwner, @GetOwner), @GetName);
+    }
+
+    ShowDesc()
+    {
+        AddPacket(4,vrDesc,4,send(poStoreOwner,@GetTrueName));
+
+        return;
+    }
+
+    SetForSale()
+    {
+        local i, oJunk, lForSale;
+
+        lForSale = $;
+
+        Send(self,@NewHold,#what=oJunk);
+
+        plFor_sale = [ lForSale,$,$ ];
+
+        return;
+    }
+
+    Someonesaid(what = $,type = $,string = $)
+    {
+        if type = SAY_NORMAL
+        {
+            if StringEqual(string,"close-store")
+                AND what <> $
+                AND IsClass(what,&User)
+                AND what = poStoreOwner 
+            {
+                Post(self,@Delete);
+                Send(poStoreOwner,@SetStore,#ostore=$);
+            }
+        }
+        
+        return;
+    }
+
+    CanAcceptOffer(who=$)
+    {
+        return (who = poStoreOwner) OR IsClass(who,&DM);
+    }
+
+    ReqOffer(what = $)
+    {
+        if (what = poStoreOwner) OR IsClass(what,&DM)
+        {
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    Offer(what = $)
+    {
+        if (what = poStoreOwner) OR IsClass(what,&DM)
+        {
+            Send(what,@CounterOffer,#item_list=$);
+        }
+
+        return;
+    }
+
+    AcceptOffer()
+    "This does nothing now, we're using a special protocol"
+    {
+        return TRUE;
+    }
+
+    ObjectDesired(what=$,report=TRUE)
+    "Items our store accepts to be available for sale"
+    {
+        return Send(what, @CanListOnMarketplace);
+    }
+
+    ListOnMarketplace(what=$, quantity=1, unit_price=1000)
+    "Lists an item for sale and removes it from the player's inventory"
+    {
+        local i, j, oHolder, lTake_items, bHadSomeNum, lForSale, oNewItem;
+
+        if plFor_Sale = $ OR NOT IsList(plFor_Sale)
+        {
+            Send(self,@SetForSale);
+        }
+
+        if NOT Send(self, @ObjectDesired, #what=what)
+        {
+            return FALSE;
+        }
+
+        if IsClass(what, &NumberItem) AND Send(what,@GetNumber) > quantity
+        {
+            // Remove partial stack from player's inventory (quantity).
+            Send(what,@SubtractNumber,#number=quantity);
+
+            // Create a new object with the partial stack (quantity).
+            // This object can now be safely stored in our holder.
+            what = Create(GetClass(what),#number=quantity);
+        }
+
+        // Set the item's properties as listed on marketplace
+        Send(what,@ListOnMarketplace,#who=poStoreOwner,#quantity=quantity,#unit_price=unit_price);
+
+        //Debug(Send(what,@GetName),poStoreOwner,quantity,unit_price);
+
+        lForSale = First(plFor_Sale);
+        
+        // Holder where our marketplace items will be stored
+        oHolder = Send(SYS,@GetSystemHolder2);
+        
+        // Put the new marketplace listed item in our holder
+        Send(oHolder,@NewHold,#what=what);
+        //Debug("oHolder2",oHolder);
+        //Debug("NewHoldHolder2",what);
+
+        foreach lTake_items in [ Send(oHolder,@GetHolderActive),
+                            Send(oHolder,@GetHolderPassive) ]
+        {
+            foreach i in lTake_items
+            {
+                if NOT IsClass(i, &Item) OR NOT (Send(i,@GetMarketplaceOwner) = poStoreOwner)
+                {
+                    continue;
+                }
+
+                if IsClass(i,&NumberItem)
+                {
+                    bHadSomeNum = FALSE;
+                }
+                else
+                {
+                    // If this is a spell item, then stop the go bad timer.
+                    if IsClass(i,&SpellItem)
+                    {
+                        Send(i,@StopGoBadTimer);
+                    }
+                }
+
+                if NOT FindListElem(lForSale, i)
+                {
+                    lForSale = Cons(i,lForSale);
+                    //Debug("Sellable Found",Send(i, @GetName),Send(Send(i,@GetMarketplaceOwner),@GetName),Send(i,@GetValue));
+                }
+            }
+        }
+
+        // Set the items for sale
+        SetNth(plFor_Sale,1,lForSale);
+
+        //Debug("plFor_sale", plFor_sale);
+        //Debug("lForSale", lForSale);
+
+        return TRUE;
+    }
+
+    UnListFromMarketplace(what=$, quantity=1)
+    "Unlists an item from the marketplace (ie: puts the items back on the owner) and strips Marketplace Data from the item."
+    {
+        // Does nothing for now. Maybe the owner just buys their stuff back instead?
+        return;
+    }
+
+    NewHoldObject(what=$)
+    {
+        local oOwner;
+
+        oOwner = Send(what,@GetOwner);
+
+        if oOwner <> $
+        {
+            Send(poOwner,@LeaveHold,#what=what);
+            Send(what,@NewOwner,#what=$);
+        }
+
+        return;
+    }
+
+    SetStoreOwner(oStoreOwner=$)
+    {
+        poStoreOwner = oStoreOwner;
+
+        return;
+    }
+
+    GetStoreOwner()
+    {
+        return poStoreOwner;
+    }
+
+    Delete()
+    "Upon deleting a store, we need to make sure all of the items go back to the seller"
+    "or if that's not an issue, we'll see."
+    {
+        // We really shouldn't allow deleting a store until it has been emptied back to the owners.
+        // We have tagged every item on the marketplace with the owner / quantity / unit price.
+        // But if this hold deletes, it may delete its contents.
+        return FALSE;
+    }
+
+end
+////////////////////////////////////////////////////////////////////////////////

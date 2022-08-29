@@ -268,6 +268,8 @@ resources:
    monster_faction_heretic = "Cult of the Three"
    monster_faction_undead = "Minions of Death"
 
+   shop_sold_offer = "~B~yYour %s sold for %i shillings. Your earnings have been sent to your bank account.~k"
+
 classvars:
 
    vrKocName = monster_koc_name
@@ -538,6 +540,9 @@ properties:
 
    ptFollowTimer = $
 
+   // Store owner
+   poStoreOwner = $
+
 messages:
 
    Constructor(template=FALSE, color=0, piSurvivalLevel=0, iBrain = 0)
@@ -546,10 +551,10 @@ messages:
       local iStatPoints, iMin, iMax;
 
       piSpeed = viSpeed;
-	  piAttributes = viAttributes;
+      piAttributes = viAttributes;
 
       piMax_Hit_points = Send(Self,@Fuzzy,#num=Send(self,@GetMaxHitPoints))
-                         + piSurvivalLevel*viDifficulty;
+                           + piSurvivalLevel*viDifficulty;
       piHit_points = piMax_hit_points*100;
       piMana = piMax_mana;
       piAttackRange = viAttackRange;
@@ -640,34 +645,34 @@ messages:
 
       propagate;
    }
-   
+
    Constructed()
    {
       if NOT IsClass(self, &Servant)
-	  {
-	     piMonsterCastInterval = 5000;
-	  }
-	  
+      {
+         piMonsterCastInterval = 5000;
+      }
+      
       ptMonsterCastTimer = CreateTimer(self,@MonsterCastSpell,piMonsterCastInterval);
-	  
-	  propagate;
+      
+      propagate;
    }
-   
+
    GetBonusXP()
    {
-       return viBonusXP;
+         return viBonusXP;
    }
-   
+
    GetBonusTP()
    {
       return viBonusTP;
    }
-   
+
    GetCurrentState()
    {
-	   return viCurrentState;
+      return viCurrentState;
    }
-   
+
    SetPatrolPath(lPath = $)
    {
       if (lPath <> $)
@@ -719,7 +724,7 @@ messages:
 
       return;
    }
- 
+
    // Remove the questnode from this NPCs list
    RemoveQuestNodeFromActiveList(node = $)
    {
@@ -779,7 +784,7 @@ messages:
    "End of monster. Clean up any quests it might have spawned."
    {
       local i, j, k;
-	  
+      
       // Minion Management - upon dying they should leave your control list
       if poMaster <> $
       {
@@ -840,11 +845,11 @@ messages:
             foreach j in Send(Send(SYS,@GetLibrary),@GetSignetRings)
             {
                if Send(j,@GetRingOwner) = self
-                 {
-                    Send(Send(SYS,@GetLibrary),@UnregisterSignet,#newring=j);
-                    Send(j,@Delete);
-                 }
-             }
+                  {
+                     Send(Send(SYS,@GetLibrary),@UnregisterSignet,#newring=j);
+                     Send(j,@Delete);
+                  }
+               }
          }
       }
 
@@ -910,7 +915,7 @@ messages:
    }
 
    StartEnchantment(what = $,time = $,state=$, iSpellPower = 0,
-                    lastcall = TRUE, bRadiusEnchant = FALSE)
+                     lastcall = TRUE, bRadiusEnchant = FALSE)
    "Adds <what> to our enchantments, and creates a timer that will cause it "
    "to end."
    {
@@ -993,7 +998,7 @@ messages:
             if Length(i) > ENCHANTMENT_LIST_NO_STATE
             {
                Send(Nth(i,2),@RemoveEnchantmentEffects,#who=self,
-                    #state=Nth(i,3));
+                     #state=Nth(i,3));
             }
             else
             {
@@ -1008,7 +1013,7 @@ messages:
    }
 
    ////  State Transition Functions
-   
+
    EnterStateLimbo()
    {
       Send(self,@ClearBehavior);
@@ -1017,9 +1022,9 @@ messages:
          AND Send(poTarget,@GetOwner) = poOwner
          AND isClass(poTarget,&User)
       {
-	     Send(poTarget,@ReduceAggro,#what=self);
+         Send(poTarget,@ReduceAggro,#what=self);
          Send(poTarget,@SubtractFromMonsterChasers,
-              #level=viLevel);
+               #level=viLevel);
       }
 
       poTarget = $;
@@ -1036,9 +1041,9 @@ messages:
          AND Send(poTarget,@GetOwner) = poOwner
          AND isClass(poTarget,&user)
       {
-	     Send(poTarget,@ReduceAggro,#what=self);
+         Send(poTarget,@ReduceAggro,#what=self);
          Send(poTarget,@SubtractFromMonsterChasers,
-              #level=viLevel);
+               #level=viLevel);
       }
 
       poTarget = $;
@@ -1058,13 +1063,13 @@ messages:
 
       return;
    }
-   
+
    IsMobile()
    {
       return 
-	     (piState & STATE_ATTACK)
-		 OR (piState & STATE_CHASE)
-		 OR (piState & STATE_MOVE);
+         (piState & STATE_ATTACK)
+         OR (piState & STATE_CHASE)
+         OR (piState & STATE_MOVE);
    }
 
    EnterStateMove( actnow=FALSE )
@@ -1076,9 +1081,9 @@ messages:
          AND Send(poTarget,@GetOwner) = poOwner
          AND isClass(poTarget,&User)
       {
-	     Send(poTarget,@ReduceAggro,#what=self);
+         Send(poTarget,@ReduceAggro,#what=self);
          Send(poTarget,@SubtractFromMonsterChasers,
-              #level=viLevel);
+               #level=viLevel);
       }
 
       poTarget = $;
@@ -1109,7 +1114,7 @@ messages:
 
       Send(self,@SetState,#bit=STATE_ATTACK);
       Send(self,@ClearBehavior);
-	  
+      
       if actnow
       {
          oWaitTime = 100;
@@ -1127,26 +1132,26 @@ messages:
    EnterStateChase( target = $, actnow = TRUE )
    {
       local bPlaySound;
-	  
+      
       bPlaySound = (NOT IsClass(self, &Servant));
 
-	  if target <> $
-	  {
-	     bPlaySound = (NOT IsClass(target, &Servant));
-	  }
-	  
-	  if poTarget <> $
-	  {
-	     bPlaySound = (NOT IsClass(poTarget, &Servant));
-	  }
-	  
+      if target <> $
+      {
+         bPlaySound = (NOT IsClass(target, &Servant));
+      }
+      
+      if poTarget <> $
+      {
+         bPlaySound = (NOT IsClass(poTarget, &Servant));
+      }
+      
       if poTarget <> $ AND target <> $ AND poTarget <> target AND vrSound_aware <> $ AND bPlaySound 
          AND NOT IsClass(self, &Servant) AND NOT IsClass(self, &Reflection)
          AND NOT IsClass(target, &Servant) AND NOT IsClass(target, &Reflection)
          AND NOT IsClass(poTarget, &Servant) AND NOT IsClass(poTarget, &Reflection)
       {
          Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=vrSound_aware,
-              #flags=SOUND_RANDOM_PITCH);
+               #flags=SOUND_RANDOM_PITCH);
       }
 
       Send(self,@SetState,#bit=STATE_CHASE);
@@ -1170,7 +1175,7 @@ messages:
    }
 
    //// Sensory Inputs
-   
+
    NewOwner(what = $)
    "Monster just entered this room. Right now, thats only possible on a"
    "creation. So, lets pause for a few beats if we got users."
@@ -1196,7 +1201,10 @@ messages:
          Send(self,@StartBasicTimers);
       }
 
-      Send(poBrain,@NewOwner,#mob=self,#state=piState,#what=what);
+      if NOT IsClass(self, &Store)
+      {
+         Send(poBrain,@NewOwner,#mob=self,#state=piState,#what=what);
+      }
 
       propagate;
    }
@@ -1206,6 +1214,11 @@ messages:
    "here, we have already handled the case that the user was plunked down"
    "near a non-fighting and agressive mob. So, lets just start our timers."
    {
+      if IsClass(self, &Store)
+      {
+         return;
+      }
+
       if ((piState & STATE_LIMBO)
          OR (piBehavior & AI_NPC))
       {
@@ -1213,17 +1226,22 @@ messages:
       }
 
       Send(poBrain,@FirstUserEntered,#mob=self,#state=piState,
-           #what=what,#new_row=new_row,#new_col=new_col);
+            #what=what,#new_row=new_row,#new_col=new_col);
 
       propagate;
    }
-   
+
    LastUserLeft()
    "All our users just left, so lets stop all our timers. If we were a"
    "seller of some conditional goods, we hide them again so the next"
    "set of players has to ask for them by name."
    {
       local i;
+
+      if IsClass(self, &Store)
+      {
+         return;
+      }
 
       Send(self,@ClearBasicTimers);
 
@@ -1239,7 +1257,7 @@ messages:
 
       propagate;
    }
-   
+
    SomethingMoved(what=$,new_row=$,new_col=$,fine_row=$,fine_col=$)
    "Check to see if we need to change our combat plan because someone moved."
    {
@@ -1442,7 +1460,7 @@ messages:
    PlayerFirstMove(what=$, where = $, new_row = 0, new_col=0)
    {
       Send(poBrain,@PlayerFirstMove,#mob=self,#state=piState,
-           #what=what,#where=where,#new_row = new_row, #new_col=new_col);
+            #what=what,#where=where,#new_row = new_row, #new_col=new_col);
 
       return;
    }
@@ -1455,8 +1473,13 @@ messages:
    {
       local oQuestNode;
 
+      if IsClass(self, &Store)
+      {
+         return;
+      }
+
       Send(poBrain,@SomethingEntered,#mob=self,#state=piState,
-           #what=what,#where=where);
+            #what=what,#where=where);
 
       // Check if it was this mob's temporary owner.
       Send(self,@MobSeduceCheck,#what=what);
@@ -1526,7 +1549,7 @@ messages:
    {
       if ((poApparitionCaster <> $ AND what = poApparitionCaster)
             OR (poApparitionOriginal <> $ AND what = poApparitionOriginal)
-			OR (IsClass(what,&Player) AND Send(what,@GetServant) = self))
+         OR (IsClass(what,&Player) AND Send(what,@GetServant) = self))
       {
          Send(self,@Delete);
       }
@@ -1614,7 +1637,7 @@ messages:
 
       if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 25) OR IsClass(self, &Servant)
       {
-	     // Servants always enter, even if there's 25+ monsters.
+         // Servants always enter, even if there's 25+ monsters.
          Send(oNewRoom,@NewHold,#what=self,
                #new_row=Send(poMaster,@GetRow),#new_col=Send(poMaster,@GetCol),
                #new_angle=Send(poMaster,@GetAngle));
@@ -1627,12 +1650,12 @@ messages:
    "Someone just died, perhaps we need to clear our target."
    {
       if victim <> $ AND IsClass(victim, &Player)
-	  {
-	     Send(victim,@ReduceAggro,#what=self);
-	  }
+      {
+         Send(victim,@ReduceAggro,#what=self);
+      }
 
       Send(poBrain,@SomethingKilled,#mob=self,#state=piState,
-           #what=what,#victim=victim,#use_weapon=use_weapon);
+            #what=what,#victim=victim,#use_weapon=use_weapon);
 
       propagate;
    }
@@ -1756,7 +1779,7 @@ messages:
 
       if poTarget = $ OR NOT IsClass(poTarget,&Battler)
       {
-	     // Disabled, spammy - will fix later.
+         // Disabled, spammy - will fix later.
          //Debug("Unreachable. Null poTarget","monster",self);
          poTarget = $;
          Send(self,@EnterStateWait);
@@ -1774,7 +1797,7 @@ messages:
       }
 
       Send(poBrain,@GetAttackBehavior,#mob=self,#target=poTarget,
-           #behavior=piBehavior);
+            #behavior=piBehavior);
       
       if poTarget = $
       {
@@ -1813,7 +1836,7 @@ messages:
 
       return;
    }
- 
+
    ChaseTimer( timer = $ )
    "We're in Hot pursuit, so either we keep chasing, or we attack."
    "Note that even if we can't move, we can be 'chasing'...."
@@ -1868,7 +1891,7 @@ messages:
       if not bCast
       {
          Send(poBrain,@GetChaseBehavior,#mob=self,#target=poTarget,
-              #behavior=piBehavior);
+               #behavior=piBehavior);
       }
 
       // Call this if the monster just killed the player with a spell
@@ -1884,16 +1907,16 @@ messages:
 
       return;
    }
-   
+
    ClearMonsterCastTimer()
    {
       if ptMonsterCastTimer <> $
-	  {
-	     DeleteTimer(ptMonsterCastTimer);
-		 ptMonsterCastTimer = $;
-	  }
-	  
-	  return;
+      {
+         DeleteTimer(ptMonsterCastTimer);
+         ptMonsterCastTimer = $;
+      }
+      
+      return;
    }
 
    MoveTimer( timer = $ )
@@ -2023,32 +2046,32 @@ messages:
 
       return piAim - iOrigAim;
    }
-   
+
    GetMight()
    {
       return piMight;
    }
-   
+
    GetAgility()
    {
       return piAgility;
    }
-   
+
    GetIntellect()
    {
       return piIntellect;
    }
-   
+
    GetAim()
    {
       return piAim;
    }
-   
+
    GetStamina()
    {
       return piStamina;
    }
-   
+
    AddMonsterAgility(points=0)
    {
       local iOrigAgil;
@@ -2073,7 +2096,7 @@ messages:
 
       return;
    }
-   
+
    StartDementia()
    {
       piEnch_flags |= ENCH_DEMENTIA;
@@ -2195,7 +2218,7 @@ messages:
          iNew_row = piRow - bound((-iNew_finerow / FINENESS), 1, 100);
          iNew_finerow = FINENESS - (-iNew_finerow % FINENESS);
       }
-     
+      
       // moved right at least a full col 
       if iNew_finecol >= FINENESS
       {
@@ -2214,7 +2237,7 @@ messages:
                   #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
       {
          Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
-              #new_finerow=iNew_finerow,#new_finecol=iNew_finecol);
+               #new_finerow=iNew_finerow,#new_finecol=iNew_finecol);
 
          // Check for owner, perhaps we died already
          if poOwner <> $
@@ -2255,7 +2278,7 @@ messages:
       // The move-timer is configured to make this movement seamless.
       if drow > 3 OR dcol > 3
       {
-        Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE);
+         Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE);
       }
       else if piKeepWalkingSteps < 8
       {
@@ -2281,10 +2304,10 @@ messages:
 
       // see how far away we are (2D only)
       iDist2 = Send(self, @SquaredFineDistanceToLocation,
-                    #row=piTargetLocationRow,
-                    #col=piTargetLocationCol,
-                    #fine_row=piTargetLocationFineRow,
-                    #fine_col=piTargetLocationFineCol);
+                     #row=piTargetLocationRow,
+                     #col=piTargetLocationCol,
+                     #fine_row=piTargetLocationFineRow,
+                     #fine_col=piTargetLocationFineCol);
 
       // more than 64 fine-units far away (64*64=4096)
       // and not yet reached maxappempts
@@ -2292,10 +2315,10 @@ messages:
       {
          // try get closer
          Send(self,@MoveTowardsCoords,
-              #iRow=piTargetLocationRow,
-              #iCol=piTargetLocationCol,
-              #iFineRow=piTargetLocationFineRow,
-              #iFineCol=piTargetLocationFineCol);
+               #iRow=piTargetLocationRow,
+               #iCol=piTargetLocationCol,
+               #iFineRow=piTargetLocationFineRow,
+               #iFineCol=piTargetLocationFineCol);
 
          piPatrolAttempts = piPatrolAttempts + 1;
       }
@@ -2305,7 +2328,7 @@ messages:
          Send(self,@SetBehaviorFlag,#flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
          piPatrolAttempts = 0;
       }
- 
+
       return;
    }
 
@@ -2326,7 +2349,7 @@ messages:
    //// Combat messages
 
    AllowBattlerAttack(victim=$,stroke_obj=$,report=TRUE,minion=FALSE,
-                      oRoomOverride=$)
+                        oRoomOverride=$)
    "Can this monster attack the victim?"
    {
       local oRoom, bWasBad, lMinions;
@@ -2421,7 +2444,7 @@ messages:
       {
          // Is the caster bad to start with? This is for flavor text.
          bWasBad = (Send(poMaster,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-                    OR Send(poMaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER));
+                     OR Send(poMaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER));
 
          // Check the attack here. If it fails, Player's AllowBatterAttack
          // handles the message sent to the player.
@@ -2473,7 +2496,7 @@ messages:
       if IsClass(self, &Reflection) AND IsClass(who, &Player)
       {
          if NOT (Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-                 OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+                  OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
          {
             if IsClass(poMaster, &Player)
             {
@@ -2529,7 +2552,7 @@ messages:
          
          if oMaster <> $ 
             AND (Send(self, @IsMinionOf, #who=oMaster) 
-                 OR Send(self, @IsMinionOf, #who=poMaster))
+                  OR Send(self, @IsMinionOf, #who=poMaster))
          {
             return FALSE;
          }
@@ -2762,16 +2785,16 @@ messages:
       
       if piHit_points <= 0 
       {
-	     if IsClass(self, &Servant) AND poMaster <> $
-	     {
-	        // Report servant's death to master
+         if IsClass(self, &Servant) AND poMaster <> $
+         {
+            // Report servant's death to master
             Post(poMaster,@MsgSendUser,#what=self,#message_rsc=vrParty_killed_monster,
-	           #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName),
+               #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName),
                #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
-			
-	        return $;
-	     }
-	  
+         
+            return $;
+         }
+      
          foreach i in Send(poOwner,@GetHolderActive)
          {
             each_obj = First(i);
@@ -2780,9 +2803,9 @@ messages:
                AND Send(each_obj,@GetKillTarget)=self
             {
                Post(each_obj,@MsgSendUser,#what=self,
-                    #message_rsc=vrParty_killed_monster,
-                    #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName),
-                    #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+                     #message_rsc=vrParty_killed_monster,
+                     #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName),
+                     #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
             }
          }
          
@@ -2799,7 +2822,7 @@ messages:
       if IsClass(what,&player) AND NOT absolute
       {
          Post(what,@MsgPlayerHitResisted,#what=what,#resistance=iResist,
-              #target=self,#color_rsc=monster_color_blue_rsc);
+               #target=self,#color_rsc=monster_color_blue_rsc);
       }
       
       Send(self,@AddHurtMeRecently,#who=what,#amount=iDamage);
@@ -3077,22 +3100,22 @@ messages:
       }
 
       return Send(self, @MoveTowardsCoords,
-                   #iRow=Send(oTarget,@GetRow),
-                   #iCol=Send(oTarget,@GetCol),
-                   #iFineRow=Send(oTarget,@GetFineRow),
-                   #iFineCol=Send(oTarget,@GetFineCol),
-                   #face_target=face_target,
-                   #face_away=face_away,
-                   #to_master=to_master);
+                     #iRow=Send(oTarget,@GetRow),
+                     #iCol=Send(oTarget,@GetCol),
+                     #iFineRow=Send(oTarget,@GetFineRow),
+                     #iFineCol=Send(oTarget,@GetFineCol),
+                     #face_target=face_target,
+                     #face_away=face_away,
+                     #to_master=to_master);
    }
 
    MoveAway(oTarget = $, face_target=FALSE, face_away=FALSE)
    {
       local drow,dcol;
-  
+
       if oTarget = $
       {
-         Debug("Bad info passed to MoveAway!");
+         //Debug("Bad info passed to MoveAway!");
          return FALSE;
       }
 
@@ -3110,12 +3133,12 @@ messages:
 
       // add vector from oTarget to self on our position and try move there
       return Send(self, @MoveTowardsCoords,
-                   #iRow=(piRow + (drow / FINENESS)),
-                   #iCol=(piCol + (dcol / FINENESS)),
-                   #iFineRow=(piFine_row + (drow % FINENESS)),
-                   #iFineCol=(piFine_col + (dcol % FINENESS)),
-                   #face_target=face_target,
-                   #face_away=face_away);
+                     #iRow=(piRow + (drow / FINENESS)),
+                     #iCol=(piCol + (dcol / FINENESS)),
+                     #iFineRow=(piFine_row + (drow % FINENESS)),
+                     #iFineCol=(piFine_col + (dcol % FINENESS)),
+                     #face_target=face_target,
+                     #face_away=face_away);
    }
 
    ReqMonsterMove(new_row = $,new_col = $,new_finerow = FINENESS_HALF,
@@ -3146,7 +3169,7 @@ messages:
 
       return TRUE;
    }
-    
+      
    MonsterOrient(new_row = $,new_col = $,new_finerow = FINENESS_HALF,
                new_finecol=FINENESS_HALF,face_target = FALSE, face_away=FALSE)
    "Called by monster moving code before and after a real move"
@@ -3209,10 +3232,10 @@ messages:
       // note: these need some persistent info across
       // calls which are stored in piState (flags from old KOD code)
       iState = GetStepTowardsBSP(
-                Send(poOwner, @GetRoomData),
-                piRow, piCol, piFine_row, piFine_col,
-                *iRow, *iCol, *iFineRow, *iFineCol,
-                piState | iMoveFlags, self);
+                  Send(poOwner, @GetRoomData),
+                  piRow, piCol, piFine_row, piFine_col,
+                  *iRow, *iCol, *iFineRow, *iFineCol,
+                  piState | iMoveFlags, self);
 
       if iState <> $
       {
@@ -3222,24 +3245,24 @@ messages:
          {
             //Debug(Send(self,@GetName),"step",iRow,iCol,iFineRow,iFineCol);
          }
-	  
+      
          if (NOT (piBehavior & AI_MOVE_WALKTHROUGH_WALLS))
-             OR Send(self,@ReqMonsterMove,#new_row=iRow,#new_col=iCol,
+               OR Send(self,@ReqMonsterMove,#new_row=iRow,#new_col=iCol,
                      #new_finerow=iFineRow,#new_finecol=iFineCol)
          {
             Send(self,@MonsterOrient,#new_row=iRow,#new_col=iCol,
-                 #new_finerow=iFineRow,#new_finecol=iFineCol,
-                 #face_target=face_target,#face_away=face_away);
-		
+                  #new_finerow=iFineRow,#new_finecol=iFineCol,
+                  #face_target=face_target,#face_away=face_away);
+      
             Send(poOwner,@SomethingMoved,#what=self,#speed=piSpeed,
-                 #new_row=iRow,#new_col=iCol,
-                 #fine_row=iFineRow,#fine_col=iFineCol,
-                 #non_monsters_only=TRUE);
+                  #new_row=iRow,#new_col=iCol,
+                  #fine_row=iFineRow,#fine_col=iFineCol,
+                  #non_monsters_only=TRUE);
 
             // Turn to face target
             Send(self,@MonsterOrient,#new_row=iRow,#new_col=iCol,
-                 #new_finerow=iFineRow,#new_finecol=iFineCol,
-                 #face_target=face_target,#face_away=face_away);
+                  #new_finerow=iFineRow,#new_finecol=iFineCol,
+                  #face_target=face_target,#face_away=face_away);
 
          return TRUE;		
          }
@@ -3299,7 +3322,7 @@ messages:
       ptSpasm = $;
       Send(self,@DoSpasm);
       ptSpasm = CreateTimer(self,@SpasmMonsterTimer,
-                            viSpasm_delay+Random(0,viSpasm_delay/3));
+                              viSpasm_delay+Random(0,viSpasm_delay/3));
 
       return;
    }
@@ -3330,8 +3353,8 @@ messages:
    "offer the value of the items in return."
    {
       local i,j, lArgList, iValueOffered, oQuestNode, bIsBuyer, bWarnAboutUnwantedItems;
-	  
-	  poOffer_who = what;
+      
+      poOffer_who = what;
 
       if item_list = $
       {
@@ -3355,7 +3378,7 @@ messages:
          if NOT Send(i,@CanBeGivenToNPC)
          {
             Post(self,@SayToOne,#target=what,#message_rsc=LS_cant_part,
-                 #parm1=Send(i,@GetIndef),#parm2=Send(i,@GetName));
+                  #parm1=Send(i,@GetIndef),#parm2=Send(i,@GetName));
 
             return FALSE;
          }
@@ -3363,7 +3386,7 @@ messages:
          if NOT Send(what,@ReqLeaveHold,#what=i)
          {
             Post(what,@MsgSendUser,#message_rsc=Lm_cant_remove_item,
-                 #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName));
+                  #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName));
 
             return FALSE;
          }
@@ -3373,7 +3396,7 @@ messages:
             foreach oQuestNode in plActiveQuestNodes
             {
                if Send(oQuestNode,@CheckCompletionCriteria,#who_tried=what,
-                       #item_offered=i)
+                        #item_offered=i)
                {
                   return FALSE;
                }
@@ -3387,9 +3410,9 @@ messages:
          // If we also buy items, don't complain about being offered something
          // that we can't use for a quest.  Maybe we'll buy it.
          bWarnAboutUnwantedItems = (NOT Send(self, @MobIsVaultman)) AND
-              (NOT bIsBuyer);
+               (NOT bIsBuyer);
          if Send(self,@ReqGive,#what=what,#item_list=item_list,
-                 #notify_about_unwanted_items = bWarnAboutUnwantedItems)
+                  #notify_about_unwanted_items = bWarnAboutUnwantedItems)
          {
             return FALSE;
          }
@@ -3406,7 +3429,7 @@ messages:
          if poCustomer <> $
          {
             Send(what,@MsgSendUser,#message_rsc=Lm_buyer_offer_busy,
-                 #parm1=Send(self,@GetName));
+                  #parm1=Send(self,@GetName));
 
             return FALSE;
          }
@@ -3418,7 +3441,7 @@ messages:
             if NOT Send(what,@ReqLeaveHold,#what=i)
             {
                Post(what,@MsgSendUser,#message_rsc=Lm_cant_remove_item,
-                    #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName));
+                     #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName));
 
                return FALSE;
             }
@@ -3426,7 +3449,7 @@ messages:
             if NOT Send(self,@ObjectDesired,#what=i)
             {
                Send(self,@SayToOne,#target=what,
-                    #message_rsc=Lm_buyer_unwanted);
+                     #message_rsc=Lm_buyer_unwanted);
 
                return FALSE;
             }
@@ -3470,7 +3493,7 @@ messages:
          if NOT Send(what,@ReqLeaveHold,#what=i)
          {
             Post(what,@MsgSendUser,#message_rsc=LM_cant_remove_item,
-                 #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName));
+                  #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName));
 
             return FALSE;
          }
@@ -3481,7 +3504,7 @@ messages:
             foreach oQuestNode in plActiveQuestNodes
             {
                if Send(oQuestNode,@CheckCompletionCriteria,#who_tried=what,
-                       #item_offered=i)
+                        #item_offered=i)
                {
                   return TRUE;
                }
@@ -3496,15 +3519,15 @@ messages:
             {
                // We were offered something we want.
                iWantedRejected = Send(Self,@GotWantedItem,#obj=i,#who=what);
-			   
-			   if iWantedRejected = $ OR iWantedRejected = TRUE
-			   {
+            
+            if iWantedRejected = $ OR iWantedRejected = TRUE
+            {
                   bWanted = TRUE;
-			   }
-			   else
-			   {
-			      bWanted = FALSE;
-			   }
+            }
+            else
+            {
+               bWanted = FALSE;
+            }
 
                break;
             }
@@ -3526,13 +3549,13 @@ messages:
 
       return bAllWanted;
    }
-   
+
    GotWantedItem(obj = $, who = $)
    "We have been given an item on our wanted list. This is either a banker"
    "type, or a quest completion of some kind or an intrigue token."
    {
-      Debug("GotWantedMonster",obj,who);
-	  
+      //Debug("GotWantedMonster",obj,who);
+      
       // Handle the kludgy banker interface immediately.
       if (piAttributes & MOB_BANKER) AND IsClass(obj,&Money)
       {
@@ -3554,7 +3577,7 @@ messages:
       if IsClass(obj,&Token) AND Send(SYS,@GetTokenGame) <> $
       {
          Send(Send(SYS,@GetTokenGame),@TokenDelivered,
-              #what=obj,#who=who,#mob=self);
+               #what=obj,#who=who,#mob=self);
 
          return;
       }
@@ -3579,9 +3602,9 @@ messages:
       if IsClass(obj,&SignetRing)
       {
          Post(poOwner,@SomeoneSaid,#what=self,
-              #string=LS_Signet_wrong,#type=SAY_RESOURCE,
-              #parm1=Send(Send(obj,@GetRingOwner),@GetDef),
-              #parm2=Send(Send(obj,@GetRingOwner),@GetName));
+               #string=LS_Signet_wrong,#type=SAY_RESOURCE,
+               #parm1=Send(Send(obj,@GetRingOwner),@GetDef),
+               #parm2=Send(Send(obj,@GetRingOwner),@GetName));
 
          return;
       }
@@ -3590,7 +3613,7 @@ messages:
       if IsClass(obj,&Token) AND NOT IsClass(self,&DragonFlyQueen)
       {
          Post(who,@MsgSendUser,#message_rsc=vrUnwanted_token,
-              #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+               #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
          Send(obj,@OfferRejected);
          Send(who,@NewHold,#what=obj);
 
@@ -3600,7 +3623,7 @@ messages:
       // So this really was a random offering it appears so lets act alive.
       // We say no thanks, and return the item to the giver.
       Post(who,@MsgSendUser,#message_rsc=vrUnwanted_give,
-           #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+            #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
       if IsClass(obj,&NumberItem)
       {
          // Delete the numberitem because it was created special for the offer.
@@ -3647,11 +3670,11 @@ messages:
 
       if IsClass(what,&User)
          AND (Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
-              OR Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED))
+               OR Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED))
          AND type <> SAY_DM
       {
          Send(what,@MsgSendUser,#message_rsc=monster_anonymous_response,
-              #parm1=Send(self,@GetName));
+               #parm1=Send(self,@GetName));
 
          return;
       }
@@ -3662,7 +3685,7 @@ messages:
          foreach oQuestNode in plActiveQuestNodes
          {
             if Send(oQuestNode,@CheckCompletionCriteria,#who_tried=what,
-                    #message=string)
+                     #message=string)
             {
                return;
             }
@@ -3675,9 +3698,9 @@ messages:
       if lActionList <> $
       {
          Post(oLibrary,@ParseAction,#action=First(lActionList),
-              #mob=self,#target=what);
+               #mob=self,#target=what);
          Send(self,@AddToSpamList,#mob_class=Nth(lActionList,2),
-              #key_num=Nth(lActionList,3));
+               #key_num=Nth(lActionList,3));
       }
 
       // Last but not least, is the player asking about one of my spells/skills?
@@ -3714,11 +3737,11 @@ messages:
    SomeoneSaidLevel(what = $,type = $,string = $)
    {
       local iLevel;
-	  
-	  if plFor_Sale = $
-	  {
-	     return FALSE;
-	  }
+      
+      if plFor_Sale = $
+      {
+         return FALSE;
+      }
 
       if (Nth(plFor_Sale,2) = $ AND Nth(plFor_Sale,3) = $)
          OR NOT StringContain(string,monster_level)
@@ -3815,9 +3838,9 @@ messages:
       local i, iNumAbilities, iNumRsc, iCounter;
 
       AddPacket(1,BP_SAID, 4,self, 4,Send(self,@GetName), 1,SAY_RESOURCE,
-                4,monster_said_resource_str, 4,Send(self,@GetCapDef),
-                4,Send(self,@GetName));
-                
+                  4,monster_said_resource_str, 4,Send(self,@GetCapDef),
+                  4,Send(self,@GetName));
+                  
       if lAvailable = $
       {
          AddPacket(4, vrTeach_nothing);
@@ -4139,12 +4162,12 @@ messages:
    {
       return vrDead_name;
    }
-   
+
    GetDeadIcon()
    {
       return vrDead_Icon;
    }
-   
+
    Killed(what=$)
    "The mob was just killed."
    {
@@ -4464,7 +4487,7 @@ messages:
          if Send(i,@GetBulk) <= 0 
          {
             Send(self,@SayToOne,#message_rsc=vaultman_nogold,#target=who,
-                 #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName));
+                  #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName));
 
             return FALSE;
          }
@@ -4472,7 +4495,7 @@ messages:
          if NOT Send(who,@ReqLeaveHold,#what=i)
          {
             Send(self,@SayToOne,#message_rsc=vaultman_nocursed,#target=who,
-                 #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName));
+                  #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName));
 
             return FALSE;            
          }
@@ -4480,7 +4503,7 @@ messages:
          if NOT Send(i,@CanBeStoredInVault)
          {
             Send(self,@SayToOne,#message_rsc=vaultman_cant_part,#target=who,
-                 #parm1=Send(i,@GetName));
+                  #parm1=Send(i,@GetName));
 
             return FALSE;            
          }
@@ -4502,7 +4525,7 @@ messages:
       if iCash < iFee AND iFee <> 0
       {
          Send(self,@SayToOne,#target=who,#message_rsc=vaultman_nodeposit_cash,
-              #parm1=iFee);
+               #parm1=iFee);
 
          return;
       }               
@@ -4522,7 +4545,7 @@ messages:
       {
          Send(oMoney,@SubtractNumber,#number=iFee);  
          Send(self,@SayToOne,#message_rsc=vaultman_Thanks_amount,#target=who,
-              #parm1=iFee);
+               #parm1=iFee);
       }
       else
       {
@@ -4619,7 +4642,7 @@ messages:
          if NOT bFound
          {
             Post(self,@SayToOne,#target=what,#message_rsc=vaultman_dont_have,
-                 #parm1=Send(i,@getindef),#parm2=Send(i,@GetName));
+                  #parm1=Send(i,@getindef),#parm2=Send(i,@GetName));
 
             return;
          }
@@ -4631,7 +4654,7 @@ messages:
             AND Length(number_list) >= iCount
          {
             iBulk = iBulk + ((Send(i,@GetBulk) * nth(number_list,iCount))
-                             / Send(i,@GetNumber));
+                              / Send(i,@GetNumber));
          }
          else
          {
@@ -4643,7 +4666,7 @@ messages:
       if iCash < iFee AND iFee <> 0
       {
          Send(self,@SayToOne,#target=what,
-              #message_rsc=vaultman_nowithdraw_cash);
+               #message_rsc=vaultman_nowithdraw_cash);
 
          return;
       }         
@@ -4671,7 +4694,7 @@ messages:
             if IsClass(i,&NumberItem)
             {               
                if NOT Send(oVault,@WithdrawFromStorage,#what=i,#who=what,
-                    #count=First(lNumbers))
+                     #count=First(lNumbers))
                {
                   bFailed = TRUE;
                   break;
@@ -4701,7 +4724,7 @@ messages:
          else
          {
             Send(self,@SayToOne,#message_rsc=vaultman_Thanks_amount,#target=what,
-              #parm1=iFee);
+               #parm1=iFee);
          }
       }
       else
@@ -4737,7 +4760,7 @@ messages:
 
       oBank = Send(SYS,@FindBankByNum,#num=Send(self,@GetBankNum));
       Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-           #string=Lm_bnkr_balance,#parm1=Send(oBank,@GetAccount,#what=who));
+            #string=Lm_bnkr_balance,#parm1=Send(oBank,@GetAccount,#what=who));
 
       return;
    }
@@ -4774,9 +4797,9 @@ messages:
       if who <> $
       {
          Send(oSnoop,@MsgSendUser,#message_rsc=monster_report_balance,
-              #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName),
-              #parm3=Send(who,@GetUserName),#type3=STRING_RESOURCE,
-              #parm4=Send(oBank,@GetAccount,#what=who));
+               #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName),
+               #parm3=Send(who,@GetUserName),#type3=STRING_RESOURCE,
+               #parm4=Send(oBank,@GetAccount,#what=who));
       }
       else
       {
@@ -4818,7 +4841,7 @@ messages:
       if oMoney = $
       {
          Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-              #string=Lm_bnkr_not_enough_deposit,#parm1=0);
+               #string=Lm_bnkr_not_enough_deposit,#parm1=0);
 
          return;
       }
@@ -4826,8 +4849,8 @@ messages:
       if Send(oMoney,@GetValue) < amount
       {
          Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-              #string=Lm_bnkr_not_enough_deposit,
-              #parm1=Send(oMoney,@GetValue));
+               #string=Lm_bnkr_not_enough_deposit,
+               #parm1=Send(oMoney,@GetValue));
 
          return;
       }
@@ -4839,7 +4862,7 @@ messages:
       if (iBankAmt = MAX_KOD_INT)
       {
          Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-              #string=Lm_bnkr_acct_full);
+               #string=Lm_bnkr_acct_full);
 
          return;
       }
@@ -4863,8 +4886,8 @@ messages:
       Send(oBank,@DepositAccount,#what=who,#amount=amount);
 
       Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-           #string=Lm_bnkr_did_deposit,
-           #parm1=Send(oBank,@GetAccount,#what=who));
+            #string=Lm_bnkr_did_deposit,
+            #parm1=Send(oBank,@GetAccount,#what=who));
 
       Send(self,@AffectMood,#why=MOODMOD_BANK_DEPOSIT);
 
@@ -4903,7 +4926,7 @@ messages:
       if iBankAmt = 0
       {
          Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_no_account,
-              #type=SAY_RESOURCE);
+               #type=SAY_RESOURCE);
 
          return;
       }
@@ -4912,7 +4935,7 @@ messages:
       {
          Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt);
          Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-              #string=Lm_bnkr_not_enough_withdraw,#parm1=iBankAmt);
+               #string=Lm_bnkr_not_enough_withdraw,#parm1=iBankAmt);
 
          return;
       }
@@ -5149,6 +5172,13 @@ messages:
                      #obj=Send(self,@GetObjectOnConditionalList,
                      #class=GetClass(i)));
 
+               // Marketplace notify owner of sale (whole item)
+               if Send(self,@GetStoreOwner) <> $ AND (viAttributes & MOB_MARKETPLACE)
+               {
+                  Send(Send(SYS,@FindBankByNum,#num=BID_TOS), @DepositAccount, #what=Send(self,@GetStoreOwner), #amount=iPrice);
+                  Send(Send(self,@GetStoreOwner),@MsgSendUser,#message_rsc=shop_sold_offer,#parm1=Send(oBuy, @GetName),#parm2=iPrice);
+               }
+
                Send(self,@AffectMood,#why=MOODMOD_SELL_ITEM,#what=oBuy);
 
                if Send(oBuy,@HasAttribute,#ItemAtt=IA_SELL_INFO)
@@ -5189,11 +5219,19 @@ messages:
                         if Send(oBuy,@HasAttribute,#ItemAtt=IA_SELL_INFO)
                         {
                            oItemAtt = Send(oBuy,@GetAttributeData,
-                                           #ItemAtt=IA_SELL_INFO);
+                                             #ItemAtt=IA_SELL_INFO);
                            Post(poOwner,@SomeoneSaid,#what=self,
-                               #string=Nth(oItemAtt,2),
-                               #type=SAY_RESOURCE);
+                                 #string=Nth(oItemAtt,2),
+                                 #type=SAY_RESOURCE);
                         }
+
+                        // Marketplace notify owner of sale (partial stack)
+                        if Send(self,@GetStoreOwner) <> $ AND (viAttributes & MOB_MARKETPLACE)
+                        {
+                           Send(Send(SYS,@FindBankByNum,#num=BID_TOS), @DepositAccount, #what=Send(self,@GetStoreOwner), #amount=iPriceOne * Send(oSplit,@GetNumber));
+                           Send(Send(self,@GetStoreOwner),@MsgSendUser,#message_rsc=shop_sold_offer,#parm1=Send(oBuy, @GetName),#parm2=iPriceOne * Send(oSplit,@GetNumber));
+                        }
+
                         Send(oBuy,@Delete);
                      }
                   }
@@ -5222,6 +5260,11 @@ messages:
             }
             Send(oMoney,@SubtractNumber,#number=iPrice);
          }
+      }
+
+      if (viAttributes & MOB_MARKETPLACE)
+      {
+         return;
       }
 
       Send(self,@ItemBoughtHook,#buyer=what);
@@ -5304,9 +5347,9 @@ messages:
    "Handle monster spellcasting here."
    {
       local i, iDistance, oSpell, iRandom, lTargets, iSpellNum, iManaCost, lMinions;
-	  
-	  ptMonsterCastTimer = CreateTimer(self,@MonsterCastSpell,piMonsterCastInterval);
-	  
+      
+      ptMonsterCastTimer = CreateTimer(self,@MonsterCastSpell,piMonsterCastInterval);
+      
       // If monster knows no spells, or has no target, return.
       if plSpellBook = $
          OR poTarget = $
@@ -5316,32 +5359,32 @@ messages:
 
       if NOT Send(self,@MonsterCanCastSpell)
       {
-	     return FALSE;
+         return FALSE;
       }
-	  
-	  if IsClass(poTarget, &Player) AND NOT Send(self, @CanAttackPlayer, #who=poTarget)
-	  {
-	     // Servant cannot attack this player (poTarget) with spells.
-	     return FALSE;
-	  }
+      
+      if IsClass(poTarget, &Player) AND NOT Send(self, @CanAttackPlayer, #who=poTarget)
+      {
+         // Servant cannot attack this player (poTarget) with spells.
+         return FALSE;
+      }
 
       // Get the adjusted chance to cast, based on whether we're demented
       // or if AmA is up. Multiply this by 6 because we've decreased the
       // time between chase behavior checks by a factor of 4-7x.
       //iRandom = Send(self,@AdjustedChanceBase,#base=(piSpellChance*12));
-       
-	  // Do the random check now, so we don't go any further
+         
+      // Do the random check now, so we don't go any further
       // if we don't have to.
       //if Random(1,iRandom) <> 1
       //{
-	  //   return FALSE;
+      //   return FALSE;
       //}
-	  
+      
       // Check LoS to target here so we don't waste mana casting
       // when we can't get our target. Instead, we use that time
       // walking to the target.
-	  
-	  // Servants get to cast all the time.
+      
+      // Servants get to cast all the time.
 
       // Get distance to target.
       iDistance = Send(self,@SquaredFineDistanceTo3D,#what=poTarget);
@@ -5350,19 +5393,19 @@ messages:
          AND iDistance <= piSpellRange * piSpellRange
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
          AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,
-                   #use_weapon=self))
-       {
+                     #use_weapon=self))
+         {
          // We go through the monster's spellbook and pick the spell
          // that corresponds to the random number picked. This is used
          // to give a // chance for each spell to be picked.
          iRandom = Random(1,100);
-		 i = Nth(plSpellBook, Random(1, Length(plSpellBook)));
-		 
-		 if iRandom <= Nth(i,3)
-		 {
-		    iSpellNum = Nth(i,1);
-		    iManaCost = Nth(i,2);
-		 }
+         i = Nth(plSpellBook, Random(1, Length(plSpellBook)));
+         
+         if iRandom <= Nth(i,3)
+         {
+            iSpellNum = Nth(i,1);
+            iManaCost = Nth(i,2);
+         }
 
          // If no spell returned or cannot pay mana costs, spell fails.
          if iSpellNum = $
@@ -5380,25 +5423,25 @@ messages:
          // Find the valid targets, defaulting to poTarget.
          lTargets = [poTarget];
          lTargets = Send(oSpell,@GetTargets,#who=self,#lTargets=lTargets);
-		 
-		 if IsClass(self, &Servant)
-		 {
-		    // Prevent servants from having too many reflections/minions.
-		    lMinions =  Send(self,@GetControlledMinions);
-			
-		    if iSpellNum = SID_REFLECTION AND lMinions <> $ AND Length(lMinions) >= MAX_SERVANT_MINIONS
-		    {
-		       return FALSE;
-		    }
-		 }
+         
+         if IsClass(self, &Servant)
+         {
+            // Prevent servants from having too many reflections/minions.
+            lMinions =  Send(self,@GetControlledMinions);
+         
+            if iSpellNum = SID_REFLECTION AND lMinions <> $ AND Length(lMinions) >= MAX_SERVANT_MINIONS
+            {
+               return FALSE;
+            }
+         }
 
          // See if we can cast the spell here.
          // Added room enchantment check
          if Send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,#lItems=lTargets)
-		    AND NOT Send(poTarget,@IsEnchanted,#what=oSpell)
-          AND NOT Send(poOwner,@IsEnchanted,#what=oSpell)
+            AND NOT Send(poTarget,@IsEnchanted,#what=oSpell)
+            AND NOT Send(poOwner,@IsEnchanted,#what=oSpell)
          {
-		    //Debug("Monster Cast",Send(self,@GetName),Send(oSpell,@GetName));
+            //Debug("Monster Cast",Send(self,@GetName),Send(oSpell,@GetName));
             // Do any special cast animations; send spell for specific ones.
             Send(self,@MonsterCastAnimation,#iSpellNum=iSpellNum);
 
@@ -5411,7 +5454,7 @@ messages:
       }
 
       //Debug("Monster did not cast anything");
-	  
+      
       return FALSE;
    }
 
@@ -5438,54 +5481,54 @@ messages:
       else if iThreshold = 3
       {
          rDamage_report = vrFirst_damage_level;
-		 rDamage_report_minion = vrFirst_minion_damage_level;
+         rDamage_report_minion = vrFirst_minion_damage_level;
       }
       else if iThreshold = 2
       {
          rDamage_report = vrSecond_damage_level;
-		 rDamage_report_minion = vrSecond_minion_damage_level;
+         rDamage_report_minion = vrSecond_minion_damage_level;
       }
       else if iThreshold = 1
       {
          rDamage_report = vrThird_damage_level;
-		 rDamage_report_minion = vrThird_minion_damage_level;
+         rDamage_report_minion = vrThird_minion_damage_level;
       }
       else
       {
          rDamage_report = vrFourth_damage_level;
-		 rDamage_report_minion = vrFourth_minion_damage_level;
+         rDamage_report_minion = vrFourth_minion_damage_level;
       }
-	  
-	  if IsClass(self, &Servant) AND poMaster <> $
-	  {
-	     // Report damage to our master.
+      
+      if IsClass(self, &Servant) AND poMaster <> $
+      {
+         // Report damage to our master.
          Post(poMaster,@MsgSendUser,#what=self,#message_rsc=rDamage_report_minion,
-	        #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
-			
-	     return;
-	  }
+            #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+         
+         return;
+      }
 
       foreach i in Send(poOwner,@GetHolderActive)
       {
          each_obj = First(i);
-		 
+         
          if IsClass(each_obj,&User) AND Send(each_obj,@GetKillTarget) = self
          {
-		    Post(each_obj,@MsgSendUser,#what=self,#message_rsc=rDamage_report,
-			   #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+            Post(each_obj,@MsgSendUser,#what=self,#message_rsc=rDamage_report,
+            #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
          }
       }
 
       return;
    }
-   
+
    GetKillTarget()
    {
       if poTarget <> $
-	  {
+      {
          //Debug("GetKillTarget",Send(self,@GetName),Send(poTarget,@GetName));
-	  }
-	  
+      }
+      
       return poTarget;
    }
 
@@ -5510,14 +5553,14 @@ messages:
       {
          Send(self,@HitPointThresholdHeal);
 
-	     if IsClass(self, &Servant) AND poMaster <> $
-	     {
-	        // Report healing to our master
+         if IsClass(self, &Servant) AND poMaster <> $
+         {
+            // Report healing to our master
             Post(poMaster,@MsgSendUser,#what=self,#message_rsc=vrMonster_minion_healing,
-	           #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
-			
-	        return;
-	     }
+               #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+         
+            return;
+         }
 
 
          foreach i in Send(poOwner,@GetHolderActive)
@@ -5548,7 +5591,7 @@ messages:
             Send(Send(SYS,@GetLibrary),@UnregisterSignet,#newring=obj);
             Send(Send(SYS,@GetLibrary),@SignetDelivered,#who=who);
             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-                 #string=LS_Signet_returned);
+                  #string=LS_Signet_returned);
             Send(obj,@NewOwner,#what=self);
 
             // Have the ring handle the reward.
@@ -5559,16 +5602,16 @@ messages:
          else
          {
             Post(poOwner,@SomeoneSaid,#what=self,
-                 #string=LS_Signet_wrong,#type=SAY_RESOURCE,
-                 #parm1=Send(Send(obj,@GetRingOwner),@GetDef),
-                 #parm2=Send(Send(obj,@GetRingOwner),@GetName));
+                  #string=LS_Signet_wrong,#type=SAY_RESOURCE,
+                  #parm1=Send(Send(obj,@GetRingOwner),@GetDef),
+                  #parm2=Send(Send(obj,@GetRingOwner),@GetName));
 
             return FALSE;
          }
       }
 
       Post(poOwner,@SomeoneSaid,#what=self,#string=LS_wanted_keep,
-           #type=SAY_RESOURCE);
+            #type=SAY_RESOURCE);
 
       return TRUE;
    }
@@ -5596,7 +5639,7 @@ messages:
          else
          {
             AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,monster_desc_level,
-                      4,Bound(viLevel,20,150));
+                        4,Bound(viLevel,20,150));
          }
 
          return;
@@ -5621,13 +5664,13 @@ messages:
       if piBehavior & AI_NPC
       {
          AddPacket(4,rMonster_Condition, 4,vrDesc, 4,monster_nothing,
-                   4,Send(self,@GetCapDef), 4,Send(self,@GetName));
+                     4,Send(self,@GetCapDef), 4,Send(self,@GetName));
       }
       else
       {
          AddPacket(4,rMonster_Condition, 4,vrDesc, 4,monster_desc_level,
-                   4,Bound(viLevel,20,150), 4,Send(self,@GetCapDef),
-                   4,Send(self,@GetName));
+                     4,Bound(viLevel,20,150), 4,Send(self,@GetCapDef),
+                     4,Send(self,@GetName));
       }
 
       return;
@@ -5645,7 +5688,7 @@ messages:
 
       return ((120 * viLevel) / 100);
    }
-   
+
    ReturnMaxHitPoints()
    {
       return piMax_hit_points;
@@ -5799,13 +5842,13 @@ messages:
       if (piAttributes & MOB_RANDOM)
       {
          ptRandom = CreateTimer(self,@RandomTimer,
-                                viRandom_delay+Random(0,viRandom_delay/2));
+                                 viRandom_delay+Random(0,viRandom_delay/2));
       }
 
       if (piAttributes & MOB_SPASM)
       {
          ptSpasm = CreateTimer(self,@SpasmMonsterTimer,
-                               viSpasm_delay+Random(0,viSpasm_delay/3));
+                                 viSpasm_delay+Random(0,viSpasm_delay/3));
       }
 
       return;
@@ -5874,7 +5917,7 @@ messages:
 
       return;
    }
-   
+
    GetState()
    {
       return viCurrentState;
@@ -5883,16 +5926,16 @@ messages:
    GetAttackTime()
    {
       local iTimer;
-	  
-      iTimer = Bound(Send(self,@Fuzzy,#num=MOB_ATTACK_TIMER_WAIT)
-             + 3500-70*(3*viDifficulty+piSpeed), 1, 5000);
       
-	  if iTimer < 1000
-	  {
-	     iTimer = 1250;
-	  }
-	  
-	  return iTimer;
+      iTimer = Bound(Send(self,@Fuzzy,#num=MOB_ATTACK_TIMER_WAIT)
+               + 3500-70*(3*viDifficulty+piSpeed), 1, 5000);
+      
+      if iTimer < 1000
+      {
+         iTimer = 1250;
+      }
+      
+      return iTimer;
    }
 
    GetMoveTime()
@@ -5903,7 +5946,7 @@ messages:
       // piSpeed is pre-defined by monster
       // Move-increment is predefined/fixed at 16fine unit per step
       // --> The elapse-interval is fixed!
-  
+
       // EXAMPLE: SPEED_VERY_SLOW: 4 squares per 10000 ms
       // 1024 super-fine squares = 1 square
       // 256 super-fine squares = 1 highres square = 16 finesquare = stepwidth
@@ -5927,8 +5970,8 @@ messages:
          // bit late in transmission. the client has a dynamic playout which 
          // will compensate this.
          iTime = iTime - 5;
-		 
-		 // make sure timer interval does not get negative
+         
+         // make sure timer interval does not get negative
          // and also not like "run all the time"
          iTime = bound(iTime, 10, 10000);
       }
@@ -5937,7 +5980,7 @@ messages:
          iTime = 1000;
       }
 
-		
+      
 
       return iTime;
    }
@@ -5971,7 +6014,7 @@ messages:
    {
       if class = $
       {
-       return;
+         return;
       }
 
       plWantedItems = cons(class,plWantedItems);
@@ -6059,7 +6102,7 @@ messages:
       }
 
       iQuestHistory = First(Send(who,@GetQuestHistory,#index=viQuestID));
-	  
+      
       return (QUEST_HISTORY_SUCCESS & iQuestHistory);
    }
 
@@ -6345,8 +6388,8 @@ messages:
    MobIsSeller()
    {
       return (piAttributes & MOB_SELLER)
-             OR (piAttributes & MOB_COND_SELLER)
-             OR (piAttributes & MOB_TEACHER);
+               OR (piAttributes & MOB_COND_SELLER)
+               OR (piAttributes & MOB_TEACHER);
    }
 
    GetAttributes()
@@ -6583,12 +6626,17 @@ messages:
 
       return lForSale;
    }
-   
+
    GetPrice(what = $, who = $)
    "Returns the value of an item, or the cost of a skill or spell"
-   "No markup for skills or spells"
+   "No markup for skills or spells - Marketplace items have a specific cost"
    {
       local i, x, y;
+
+      if IsClass(what, &Item) AND Send(what,@IsListedOnMarketplace)
+      {
+         return Send(what,@GetMarketplaceUnitPrice);
+      }
 
       if plFor_sale <> $ AND Length(plFor_sale) = 4
       {
@@ -6707,7 +6755,7 @@ messages:
             corpse = $;
          }
 
-		 iRandomCashAmount = iRandomCashAmount * (Send(SETTINGS_OBJECT, @GetMoneyFactor) / 100);
+         iRandomCashAmount = iRandomCashAmount * (Send(SETTINGS_OBJECT, @GetMoneyFactor) / 100);
 
          oMoney = Create(&Money,#corpse=corpse,#number=iRandomCashAmount + (piBoostedLevel
                      * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalCash)));
@@ -6746,7 +6794,7 @@ messages:
          }
 
          if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,
-                 #new_col=piCol)
+                  #new_col=piCol)
          {
             Send(poOwner,@NewHold,#what=oTreasure,
                   #new_row=piRow,#new_col=piCol,
@@ -6810,7 +6858,7 @@ messages:
 
                if NOT IsClass(oTreasure,&Money)
                   AND (iGetResult = AUTOLOOT_GOT_ITEM
-                         OR iGetResult = AUTOLOOT_GOT_PARTIAL_STACK)
+                           OR iGetResult = AUTOLOOT_GOT_PARTIAL_STACK)
                {
                   ++iNumberOfItemsLooted;
                }
@@ -7033,11 +7081,11 @@ messages:
    }
 
    Say(message_rsc=$, parm1=$, parm2=$, parm3=$, parm4=$,
-       parm5=$, parm6=$, parm7=$, parm8=$)
+         parm5=$, parm6=$, parm7=$, parm8=$)
    {
       Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-           #string=message_rsc,#parm1=parm1,#parm2=parm2,#parm3=parm3,
-           #parm4=parm4,#parm5=parm5,#parm6=parm6,#parm7=parm7,#parm8=parm8);
+            #string=message_rsc,#parm1=parm1,#parm2=parm2,#parm3=parm3,
+            #parm4=parm4,#parm5=parm5,#parm6=parm6,#parm7=parm7,#parm8=parm8);
 
       return;
    }
@@ -7055,14 +7103,14 @@ messages:
       }
 
       Send(target,@MsgSendUser,#message_rsc=monster_say_to_one,
-           #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName),
-           #parm3=message_rsc,#parm4=parm1,#type4=type1,
-           #parm5=parm2,#type5=type2,#parm6=parm3,#type6=type3,
-           #parm7=parm4,#type7=type4,#parm8=parm5,#type8=type5);
+            #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName),
+            #parm3=message_rsc,#parm4=parm1,#type4=type1,
+            #parm5=parm2,#type5=type2,#parm6=parm3,#type6=type3,
+            #parm7=parm4,#type7=type4,#parm8=parm5,#type8=type5);
 
       return;
    }
-   
+
    CanMorphTo()
    {
       return TRUE;
@@ -7128,7 +7176,7 @@ messages:
 
       return FALSE;
    }
-   
+
    IsMinionOf(who=$)
    {
       local lMinions;
@@ -7500,7 +7548,7 @@ messages:
 
       return;
    }
-   
+
    SetAttributeFlag(flag=0, value = TRUE)
    {
       if value
@@ -7518,8 +7566,8 @@ messages:
    SetSpeed(speed=20)
    {
       piSpeed = speed;
-	  
-	  return;
+      
+      return;
    }
 
    IsWizard()
@@ -7542,7 +7590,7 @@ messages:
       local oMaster;
 
       //Debug("TargetSwitch",GetClass(self),GetClass(what));
-	  
+      
       if what = $
          OR poOwner = $
       {
@@ -7550,7 +7598,7 @@ messages:
 
          return FALSE;
       }
-	  
+      
       if IsClass(what,&User)
          AND NOT Send(what,@IsLoggedOn)
       {
@@ -7582,7 +7630,7 @@ messages:
          return FALSE;
       }
 
-	   if IsClass(self,&Reflection) AND IsClass(what, &Player)
+      if IsClass(self,&Reflection) AND IsClass(what, &Player)
       {
          // A reflection wants to attack a player.
          if Send(self, @IsMinionOf, #who=what) 
@@ -7610,7 +7658,7 @@ messages:
          AND IsClass(poTarget,&User)
          AND Send(poTarget,@GetOwner) = poOwner
       {
-	     Send(poTarget,@ReduceAggro,#what=self);
+         Send(poTarget,@ReduceAggro,#what=self);
          Send(poTarget,@SubtractFromMonsterChasers,#level=viLevel);
       }
 
@@ -7864,9 +7912,9 @@ messages:
       if piSweepCounter < 5
       {
          Post(oRoom,@SomeoneSaid,#what=self,#string=Monster_Sweep_Reward,
-              #type=SAY_RESOURCE,#parm1=Send(who,@GetDef),
-              #parm2=Send(who,@GetName));
-              
+               #type=SAY_RESOURCE,#parm1=Send(who,@GetDef),
+               #parm2=Send(who,@GetName));
+               
          piSweepCounter = piSweepCounter + 1;
          
          if Send(who,@ReqNewHold,#what=oMoney)
@@ -7912,12 +7960,12 @@ messages:
    {
       return;
    }
-   
+
    GetBaseResistances()
    {
       return plResistances;
    }
-   
+
    GetBoostedLevel()
    {
       return piBoostedLevel;
@@ -8027,50 +8075,50 @@ messages:
    ColdResistance(amount=90)
    {
       plResistances = AppendListElem([-ATCK_SPELL_COLD, amount], plResistances);
-	  
-	  return;
+      
+      return;
    }
 
    HeatResistance(amount=90)
    {
       plResistances = AppendListElem([-ATCK_SPELL_FIRE, amount], plResistances);
 
-	  return;
+      return;
    }
 
    ShockResistance(amount=90)
    {
       plResistances = AppendListElem([-ATCK_SPELL_SHOCK, amount], plResistances);
 
-	  return;
+      return;
    }
 
    QuakeResistance(amount=90)
    {
       plResistances = AppendListElem([-ATCK_SPELL_QUAKE, amount], plResistances);
 
-	  return;
+      return;
    }
 
    UnholyResistance(amount=90)
    {
       plResistances = AppendListElem([-ATCK_SPELL_UNHOLY, amount], plResistances);
 
-	  return;
+      return;
    }
 
    HolyResistance(amount=90)
    {
       plResistances = AppendListElem([-ATCK_SPELL_HOLY, amount], plResistances);
 
-	  return;
+      return;
    }
 
    WeapResistance(amount=90)
    {
       plResistances = AppendListElem([-ATCK_WEAP_ALL, amount], plResistances);
 
-	  return;
+      return;
    }
 
    NatureResistance(amount=90)
@@ -8080,7 +8128,7 @@ messages:
       Send(self, @ShockResistance, #amount=amount);
       Send(self, @QuakeResistance, #amount=amount);
 
-	  return;
+      return;
    }
 
 end

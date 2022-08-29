@@ -129,11 +129,18 @@ BOOL CALLBACK LookDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
       /* Ensure that cost list shows same index at top that item list does */
       index1 = ListBox_GetTopIndex(info->hwndListBox);
       index2 = ListBox_GetTopIndex(info->hwndQuanList);
-      if (index1 != index2)
+	  if (index1 != index2)
       {
          ListBox_SetTopIndex(info->hwndQuanList, index1);
       }
-      return TRUE;
+
+	  index1 = ListBox_GetTopIndex(info->hwndQuanList);
+	  index2 = ListBox_GetTopIndex(info->hwndPriceList);
+	  if (index1 != index2)
+	  {
+		  ListBox_SetTopIndex(info->hwndPriceList, index1);
+	  }
+	  return TRUE;
 
    case WM_DESTROY:
       hwndLookDialog = NULL;
@@ -298,32 +305,6 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
       }
       break;
 
-   case IDC_ALL:
-      /* In multiple selection box only, select all objects.  If we require that
-       * user give amounts, don't select amount objects */
-      num_entries = ListBox_GetCount(info->hwndListBox);
-
-      ListBox_SetSel(info->hwndListBox, TRUE, -1);
-
-      WindowBeginUpdate(info->hwndQuanList);
-      // Select all for number items
-      for (i=0; i < num_entries; i++)
-      {
-	 info->selected[i] = True;
-	 obj = (object_node *) ListBox_GetItemData(info->hwndListBox, i);
-	 if (IsNumberObj(obj->id))
-	    amount = obj->amount;
-	 else
-	    amount = 1;
-	 obj->temp_amount = amount;
-	 ListBox_DeleteString(info->hwndQuanList,i);
-	 sprintf(temp, "%d", amount);
-	 ListBox_InsertString(info->hwndQuanList,i,temp);
-	 ListBox_SetItemData(info->hwndQuanList,i,amount);
-      }
-      WindowEndUpdate(info->hwndQuanList);
-      break;
-
    case IDC_ITEMLIST:
       switch (codeNotify)
       {
@@ -348,6 +329,8 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	 obj = (object_node *) ListBox_GetItemData(info->hwndListBox, index);
 	 WindowBeginUpdate(info->hwndQuanList);
 	 ListBox_DeleteString(info->hwndQuanList,index);
+	 WindowBeginUpdate(info->hwndPriceList);
+	 ListBox_DeleteString(info->hwndPriceList, index);
 	 if (ListBox_GetSel(info->hwndListBox,index))
 	 {
 	    if (IsNumberObj(obj->id))
@@ -363,11 +346,16 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	 }
 	 ListBox_InsertString(info->hwndQuanList,index,temp);
 	 ListBox_SetItemData(info->hwndQuanList,index,amount);
+	 ListBox_InsertString(info->hwndPriceList, index, temp);
+	 ListBox_SetItemData(info->hwndPriceList, index, amount);
 	 ListBox_SetSel(info->hwndListBox,amount > 0,index);
 	 info->selected[index] = (amount > 0);
 	 obj->temp_amount = amount;
+	 obj->temp_listprice = (amount <= 1 ? 1000 : amount);
 	 ListBox_SetSel(info->hwndQuanList,FALSE,index);
 	 WindowEndUpdate(info->hwndQuanList);
+	 ListBox_SetSel(info->hwndPriceList, FALSE, index);
+	 WindowEndUpdate(info->hwndPriceList);
 
 #endif
 	 break;
@@ -441,6 +429,55 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
       }
       break;
 
+   case IDC_PRICELIST:
+	   if (codeNotify == LBN_SELCHANGE)
+	   {
+		   index = (int)ListBox_GetCurSel(info->hwndPriceList);
+		   obj = (object_node*)ListBox_GetItemData(info->hwndListBox, index);
+		   currentAmount = (int)ListBox_GetItemData(info->hwndPriceList, index);
+		   amount = currentAmount;
+
+		   if (ListBox_GetItemData(info->hwndPriceList, index) > 0)
+		   {
+				MEASUREITEMSTRUCT m;
+				int startAmount = amount;
+
+				if (currentAmount == 0)
+					startAmount = obj->amount;
+					/* Place amount dialog just beneath selected item */
+					ItemListMeasureItem(info->hwndPriceList, &m);
+					// Force highlight on (we are editing it)
+					ListBox_SetSel(info->hwndListBox, TRUE, index);
+					if (InputNumber(hDlg, info->hwndPriceList,
+						0, (index - ListBox_GetTopIndex(info->hwndPriceList) + 1) * (m.itemHeight - 1),
+						&amount, startAmount, 1, 1000000000))
+					{
+						ListBox_DeleteString(info->hwndPriceList, index);
+						if (amount > 0)
+						{
+							sprintf(temp, "%d", amount);
+							ListBox_InsertString(info->hwndPriceList, index, temp);
+						}
+						else
+						{
+							ListBox_InsertString(info->hwndPriceList, index, " ");
+						}
+						ListBox_SetItemData(info->hwndPriceList, index, amount);
+					}
+					else
+						amount = currentAmount;
+						// reset highlight based on quantity - off if zero, on otherwise
+						ListBox_SetSel(info->hwndListBox,
+							(ListBox_GetItemData(info->hwndPriceList, index) > 0),
+							index);
+		   }
+
+		   ListBox_SetSel(info->hwndListBox, amount > 0, index);
+		   info->selected[index] = (amount > 0);
+		   obj->temp_listprice = amount;
+		   ListBox_SetCurSel(info->hwndPriceList, -1);
+	   }
+	   break;
    case IDOK:
       /* Get user's selection(s) */
       num_entries = ListBox_GetCount(info->hwndListBox);
@@ -448,12 +485,12 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
       
       for (i = 0; i < num_entries; i++)
       {
-	 /* If item is selected, add to selection list, else free */
-	 obj = (object_node *) ListBox_GetItemData(info->hwndListBox, i);
-	 if (ListBox_GetSel(info->hwndListBox, i) > 0)
-	    selection = list_add_item(selection, obj);
-	 else 
-	    ObjectDestroyAndFree(obj);
+		 /* If item is selected, add to selection list, else free */
+		 obj = (object_node *) ListBox_GetItemData(info->hwndListBox, i);
+		 if (ListBox_GetSel(info->hwndListBox, i) > 0)
+			selection = list_add_item(selection, obj);
+		 else 
+			ObjectDestroyAndFree(obj);
       }
 
       LookDialogRetval = selection;

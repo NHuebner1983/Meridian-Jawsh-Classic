@@ -281,6 +281,9 @@ enum {
    UC_MINIGAME_RESET_PLAYERS= 49,
 
    UC_REQ_TIME = 60,
+
+   UC_MARKETPLACE_LIST = 61,
+   UC_MARKETPLACE_UNLIST = 62,
 };
 
 // Login error action constants

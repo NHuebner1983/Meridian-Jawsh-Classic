@@ -75,6 +75,7 @@ typedef struct {
    DWORD        amount;              /* If top bits of id signify CLIENT_TAG_NUMBER, then
                                         this field gives amount of object */
    DWORD        temp_amount;         /* Scratch field used when user is selecting amount of object */
+   DWORD        temp_listprice;         /* Scratch field used when user is selecting amount of object */
    int          flags;               // Boolean object flags.
    BYTE         drawingtype;        // Object flags for drawing effects (invisibility, lighting type etc.)
    int          minimapflags;        // Flags used to draw the right color/icon on the minimap.

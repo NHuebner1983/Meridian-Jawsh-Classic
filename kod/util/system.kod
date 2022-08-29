@@ -417,6 +417,9 @@ properties:
    poRentableRoomMaintenance = $
    poSurvivalRoomMaintenance = $
 
+   // plStores is only used when rooms are recreated.
+	plStores = $
+
    // Singleton object that keeps track of various game statistics
    poStatistics = $
 
@@ -549,7 +552,7 @@ messages:
 
       Send(&NPCTotem, @Recreate);
 	  
-	  Send(self,@RecreateDamageTypeLists);
+	   Send(self,@RecreateDamageTypeLists);
 
       // Reset the list of naughty words
       Send(self,@ResetNaughtyWords);
@@ -851,6 +854,7 @@ messages:
       Send(self,@RecreateChests);
       Send(self,@RecreateLore);
       Send(self,@UpdateHallOfHeroes);
+      Send(self,@RecreateStores);
 
       poTotem = Create(&Totem);
       poTotemOne = Create(&TotemOne);
@@ -5501,8 +5505,11 @@ messages:
       plMonsterTemplates = cons(create(&Ogre),plMonsterTemplates);
       plMonsterTemplates = cons(create(&DarkOgre),plMonsterTemplates);
       
-	  // Servant monster
-	  plMonsterTemplates = cons(create(&Servant),plMonsterTemplates);
+      // Servant
+      plMonsterTemplates = cons(create(&Servant),plMonsterTemplates);
+      
+      // Stores (Marketplace)
+      plMonsterTemplates = cons(create(&Store),plMonsterTemplates);
 
       return;
    }
@@ -5666,6 +5673,7 @@ messages:
       plItemTemplates = cons(create(&VaultLoadoutScroll),plItemTemplates);
       plItemTemplates = cons(create(&MirthScroll),plItemTemplates);
       plItemTemplates = cons(create(&MelancholyScroll),plItemTemplates);
+      plItemTemplates = cons(create(&StoreScroll),plItemTemplates);
 
       // Wands
       plItemTemplates = cons(create(&BonkStick),plItemTemplates);
@@ -5922,6 +5930,54 @@ messages:
       plItemTemplates = cons(create(&Rouladen),plItemTemplates);
       plItemTemplates = cons(create(&PilgrimHat),plItemTemplates);
       plItemTemplates = cons(create(&IndianHat),plItemTemplates);
+
+      return;
+   }
+
+   AddStoreToList(oStore=$)
+   "Adds Store objects or box objects to list of Stores and boxes."
+   {
+      local iRoom, iRow, iCol, iFineRow, iFineCol;
+
+      if oStore <> $
+      {
+         if IsClass(Send(oStore,@GetOwner), &Player) AND Send(Send(oStore,@GetOwner), @IsLoggedOn)
+         {
+            Send(Send(oStore,@GetOwner),@SaveStoreLocation);
+         }
+         
+         plStores = Cons(oStore,plStores);
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   RecreateStores()
+   "When recreateall takes place, all stores should reappear in their original location."
+   {
+      Send(&Store, @Recreate);
+
+      return;
+   }
+
+   RemoveStoreFromList(oStore=$)
+   {
+      local i;
+
+      if oStore = $ OR plStores = $ OR NOT IsList(plStores)
+      {
+         return FALSE;
+      }
+
+      foreach i in plStores
+      {
+         if i = oStore
+         {
+            plStores = DelListElem(plStores,i);
+         }
+      }
 
       return;
    }

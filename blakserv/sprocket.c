@@ -136,6 +136,8 @@ client_def_table_type usercommand_def_table[] =
 	{ UC_MINIGAME_STATE,        { {4, TAG_OBJECT}, {0, TAG_TEMP_STRING}, {0, DONE_PARM} } },
 	{ UC_MINIGAME_RESET_PLAYERS,{ {4, TAG_OBJECT}, {0, DONE_PARM} } },
 	{ UC_REQ_TIME,              { {0, DONE_PARM} } },
+	{ UC_MARKETPLACE_LIST,      { {4, TAG_OBJECT}, {4, TAG_INT}, {4, TAG_INT}, {0, DONE_PARM} } },
+	{ UC_MARKETPLACE_UNLIST,    { {4, TAG_OBJECT}, {4, TAG_INT}, {0, DONE_PARM} } },
 };
 int num_usercommand_msgs = sizeof(usercommand_def_table)/sizeof(client_def_table_type);
 

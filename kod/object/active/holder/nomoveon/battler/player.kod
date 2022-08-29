@@ -835,6 +835,11 @@ resources:
 
    player_camp_return_rsc = "~B~I~rYou wake up from a deep sleep, let out a loud yawn and begin to stretch your legs. How long was I asleep?~r~I~B"
 
+   player_already_store_owner = \
+      "You already have a store.  You will have to "
+      "let them know that you need to ~Ipart ways~I, before you can start "
+      "a new one."
+
    pvp_notify_wav = gong.ogg
 
 classvars:
@@ -1202,6 +1207,11 @@ properties:
    // Player is building a campfire to pbCamped = TRUE next.
    pbCamping = FALSE
 
+   // Player's store (Marketplace)
+   poStore = $
+   plStoreLocation = $
+   ptMoveStoreTimer = $
+
 messages:
 
    Constructor()
@@ -1281,6 +1291,132 @@ messages:
 
       return;
    }
+
+   GetStore()
+   {
+      return poStore;
+   }
+
+   SetStore(oStore=$)
+   {
+      poStore = oStore;
+
+      return;
+   }
+
+   SaveStoreLocation()
+   {
+      local iRoomNum;
+
+      if poStore = $
+      {
+         return FALSE;
+      }
+
+      iRoomNum = Send(Send(self,@GetOwner),@GetRoomNum);
+
+      // [Room ID, [row,col,finerow,finecol]]
+      plStoreLocation = [iRoomNum, Send(self,@GetPos)];
+
+      return TRUE;
+   }
+
+   ResetStoreLocation(change=FALSE)
+   {
+      local lPos;
+      
+      if poStore <> $ AND plStoreLocation <> $ AND IsList(plStoreLocation)
+      {
+         lPos = Nth(plStoreLocation, 2);
+
+         //Debug("plStoreLocation", plStoreLocation);
+         //Debug("plStoreLocation", First(plStoreLocation));
+         //Debug("plStoreLocation", Nth(plStoreLocation, 2));
+         //Debug("plStoreLocation", Nth(lPos, 1));
+         //Debug("plStoreLocation", Nth(lPos, 2));
+         //Debug("plStoreLocation", Nth(lPos, 3));
+         //Debug("plStoreLocation", Nth(lPos, 4));
+
+         if NOT change
+         {
+            // Place the store at its original position.
+            Send(Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)),@NewHold,#what=poStore,
+               #new_row=Nth(lPos, 1),
+               #new_col=Nth(lPos, 2),
+               #fine_row=Nth(lPos, 3),
+               #fine_col=Nth(lPos, 4));
+               //Debug("RESET STORE IN",Send(Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)), @GetName), Nth(lPos,1), Nth(lPos,2), Nth(lPos,3), Nth(lPos,4));
+         }
+         else
+         {
+            // Place the store at the player's position.
+            lPos = Send(self, @GetPos);
+
+            if Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)) = Send(self,@GetOwner)
+            {
+               // Store is in the same room, teleport it to the player's position.
+               Send(SYS,@UtilGoNearSquare,#what=poStore,#where=Send(self,@GetOwner),
+                     #new_row=Nth(lPos, 1),
+                     #new_col=Nth(lPos, 2),
+                     #fine_row=Nth(lPos, 3),
+                     #fine_col=Nth(lPos, 4),
+                     #max_distance=1000);
+            }
+            else
+            {
+               // Store needs to be moved to a new room.
+               Send(Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)),@LeaveHold,#what=poStore);
+               ptMoveStoreTimer = CreateTimer(self, @MoveStore, 500);
+            }
+            
+            //Debug("MOVED STORE TO",Send(Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)), @GetName), Nth(lPos,1), Nth(lPos,2), Nth(lPos,3), Nth(lPos,4));
+            
+            // Save the store's new location
+            Send(self, @SaveStoreLocation);
+         }
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   MoveStore()
+   {
+      local lPos;
+
+      lPos = Nth(plStoreLocation, 2);
+
+      Send(poOwner,@NewHold,#what=poStore,
+         #new_row=Nth(lPos, 1),
+         #new_col=Nth(lPos, 2),
+         #fine_row=Nth(lPos, 3),
+         #fine_col=Nth(lPos, 4));
+
+      //Debug("Did new store show up?");
+
+      ptMoveStoreTimer = $;
+      
+      return;
+   }
+
+   GetStoreLocation()
+   {
+      return plStoreLocation;
+   }
+
+   MarketplaceList(what=$,quantity=1,unit_price=1000)
+   "List an item on the marketplace"
+   {
+      return Send(poStore,@ListOnMarketplace,#what=what,#quantity=quantity,#unit_price=unit_price);
+   }
+
+   MarketplaceUnList(what=$,quantity=1)
+   "TODO: Remove a listed marketplace item"
+   {
+      return;
+   }
+
 
    KillPlayer(real_death=TRUE, wait_time=0, rscMistakeMessage=$, oRoomOrPlayerWhoKilledMe=$)
    "This will kill the player (#real_death=TRUE default), but can be delayed for dramatic effect."

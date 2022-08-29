@@ -1882,6 +1882,7 @@ messages:
 
       if liClient_cmd = BP_REQ_OFFER
       {
+         //Debug("Number",First(number_stuff));
          Send(self,@UserOffer,#what=Nth(client_msg,2),
                #item_list=Nth(client_msg,3),#number_list=number_stuff);
 
@@ -2471,13 +2472,21 @@ messages:
 
    UserCommand(client_msg=$, number_stuff=$)
    {
-      local iClient_cmd, oWhat;
+      local iClient_cmd, oWhat, l, m;
 
       iClient_cmd = First(client_msg);
 
       // Arranged in decreasing order of frequency.
       switch(iClient_cmd)
       {
+         case UC_MARKETPLACE_LIST:
+            Send(self,@MarketplaceList,#what=Nth(client_msg, 2),#quantity=Nth(client_msg, 3),#unit_price=Nth(client_msg, 4));
+            return;
+         case UC_MARKETPLACE_UNLIST:
+            // For the moment, just buy back your own items.
+            //Debug("Marketplace UNLIST (msg)", client_msg,"(number)",number_stuff);
+            //Send(self,@MarketplaceUnList,#what=Nth(client_msg, 2),#quantity=Nth(client_msg, 3));
+            return;
          case UC_REST:
             Send(self,@StartResting);
             return;
