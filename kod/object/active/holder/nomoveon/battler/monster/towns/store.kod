@@ -22,7 +22,7 @@ resources:
      "Welcome to %s's marketplace! \n\n"
 	  "Feel free to browse the list of items to purchase. The "
 	  "item will immediatly be given to you and the owner will "
-	  "receive their payment. Tthere are no refunds - all sales are final!"
+	  "receive their payment. There are no refunds - all sales are final!"
 
 classvars:
 
