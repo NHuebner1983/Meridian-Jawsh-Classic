@@ -268,7 +268,7 @@ resources:
    monster_faction_heretic = "Cult of the Three"
    monster_faction_undead = "Minions of Death"
 
-   shop_sold_offer = "~B~yYour %s sold for %i shillings: bank deposit~k"
+   shop_sold_offer = "~B~y%s bought your %s for %i shillings.~k"
 
 classvars:
 
@@ -5000,7 +5000,7 @@ messages:
    "This is used for both teachers and sellers"
    {
       local i, j, bFound, oBuy, oMoney, iPrice, iPriceOne, lNumbers,
-            iAmount, oItemAtt, iCan_hold, oSplit; 
+            iAmount, oItemAtt, iCan_hold, oSplit, bFree; 
 
       // Ensure that buyer and seller are in the same room
       if Send(what,@GetOwner) <> poOwner
@@ -5041,6 +5041,14 @@ messages:
 
          // Get the price for that amount
          iPriceOne = Send(self,@GetPrice,#what=i,#who=what);
+
+         bFree = FALSE;
+
+         if Send(i, @IsListedOnMarketplace) AND Send(i, @GetMarketplaceOwner) = what
+         {
+            // This is a marketplace item and owned by the buyer, it should be free.
+            bFree = TRUE;
+         }
 
          // Init iPrice to the cost of one item.
          iPrice = iPriceOne;
@@ -5088,6 +5096,11 @@ messages:
                // Move to next number in the list.
                lNumbers = Rest(lNumbers);
             }
+         }
+
+         if bFree
+         {
+            iPrice = 0;
          }
 
          // Does player have enough money to buy it?
@@ -5176,7 +5189,11 @@ messages:
                if Send(self,@GetStoreOwner) <> $ AND (viAttributes & MOB_MARKETPLACE)
                {
                   Send(Send(SYS,@FindBankByNum,#num=BID_TOS), @DepositAccount, #what=Send(self,@GetStoreOwner), #amount=iPrice);
-                  Send(Send(self,@GetStoreOwner),@MsgSendUser,#message_rsc=shop_sold_offer,#parm1=Send(oBuy, @GetName),#parm2=iPrice);
+
+                  if iPrice > 0
+                  {
+                     Send(Send(self,@GetStoreOwner),@MsgSendUser,#message_rsc=shop_sold_offer,#parm1=Send(what,@GetName),#parm2=Send(oBuy, @GetName),#parm3=iPrice);
+                  }
                }
 
                Send(self,@AffectMood,#why=MOODMOD_SELL_ITEM,#what=oBuy);
@@ -5228,8 +5245,11 @@ messages:
                         // Marketplace notify owner of sale (partial stack)
                         if Send(self,@GetStoreOwner) <> $ AND (viAttributes & MOB_MARKETPLACE)
                         {
-                           Send(Send(SYS,@FindBankByNum,#num=BID_TOS), @DepositAccount, #what=Send(self,@GetStoreOwner), #amount=iPriceOne * Send(oSplit,@GetNumber));
-                           Send(Send(self,@GetStoreOwner),@MsgSendUser,#message_rsc=shop_sold_offer,#parm1=Send(oBuy, @GetName),#parm2=iPriceOne * Send(oSplit,@GetNumber));
+                           if (iPriceOne * Send(oSplit,@GetNumber)) > 0
+                           {
+                              Send(Send(SYS,@FindBankByNum,#num=BID_TOS), @DepositAccount, #what=Send(self,@GetStoreOwner), #amount=iPriceOne * Send(oSplit,@GetNumber));
+                              Send(Send(self,@GetStoreOwner),@MsgSendUser,#message_rsc=shop_sold_offer,#parm1=Send(what,@GetName),#parm2=Send(oBuy, @GetName),#parm3=iPriceOne * Send(oSplit,@GetNumber));
+                           }
                         }
 
                         Send(oBuy,@Delete);
