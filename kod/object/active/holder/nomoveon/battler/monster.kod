@@ -268,7 +268,7 @@ resources:
    monster_faction_heretic = "Cult of the Three"
    monster_faction_undead = "Minions of Death"
 
-   shop_sold_offer = "~B~yYour %s sold for %i shillings. Your earnings have been sent to your bank account.~k"
+   shop_sold_offer = "~B~yYour %s sold for %i shillings: bank deposit~k"
 
 classvars:
 

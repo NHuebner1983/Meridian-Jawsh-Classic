@@ -71,10 +71,14 @@
    OF_APPLYABLE      = 0x00001000
    OF_NPC            = 0x00002000
    OF_MARKETPLACE    = 0x00004000
+   OF_EQUIPPED       = 0x00008000
    OF_BOUNCING       = 0x00010000
    OF_FLICKERING     = 0x00020000
    OF_FLASHING       = 0x00040000
    OF_PHASING        = 0x00080000
+   OF_NPCHASQUESTS   = 0x00100000
+   OF_NPCACTIVEQUEST = 0x00200000
+   OF_MOBKILLQUEST   = 0x00400000
 
    // Client preference flags (stored in piPreferences in Player)
    // Default preferences - all on except safety (which is reverse)

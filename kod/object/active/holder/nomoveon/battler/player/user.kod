@@ -2484,8 +2484,6 @@ messages:
             return;
          case UC_MARKETPLACE_UNLIST:
             // For the moment, just buy back your own items.
-            //Debug("Marketplace UNLIST (msg)", client_msg,"(number)",number_stuff);
-            //Send(self,@MarketplaceUnList,#what=Nth(client_msg, 2),#quantity=Nth(client_msg, 3));
             return;
          case UC_REST:
             Send(self,@StartResting);
