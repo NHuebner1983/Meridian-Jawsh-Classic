@@ -35,8 +35,8 @@ messages:
                      [ &InkyCap , 9 ],
                      [ &IllusionaryFormPotion, 10 ],
                      [ &BlindWand, 5 ],
-                     [ &HoldWand, 5 ],
-                     [ &SpiderEggShell, 1 ]
+                     [ &HoldWand, 5 ]
+                     //[ &SpiderEggShell, 1 ]
                    ];
       propagate;
    }

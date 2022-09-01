@@ -156,7 +156,9 @@ properties:
    pbMarketplaceListed = FALSE
    poMarketplaceOwner = $
    piMarketplaceQuantity = 1
-   piMarketplaceUnitPrice = 1000
+   piMarketplaceUnitPriceShillings = 500
+   piMarketplaceUnitPricePlatinum = 1
+   poMarketplacePurchasedFrom = $
    
 messages:
 
@@ -214,16 +216,38 @@ messages:
       return;
    }
 
-   GetMarketplaceUnitPrice()
+   GetMarketplaceUnitPriceShillings()
    "Unit price for marketplace sale"
    {
-      return piMarketplaceUnitPrice;
+      return piMarketplaceUnitPriceShillings;
    }
 
-   SetMarketplaceUnitPrice(amount=1000)
-   "Set the Unit Price for this item on the marketplace"
+   GetMarketplaceUnitPricePlatinum()
+   "Unit price for marketplace sale"
    {
-      piMarketplaceUnitPrice = amount;
+      return piMarketplaceUnitPricePlatinum;
+   }
+
+   SetMarketplaceUnitPrice(amount_shillings=500, amount_platinum=1)
+   "Set the Shilling Unit Price for this item on the marketplace"
+   {
+      local iPlatinum, iRemainingShillings;
+
+      if amount_shillings = $ OR amount_shillings < 0
+      {
+         amount_shillings = 0;
+      }
+
+      if amount_platinum = $ OR amount_platinum < 0
+      {
+         amount_platinum = 0;
+      }
+
+      iPlatinum = Send(SYS, @ShillingsToPlatinum, #number=amount_shillings);
+      iRemainingShillings = Send(SYS, @ShillingsRemaining, #number=amount_shillings);
+
+      piMarketplaceUnitPriceShillings = iRemainingShillings;
+      piMarketplaceUnitPricePlatinum = iPlatinum + amount_platinum;
 
       return;
    }
@@ -248,7 +272,7 @@ messages:
       return Send(self,@CanBeStoredInVault) AND NOT Send(self,@IsCursed);
    }
 
-   ListOnMarketplace(who=$, quantity=1, unit_price=1000)
+   ListOnMarketplace(who=$, quantity=1, unit_shillings=500, unit_platinum=1)
    "List this item on the marketplace"
    {
       if who = $
@@ -258,24 +282,30 @@ messages:
 
       poMarketplaceOwner = who;
       piMarketplaceQuantity = quantity;
-      piMarketplaceUnitPrice = unit_price;
+      
+      Send(self, @SetMarketplaceUnitPrice, #amount_shillings=unit_shillings, #amount_platinum=unit_platinum);
+
       pbMarketplaceListed = TRUE;
 
       return TRUE;
    }
 
-   UnListFromMarketplace()
-   "Unlist an item from the marketplace"
+   RemoveFromMarketplace()
+   "Removes the item from the marketplace because it was purchased. New owner is a player!"
    {
-      if poMarketplaceOwner = $
+      if poMarketplaceOwner <> $
       {
-         return FALSE;
+         // Item was purchased from this player.
+         poMarketplacePurchasedFrom = poMarketplaceOwner;
       }
+      
+      pbMarketplaceListed = FALSE;
+      poMarketplaceOwner = $;
+      piMarketplaceQuantity = 0;
+      piMarketplaceUnitPricePlatinum = 0;
+      piMarketplaceUnitPriceShillings = 0;
 
-      // Owner must be able to carry the items they listed on the marketplace since they're unlisting them.
-      // TODO: Unlist item from marketplace.
-
-      return TRUE;
+      return;
    }
 
    SetBuffSpell(num=$)
@@ -1249,14 +1279,21 @@ messages:
       return viValue_average;
    }
 
-   GetValue()
+   GetValue(type=$)
    {
       local iPercent, iValue, iFinal, i, oItemAtt, iNum;
 
-      if pbMarketplaceListed AND piMarketplaceUnitPrice <> $
+      if pbMarketplaceListed AND type <> $
       {
          // Marketplace items do not have a degredation value calculation.
-         return piMarketplaceUnitPrice;
+         if type = &Shilling
+         {
+            return piMarketplaceUnitPriceShillings;
+         }
+         if type = &Platinum
+         {
+            return piMarketplaceUnitPricePlatinum;
+         }
       }
 
       // Okay, new way of figuring value, considering 
@@ -1333,6 +1370,11 @@ messages:
    NewOwner(what = $)
    {
       local lData;
+
+      if poOwner <> $ AND IsClass(poOwner, &Player) AND pbMarketplaceListed
+      {
+         Send(self,@RemoveFromMarketplace);
+      }
 
       // If the person who is supposed to pick up an item picks up 
       //  the item, then remove the corpsepointer.          

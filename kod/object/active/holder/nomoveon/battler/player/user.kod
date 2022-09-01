@@ -1923,6 +1923,7 @@ messages:
          oWhat = Nth(client_msg,2);
          if IsClass(oWhat,&Monster)
          {
+            Debug("BP_REQ_BUY");
             Send(self,@UserBuy,#what=oWhat);
          }
 
@@ -1934,6 +1935,7 @@ messages:
          oWhat = Nth(client_msg,2);
          if IsClass(oWhat,&Monster)
          {
+            Debug("BP_REQ_BUY_ITEMS");
             Send(self,@UserBuyItems,#what=oWhat,#item_list=Nth(client_msg,3),
                   #number_list=number_stuff);
          }
@@ -2480,7 +2482,7 @@ messages:
       switch(iClient_cmd)
       {
          case UC_MARKETPLACE_LIST:
-            Send(self,@MarketplaceList,#what=Nth(client_msg, 2),#quantity=Nth(client_msg, 3),#unit_price=Nth(client_msg, 4));
+            Send(self,@MarketplaceList,#what=Nth(client_msg, 2),#quantity=Nth(client_msg, 3),#unit_shillings=Nth(client_msg, 4),#unit_platinum=Nth(client_msg, 5));
             return;
          case UC_MARKETPLACE_UNLIST:
             // For the moment, just buy back your own items.
@@ -2665,9 +2667,8 @@ messages:
       }
 
       iCost = Send(oHall,@GetPurchaseValue,#who=self);
-      oMoney = Send(self,@GetMoneyObject);
 
-      if oMoney = $ OR Send(oMoney,@GetNumber) < iCost
+      if NOT Send(self,@CanAfford,#cost_shillings=iCost)
       {
          Send(self,@MsgSendUser,#message_rsc=user_no_guildhall_broke);
          
@@ -2677,7 +2678,7 @@ messages:
       if Send(oHall,@ClaimGuildHall,#oGuild=poGuild,#rep=self,
                #password=sPassword)
       {
-          Send(oMoney,@SubtractNumber,#number=iCost);
+          Send(self,@Pay,#amount_shillings=iCost);
       }
 
       return;
@@ -2719,14 +2720,12 @@ messages:
 
    UserCommandCreateGuild(client_msg = $)
    {
-      local i, oMoney, iCost;
+      local i, oMoney, iCost, oNewGuild;
 
       if client_msg = $
       {
          return;
       }
-
-      oMoney = Send(self,@GetMoneyObject);
 
       // Secret guild?
       if Nth(client_msg,13)
@@ -2738,8 +2737,7 @@ messages:
          iCost = Send(SYS,@GetGuildPrice);
       }
 
-      if oMoney = $
-         OR Send(oMoney,@GetNumber) < iCost
+      if NOT Send(self,@CanAfford,#cost_shillings=iCost)
       {
          Send(self,@MsgSendUser,#message_rsc=user_no_guild_broke);
 
@@ -2786,7 +2784,7 @@ messages:
          ++i;
       }
 
-      Create(&Guild,#master=self,#guildname=Nth(client_msg,2),
+      oNewGuild = Create(&Guild,#master=self,#guildname=Nth(client_msg,2),
                     #secret=Nth(client_msg,13),
                     #rApprentice_male=Nth(client_msg,3),
                     #rApprentice_female=Nth(client_msg,4),
@@ -2797,7 +2795,13 @@ messages:
                     #rMaster=Nth(client_msg,11),
                     #rMistress=Nth(client_msg,12));
 
-      Send(oMoney,@SubtractNumber,#number=iCost);
+      Send(self,@Pay,#amount_shillings=iCost);
+
+      if IsClass(self, &DM)
+      {
+         // DM Guilds are matured.
+         Send(oNewGuild,@SetMature);
+      }
 
       return;
    }
@@ -6887,6 +6891,7 @@ messages:
       }
 
       AddPacket(1,BP_OFFERED,2,Length(plOffer_items));
+      
       foreach i in plOffer_items
       {
          Send(self,@ToCliObject,#what=i);
@@ -7302,6 +7307,8 @@ messages:
 
       foreach i in plOffer_items
       {
+         Debug("CheckOffer",Send(i,@GetName));
+         
          if NOT Send(i,@ReqNewOwner,#what=poOffer_who)
          {
             Send(self,@MsgSendUser,#message_rsc=user_cant_drop_offer, 
@@ -7324,8 +7331,10 @@ messages:
          if IsClass(i,&NumberItem)
          {
             bFound = FALSE;
-            foreach j in plPassive
+            foreach j in Send(self,@GetInventory)
             {
+               Debug("Inventory",GetClass(j),"vs",GetClass(i));
+
                if GetClass(j) = GetClass(i)
                {
                   if Send(j,@GetNumber) < Send(i,@GetNumber)
@@ -7349,6 +7358,7 @@ messages:
 
             if NOT bFound
             {
+               Debug(GetClass(i),"wasn't in your inventory");
                Send(self,@MsgSendUser,#message_rsc=user_dont_have_offer);
                Send(poOffer_who,@MsgSendUser,
                     #message_rsc=user_didnt_have_offer, 
@@ -7599,7 +7609,7 @@ messages:
 
    UserBuy(what = $)
    {
-      local i,lSaleItems;
+      local i,lSaleItems, iShillings, iPlatinum, iRemainingShillings, iConvertedPlatinum;
 
       lSaleItems = $;
       lSaleItems = Send(what,@GetForSale,#who=self);
@@ -7618,7 +7628,14 @@ messages:
          foreach i in lSaleItems
          {
             Send(self,@ToCliObject,#what=i);
-            AddPacket(4,Send(what,@GetVaultRetrievalFee,#what=i,#who=self));
+            iShillings = Send(what,@GetVaultRetrievalFee,#type=&Shilling,#what=i,#who=self);
+            iPlatinum = Send(what,@GetVaultRetrievalFee,#type=&Platinum,#what=i,#who=self);
+            iConvertedPlatinum = Send(SYS,@ShillingsToPlatinum,#number=iShillings);
+            iRemainingShillings = Send(SYS,@ShillingsRemaining,#number=iShillings);
+            iPlatinum = iPlatinum + iConvertedPlatinum;
+            iShillings = iRemainingShillings;
+            AddPacket(4,iShillings);
+            AddPacket(4,iPlatinum);
          }
       }
       else
@@ -7626,7 +7643,14 @@ messages:
          foreach i in lSaleItems
          {
             Send(self,@ToCliObject,#what=i);
-            AddPacket(4,Send(what,@GetPrice,#what=i,#who=self));
+            iShillings = Send(what,@GetPrice,#type=&Shilling,#what=i,#who=self);
+            iPlatinum = Send(what,@GetPrice,#type=&Platinum,#what=i,#who=self);
+            iConvertedPlatinum = Send(SYS,@ShillingsToPlatinum,#number=iShillings);
+            iRemainingShillings = Send(SYS,@ShillingsRemaining,#number=iShillings);
+            iPlatinum = iPlatinum + iConvertedPlatinum;
+            iShillings = iRemainingShillings;
+            AddPacket(4,iShillings);
+            AddPacket(4,iPlatinum);
          }
       }
 
@@ -7717,11 +7741,17 @@ messages:
       // Check quantities; must be positive
       foreach i in number_list
       {
+         Debug("UserBuyItems (quantity list)",i);
          if i < 1
          {
             Debug("Bad buy quantity", i, "from user", self);
             return;
          }
+      }
+
+      foreach i in item_list
+      {
+         Debug("UserBuyItems (item list)",Send(i,@GetName));
       }
 
       Send(what,@Buy,#what=self,#item_list=item_list,#number_list=number_list);
@@ -7954,6 +7984,20 @@ messages:
          return;
       }
 
+      if IsClass(what,&Shilling)
+         OR (IsClass(what, &Money)
+            AND NOT IsClass(what, &Shilling)
+            AND NOT IsClass(what, &Platinum))
+      {
+         // Let's make sure we convert shillings to platinum for this user.
+         if NOT Send(self,@ConvertInventoryMoney, #what=what)
+         {
+            // Returning false means we do not want to pick up the item.
+            // We most likely deleted the shillings from the monster when converted to platinum.
+            return FALSE;
+         }
+      }
+
       if IsClass(what,&SpellItem)
          AND (piPreferences & CF_AUTOCOMBINE)
          AND check_combine
@@ -7974,6 +8018,146 @@ messages:
       }
 
       propagate;
+   }
+
+   ConvertInventoryMoney(what=$, deep_scan=FALSE)
+   {
+      local oShilling, oPlatinum, iTotalPlatinum, iTotalShilling, iRemainingShillings, lInventory, i, 
+            iInventoryShilling, iWhatShilling, oDeprecatedMoney;
+
+      if what <> $ AND IsClass(what, &Money) AND NOT IsClass(what, &Shilling) AND NOT IsClass(what, &Platinum)
+      {
+         // Deprecated &Money object will be converted to shillings -> platinum.
+         Send(self, @AddShillings, #amount=Send(what,@GetNumber));
+         Send(what, @Delete);
+
+         // Calculate platinum from shillings we've added now that the deprecated money is gone.
+         Send(self, @ConvertInventoryMoney);
+
+         return FALSE;
+      }
+
+      oShilling = Send(self, @GetInventoryObjectByClass, #class=&Shilling);
+      
+      iInventoryShilling = 0;
+      iWhatShilling = 0;
+
+      if oShilling <> $
+      {
+         iInventoryShilling = Send(oShilling, @GetNumber);
+      }
+
+      if what = $ AND deep_scan
+      {
+         lInventory = Send(self,@GetInventory);
+         
+         // Check player's inventory for deprecated money object
+         foreach i in lInventory
+         {
+            if i <> $ 
+               AND IsClass(i, &Money) 
+               AND NOT IsClass(i, &Shilling)
+               AND NOT IsClass(i, &Platinum)
+            {
+               // Old &Money object should be converted to shillings and then will convert to platinum.
+               Send(self, @AddShillings, #amount=Send(i,@GetNumber));
+               Send(i, @Delete);
+
+               return FALSE;
+            }
+         }
+      }
+
+      Debug("Converting shillings to platinum", Send(self,@GetName));
+
+      if what <> $ AND IsClass(what, &Shilling)
+      {
+         iWhatShilling = Send(what, @GetNumber);
+      }
+
+      iTotalShilling = iInventoryShilling + iWhatShilling;
+
+      Debug("Total Shilling is",iTotalShilling);
+
+      if iTotalShilling < 0
+      {
+         // Prevented converting negative amount of shillings.
+         Debug("Prevented converting negative amount of shillings", Send(self,@GetName), iTotalShilling);
+         return FALSE;
+      }
+
+      if iTotalShilling >= SHILLINGS_PER_PLATINUM
+      {
+         Debug("oShilling is >= SHILLINGS_PER_PLATINUM",iTotalShilling);
+
+         // Convert shillings to platinum
+         oPlatinum = Send(self, @GetInventoryObjectByClass, #class=&Platinum);
+         iTotalPlatinum = Send(SYS, @ShillingsToPlatinum, #number=iTotalShilling);
+
+         if oPlatinum = $
+         {
+            oPlatinum = Create(&Platinum, #number=iTotalPlatinum);
+            Send(self,@NewHold,#what=oPlatinum);
+            Debug("Created Platinum",iTotalPlatinum);
+         }
+         else
+         {
+            Send(oPlatinum, @AddNumber, #number=iTotalPlatinum);
+            Debug("Add to Platinum",iTotalPlatinum);
+         }
+
+         iRemainingShillings = Send(SYS, @ShillingsRemaining, #number=iTotalShilling);
+
+         Debug("Remaining Shillings",iRemainingShillings);
+
+         if iRemainingShillings > 0
+         {
+            // We have remaining shillings.
+            if iInventoryShilling > 0
+            {
+               // Shillings are in our inventory, let's update that and reject the incoming one.
+               Send(oShilling, @SetNumber, #number=iRemainingShillings);
+
+               if iWhatShilling > 0
+               {
+                  // Set the incoming shillings as zero.
+                  // Delete the incoming shillings.
+                  Send(what, @SetNumber, #number=0);
+                  Send(what, @Delete);
+
+                  return FALSE;
+               }
+            }
+            else
+            {
+               // We do not have shillings in our inventory, let's receive the incoming one and set the remaining number.
+               Send(what, @SetNumber, #number=iRemainingShillings);
+            }
+         }
+         else
+         {
+            // We have 0 shillings - everything was converted to Platinum.
+            // Delete the shilling object.
+            if iInventoryShilling > 0
+            {
+               Send(oShilling, @SetNumber, #number=0);
+               Debug("Deleted",Send(oShilling,@GetName),Send(oShilling,@GetNumber));
+               Send(oShilling, @Delete);
+            }
+
+            if iWhatShilling > 0
+            {
+               Send(what, @SetNumber, #number=0);
+               Debug("Deleted",Send(what,@GetName),Send(what,@GetNumber));
+               Send(what, @Delete);
+            }
+
+            // Prevent the object from being held.
+            return FALSE;
+         }
+      }
+
+      return TRUE;
    }
 
    NewHoldObject(what = $)
@@ -10163,7 +10347,11 @@ messages:
    {
       local oMoney,num;
 
-      oMoney = Send(self,@GetMoneyObject);
+      // We no longer need to fix money. We fixed this with platinum.
+      return;
+
+
+      oMoney = Send(self,@GetShillingObject);
       if oMoney <> $
       {
          num = Send(oMoney,@GetNumber);

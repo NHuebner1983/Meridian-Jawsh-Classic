@@ -200,12 +200,11 @@ messages:
 
       if IsClass(obj,&NeruditeOreChunk)
       {
-         oMoney = Create(&Money,#number=(Send(obj,@GetValue)+1300));
+         oMoney = Create(&Shilling,#number=(Send(obj,@GetValue)+1300));
          if Send(who,@ReqNewHold,#what=oMoney)
          {
             Send(who,@NewHold,#what=oMoney);
-            Send(Send(SYS,@GetStatistics),@MoneyCreated,
-                  #amount=Send(oMoney,@GetNumber));
+            Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=Send(oMoney,@GetNumber));
             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
                   #string=Wolfgang_Nerudite_bought);
 

@@ -53,6 +53,46 @@ messages:
       return piBank;
    }
 
+   MigrateShillingsToPlatinum(who=$)
+   {
+      local lAccount, oShilling, iShillings;
+
+      if Send(SETTINGS_OBJECT, @GetShillingsToPlatinumMigrated)
+      {
+         // Operation is already complete.
+         return FALSE;
+      }
+
+      if who = $
+      {
+         return FALSE;
+      }
+
+      lAccount = GetListNode(plAccounts,1,who);
+
+      if lAccount = $
+      {
+         // User does not have anything in their bank account, no migration needed.
+         return FALSE;
+      }
+
+      iShillings = Nth(lAccount,2);
+
+      if iShillings >= SHILLINGS_PER_PLATINUM
+      {
+         // Migrate their shillings to platinum
+         SetNth(lAccount,2,iShillings / SHILLINGS_PER_PLATINUM);
+         Debug("---SHILLING-TO-PLATINUM---", Send(who,@GetName),"migrated",iShillings,"to",Nth(lAccount,2),"platinum");
+      }
+      else
+      {
+         // Send the "under 1000 shillings" to the character's inventory.
+         Send(who,@AddShillings,#amount=iShillings);
+      }
+
+      return TRUE;
+   }
+
    DepositAccount(what = $,amount = $)
    {
       local lAccount;
@@ -122,6 +162,9 @@ messages:
    FixMoney(amount = $, bAreYouSure = FALSE)
    {
       local i, new_num;
+
+      // We no longer need to fix money. We fixed this with platinum.
+      return;
 
       // Check for really wanting to do this - can destroy bank accounts.
       if (NOT bAreYouSure)

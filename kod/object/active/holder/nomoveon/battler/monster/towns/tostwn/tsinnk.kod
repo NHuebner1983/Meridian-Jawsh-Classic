@@ -47,13 +47,31 @@ classvars:
    vrDesc = tosinnkeeper_desc_rsc
    viAttributes = \
       MOB_NOFIGHT | MOB_RECEIVE | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE \
-      | MOB_SELLER | MOB_COND_SELLER | MOB_LAWFUL
+      | MOB_SELLER | MOB_COND_SELLER | MOB_LAWFUL | MOB_BUYER
    viOccupation = MOB_ROLE_INNKEEPER
-   viMerchant_markup = MERCHANT_DISCOUNT
+   viMerchant_markup = MERCHANT_FLAT
 
 properties:
 
 messages:
+   
+   Constructor()
+   {
+      plWantedItems = [&Weed];
+
+      propagate;
+   }
+
+   CheckWhyWanted(obj=$, who=$)
+   {
+      return TRUE;
+   }
+
+   GotWantedItem(obj = $, who = $)
+   {
+      // Why is the normal monster sending @Delete to an item that we want a counter-offer?
+      return TRUE;
+   }
 
    AffectMood(why=$,what=$)
    {

@@ -320,6 +320,8 @@ properties:
    // much more powerful with these items.
    pbSpellItemsCostMana = FALSE
 
+   pbShillingsToPlatinumMigrated = FALSE
+
 messages:
 
    Constructor()
@@ -331,6 +333,18 @@ messages:
    "If we need to obtain the settings object, use this message."
    {
       return self;
+   }
+
+   GetShillingsToPlatinumMigrated()
+   {
+      return pbShillingsToPlatinumMigrated;
+   }
+
+   SetShillingsToPlatinumMigrated()
+   {
+      pbShillingsToPlatinumMigrated = TRUE;
+
+      return;
    }
 
    Recreate()

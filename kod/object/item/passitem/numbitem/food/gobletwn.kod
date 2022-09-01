@@ -52,11 +52,15 @@ messages:
    SendTaste(what = $,apply_on = $)
    {
       local oMoney;
-      oMoney = send(apply_on, @getMoneyObject);
-      if oMoney = $ or send(oMoney,@GetNumber) < 5000
-      {  Send(apply_on,@MsgSendUser,#message_rsc=wineGoblet_use_poor);  }
+      
+      if NOT Send(apply_on,@CanAfford,#cost_shillings=5000)
+      {  
+         Send(apply_on,@MsgSendUser,#message_rsc=wineGoblet_use_poor);
+      }
       else
-      {  Send(apply_on,@MsgSendUser,#message_rsc=wineGoblet_use_rich);  }
+      {
+         Send(apply_on,@MsgSendUser,#message_rsc=wineGoblet_use_rich);
+      }
       
       Send(apply_on,@EffectSendUserDuration,#effect=EFFECT_BLUR,#duration=5000);
 

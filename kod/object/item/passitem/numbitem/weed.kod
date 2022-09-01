@@ -38,7 +38,7 @@ classvars:
    viBulk = 0
    viWeight = 0
 
-   viValue_average = 100
+   viValue_average = 5000000
 
    viUse_type = ITEM_CANT_USE
 
@@ -46,5 +46,11 @@ properties:
 
 messages:
 
+   Delete()
+   {
+      Debug(Send(self,@GetName),GetClass(self),"DELETED");
+
+      propagate;
+   }
 end
 ////////////////////////////////////////////////////////////////////////////////

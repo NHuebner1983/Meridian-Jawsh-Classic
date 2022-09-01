@@ -113,6 +113,15 @@ messages:
       return piNumber;
    }
 
+   SetNumber(number=1)
+   {
+      piNumber = number;
+
+      Send(self,@NewNumber);
+
+      return;
+   }
+
    GetWeight()
    {
       if viWeight < 0

@@ -143,7 +143,7 @@ messages:
         return Send(what, @CanListOnMarketplace);
     }
 
-    ListOnMarketplace(what=$, quantity=1, unit_price=1000)
+    ListOnMarketplace(what=$, quantity=1, unit_shillings=500, unit_platinum=1)
     "Lists an item for sale and removes it from the player's inventory"
     {
         local i, j, oHolder, lTake_items, bHadSomeNum, lForSale, oNewItem;
@@ -169,7 +169,7 @@ messages:
         }
 
         // Set the item's properties as listed on marketplace
-        Send(what,@ListOnMarketplace,#who=poStoreOwner,#quantity=quantity,#unit_price=unit_price);
+        Send(what,@ListOnMarketplace,#who=poStoreOwner,#quantity=quantity,#unit_shillings=unit_shillings,#unit_platinum=unit_platinum);
 
         //Debug(Send(what,@GetName),poStoreOwner,quantity,unit_price);
 
@@ -221,13 +221,6 @@ messages:
         //Debug("lForSale", lForSale);
 
         return TRUE;
-    }
-
-    UnListFromMarketplace(what=$, quantity=1)
-    "Unlists an item from the marketplace (ie: puts the items back on the owner) and strips Marketplace Data from the item."
-    {
-        // Does nothing for now. Maybe the owner just buys their stuff back instead?
-        return;
     }
 
     NewHoldObject(what=$)

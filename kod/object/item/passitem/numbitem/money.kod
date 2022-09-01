@@ -13,18 +13,18 @@ Money is NumberItem
 constants:
 
    include blakston.khd
+   include protocol.khd
 
 resources:
 
    include money.lkod
 
-   money_name_one_rsc = "shilling"
-   money_name_many_rsc = "shillings"
+   money_name_one_rsc = "money"
+   money_name_many_rsc = "money"
    
    money_icon_rsc = coin.bgf
    money_desc_rsc = \
-      "The currency of Meridian.  A profile of an ancient princess "
-      "adorns the front and an apothecary's stone the back."
+      "Meridian 59 currency."
 
 classvars:
 
@@ -38,6 +38,7 @@ classvars:
    viWeight = 0
 
    viValue_average = 1
+   viValue_multiplier = 1
 
    viUse_type = ITEM_CANT_USE
    viItem_type = ITEMTYPE_MONEY
@@ -51,22 +52,33 @@ properties:
 
 messages:
 
-   GetValue()
+   NewNumber()
+   "Handle converting shillings to platinum."
    {
-      return piNumber * Send(self,@GetInitValue);
-   }
-
-   FixMoney(amount = $)
-   "Bounds money to the upper limit of 'amount'."
-   {
-      if amount <> $
+      if IsClass(self, &Shilling)
       {
-         piNumber = Bound(piNumber,0,amount);
+         if piNumber >= SHILLINGS_PER_PLATINUM
+         {
+            if poOwner <> $ AND IsClass(poOwner, &Player)
+            {
+               // The player is holding this money, let's convert it to the next tier of currency
+               Debug("Shillings Convert", piNumber,"to platinum on",Send(poOwner,@GetName));
+            }
+         }
+         else
+         {
+            // We could possibly check if the shillings are on a monster and convert there.
+            // If the shillings are on the ground, we should just leave them as is and when the 
+            // player picks it up, it will convert for them.
+            if poOwner <> $
+            {
+               Debug("Shillings Convert", piNumber,"non-player",Send(poOwner,@GetName));
+            }
+         }
       }
 
-      return;
+      propagate;
    }
-
-
+   
 end
 ////////////////////////////////////////////////////////////////////////////////

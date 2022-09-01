@@ -465,8 +465,7 @@ messages:
             {
                iNumber = 0;
                Send(oObj,@AddNumber,#number=iNumber);
-               Send(Send(SYS,@GetStatistics),@MoneyCreated,
-                     #amount=Send(oObj,@GetNumber));
+               Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oObj,#amount=Send(oObj,@GetNumber));
             }
 
             return oObj;

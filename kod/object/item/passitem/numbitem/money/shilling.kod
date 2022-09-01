@@ -1,0 +1,76 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Shilling is Money
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include shilling.lkod
+
+   shilling_name_one_rsc = "shilling"
+   shilling_name_many_rsc = "shillings"
+   
+   shilling_icon_rsc = coin.bgf
+   shilling_desc_rsc = \
+      "The lowest currency of Meridian.  A gold profile of an ancient princess "
+      "adorns the front and an apothecary's stone the back. "
+      "1,000 shillings is equal to 1 platinum."
+
+classvars:
+
+   vrName = shilling_name_one_rsc
+   vrIcon = shilling_icon_rsc
+   vrDesc = shilling_desc_rsc
+
+   vrName_plural = shilling_name_many_rsc
+
+   viBulk = 0
+   viWeight = 0
+
+   viValue_average = 1
+   viValue_multiplier = 1
+
+   viUse_type = ITEM_CANT_USE
+   viItem_type = ITEMTYPE_MONEY
+
+   viGround_group = 2
+   viInventory_group = 1
+
+properties:
+
+   viObject_flags = OF_GETTABLE
+
+messages:
+
+   GetValue()
+   {
+      return piNumber * Send(self,@GetInitValue);
+   }
+
+   FixMoney(amount = $)
+   "Bounds money to the upper limit of 'amount'."
+   {
+      // We no longer need to fix money. We fixed this with platinum.
+      return;
+
+      if amount <> $
+      {
+         piNumber = Bound(piNumber,0,amount);
+      }
+
+      return;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////
