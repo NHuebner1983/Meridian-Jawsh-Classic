@@ -2482,7 +2482,11 @@ messages:
       switch(iClient_cmd)
       {
          case UC_MARKETPLACE_LIST:
-            Send(self,@MarketplaceList,#what=Nth(client_msg, 2),#quantity=Nth(client_msg, 3),#unit_platinum=Nth(client_msg, 4),#unit_shillings=Nth(client_msg, 5));
+            Send(self,@MarketplaceList,
+               #what=Nth(client_msg, 2),
+               #quantity=Nth(client_msg, 3),
+               #unit_platinum=Nth(client_msg, 4),
+               #unit_shillings=Nth(client_msg, 5));
             return;
          case UC_MARKETPLACE_UNLIST:
             // For the moment, just buy back your own items.

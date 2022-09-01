@@ -1405,7 +1405,7 @@ messages:
       return plStoreLocation;
    }
 
-   MarketplaceList(what=$,quantity=1,unit_platinum=1,unit_shillings=500)
+   MarketplaceList(what=$,quantity=1,unit_platinum=0,unit_shillings=500)
    "List an item on the marketplace"
    {
       return Send(poStore,@ListOnMarketplace,
@@ -4073,7 +4073,7 @@ messages:
          }
       }
 
-      Debug("Enchantment timer went off with no enchantment",timer);
+      //Debug("Enchantment timer went off with no enchantment",timer);
 
       return;
    }
@@ -4116,7 +4116,7 @@ messages:
          }
       }
 
-      Debug("Enchantment timer went off with no enchantment",timer);
+      //Debug("Enchantment timer went off with no enchantment",timer);
 
       return;
    }

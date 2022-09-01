@@ -238,16 +238,19 @@ messages:
 
    GetValue(type=$)
    {
-      if type <> $
+      if type = $
       {
-         if type = &Shilling
-         {
-            return piNumber * Send(self,@GetInitValue);
-         }
-         if type = &Platinum
-         {
-            return piNumber * (Send(self,@GetInitValue) / SHILLINGS_PER_PLATINUM);
-         }
+         type = &Shilling;
+      }
+
+      if type = &Shilling
+      {
+         return piNumber * Send(self,@GetInitValue);
+      }
+      
+      if type = &Platinum
+      {
+         return piNumber * (Send(self,@GetInitValue) / SHILLINGS_PER_PLATINUM);
       }
 
       return piNumber * Send(self,@GetInitValue);

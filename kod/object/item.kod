@@ -156,8 +156,8 @@ properties:
    pbMarketplaceListed = FALSE
    poMarketplaceOwner = $
    piMarketplaceQuantity = 1
-   piMarketplaceUnitPriceShillings = 500
-   piMarketplaceUnitPricePlatinum = 1
+   piMarketplaceUnitPriceShillings = 1
+   piMarketplaceUnitPricePlatinum = 0
    poMarketplacePurchasedFrom = $
    
 messages:
@@ -228,7 +228,7 @@ messages:
       return piMarketplaceUnitPricePlatinum;
    }
 
-   SetMarketplaceUnitPrice(amount_platinum=1, amount_shillings=500)
+   SetMarketplaceUnitPrice(amount_platinum=0, amount_shillings=500)
    "Set the Shilling Unit Price for this item on the marketplace"
    {
       local iPlatinum, iRemainingShillings;
@@ -1287,7 +1287,12 @@ messages:
    {
       local iPercent, iValue, iFinal, i, oItemAtt, iNum;
 
-      if pbMarketplaceListed AND type <> $
+      if type = $
+      {
+         type = &Shilling;
+      }
+
+      if pbMarketplaceListed
       {
          // Marketplace items do not have a degredation value calculation.
          if type = &Shilling
@@ -1334,6 +1339,16 @@ messages:
                        #iCompound=First(i));
       }
       
+      if type = &Shilling
+      {
+         return iFinal;
+      }
+      
+      if type = &Platinum
+      {
+         return iFinal / SHILLINGS_PER_PLATINUM;
+      }
+
       return iFinal;
    }
 

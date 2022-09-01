@@ -3459,16 +3459,19 @@ messages:
                return FALSE;
             }
 
-            Debug(Send(i,@GetName),"is worth",Send(i,@GetValue,#type=&Platinum));
+            Debug(Send(i,@GetName),"is worth",Send(i,@GetValue,#type=&Platinum),"plat");
 
             iPlatinum = iPlatinum + Send(i,@GetValue,#type=&Platinum);
 
             if iPlatinum <= 0
             {
-               iShillings = iShillings + Send(SYS,@ShillingsRemaining,#number=Send(i,@GetValue));
+               // It's not worth platinum, it may be worth shillings though.
+               iShillings = iShillings + Send(i,@GetValue);
+               Debug(Send(i,@GetName),"is worth",iShillings,"shillings");
             }
          }
 
+         Debug(Send(i,@GetName),"is shillings worth",Send(i,@GetValue),"shillings");
          Debug("iPlatinum",iPlatinum,"iShillings",iShillings);
 
          if iPlatinum = 0 AND iShillings = 0
@@ -4385,7 +4388,7 @@ messages:
    Offer(what = $,item_list = $)
    "Offer the player money in exchange for their goods - MOB_BUYER"
    {
-      local i, iValue_offered, iAdd, x, y, iPlatinum, iShillings;
+      local i, iValue_offered, iAdd, x, y, iPlatinum, iShillings, xPlatinum, xShillings, iAddShillings, iAddPlatinum;
 
       // The Faction Pricing bonus was selling items to NPCs at higher prices
       // than the new price.  This has been taken out.
@@ -4400,31 +4403,37 @@ messages:
 
          foreach i in item_list
          {
-            iAdd = 0;
+            iAddShillings = 0;
+            iAddPlatinum = 0;
 
-            if Send(i,@GetValue) < 0
+            if Send(i,@GetValue,#type=&Shilling) < 0
             {
-               // Breached MAX_KOD_INT...
-               // Treated as Platinum...
-               x = Send(i,@GetValue,#type=&Platinum);
-               iAdd = Bound(x,1,$);
-
-               iPlatinum = iPlatinum + iAdd;
+               // MAX_KOD_INT reached, only deal in platinum.
+               iAddPlatinum = Send(i,@GetValue,#type=&Platinum);
+               iAddShillings = 0;
             }
             else
             {
-               // Treated as shillings
-               x = Send(i,@GetValue);
+               // Item has a shilling value under KOD limit.
+               iAddShillings = Send(i,@GetValue,#type=&Shilling);
 
                if viMerchant_markup > 0
                {
-                  x = x * (100 - 10*viMerchant_markup) / 100;
+                  // Merchant is marking up
+                  iAddShillings = iAddShillings * (100 - 10*viMerchant_markup) / 100;
                }
 
-               iAdd = Bound(x,1,$);
-               
-               iPlatinum = iPlatinum + Send(SYS,@ShillingsToPlatinum,#number=iAdd);
-               iShillings = Send(SYS,@ShillingsRemaining,#number=iAdd);
+               iAddPlatinum = Send(SYS,@ShillingsToPlatinum,#number=iAddShillings);
+               iAddShillings = Send(SYS,@ShillingsRemaining,#number=iAddShillings);
+            }
+
+            iPlatinum = iPlatinum + iAddPlatinum;
+            iShillings = iShillings + iAddShillings;
+
+            if iShillings >= SHILLINGS_PER_PLATINUM
+            {
+               iPlatinum = iPlatinum + Send(SYS,@ShillingsToPlatinum,#number=iShillings);
+               iShillings = Send(SYS,@ShillingsRemaining,#number=iShillings);
             }
          }
 

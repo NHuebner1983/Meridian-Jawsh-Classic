@@ -44,8 +44,23 @@ properties:
 
 messages:
 
-    GetValue()
+    GetValue(type=$)
     {
+        if type = $
+        {
+            type = &Shilling;
+        }
+
+        if type = &Shilling
+        {
+            return 10;
+        }
+
+        if type = &Platinum
+        {
+            return 0;
+        }
+        
         // Can't really tell the value of an item in a box.
         return 10;
     }
