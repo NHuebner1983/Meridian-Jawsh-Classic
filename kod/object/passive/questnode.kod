@@ -653,7 +653,7 @@ messages:
    "met to award prize/penalty."
    {
       local lQuesters, iDistance, iType, oQuester, bOnQuest, iNumber,
-            lMonster, oMonster, bFound;
+            lMonster, oMonster, bFound, cCargoBaseClass, iPlatinum, iShillings;
 
       // if the player isn't on this quest, bail out here
       if piStatus <> QN_STATUS_WAITING_FOR_PLAYERS
@@ -721,10 +721,22 @@ messages:
             return FALSE;
          }
 
+         cCargoBaseClass = $;
+
          if (iType = QN_TYPE_ITEMCLASS
              OR iType = QN_TYPE_MONSTER_ITEMCLASS
              OR iType = QN_TYPE_ITEMFINDCLASS)
-            AND GetClass(item_offered) <> GetClass(pCargo)
+            AND (IsClass(item_offered, &Money) AND IsClass(pCargo, &Money))
+         {
+            // We ofered some form of currency, and cargo is currency, we should try to accept it.
+            cCargoBaseClass = &Money;
+            //Debug("Quest offering is currency",GetClass(item_offered),"vs",GetClass(pCargo));
+         }
+
+         if (iType = QN_TYPE_ITEMCLASS
+             OR iType = QN_TYPE_MONSTER_ITEMCLASS
+             OR iType = QN_TYPE_ITEMFINDCLASS)
+            AND (GetClass(item_offered) <> GetClass(pCargo) AND cCargoBaseClass = $)
          {
             return FALSE;
          }
@@ -737,6 +749,25 @@ messages:
 
          if IsClass(item_offered,&NumberItem)
          {
+            if IsClass(pCargo, &Money)
+            {
+               // Our quest wants shillings.
+               if IsClass(item_offered, &Platinum)
+               {
+                  // But we gave platinum.
+                  // Let's use the pay function, which will automatically break platinum for us.
+                  Send(who_tried,@Pay,#amount_shillings=Send(pCargo,@GetNumber));
+
+                  //Debug("Quest accepted the platinum and used @Pay function");
+
+                  // We should be good for this quest using platinum.
+
+                  Send(self,@CompletionCriteriaMet);
+
+                  return TRUE;
+               }
+            }
+
             if Send(item_offered,@GetNumber) < Send(pCargo,@GetNumber)
             {
                iNumber = Send(pCargo,@GetNumber)-Send(item_offered,@GetNumber);

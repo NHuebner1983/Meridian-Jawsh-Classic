@@ -148,7 +148,7 @@ messages:
     {
         local i, j, oHolder, lTake_items, bHadSomeNum, lForSale, oNewItem, oNewHoldObj;
         
-        Debug("List on Marketplace",what,quantity,unit_platinum,unit_shillings);
+        //Debug("List on Marketplace",what,quantity,unit_platinum,unit_shillings);
 
         if plFor_Sale = $ OR NOT IsList(plFor_Sale)
         {
@@ -170,7 +170,7 @@ messages:
             what = Create(GetClass(what),#number=quantity);
         }
 
-        Debug(Send(what,@GetName),poStoreOwner,quantity,unit_platinum,unit_shillings);
+        //Debug(Send(what,@GetName),poStoreOwner,quantity,unit_platinum,unit_shillings);
 
         lForSale = First(plFor_Sale);
         
@@ -228,7 +228,7 @@ messages:
                 if NOT FindListElem(lForSale, i)
                 {
                     lForSale = Cons(i,lForSale);
-                    Debug("Sellable Found",Send(i, @GetName),Send(Send(i,@GetMarketplaceOwner),@GetName),Send(i,@GetValue));
+                    //Debug("Sellable Found",Send(i, @GetName),Send(Send(i,@GetMarketplaceOwner),@GetName),Send(i,@GetValue));
                 }
             }
         }
@@ -246,7 +246,7 @@ messages:
     {
         local oOwner;
 
-        Debug("Store has new hold",Send(what,@GetName),what,Send(what,@GetNumber));
+        //Debug("Store has new hold",Send(what,@GetName),what,Send(what,@GetNumber));
 
         oOwner = Send(what,@GetOwner);
 

@@ -3459,7 +3459,7 @@ messages:
                return FALSE;
             }
 
-            Debug(Send(i,@GetName),"is worth",Send(i,@GetValue,#type=&Platinum),"plat");
+            //Debug(Send(i,@GetName),"is worth",Send(i,@GetValue,#type=&Platinum),"plat");
 
             iPlatinum = iPlatinum + Send(i,@GetValue,#type=&Platinum);
 
@@ -3467,12 +3467,12 @@ messages:
             {
                // It's not worth platinum, it may be worth shillings though.
                iShillings = iShillings + Send(i,@GetValue);
-               Debug(Send(i,@GetName),"is worth",iShillings,"shillings");
+               //Debug(Send(i,@GetName),"is worth",iShillings,"shillings");
             }
          }
 
-         Debug(Send(i,@GetName),"is shillings worth",Send(i,@GetValue),"shillings");
-         Debug("iPlatinum",iPlatinum,"iShillings",iShillings);
+         //Debug(Send(i,@GetName),"is shillings worth",Send(i,@GetValue),"shillings");
+         //Debug("iPlatinum",iPlatinum,"iShillings",iShillings);
 
          if iPlatinum = 0 AND iShillings = 0
          {
@@ -5116,7 +5116,7 @@ messages:
                iPriceShillings = 0;
                iPricePlatinum = 0;
 
-               Debug("Item is free, marketplace owner");
+               //Debug("Item is free, marketplace owner");
             }
          }
 
@@ -5127,7 +5127,7 @@ messages:
             iPricePlatinum = Send(self,@GetPrice,#type=&Platinum,#what=i,#who=what);
             iPricePlatinum = iPricePlatinum + Send(SYS, @ShillingsToPlatinum, #number=iPriceShillings);
             iPriceShillings = Send(SYS, @ShillingsRemaining, #number=iPriceShillings);
-            Debug("Unit Pricing is", iPricePlatinum, "plat", iPriceShillings, "shills");
+            //Debug("Unit Pricing is", iPricePlatinum, "plat", iPriceShillings, "shills");
          }
 
          //Debug("Value", iPriceShillings,"shill",iPricePlatinum,"plat");
@@ -5144,7 +5144,7 @@ messages:
                iAmount = Nth(number_list, index);
             }
 
-            Debug("Quantity Purchase is",iAmount);
+            //Debug("Quantity Purchase is",iAmount);
 
             if IsClass(i,&NumberItem)
             {
@@ -5152,22 +5152,22 @@ messages:
                // as we don't need a number list for non-number items.
                if lNumbers = $
                {
-                  Debug("lNumbers is empty, which must be a bug");
+                  //Debug("lNumbers is empty, which must be a bug");
                   continue;
                }
 
                // See how many the player wants.
                iAmount = First(lNumbers);
 
-               Debug("Buying Amount",iAmount);
+               //Debug("Buying Amount",iAmount);
 
                if (iAmount = $)
                {
                   iAmount = 1;
-                  Debug("iAmount is now 1");
+                  //Debug("iAmount is now 1");
                }
 
-               Debug("iAmount is ", iAmount);
+               //Debug("iAmount is ", iAmount);
 
                // Make sure requested number of items is within the
                // limits. If selling from inventory, we can only sell
@@ -5175,12 +5175,12 @@ messages:
                if vbSellFromInventory
                {
                   iAmount = Bound(iAmount,1,Send(i,@GetNumber));
-                  Debug("Selling from inventory", iAmount);
+                  //Debug("Selling from inventory", iAmount);
                }
                else
                {
                   iAmount = Bound(iAmount,1,MAX_BUY_AMOUNT);
-                  Debug("Selling from monster", iAmount);
+                  //Debug("Selling from monster", iAmount);
                }
 
                lNumbers = Rest(lNumbers);
@@ -5257,7 +5257,7 @@ messages:
                         SetNth(plFor_Sale,1,DelListElem(First(plFor_Sale),i));
                      }
 
-                     Debug("Subtracting",iAmount,"from",Send(i,@GetNumber),Send(i,@GetName));
+                     //Debug("Subtracting",iAmount,"from",Send(i,@GetNumber),Send(i,@GetName));
 
                      Send(i,@SubtractNumber,#number=iAmount);
                   }
@@ -7268,7 +7268,7 @@ messages:
 
       if piAttributes & MOB_MARKETPLACE
       {
-         Debug(Send(self,@GetName),"is Marketplace");
+         //Debug(Send(self,@GetName),"is Marketplace");
          iFlags = iFlags | OF_MARKETPLACE;
       }
 
