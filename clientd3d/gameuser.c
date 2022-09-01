@@ -491,7 +491,7 @@ void UserMakeOffer(void)
 	   for (l = items; l != NULL; l = l->next)
 	   {
 		   obj = (object_node*)(l->data);
-		   MarketplaceList(obj->id, obj->temp_amount, obj->temp_listprice);
+		   MarketplaceList(obj->id, obj->temp_amount, obj->temp_listprice_plat, obj->temp_listprice_shills);
 	   }
    }
    else {

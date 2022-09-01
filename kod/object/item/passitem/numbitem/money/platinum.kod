@@ -24,10 +24,11 @@ resources:
    
    platinum_icon_rsc = platinum.bgf
    platinum_desc_rsc = \
-      "The highest currency of Meridian. The front of the coin symbolizes "
-      "the holder has faced life & death situations to obtain it. "
-      "This rarity will not remain with you in death, so take care to deposit it at your "
-      "nearest bank. A single platinum coin is worth 1,000 shillings. "
+      "Tarnished and rugged, this ancient coin is very rare. "
+      "The highest currency of Meridian depicts "
+      "an ancient princess adorned to the front and an "
+      "apothecary's stone etched by hand on the back."
+      "\n\n- Each platinum coin is worth 1000 shillings."
 
 classvars:
 

@@ -1923,7 +1923,7 @@ messages:
          oWhat = Nth(client_msg,2);
          if IsClass(oWhat,&Monster)
          {
-            Debug("BP_REQ_BUY");
+            //Debug("BP_REQ_BUY");
             Send(self,@UserBuy,#what=oWhat);
          }
 
@@ -1935,7 +1935,7 @@ messages:
          oWhat = Nth(client_msg,2);
          if IsClass(oWhat,&Monster)
          {
-            Debug("BP_REQ_BUY_ITEMS");
+            //Debug("BP_REQ_BUY_ITEMS");
             Send(self,@UserBuyItems,#what=oWhat,#item_list=Nth(client_msg,3),
                   #number_list=number_stuff);
          }
@@ -2482,7 +2482,7 @@ messages:
       switch(iClient_cmd)
       {
          case UC_MARKETPLACE_LIST:
-            Send(self,@MarketplaceList,#what=Nth(client_msg, 2),#quantity=Nth(client_msg, 3),#unit_shillings=Nth(client_msg, 4),#unit_platinum=Nth(client_msg, 5));
+            Send(self,@MarketplaceList,#what=Nth(client_msg, 2),#quantity=Nth(client_msg, 3),#unit_platinum=Nth(client_msg, 4),#unit_shillings=Nth(client_msg, 5));
             return;
          case UC_MARKETPLACE_UNLIST:
             // For the moment, just buy back your own items.
@@ -6891,7 +6891,7 @@ messages:
       }
 
       AddPacket(1,BP_OFFERED,2,Length(plOffer_items));
-      
+
       foreach i in plOffer_items
       {
          Send(self,@ToCliObject,#what=i);
@@ -7307,7 +7307,7 @@ messages:
 
       foreach i in plOffer_items
       {
-         Debug("CheckOffer",Send(i,@GetName));
+         //Debug("CheckOffer",Send(i,@GetName));
          
          if NOT Send(i,@ReqNewOwner,#what=poOffer_who)
          {
@@ -7333,7 +7333,7 @@ messages:
             bFound = FALSE;
             foreach j in Send(self,@GetInventory)
             {
-               Debug("Inventory",GetClass(j),"vs",GetClass(i));
+               //Debug("Inventory",GetClass(j),"vs",GetClass(i));
 
                if GetClass(j) = GetClass(i)
                {
@@ -7358,7 +7358,7 @@ messages:
 
             if NOT bFound
             {
-               Debug(GetClass(i),"wasn't in your inventory");
+               //Debug(GetClass(i),"wasn't in your inventory");
                Send(self,@MsgSendUser,#message_rsc=user_dont_have_offer);
                Send(poOffer_who,@MsgSendUser,
                     #message_rsc=user_didnt_have_offer, 
@@ -7741,17 +7741,12 @@ messages:
       // Check quantities; must be positive
       foreach i in number_list
       {
-         Debug("UserBuyItems (quantity list)",i);
+         //Debug("UserBuyItems (quantity list)",i);
          if i < 1
          {
             Debug("Bad buy quantity", i, "from user", self);
             return;
          }
-      }
-
-      foreach i in item_list
-      {
-         Debug("UserBuyItems (item list)",Send(i,@GetName));
       }
 
       Send(what,@Buy,#what=self,#item_list=item_list,#number_list=number_list);
@@ -8068,7 +8063,7 @@ messages:
          }
       }
 
-      Debug("Converting shillings to platinum", Send(self,@GetName));
+      //Debug("Converting shillings to platinum", Send(self,@GetName));
 
       if what <> $ AND IsClass(what, &Shilling)
       {
@@ -8077,18 +8072,18 @@ messages:
 
       iTotalShilling = iInventoryShilling + iWhatShilling;
 
-      Debug("Total Shilling is",iTotalShilling);
+      //Debug("Total Shilling is",iTotalShilling);
 
       if iTotalShilling < 0
       {
          // Prevented converting negative amount of shillings.
-         Debug("Prevented converting negative amount of shillings", Send(self,@GetName), iTotalShilling);
+         //Debug("Prevented converting negative amount of shillings", Send(self,@GetName), iTotalShilling);
          return FALSE;
       }
 
       if iTotalShilling >= SHILLINGS_PER_PLATINUM
       {
-         Debug("oShilling is >= SHILLINGS_PER_PLATINUM",iTotalShilling);
+         //Debug("oShilling is >= SHILLINGS_PER_PLATINUM",iTotalShilling);
 
          // Convert shillings to platinum
          oPlatinum = Send(self, @GetInventoryObjectByClass, #class=&Platinum);
@@ -8098,17 +8093,17 @@ messages:
          {
             oPlatinum = Create(&Platinum, #number=iTotalPlatinum);
             Send(self,@NewHold,#what=oPlatinum);
-            Debug("Created Platinum",iTotalPlatinum);
+            //Debug("Created Platinum",iTotalPlatinum);
          }
          else
          {
             Send(oPlatinum, @AddNumber, #number=iTotalPlatinum);
-            Debug("Add to Platinum",iTotalPlatinum);
+            //Debug("Add to Platinum",iTotalPlatinum);
          }
 
          iRemainingShillings = Send(SYS, @ShillingsRemaining, #number=iTotalShilling);
 
-         Debug("Remaining Shillings",iRemainingShillings);
+         //Debug("Remaining Shillings",iRemainingShillings);
 
          if iRemainingShillings > 0
          {
@@ -8141,14 +8136,14 @@ messages:
             if iInventoryShilling > 0
             {
                Send(oShilling, @SetNumber, #number=0);
-               Debug("Deleted",Send(oShilling,@GetName),Send(oShilling,@GetNumber));
+               //Debug("Deleted",Send(oShilling,@GetName),Send(oShilling,@GetNumber));
                Send(oShilling, @Delete);
             }
 
             if iWhatShilling > 0
             {
                Send(what, @SetNumber, #number=0);
-               Debug("Deleted",Send(what,@GetName),Send(what,@GetNumber));
+               //Debug("Deleted",Send(what,@GetName),Send(what,@GetNumber));
                Send(what, @Delete);
             }
 

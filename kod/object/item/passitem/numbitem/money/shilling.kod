@@ -24,8 +24,11 @@ resources:
    shilling_icon_rsc = coin.bgf
    shilling_desc_rsc = \
       "The lowest currency of Meridian.  A gold profile of an ancient princess "
-      "adorns the front and an apothecary's stone the back. "
-      "1,000 shillings is equal to 1 platinum."
+      "adorns the front and an apothecary's stone the back. Although this currency "
+      "is widely accepted across Meridian, you will find most banks may only take "
+      "platinum. You will find that platinum comes in an abundance when facing harder "
+      "enemies."
+      "\n\n- Every 1000 shillings will be converted to a platinum coin"
 
 classvars:
 

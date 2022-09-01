@@ -106,13 +106,13 @@ messages:
          if iShilling >= SHILLINGS_PER_PLATINUM
          {
             iPlatinum = Send(SYS, @ShillingsToPlatinum, #number=iShilling);
-            iShilling = (iPlatinum * SHILLINGS_PER_PLATINUM) - iShilling;
+            iShilling = Send(SYS, @ShillingsRemaining, #number=iShilling);
 
             if iShilling < 0
             {
                // Not sure how this could be negative, it should always be zero or positive.
                iShilling = 0;
-               Debug("MoneyCreated got negative shilling conversion", amount, iPlatinum, iShilling);
+               //Debug("MoneyCreated got negative shilling conversion", amount, iPlatinum, iShilling);
             }
          }
       } else if IsClass(what, &Platinum) {

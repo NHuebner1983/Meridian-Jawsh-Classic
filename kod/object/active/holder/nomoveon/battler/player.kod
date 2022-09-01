@@ -1405,14 +1405,14 @@ messages:
       return plStoreLocation;
    }
 
-   MarketplaceList(what=$,quantity=1,unit_shillings=500,unit_platinum=1)
+   MarketplaceList(what=$,quantity=1,unit_platinum=1,unit_shillings=500)
    "List an item on the marketplace"
    {
       return Send(poStore,@ListOnMarketplace,
          #what=what,
          #quantity=quantity,
-         #unit_shillings=unit_shillings,
-         #unit_platinum=unit_platinum);
+         #unit_platinum=unit_platinum,
+         #unit_shillings=unit_shillings);
    }
 
    MarketplaceUnList(what=$,quantity=1)
@@ -7520,27 +7520,27 @@ messages:
       oShilling = Send(self,@GetShillingObject);
       oPlatinum = Send(self,@GetPlatinumObject);
 
-      Debug("Can Afford Check", cost_shillings, cost_platinum, quantity);
+      //Debug("Can Afford Check", cost_shillings, cost_platinum, quantity);
 
       if cost_shillings >= SHILLINGS_PER_PLATINUM
       {
-         Debug("Converting shillings to platinum", cost_shillings);
+         //Debug("Converting shillings to platinum", cost_shillings);
          cost_platinum = cost_platinum + Send(SYS, @ShillingsToPlatinum, #number=cost_shillings);
-         Debug("Converted shillings to platinum", cost_platinum);
+         //Debug("Converted shillings to platinum", cost_platinum);
          cost_shillings = Send(SYS, @ShillingsRemaining, #number=cost_shillings);
-         Debug("Converted shillings to platinum (remain)", cost_shillings);
+         //Debug("Converted shillings to platinum (remain)", cost_shillings);
       }
 
       if oShilling <> $
       {
          iShillings = Send(oShilling,@GetNumber);
-         Debug("Player has",iShillings,"shillings");
+         //Debug("Player has",iShillings,"shillings");
       }
 
       if oPlatinum <> $
       {
          iPlatinum = Send(oPlatinum,@GetNumber);
-         Debug("Player has",iPlatinum,"platinum");
+         //Debug("Player has",iPlatinum,"platinum");
       }
 
       if quantity <> $ AND quantity > 1
@@ -7551,18 +7551,18 @@ messages:
          cost_shillings = Send(SYS, @ShillingsRemaining, #number=cost_shillings);
       }
 
-      Debug("CanAfford",cost_shillings,cost_platinum,"from",iShillings,"shills",iPlatinum,"plat");
+      //Debug("CanAfford",cost_shillings,cost_platinum,"from",iShillings,"shills",iPlatinum,"plat");
 
       if cost_platinum > 0 AND cost_platinum < iPlatinum
          OR (cost_platinum = iPlatinum AND cost_shillings <= iShillings)
          OR (cost_platinum = 0 AND iPlatinum > 0)
       {
          // We can afford this item.
-         Debug("Player can afford it.");
+         //Debug("Player can afford it.");
          return TRUE;
       }
 
-      Debug("Player could not afford it.");
+      //Debug("Player could not afford it.");
 
       // We cannot afford this item.
       return FALSE;
@@ -7639,7 +7639,7 @@ messages:
          iSetPlatinum = Send(oPlatinum, @GetNumber);
       }
 
-      Debug("Paying for goods", amount_shillings, amount_platinum, quantity);
+      //Debug("Paying for goods", amount_shillings, amount_platinum, quantity);
 
       if quantity = $ OR quantity <= 0
       {
@@ -7658,12 +7658,12 @@ messages:
 
       if amount_shillings >= SHILLINGS_PER_PLATINUM
       {
-         Debug("Converted", amount_shillings, "to platinum");
-         Debug("Plat converting", amount_platinum);
+         //Debug("Converted", amount_shillings, "to platinum");
+         //Debug("Plat converting", amount_platinum);
          amount_platinum = amount_platinum + Send(SYS, @ShillingsToPlatinum, #number=amount_shillings);
-         Debug("Plat converted", amount_platinum);
+         //Debug("Plat converted", amount_platinum);
          amount_shillings = Send(SYS, @ShillingsRemaining, #number=amount_shillings);
-         Debug("Remaining shills", amount_shillings);
+         //Debug("Remaining shills", amount_shillings);
       }
 
       if amount_platinum > 0
@@ -7678,12 +7678,12 @@ messages:
 
       if iSetShillings < 0
       {
-         Debug("Shillings went negative, breaking a platinum",iSetShillings);
+         //Debug("Shillings went negative, breaking a platinum",iSetShillings);
          // If our shillings went negative, it means we need to break a platinum.
          lBroken = Send(self,@BreakPlatinumFromNegativeShillings,#amount_shillings=iSetShillings);
          iSetShillings = Nth(lBroken, 1);
          iSetPlatinum = iSetPlatinum - Nth(lBroken, 2);
-         Debug("Shillings went negative, breaking a platinum",iSetShillings,iSetPlatinum);
+         //Debug("Shillings went negative, breaking a platinum",iSetShillings,iSetPlatinum);
       }
 
       if iSetPlatinum < 0
@@ -7691,21 +7691,21 @@ messages:
          // How did we go negative on platinum?
          // Looks like a bug.
          iSetPlatinum = 0;
-         Debug("Platinum went negative somehow",iSetPlatinum);
+         //Debug("Platinum went negative somehow",iSetPlatinum);
       }
 
-      Debug("Pay",iSetPlatinum,"newplat",iSetShillings,"new shills");
-      Debug("Calc",amount_shillings,"(sh)",amount_platinum,"(p)",iSetShillings,"(ish)",iSetPlatinum,"(ip)");
+      //Debug("Pay",iSetPlatinum,"newplat",iSetShillings,"new shills");
+      //Debug("Calc",amount_shillings,"(sh)",amount_platinum,"(p)",iSetShillings,"(ish)",iSetPlatinum,"(ip)");
 
       if iSetPlatinum > 0
       {
-         Debug("New platinum is set to",iSetPlatinum);
+         //Debug("New platinum is set to",iSetPlatinum);
          Send(oPlatinum,@SetNumber,#number=iSetPlatinum);
       }
 
       if iSetShillings > 0
       {
-         Debug("New shillings is set to",iSetShillings);
+         //Debug("New shillings is set to",iSetShillings);
 
          if oShilling = $
          {
@@ -7719,13 +7719,13 @@ messages:
 
       if iSetPlatinum = 0 AND oPlatinum <> $
       {
-         Debug("iSetPlatinum is zero, removing it from inventory");
+         //Debug("iSetPlatinum is zero, removing it from inventory");
          Send(oPlatinum, @Delete);
       }
 
       if iSetShillings = 0 AND oShilling <> $
       {
-         Debug("iSetShillings is zero, removing it from inventory");
+         //Debug("iSetShillings is zero, removing it from inventory");
          Send(oShilling, @Delete);
       }
 

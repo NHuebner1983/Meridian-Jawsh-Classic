@@ -131,6 +131,8 @@ resources:
       "find another player to help you, or continue killing monsters in the "
       "rest of the mausoleum (there are only a few behind the gate)."
 
+   razacrypt_levers = "pick lock"
+
    razacrypt_door1_rsc = down2.ogg
 
 classvars:
@@ -275,6 +277,20 @@ messages:
       // Lighting
       Send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=45),
            #new_row=11,#new_col=2,#fine_row=32,#fine_col=48);
+
+      propagate;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
+   {
+      local i, each_obj;
+
+      if what <> self AND StringContain(string,razacrypt_levers)
+      {
+         // say pick lock
+         Send(self,@TestOpenDoor);
+      }
 
       propagate;
    }
@@ -569,7 +585,7 @@ messages:
       {
          each_obj = First(i);
          if (count = COUNT_MONSTERS
-             AND IsClass(each_obj,&Monster) AND NOT IsClass(each_obj, &Servant))
+             AND IsClass(each_obj,&Monster) AND NOT IsClass(each_obj, &Servant) AND NOT IsClass(each_obj, &Reflection) AND NOT IsClass(each_obj, &EvilTwin))
             OR (count = COUNT_PLAYERS
              AND IsClass(each_obj,&User))
          {

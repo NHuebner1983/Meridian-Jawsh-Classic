@@ -228,7 +228,7 @@ messages:
       return piMarketplaceUnitPricePlatinum;
    }
 
-   SetMarketplaceUnitPrice(amount_shillings=500, amount_platinum=1)
+   SetMarketplaceUnitPrice(amount_platinum=1, amount_shillings=500)
    "Set the Shilling Unit Price for this item on the marketplace"
    {
       local iPlatinum, iRemainingShillings;
@@ -272,7 +272,7 @@ messages:
       return Send(self,@CanBeStoredInVault) AND NOT Send(self,@IsCursed);
    }
 
-   ListOnMarketplace(who=$, quantity=1, unit_shillings=500, unit_platinum=1)
+   ListOnMarketplace(who=$, quantity=1, unit_platinum=1, unit_shillings=500)
    "List this item on the marketplace"
    {
       if who = $
@@ -283,9 +283,11 @@ messages:
       poMarketplaceOwner = who;
       piMarketplaceQuantity = quantity;
       
-      Send(self, @SetMarketplaceUnitPrice, #amount_shillings=unit_shillings, #amount_platinum=unit_platinum);
+      Send(self, @SetMarketplaceUnitPrice, #amount_platinum=unit_platinum, #amount_shillings=unit_shillings);
 
       pbMarketplaceListed = TRUE;
+
+      Debug("Listed",Send(self,@GetName),"for",unit_platinum,"plat",unit_shillings,"shills");
 
       return TRUE;
    }
@@ -293,6 +295,8 @@ messages:
    RemoveFromMarketplace()
    "Removes the item from the marketplace because it was purchased. New owner is a player!"
    {
+      Debug("Remove from marketplace", Send(self,@GetName));
+
       if poMarketplaceOwner <> $
       {
          // Item was purchased from this player.
@@ -1371,11 +1375,6 @@ messages:
    {
       local lData;
 
-      if poOwner <> $ AND IsClass(poOwner, &Player) AND pbMarketplaceListed
-      {
-         Send(self,@RemoveFromMarketplace);
-      }
-
       // If the person who is supposed to pick up an item picks up 
       //  the item, then remove the corpsepointer.          
       if poOwner <> $ AND Send(self,@HasAttribute,#ItemAtt=IA_CORPSEPOINTER)
@@ -2038,6 +2037,12 @@ messages:
    CanBeStoredInVault()
    "Black daggers and tokens, especially, cannot be stored in vaults."
    {
+      if IsClass(self, &Money)
+      {
+         // We should not store money in our vaults.
+         return FALSE;
+      }
+
       return TRUE;
    }
 
