@@ -295,10 +295,10 @@ void LookSelChange(HWND hList)
  */ 
 void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify) 
 {
-   int index, num_entries, i, amount, currentAmount;
+   int index, num_entries, i, amount, currentAmount, noamountplat, noamountshill;
    list_type selection;
    object_node *obj;
-   char buf[MAXNAME + 1], temp[16];
+   char buf[MAXNAME + 1], temp[16], tempplat[16], tempshills[16];
 
    switch(ctrl_id)
    {
@@ -346,28 +346,40 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	 ListBox_DeleteString(info->hwndPlatList, index);
 	 if (ListBox_GetSel(info->hwndListBox,index))
 	 {
-	    if (IsNumberObj(obj->id))
-	       amount = obj->amount;
-	    else
-	       amount = 1;
+		 noamountplat = 1;
+		 noamountshill = 1;
+
+		 if (IsNumberObj(obj->id))
+		 {
+			 amount = obj->amount;
+		 }
+		 else {
+			 amount = 1;
+		 }
 	    sprintf(temp, "%d", amount);
+		sprintf(tempplat, "%d", noamountplat);
+		sprintf(tempshills, "%d", noamountplat);
 	 }
 	 else
 	 {
 	    amount = 0;
-	    strcpy(temp," ");
+		noamountplat = 0;
+		noamountshill = 0;
+		strcpy(temp," ");
+		strcpy(tempplat, " ");
+		strcpy(tempshills, " ");
 	 }
 	 ListBox_InsertString(info->hwndQuanList,index,temp);
 	 ListBox_SetItemData(info->hwndQuanList,index,amount);
-	 ListBox_InsertString(info->hwndPlatList, index, "1");
-	 ListBox_SetItemData(info->hwndPlatList, index, 1);
-	 ListBox_InsertString(info->hwndShillList, index, "500");
-	 ListBox_SetItemData(info->hwndShillList, index, 500);
+	 ListBox_InsertString(info->hwndPlatList, index, tempplat);
+	 ListBox_SetItemData(info->hwndPlatList, index, noamountplat);
+	 ListBox_InsertString(info->hwndShillList, index, tempshills);
+	 ListBox_SetItemData(info->hwndShillList, index, noamountshill);
 	 ListBox_SetSel(info->hwndListBox,amount > 0,index);
 	 info->selected[index] = (amount > 0);
 	 obj->temp_amount = amount;
-	 obj->temp_listprice_shills = 500;
-	 obj->temp_listprice_plat = 1;
+	 obj->temp_listprice_shills = noamountshill;
+	 obj->temp_listprice_plat = noamountplat;
 	 ListBox_SetSel(info->hwndQuanList,FALSE,index);
 	 WindowEndUpdate(info->hwndQuanList);
 	 ListBox_SetSel(info->hwndShillList, FALSE, index);
