@@ -441,7 +441,7 @@ messages:
 
    GenerateLootTableTreasure(who=$,corpse=$)
    {
-      local iCount, iRnd, lItem_info, oObj, iNumber;
+      local iCount, iRnd, lItem_info, oObj, iNumber, cCreate;
 
       iCount = 0;
       iRnd = Random(0,100);
@@ -458,6 +458,14 @@ messages:
             }
             else
             {
+               cCreate = First(lItem_info);
+
+               if cCreate = &Money AND NOT (cCreate = &Shilling) AND NOT (cCreate = &Platinum)
+               {
+                  // Do not create &Money superclass.
+                  cCreate = &Shilling;
+               }
+
                oObj = Create(First(lItem_info),#corpse=corpse);
             }
 

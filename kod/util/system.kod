@@ -5035,7 +5035,7 @@ messages:
 
       if (bAreYouSure = 701583)
       {
-         Send(&Money,@FixMoney,#amount=amount);
+         Send(&Shilling,@FixMoney,#amount=amount);
          Send(&Platinum,@FixMoney,#amount=amount);
       }
 
@@ -5715,7 +5715,7 @@ messages:
       plItemTemplates = cons(create(&ScrollSplitter),plItemTemplates);
       plItemTemplates = cons(create(&ReagentBag),plItemTemplates);
 
-      plItemTemplates = cons(create(&Money),plItemTemplates);
+      plItemTemplates = cons(create(&Shilling),plItemTemplates);
       plItemTemplates = cons(create(&Platinum),plItemTemplates);
       plItemTemplates = cons(create(&StatsResetToken,#temporary=FALSE),
                               plItemTemplates);
@@ -6109,7 +6109,7 @@ messages:
    RecreateMoneyTemplates()
    {
       plMoneyTemplates = $;
-      plMoneyTemplates = Cons(create(&Money),plMoneyTemplates);
+      plMoneyTemplates = Cons(create(&Shilling),plMoneyTemplates);
       plMoneyTemplates = Cons(create(&Platinum),plMoneyTemplates);
 
       return;
