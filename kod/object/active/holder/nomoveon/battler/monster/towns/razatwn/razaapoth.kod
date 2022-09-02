@@ -40,8 +40,6 @@ classvars:
 
 properties:
 
-   poCurrency = &Platinum
-
 messages:
 
    SetForSale()
