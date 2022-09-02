@@ -2907,7 +2907,7 @@ messages:
       // If there are items already, do not add anything.
       if (plActive = $ OR Length(plActive) <= 0) AND (plPassive = $ OR Length(plPassive) <= 0)
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=35000));
+         Send(self,@NewHold,#what=Create(&Shillings,#number=35000));
          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=35000);
          Send(self,@AddReagentsForSpells,#iNumCasts=3);
       }
@@ -3641,14 +3641,14 @@ messages:
       Send(self,@NewHold,#what=Create(&Gauntlet));
       Send(self,@NewHold,#what=Create(&LeatherArmor));
       Send(self,@NewHold,#what=Create(&MetalShield));
-      Send(self,@NewHold,#what=Create(&Money,#number=500));
+      Send(self,@NewHold,#what=Create(&Shillings,#number=500));
       Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
       Send(self,@AddReagentsForSpells,#iNumCasts=5);
 
       // If player hasn't suicided in last 5 hours, give them cash and prizes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=50000));
+         Send(self,@NewHold,#what=Create(&Shillings,#number=50000));
          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=50000);
          Send(self,@AddReagentsForSpells,#iNumCasts=10);
       }
@@ -3681,7 +3681,7 @@ messages:
       // give them cash and fancy clothes!
       if (GetTime() - piLast_restart_time) > (5*60*60)
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=1000));
+         Send(self,@NewHold,#what=Create(&Shillings,#number=1000));
          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=1000);
          Send(self,@NewHold,#what=create(&InkyCap,#number=5));
          Send(self,@NewHold,#what=Create(&PantsC));
@@ -7462,9 +7462,19 @@ messages:
       return;
    }
 
-   GetMoneyObject()
+   GetMoneyObject(type= $)
    {
-      return GetListElemByClass(plPassive,&Money);
+      if (type = &Platinum)
+      {
+         return GetListElemByClass(plPassive,&Platinum);
+      }
+      else
+      if (type = &Shillings)
+      {
+         return GetListElemByClass(plPassive,&Shillings);
+      }
+
+      return;
    }
 
    // Returns wielded Melee/Ranged weapon.

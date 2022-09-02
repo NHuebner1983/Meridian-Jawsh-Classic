@@ -543,6 +543,8 @@ properties:
    // Store owner
    poStoreOwner = $
 
+   poCurrency = &Shillings
+
 messages:
 
    Constructor(template=FALSE, color=0, piSurvivalLevel=0, iBrain = 0)
@@ -3550,14 +3552,16 @@ messages:
       return bAllWanted;
    }
 
-   GotWantedItem(obj = $, who = $)
+   GotWantedItem(obj = $, who = $, funds=$)
    "We have been given an item on our wanted list. This is either a banker"
    "type, or a quest completion of some kind or an intrigue token."
    {
       //Debug("GotWantedMonster",obj,who);
+
+      funds = poCurrency;
       
       // Handle the kludgy banker interface immediately.
-      if (piAttributes & MOB_BANKER) AND IsClass(obj,&Money)
+      if (piAttributes & MOB_BANKER) AND IsClass(obj,funds)
       {
          Send(self,@BankDeposit,#who=who,#amount=Send(obj,@GetNumber));
 
@@ -4368,7 +4372,7 @@ messages:
       return;
    }
 
-   Offer(what = $,item_list = $)
+   Offer(what = $,item_list = $, funds = $)
    "Offer the player money in exchange for their goods - MOB_BUYER"
    {
       local i, iValue_offered, iAdd, x, y;
@@ -4389,8 +4393,9 @@ messages:
          }
 
          poCustomer = what;
+         funds = poCurrency;
 
-         plOffer_items = [ Create(&Money,#number=iValue_offered) ];
+         plOffer_items = [ Create(funds,#number=iValue_offered) ];
          Send(what,@CounterOffer,#item_list=plOffer_items);
          ptCancelOffer = CreateTimer(self,@CancelOfferTimer,viCancel_offer_time);
       }
@@ -4430,17 +4435,19 @@ messages:
       return;
    }
 
-   AcceptOffer()
+   AcceptOffer(funds = $)
    "Transfer the purchased merchandise - MOB_BUYER"
    {
       local i,oHolder,lTake_items;
+
+      funds = poCurrency;
 
       // set the stuff where the user can get to it
       oHolder = Send(SYS,@GetSystemHolder2);
       foreach i in plOffer_items
       {
          Send(oHolder,@NewHold,#what=i);
-         if IsClass(i,&Money)
+         if IsClass(i,funds)
          {
             Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(i,@GetNumber));
          }
@@ -4463,9 +4470,11 @@ messages:
       return TRUE;
    }
 
-   VaultDeposit(who=$,lItems=$)
+   VaultDeposit(who=$,lItems=$,funds=$)
    {
       local i, oVault, iFee, oMoney, iCash;
+
+      funds = poCurrency;
 
       if not Send(self,@MobIsVaultman)
       {
@@ -4511,7 +4520,7 @@ messages:
          iFee = iFee + Send(self,@GetVaultDepositFee,#what=i,#who=who);
       }
 
-      oMoney = Send(who,@GetMoneyObject);
+      oMoney = Send(who,@GetMoneyObject,#type=funds);
       if oMoney = $
       {
          // No cash.
@@ -4569,17 +4578,19 @@ messages:
       return 0;
    }
 
-   VaultWithdraw(what=$,lItems=$,number_list = $)
+   VaultWithdraw(what=$,lItems=$,number_list = $, funds = $)
    {
       local i, j, iFee, iCash, lStored, oVault, iBulk, oMoney, bFound,
             oSafeBox, lNumbers, iCount, bFailed;
+
+      funds = poCurrency;
 
       if what = $ OR lItems = $
       {
          return;
       }
 
-      oMoney = Send(what,@GetMoneyObject);
+      oMoney = Send(what,@GetMoneyObject,#type=funds);
       if oMoney = $
       {
          // No cash.
@@ -4816,9 +4827,11 @@ messages:
       return TRUE;
    }
 
-   BankDeposit(who=$, amount = 0)
+   BankDeposit(who=$, amount = 0, funds = $)
    {
       local oMoney, oBank, iBankAmt;
+
+      funds = poCurrency;
 
       if NOT Send(self,@MobIsBanker)
       {
@@ -4837,7 +4850,7 @@ messages:
          return;
       }
 
-      oMoney = Send(who,@GetMoneyObject);
+      oMoney = Send(who,@GetMoneyObject,#type=funds);
       if oMoney = $
       {
          Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
@@ -4899,7 +4912,7 @@ messages:
       return;
    }
 
-   BankWithdraw(who = $, amount = 0)
+   BankWithdraw(who = $, amount = 0, funds = $)
    {
       local iPlayerAmt, iBankAmt, oMoney, oBank;
 
@@ -4940,10 +4953,12 @@ messages:
          return;
       }
 
-      oMoney = Send(who,@GetMoneyObject);
+      oMoney = Send(who,@GetMoneyObject,#type=funds);
       if oMoney = $
       {
-         oMoney = Create(&Money,#number=amount);
+         funds = poCurrency;
+
+         oMoney = Create(funds,#number=amount);
          Send(who,@NewHold,#what=oMoney);
       }
       else if (Send(oMoney,@GetNumber) + amount) <= 0
@@ -4995,12 +5010,14 @@ messages:
       return;
    }
 
-   Buy(what = $,item_list = $,number_list = $)
+   Buy(what = $,item_list = $,number_list = $, funds = $)
    "Handle things having to do with mobs who have stuff to sell. "
    "This is used for both teachers and sellers"
    {
       local i, j, bFound, oBuy, oMoney, iPrice, iPriceOne, lNumbers,
-            iAmount, oItemAtt, iCan_hold, oSplit, bFree; 
+            iAmount, oItemAtt, iCan_hold, oSplit, bFree;
+
+      funds = poCurrency;
 
       // Ensure that buyer and seller are in the same room
       if Send(what,@GetOwner) <> poOwner
@@ -5037,7 +5054,7 @@ messages:
          // up.
 
          // Get the amount of money for standard amount
-         oMoney = Send(what,@GetMoneyObject);
+         oMoney = Send(what,@GetMoneyObject,#type=funds);
 
          // Get the price for that amount
          iPriceOne = Send(self,@GetPrice,#what=i,#who=what);
@@ -6717,12 +6734,14 @@ messages:
       return viTreasure_type;
    }
 
-   CreateTreasure(who=$,corpse=$)
+   CreateTreasure(who=$,corpse=$,funds=$)
    {
       local i, j, oReagent, iNumberItems, oTreasure, oTreasure_type,
             lTreasureItems, iNumberOfItemsDropped, iNumberOfItemsLooted,
             iRandomCashAmount, oMoney, iGetResult, bCapacityFailure,
             bRangeFailure, iSurvivalLoot, iAutolootMethod;
+
+      funds = poCurrency;
 
       // Apparitions, etc, provide no treasure
       if pbIllusion
@@ -6777,7 +6796,7 @@ messages:
 
          iRandomCashAmount = iRandomCashAmount * (Send(SETTINGS_OBJECT, @GetMoneyFactor) / 100);
 
-         oMoney = Create(&Money,#corpse=corpse,#number=iRandomCashAmount + (piBoostedLevel
+         oMoney = Create(funds,#corpse=corpse,#number=iRandomCashAmount + (piBoostedLevel
                      * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalCash)));
 
          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
@@ -6820,7 +6839,7 @@ messages:
                   #new_row=piRow,#new_col=piCol,
                   #fine_row=piFine_row,#fine_col=piFine_col);
 
-            if NOT IsClass(oTreasure,&Money)
+            if NOT IsClass(oTreasure,funds)
             {
                ++iNumberOfItemsDropped;
             }
@@ -6831,11 +6850,11 @@ messages:
                   AND Send(oTreasure,@GetPos) <> $
                   AND IsClass(who,&User)
                   AND Send(who,@CheckPlayerPreference,#flag=CF_AUTOLOOT)
-                  AND (IsClass(oTreasure,&Money) OR (NOT bRangeFailure AND NOT bCapacityFailure)))
+                  AND (IsClass(oTreasure,funds) OR (NOT bRangeFailure AND NOT bCapacityFailure)))
             {
                iGetResult = FALSE;
 
-               if NOT IsClass(oTreasure,&Money)
+               if NOT IsClass(oTreasure,funds)
                {
                   switch(iAutolootMethod)
                   {
@@ -6876,7 +6895,7 @@ messages:
                   iGetResult = Send(who,@UserGet,#what=oTreasure,#report=FALSE);
                }
 
-               if NOT IsClass(oTreasure,&Money)
+               if NOT IsClass(oTreasure,funds)
                   AND (iGetResult = AUTOLOOT_GOT_ITEM
                            OR iGetResult = AUTOLOOT_GOT_PARTIAL_STACK)
                {
@@ -7922,11 +7941,13 @@ messages:
       return TRUE;
    }
 
-   RewardSweep(who = $)
+   RewardSweep(who = $, funds = $)
    {
       local oMoney,oRoom;
 
-      oMoney=Create(&Money,#number=Random(20,120));
+      funds = poCurrency;
+
+      oMoney=Create(funds,#number=Random(20,120));
       oRoom = Send(self,@GetOwner);
 
       if piSweepCounter < 5

@@ -206,7 +206,7 @@ messages:
   
    GotWantedItem(obj=$,who=$)
    {
-      if obj <> $ AND IsClass(obj, &Money) AND Send(self,@CheckForBribe,#obj=obj,#who=who)
+      if obj <> $ AND IsClass(obj, &Shillings) AND Send(self,@CheckForBribe,#obj=obj,#who=who)
       {
          return;
       }
@@ -226,7 +226,7 @@ messages:
          return TRUE;
       }
 
-      if NOT IsClass(obj,&Money)
+      if NOT IsClass(obj,&Shillings)
       {
          return FALSE;
       }

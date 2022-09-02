@@ -1,0 +1,42 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Platinum is Money
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Platinum_name_one_rsc = "platinum"
+   Platinum_name_many_rsc = "platinum"
+   
+   Platinum_icon_rsc = coin.bgf
+   Platinum_desc_rsc = \
+      "Pne platinum is worth a thousand shillings. A profile of an ancient princess "
+      "adorns the front and an apothecary's stone the back."
+
+classvars:
+
+   vrName = Platinum_name_one_rsc
+   vrIcon = Platinum_icon_rsc
+   vrDesc = Platinum_desc_rsc
+
+   vrName_plural = Platinum_name_many_rsc
+
+   viValue_average = 1000
+
+properties:
+
+messages:
+
+end
+////////////////////////////////////////////////////////////////////////////////

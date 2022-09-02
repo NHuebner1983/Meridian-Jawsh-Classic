@@ -116,7 +116,7 @@ messages:
          return FALSE;
       }
 
-      if IsClass(oTarget, &Money) OR (IsClass(oTarget, &Necklace) AND NOT IsClass(oTarget, &JalaNecklace))
+      if IsClass(oTarget, &Shillings) OR (IsClass(oTarget, &Necklace) AND NOT IsClass(oTarget, &JalaNecklace))
       {
          Send(who, @MsgSendUser, #message_rsc=donate_generous_rsc);
          //Debug("Generous!");
@@ -218,7 +218,7 @@ messages:
          return 100;
       }
 
-      if IsClass(oTarget, &Money)
+      if IsClass(oTarget, &Shillings)
       {
          return Bound(Send(oTarget, @GetNumber) / 5000, 1, 100);
       }

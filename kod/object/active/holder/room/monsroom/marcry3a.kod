@@ -1131,7 +1131,7 @@ messages:
                           [ 5, TREASURE_OBJECT, &EntrootBerry, 350 ],
                           [ 5, TREASURE_OBJECT, &Yrxlsap, 150 ],
                           [ 6, TREASURE_OBJECT, &Ruby, 250 ],
-                          [ 3, TREASURE_OBJECT, &Money, 250000 ]
+                          [ 3, TREASURE_OBJECT, &Shillings, 250000 ]
                         ];
 
       return;

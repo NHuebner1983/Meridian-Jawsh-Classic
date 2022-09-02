@@ -68,7 +68,7 @@ messages:
 
    Constructor()
    {
-      plWantedItems = [&Money];
+      plWantedItems = [&Shillings];
 
       propagate;
    }
@@ -125,7 +125,7 @@ messages:
    {
       local oMoney, oBank, amount;
 
-      if NOT IsClass(obj,&Money)
+      if NOT IsClass(obj,&Shillings)
       {
          return FALSE;
       }

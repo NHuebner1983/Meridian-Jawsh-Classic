@@ -67,7 +67,7 @@ messages:
                     &SkullMask,
                     &FeyMask,
                     &XeoMask,
-                    &Money,
+                    &Shillings,
                     &EntrootBerry,
                     &PurpleMushroom,
                     &BlueMushroom,
@@ -188,7 +188,7 @@ messages:
             if IsClass(find, &NumberItem)
             {
                // Numbered items
-               if IsClass(find,&Money)
+               if IsClass(find,&Shillings)
                {
                   // Shillings
                   iNumbered = 250000;
