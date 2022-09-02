@@ -24,8 +24,8 @@ classvars:
 
    vrName = name_NewRoom
 
-   viTeleport_row = 20
-   viTeleport_col = 18
+   viTeleport_row = 51
+   viTeleport_col = 22
 
    viTerrain_Type = TERRAIN_BADLANDS | TERRAIN_FOREST | TERRAIN_MOUNTAIN
 
