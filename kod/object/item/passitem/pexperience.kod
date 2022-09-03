@@ -1,0 +1,191 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+ForgetPotionExperience is PassiveItem
+
+constants:
+
+   MESSAGE_DELAY = 3000    /// three seconds, just like forget potion.
+
+   include blakston.khd
+
+resources:
+
+   // TODO: German translation by Tyrant
+   //include pexperience.lkod
+
+   ExperiencePotion_use = "You quaff the potion. Nothing happens at first, then dizziness strikes...."
+   ExperiencePotion_cant_use_on = "You can't serve a %s%s."
+
+   ExperiencePotion_cant_drop = "You drop the potion on the ground, and the bottle explodes into a thousand shards."
+
+   ExperiencePotion_warning = "As you lift the potion to your lips, your eyes catch sight of a warning label, which says, ~I'This potion may have very serious side effects!  Very serious! READ DESCRIPTION BEFORE SWALLOWING.'"
+
+   ExperiencePotion_nothing_happens = "~BThe potion of experience only works on those who have too much XP.~B ~IYou should get your money back, this potion will not work on you, and it's going to go bad soon most likely!~I"
+   ExperiencePotion_name_rsc = "forget experience potion"
+   ExperiencePotion_icon_rsc = forgetpo.bgf
+   ExperiencePotion_desc_rsc = "WARNING: Drinking this potion will cause you to forget most of your experience.  "
+      "Be absolutely sure you want this to happen before drinking it!\n\nYou may lose most of your HP past 100, making you feeble and inexperienced."
+
+   ExperiencePotion_forget_experience = "~B~yYou feel hours of hard work slip from your mind.~B~k"
+   ExperiencePotion_forget_remember_faction = "~I~B~yYou suddenly remember your faction.~I~B~k"
+   ExperiencePotion_forget_remember_faction_shield = "~I~B~yYou suddenly remember you are a soldier of your faction.~I~B~k"
+   ExperiencePotion_forget_urge = "~I~B~yYou have a sudden urge to to fight monsters.~I~B~k"
+
+   ExperiencePotion_gulp_sound = drkptn.ogg
+
+classvars:
+
+   vrName = ExperiencePotion_name_rsc
+   vrIcon = ExperiencePotion_icon_rsc
+   vrDesc = ExperiencePotion_desc_rsc
+
+   viUse_type = ITEM_SINGLE_USE
+   viItem_type = ITEMTYPE_POTION
+
+   viBulk = 20
+   viWeight = 20
+   viValue_average = 5000000
+
+properties:
+
+   piFactionNum = $
+   pbFactionSoldier = FALSE
+   poApply_target = $
+   ptQuaff = $
+   piCount = 0
+
+   pbWarned = FALSE
+
+messages:
+
+   NewOwner()
+   {
+      pbWarned = FALSE;
+
+      propagate;
+   }
+
+   ReqNewApply(what = $,apply_on = $)
+   {
+
+      if IsClass(apply_on,&User)
+      {
+         if NOT pbWarned
+         {
+            send(apply_on,@MsgSendUser,#message_rsc=ExperiencePotion_warning);
+            pbWarned = TRUE;
+
+            return FALSE;
+         }
+         
+         return TRUE;
+      }
+      
+      Send(what,@MsgSendUser,#message_rsc=ExperiencePotion_cant_use_on, 
+	        #parm1=Send(apply_on,@GetIndef),#parm2=Send(apply_on,@GetName));
+	        
+      return FALSE;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   {
+      local sSchoolName;
+      
+      poApply_target = apply_on;
+
+      if isClass(apply_on,&User) 
+      {
+         Send(apply_on,@MsgSendUser,#message_rsc=ExperiencePotion_use);
+         send(apply_on,@WaveSendUser,#wave_rsc=ExperiencePotion_gulp_sound);
+      }
+
+      Debug("Experience Potion used by",send(apply_on,@GetTrueName),apply_on,".");
+
+      ptQuaff = CreateTimer(self,@QuaffTimer,MESSAGE_DELAY);
+      
+      return;
+   }
+
+   QuaffTimer()
+   {
+      local i, spells, oSpell, iSpellnum, iLastMoved, iLastAttack, iFaction, bSoldier;
+
+      ptQuaff = $;
+
+      if NOT Send(poApply_target, @IsMaxHP)
+      {
+         // Can't use potion
+         Send(poApply_target,@MsgSendUser,#message_rsc=ExperiencePotion_nothing_happens);
+
+         return FALSE;
+      }
+
+      iFaction = Send(poApply_target, @GetFaction);
+      bSoldier = Send(poApply_target, @PossessesA, #class=&SoldierShield);
+      iLastMoved = Send(poApply_target, @SinceLastMove);
+      iLastAttack = Send(poApply_target, @SinceLastAttack);
+
+      if iLastMoved = $ OR iLastMoved < 0
+      {
+         iLastMoved = 20;
+      }
+
+      if iLastAttack = $ OR iLastAttack < 0
+      {
+         iLastAttack = 20;
+      }
+
+      // Perform XP reset
+      // Likely to remain MAX HP if you haven't moved or attacked anything in the last 10 seconds.
+      Send(poApply_target, @GainMaxHP, #force_max=(iLastMoved > 10 OR iLastAttack > 10));
+
+      // Potion used
+      Send(poApply_target,@MsgSendUser,#message_rsc=ExperiencePotion_forget_experience);
+
+      if iFaction <> $ AND NOT (iFaction = FACTION_NEUTRAL)
+      {
+         // You remember you're in a faction (asthetic only) - real faction restored in GainMaxHP()
+         Send(poApply_target,@MsgSendUser,#message_rsc=ExperiencePotion_forget_remember_faction);
+
+         if bSoldier
+         {
+            // You remember you're a soldier (asthetic only) - real shield restored in GainMaxHP()
+            Send(poApply_target,@MsgSendUser,#message_rsc=ExperiencePotion_forget_remember_faction_shield);
+         }
+      }
+
+      // Urge to fight monsters
+      Send(poApply_target,@MsgSendUser,#message_rsc=ExperiencePotion_forget_urge);
+
+      // Delete potion
+      Send(self,@Delete);
+      
+      return;
+   }
+
+   Delete()
+   {
+      if ptQuaff <> $
+      {
+         DeleteTimer(ptQuaff);
+         ptQuaff = $;
+      }
+      
+      propagate;
+   }
+
+   CanSwap()
+   {
+      return FALSE;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

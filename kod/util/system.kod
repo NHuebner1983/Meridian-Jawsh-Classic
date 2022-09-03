@@ -1898,6 +1898,37 @@ messages:
       return $;
    }
 
+   FactionToShield(iFaction = FACTION_NEUTRAL)
+   "Converts a faction to the soldier shield class."
+   {
+      switch (iFaction)
+      {
+         case FACTION_NEUTRAL:
+            return $;
+         break;
+         case FACTION_DUKE:
+            return &DukeShield;
+         break;
+         case FACTION_PRINCESS:
+            return &PrincessShield;
+         break;
+         case FACTION_REBEL:
+            return &RebelShield;
+         break;
+         case FACTION_HOLY:
+            return &HolyShield;
+         break;
+         case FACTION_NECROMANCER:
+            return &NecromancerShield;
+         break;
+         case FACTION_KOC:
+            return &KocShield;
+         break;
+      }
+
+      return $;
+   }
+
    UserKilled(what = $,killer = $, oRoom = $,stroke_obj = $)
    {
       local i, rMessage, bMurder, oSoldierShield, oToken, oGuild, oKillerGuild,
@@ -5881,6 +5912,8 @@ messages:
       plItemTemplates = cons(create(&ResistAcidPotion),plItemTemplates);
       plItemTemplates = cons(create(&FreeActionPotion),plItemTemplates);
       plItemTemplates = cons(create(&MinorHealPotion),plItemTemplates);
+
+      plItemTemplates = cons(create(&ForgetPotionExperience),plItemTemplates);
 
       plItemTemplates = cons(create(&Arsenic),plItemTemplates);
       plItemTemplates = cons(create(&Flask),plItemTemplates);

@@ -8,6 +8,13 @@ cornothsergeant_desc_rsc = de \
 CnSer_forget_potion_sale = de \
    "Gut, ich erfreue mich, dass Du kommst um dir %s%s zu holen, damit du "
    "all den Krieger Gott Zauber Kram vergessen kannst."
+CnSer_forget_xp_potion_sale = de \
+   "So you think you know everything?"
+   "I will most gladly sell %s%s that strips all "
+   "experience from your being. Be warned though, it is best not to move "
+   "or attack anything 10 to 15 seconds before digesting or you may forget "
+   "more than expected. Although I can sell this potion to anyone, only those "
+   "who have reached their max potential can swallow its contents. ~y~BBuyer beware.~B~y"   
 CnSer_Alcohol_taken = de \
    "Ohhh, danke dir! Hier hast du eines meiner alten Trainingsschwerter! "
    "Die halten nicht lange, aber vielleicht kann ich es reparieren, wenn "

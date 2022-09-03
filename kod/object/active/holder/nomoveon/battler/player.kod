@@ -10456,23 +10456,17 @@ messages:
       return;
    }
 
-   TryGainBaseMaxHealth()
+   TryGainBaseMaxHealth(report=TRUE, gainTP=TRUE)
    "Handles the roll for tougher based on the player's gain chance plus "
-   "the iLevel parameter.  Returns TRUE if the player gaints a hit point, "
+   "the iLevel parameter.  Returns TRUE if the player gains a hit point, "
    "FALSE otherwise.  The iLevel parameter has the player's base max HP "
    "taken from it, then divided by 5 before being bound between 1 and 10."
    {
       local bGainHP, iMaxHealth, oShrunken, iStamina;
 
-      if piFlags & PFLAG_PHASED
-      {
-         // You can't gain health while phased.
-         return FALSE;
-      }
-
       bGainHP = FALSE;
 
-      while (Send(self,@GetBaseMaxHealth) < (101 + Send(self,@GetStamina))
+      while (Send(self,@GetBaseMaxHealth) < (101 + (Send(self,@GetStamina)*2))
          AND Send(self,@GetXPRemainingForNextLevel) <= 0)
       {
          Send(self,@GainBaseMaxHealth,#amount=1);
@@ -10491,12 +10485,17 @@ messages:
 
          if pbLogged_on
          {
-            Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
-            Send(self,@WaveSendUser,#what=self,#wave_rsc=player_tougher_wav_rsc);
+            if report
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
+               Send(self,@WaveSendUser,#what=self,#wave_rsc=player_tougher_wav_rsc);
 
-            // Boost the player to max health, and give them 200 vigor.
-            Send(self,@MsgSendUser,#message_rsc=player_improve_health_invigorate);
+               // Boost the player to max health, and give them 200 vigor.
+               Send(self,@MsgSendUser,#message_rsc=player_improve_health_invigorate);
+            }
+
             piHealth = piMax_Health * 100;
+
             Send(self,@DrawHealth);
             Send(self,@EatSomething,#nutrition=200);
             Post(self,@DrawOffense);
@@ -10504,7 +10503,7 @@ messages:
 
             // Report to shrunken head, if they have one.
             oShrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-            if oShrunken <> $
+            if oShrunken <> $ AND report
             {
                Send(oShrunken,@Tougher,#hp=Send(self,@GetBaseMaxHealth));
             }
@@ -10520,10 +10519,10 @@ messages:
          // Awards the TP when the player hits max HP also (reward!).
          iStamina = Send(self,@GetStamina);
 
-         iMaxHealth = Send(self,@GetBaseMaxHealth);
+         iMaxHealth = Send(self,@GetBaseMaxHealth) * 2;
 
          if (iMaxHealth >= 100 + iStamina
-            OR iMaxHealth >= MAX_HP)
+            OR iMaxHealth >= MAX_HP) AND gainTP
          {
             Send(self,@AddTrainingPoints,#points=iMaxHealth * 3,#bCap=FALSE);
          }
@@ -10539,7 +10538,7 @@ messages:
       return piXP_total;
    }
 
-   AddXP(iAmount=0,report=TRUE)
+   AddXP(iAmount=0, report=TRUE, gainTP=TRUE)
    "All code that adds or subtracts XP should go through this message. "
    "Handles resource display and toughers."
    {
@@ -10554,7 +10553,7 @@ messages:
       // TryGainBaseMaxHealth checks if player can be awarded a hit point.
       if (piXP_total >= iXPNeeded)
       {
-         Send(self,@TryGainBaseMaxHealth);
+         Send(self,@TryGainBaseMaxHealth, #report=report, #gainTP=gainTP);
       }
       else
       {
@@ -17286,6 +17285,86 @@ messages:
 	  }
 	  
 	  return $;
+   }
+
+   IsMaxHP()
+   "TRUE if you're at your Max HP, FALSE if you can still gain HP."
+   {
+      return piMax_Health >= (100 + piStamina);
+   }
+
+   GainMaxHP(force_max=FALSE)
+   "Iterates the player's experience by 25k until they reach their max HP, which is randomized 1 through Stamina."
+   "You must already be at your Max HP To use this function."
+   {
+      local i, iLoopProtect, iRandomized, iFaction, bSoldier, bAo3, bSoth;
+
+      if Send(self,@IsMaxHP)
+      {
+         // Let's remember their faction / soldier status
+         iFaction = Send(self,@GetFaction);
+         bAo3 = Send(self,@PossessesA,#class=&NecromancerAmulet);
+         bSoth = Send(self,@PossessesA,#class=&HunterSword);
+         bSoldier = Send(self,@PossessesA,#class=&SoldierShield);
+
+         piXP_total = 0;
+
+         Send(self, @AddXP, #iAmount=1, #report=FALSE, #gainTP=FALSE);
+
+         iLoopProtect = 0;
+
+         if force_max
+         {
+            // Take the player all the way to their max.
+            iRandomized = 100 + piStamina;
+         }
+         else
+         {
+            // Make it interesting.
+            iRandomized = Random(1, piStamina);
+         }
+
+         while piMax_Health < (100 + iRandomized)
+         {
+            iLoopProtect = iLoopProtect + 1;
+
+            if iLoopProtect > 150
+            {
+               break;
+            }
+
+            Send(self, @AddXP, #iAmount=25000, #report=FALSE, #gainTP=FALSE);
+         }
+
+         if iFaction <> FACTION_NEUTRAL AND Send(self,@GetFaction) <> iFaction
+         {
+            // Put the player back in the faction
+            Send(self,@ResetFaction, #faction=iFaction);
+         }
+
+         if bAo3 AND NOT Send(self,@PossessesA,#class=&NecromancerAmulet)
+         {
+            // Put the AO3 back on the player
+            Send(self,@NewHold,#what=Create(&NecromancerAmulet));
+         }
+
+         if bSoth AND NOT Send(self,@PossessesA,#class=&HunterSword)
+         {
+            // Put the soth back on the player
+            Send(self,@NewHold,#what=Create(&HunterSword));
+         }
+
+         if bSoldier AND NOT Send(self,@PossessesA,#class=&SoldierShield)
+         {
+            // Put the soldier shield back on the player
+            Send(self,@NewHold,#what=Create(Send(SYS,@FactionToShield,#iFaction=iFaction)));
+         }
+
+         // Draw new XP bar
+         Post(self,@DrawXP);
+      }
+
+      return;
    }
 
 end
