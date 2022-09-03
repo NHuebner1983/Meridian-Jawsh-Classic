@@ -6186,11 +6186,11 @@ messages:
    }
 
    IsWantedItem(what=$)
-   "Simple fix for use with ObjectDesired - just proxy this function to only work with plWantedItems."
+   "Checks if what is in plWantedItems."
    {
       local l;
 
-      if plWantedItems = $ OR Length(plWantedItems) <= 0
+      if what = $ OR NOT IsClass(what, &Item) OR plWantedItems = $ OR Length(plWantedItems) <= 0
       {
          return FALSE;
       }

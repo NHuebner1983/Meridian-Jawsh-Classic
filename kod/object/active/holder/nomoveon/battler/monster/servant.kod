@@ -1085,7 +1085,7 @@ messages:
 
                iMinimapFlags = Send(poMaster, @BuildMinimapDotFlag, #what=o, #force=TRUE);
 
-               if iMinimapFlags = MM_PLAYER | MM_PLAYER_IS_ENEMY
+               if iMinimapFlags = 3
                {
                   lEnemies = AppendListElem(o, lEnemies);
                }
