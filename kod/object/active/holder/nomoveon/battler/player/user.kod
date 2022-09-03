@@ -8159,6 +8159,27 @@ messages:
       return TRUE;
    }
 
+   DeleteZeroObjectFromInventory(class=$)
+   {
+      local lInventory, l;
+
+      lInventory = Send(self,@GetInventory);
+
+      if lInventory <> $ AND Length(lInventory) > 0
+      {
+         foreach l in lInventory
+         {
+            if GetClass(l) = class AND IsClass(l, &NumberItem) AND Send(l, @GetNumber) = 0
+            {
+               Send(l,@Delete);
+               Debug("Deleting zero object",Send(l,@GetName),"from",Send(self,@GetName));
+            }
+         }
+      }
+
+      return;
+   }
+
    NewHoldObject(what = $)
    {
       if pbLogged_on

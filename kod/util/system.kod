@@ -584,6 +584,10 @@ messages:
 
          // Go through each user's inventory and perform Send(i,@ConvertInventoryMoney)
          Send(i,@ConvertInventoryMoney, #deep_scan=TRUE);
+
+         // Delete any leftover artifacts that have zero number.
+         Send(i,@DeleteZeroObjectFromInventory,#class=&Shilling);
+         Send(i,@DeleteZeroObjectFromInventory,#class=&Platinum);
       }
 
       // Migration is complete.
