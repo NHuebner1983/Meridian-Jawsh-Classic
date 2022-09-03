@@ -35,8 +35,14 @@ messages:
                      [ &InkyCap, 10],
                      [ &NeruditeShield, 5],
                      [ &Axe, 14 ],
-                     [ &JewelofFroz, 10],
-                     [ &Weed, 1 ]
+                     [ &JewelofFroz, 4],
+                     [ &RiijaCStrain, 1 ],
+                     [ &FarenCStrain, 1 ],
+                     [ &ShalCStrain, 1 ],
+                     [ &QorCStrain, 1 ],
+                     [ &JalaCStrain, 1 ],
+                     [ &WeaponCStrain, 1 ],
+                     [ &KraananCStrain, 1 ]
                    ];
       propagate;
    }

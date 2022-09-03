@@ -5,6 +5,6 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\weed.bof
-BOFS = weed2.bof weed3.bof weed4.bof weed5.bof weed6.bof weed7.bof 
+BOFS = farenc.bof jalac.bof kranc.bof qorc.bof riijac.bof shalc.bof weaponsc.bof
 
 !include $(KODDIR)\kod.mak
