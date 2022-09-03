@@ -466,7 +466,7 @@ messages:
                   cCreate = &Shilling;
                }
 
-               oObj = Create(First(lItem_info),#corpse=corpse);
+               oObj = Create(cCreate,#corpse=corpse);
             }
 
             if IsClass(oObj,&Money)

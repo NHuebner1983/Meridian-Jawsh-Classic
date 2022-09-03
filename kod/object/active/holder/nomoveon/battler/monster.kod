@@ -165,6 +165,7 @@ resources:
    Lm_buyer_timeout = \
       "Can't make up your mind?  Think on it and come back when you are ready."
    Lm_buyer_unwanted = "I'm not interested."
+   Lm_buyer_unwanted_surprised_money = "Do I look like a charity? I don't accept donations."
    Lm_bnkr_balance = "You have %i platinum in your account."
    Lm_bnkr_did_deposit = \
       "Thank you for your deposit.  You now have %i platinum in your account."
@@ -3453,9 +3454,17 @@ messages:
 
             if NOT Send(self,@ObjectDesired,#what=i)
             {
-               Send(self,@SayToOne,#target=what,
-                     #message_rsc=Lm_buyer_unwanted);
-
+               if IsClass(i, &Money)
+               {
+                  Send(self,@SayToOne,#target=what,
+                        #message_rsc=Lm_buyer_unwanted_surprised_money);
+               }
+               else
+               {
+                  Send(self,@SayToOne,#target=what,
+                        #message_rsc=Lm_buyer_unwanted);
+               }
+               
                return FALSE;
             }
 
@@ -3571,7 +3580,7 @@ messages:
    "We have been given an item on our wanted list. This is either a banker"
    "type, or a quest completion of some kind or an intrigue token."
    {
-      //Debug("GotWantedMonster",obj,who);
+      Debug(Send(self,@GetName),"GotWantedItem",obj,who);
       
       // Handle the kludgy banker interface immediately.
       if (piAttributes & MOB_BANKER) AND IsClass(obj,&Money)
@@ -3614,6 +3623,8 @@ messages:
    "Someone just randomly gave us an object we didnt really want."
    "They could be fishing for a quest, so occasionally, lets keep it."
    {
+      Debug(Send(self,@GetName),"GotUnwantedItem",obj,who);
+
       // Quickly, lets check to see if it's a signet ring.  If so, give a
       //  special message.
       if IsClass(obj,&SignetRing)
@@ -6172,6 +6183,27 @@ messages:
       plWantedItems = cons(class,plWantedItems);
 
       return;
+   }
+
+   IsWantedItem(what=$)
+   "Simple fix for use with ObjectDesired - just proxy this function to only work with plWantedItems."
+   {
+      local l;
+
+      if plWantedItems = $ OR Length(plWantedItems) <= 0
+      {
+         return FALSE;
+      }
+
+      foreach l in plWantedItems
+      {
+         if IsClass(what, l)
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
    }
 
    DeleteForSaleList()

@@ -55,24 +55,6 @@ properties:
 
 messages:
    
-   Constructor()
-   {
-      plWantedItems = [&Weed];
-
-      propagate;
-   }
-
-   CheckWhyWanted(obj=$, who=$)
-   {
-      return TRUE;
-   }
-
-   GotWantedItem(obj = $, who = $)
-   {
-      // Why is the normal monster sending @Delete to an item that we want a counter-offer?
-      return TRUE;
-   }
-
    AffectMood(why=$,what=$)
    {
       if why = MOODMOD_FACTION_CHANGE
@@ -120,6 +102,12 @@ messages:
       }
 
       return;
+   }
+
+   ObjectDesired(what=$)
+   "We buy weed."
+   {
+      return IsClass(what, &Weed);
    }
 
    SetForSale()
