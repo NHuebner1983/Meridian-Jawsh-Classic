@@ -33,6 +33,10 @@
    MAX_KOD_INT = 134217727
    MIN_KOD_INT = -134217728
 
+   // Our way of getting around MAX_KOD_INT
+   SHILLINGS_PER_PLATINUM = 1000
+   MAX_PLATINUM = 134217000
+
    // Time constants of the world
 
    // MS_PER_DAY = 24 * 3600 * 1000

@@ -121,7 +121,7 @@ client_message user_msg_table[] = {
 { UC_BALANCE,              { PARAM_END }, },
 { UC_APPEAL,               { PARAM_STRING, PARAM_END }, },
 { UC_REQ_TIME,             { PARAM_END }, },
-{ UC_MARKETPLACE_LIST,     { PARAM_ID, PARAM_INT, PARAM_INT, PARAM_END }, },
+{ UC_MARKETPLACE_LIST,     { PARAM_ID, PARAM_INT, PARAM_INT, PARAM_INT, PARAM_END }, },
 { UC_MARKETPLACE_UNLIST,   { PARAM_ID, PARAM_INT, PARAM_END }, },
 { 0,                       { PARAM_END, }, },    // Must end table this way
 };

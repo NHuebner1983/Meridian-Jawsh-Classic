@@ -244,6 +244,10 @@ messages:
       Send(self,@NewHold,#what=oSign,#new_row=14,#new_col=10,#fine_row=8,
             #fine_col=52,#new_angle=ANGLE_SOUTH);
 
+      // Show a Marketplace sign in RAZA INN razamuseum.roo
+      Send(self,@NewHold,#what=Create(&Store),
+           #new_row=10,#new_col=9,#fine_row=9,#fine_col=23,#new_angle=ANGLE_NORTH);
+           
       propagate;
    }
 

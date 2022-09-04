@@ -47,7 +47,7 @@ resources:
    KocatanInkeeper_cost = \
       "Oh, good, you should rest.  Let me see....  I charge %i shillings to "
       "~Irent~n a nice ~Iroom~n here for 85 days.  If you wish to stay "
-      "longer, I charge %i per day if you pre-pay.  Key copies, uh, key "
+      "longer, I charge %i shillings per day if you pre-pay.  Key copies, uh, key "
       "copies....  Oh, they cost %i shillings to make.  I know you'll "
       "like your room."
 
@@ -135,7 +135,7 @@ messages:
    {
       local oMoney, oBank, amount;
 
-      if NOT isClass(obj,&Money)
+      if NOT isClass(obj,&Platinum)
       {
          return FALSE;
       }
@@ -147,19 +147,24 @@ messages:
          return FALSE;
       }
 
-      oMoney = Send(who,@GetMoneyObject);
+      if IsClass(obj, &Platinum)
+      {
+         amount = amount * SHILLINGS_PER_PLATINUM;
+      }
+
+      oMoney = Send(who,@GetPlatinumObject);
       
       if oMoney = $
       {
          return FALSE;
       }
 
-      if Send(oMoney,@GetValue) < amount
+      if (Send(oMoney,@GetValue) * SHILLINGS_PER_PLATINUM) < amount
       {
          return FALSE;
       }
 
-      Send(oMoney,@SubtractNumber,#number=amount);
+      Send(who,@Pay,#cost_shillings=amount);
       Post(self,@SayToOne,#target=who,#message_rsc=kocinn_winknudge);
 
       return TRUE;
@@ -293,7 +298,7 @@ messages:
       {
          if NOT IsClass(i,&Money)
          {
-            if GetClass(i) = &RoomKeyCopy
+            if IsClass(i, &RoomKeyCopy)
             {
                // Say something and delete the key.
                Send(what,@MsgSendUser,
@@ -310,7 +315,14 @@ messages:
       iMoney = 0;
       foreach i in item_list
       {
-         iMoney = iMoney + Send(i,@GetValue);
+         if IsClass(i, &Shilling)
+         {
+            iMoney = iMoney + Send(i,@GetNumber);
+         }
+         if IsClass(i, &Platinum)
+         {
+            iMoney = iMoney + (Send(i,@GetValue) * SHILLINGS_PER_PLATINUM);
+         }
       }
 
       oRoomMaint = Send(SYS,@GetRentableRoomMaintenance);

@@ -164,9 +164,14 @@ messages:
       return;
    }
 
-   GetValue()
+   GetValue(type=$)
    {
       local i,j;
+
+      if type = $
+      {
+         type = &Shilling;
+      }
 
       i = 1;
       j = 2;
@@ -175,6 +180,21 @@ messages:
       {
          j = j * 2;
          i = i + 1;
+      }
+
+      if type = &Shilling
+      {
+         return 250 * j;
+      }
+
+      if type = &Platinum
+      {
+         if (250 * j) >= SHILLINGS_PER_PLATINUM
+         {
+            return Send(SYS,@ShillingsToPlatinum,#number=(250 * j));
+         }
+
+         return 0;
       }
 
       return 250 * j;

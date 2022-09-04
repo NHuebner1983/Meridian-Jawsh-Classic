@@ -82,7 +82,7 @@ messages:
 
    RentRoom(who=$,iLocation=$,iCost=5000)
    {
-      local iRID, oRoom, oMoney;
+      local iRID, oRoom;
 
       // Check if the player already has a room.  If so, complain and bail.
       oRoom = Send(self,@FindRoomByPlayer,#who=who,#iLocation=iLocation);
@@ -91,16 +91,13 @@ messages:
          return RoomMaintenance_room_already;
       }
 
-      // Check for the fee.  If too poor, complain and bail.
-      oMoney = Send(who,@GetMoneyObject);
-
-      if oMoney = $ OR Send(oMoney,@GetNumber) < iCost
+      if NOT Send(who,@CanAfford,#cost_shillings=iCost)
       {
          return RoomMaintenance_no_rental_fee;
       }
 
       // Deduct the fee
-      Send(oMoney,@SubtractNumber,#number=iCost);
+      Send(who,@Pay,#amount_shillings=iCost);
 
       // Set up the room
       iRID = Send(self,@GetNextAvailableRID,#iLocation=iLocation);
@@ -122,7 +119,7 @@ messages:
 
    CopyKey(who=$,iLocation=$,iCost=500)
    {
-      local lPassive, oObject, oKey, bHasRoomKey, bFound, oMoney;
+      local lPassive, oObject, oKey, bHasRoomKey, bFound;
 
       // Check if the player has a gold key.
       bHasRoomKey = FALSE;
@@ -164,16 +161,13 @@ messages:
          }
       }
 
-      // Check for the fee.  If too poor, complain and bail.
-      oMoney = Send(who,@GetMoneyObject);
-
-      if oMoney = $ OR Send(oMoney,@GetNumber) < iCost
+      if NOT Send(who,@CanAfford,#cost_shillings=iCost)
       {
          return RoomMaintenance_copy_no_money;
       }
 
       // Deduct the fee.
-      Send(oMoney,@SubtractNumber,#number=iCost);
+      Send(who,@Pay,#amount_shillings=iCost);
 
       // Copy the key and give it to the player.
       Send(who,@NewHold,#what=Send(oKey,@Copy));
@@ -183,7 +177,7 @@ messages:
 
    GotRent(who=$,iAmount=0,iCost=150,iLocation=$)
    {
-      local oMoney, iDays, oRoom, iDaysLeft;
+      local iDays, oRoom, iDaysLeft;
 
       oRoom = Send(self,@FindRoomByPlayer,#who=who,#iLocation=iLocation);
 
@@ -215,15 +209,13 @@ messages:
       // Set the amount to the even cost.
       iAmount = iDays * iCost;
 
-      oMoney = Send(who,@GetMoneyObject);
-
-      if oMoney = $ OR Send(oMoney,@GetNumber) < iAmount
+      if NOT Send(who,@CanAfford,#cost_shillings=iAmount)
       {
          // Something weird went on here.  Don't give a message, just bail.
          return $;
       }
 
-      Send(oMoney,@SubtractNumber,#number=iAmount);
+      Send(who,@Pay,#amount_shillings=iAmount);
 
       // RenewRental returns the new days left.
       return Send(oRoom,@RenewRental,#iTimeAdded=iDays);

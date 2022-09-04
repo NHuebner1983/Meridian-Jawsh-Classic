@@ -165,25 +165,26 @@ resources:
    Lm_buyer_timeout = \
       "Can't make up your mind?  Think on it and come back when you are ready."
    Lm_buyer_unwanted = "I'm not interested."
-   Lm_bnkr_balance = "You have %i shillings in your account."
+   Lm_buyer_unwanted_surprised_money = "Do I look like a charity? I don't accept donations."
+   Lm_bnkr_balance = "You have %i platinum in your account."
    Lm_bnkr_did_deposit = \
-      "Thank you for your deposit.  You now have %i shillings in your account."
-   Lm_bnkr_no_account = "You have no money to withdraw!"
+      "Thank you for your deposit.  You now have %i platinum in your account."
+   Lm_bnkr_no_account = "~r~IYour account has a zero balance.~I Try depositing platinum more often...I would appreciate it."
    Lm_bnkr_acct_full = \
-      "You have so many shillings stored here, that I'm afraid I have no "
-      "space to store any more!"
+      "You have too much platinum stored in our bank, you truly are the wealthiest in the land."
    Lm_bnkr_acct_almost_full = \
-      "You have so many shillings stored here, that I'm afraid I can only "
-      "store %i more."
+      "I could only deposit %i platinum into your bank account, we have run out of room. You truly are the wealthiest in the land."
    Lm_bnkr_not_enough_withdraw = \
-      "But you only have %i shillings in your account!"
+      "But you only have %i platinum in your account!"
    Lm_bnkr_not_enough_deposit = \
-      "But you only have %i shillings in your possession!"
+      "But you only have %i platinum in your possession!"
+   Lm_bnkr_not_want_shillings = \
+      "We no longer store shillings here, we only accept platinum. Our bank is much too small to hold shillings."
    Lm_bnkr_did_withdraw = \
-      "Here are your %i shillings. Thank you for your business."
+      "Here's %i platinum as you requested. Thank you for your business, please come back again!"
    Lm_bnkr_player_full = \
-      "I swear, if I gave you a shilling more than %i you'd topple right over!"
-   Lm_bnkr_player_all_full = "You can't hold even a single shilling more!"
+      "I swear, if I gave you one more platinum, you'd topple right over!"
+   Lm_bnkr_player_all_full = "You can't hold even a single platinum!"
 
    vaultman_nogold = "You may not use my services to store %s%s."
    vaultman_nocursed = "I cannot take %s%s from you."
@@ -222,21 +223,21 @@ resources:
    monster_koc_name = "moch"
 
    monster_report_balance = \
-      "~B~g[~n~k%s%s tells you, \"%q has %i shillings in this bank.\"~B~g]"
+      "~B~g[~n~k%s%s tells you, \"%q has %i platinum in this bank.\"~B~g]"
    Monster_Sweep_Reward = \
-      "Hmm... that looks a bit cleaner.  Here, take this as payment, %s%s."
+      "Hmm... that looks a bit cleaner. Here, take this as payment, %s%s."
 
    monster_default_attack = "attack"
    minion_trouble = \
       "You sense your minion has gotten you into some trouble..."
 
-   autolooted_all = "You loot the corpse clean, and find %d shillings."
+   autolooted_all = "You loot the corpse clean and gather some useful items and shillings."
    autolooted_all_no_money = "You loot the corpse clean."
    autolooted_some = "You loot some of the items from your fallen kill, and "
-      "find %d shillings."
+      "find some shillings."
    autolooted_some_no_money = "You loot some of the items from your fallen enemy."
    autolooted_only_money = "You find nothing easily lootable on your slain "
-      "enemy other than %d shillings."
+      "enemy other than some shillings."
    autolooted_none = "You find nothing easily lootable on your slain enemy."
      
    autoloot_too_far_away = "You're too far away to loot your fallen enemy!"
@@ -245,7 +246,7 @@ resources:
    autoloot_got_nothing_because_full= "You can't carry any more, so you loot "
       "nothing from your fallen enemy."
    autoloot_got_only_shillings_because_full = "You can't carry any more, so you "
-      "loot nothing from your fallen enemy, but you do find %d shillings."
+      "loot nothing from your fallen enemy, but you do find some shillings."
 
    monster_faction_negative_msg = \
       "Your standing with The %s has decreased"
@@ -267,8 +268,6 @@ resources:
    monster_faction_frogmen = "Frogmen"
    monster_faction_heretic = "Cult of the Three"
    monster_faction_undead = "Minions of Death"
-
-   shop_sold_offer = "~B~y%s bought your %s for %i shillings.~k"
 
 classvars:
 
@@ -540,9 +539,6 @@ properties:
 
    ptFollowTimer = $
 
-   // Store owner
-   poStoreOwner = $
-
 messages:
 
    Constructor(template=FALSE, color=0, piSurvivalLevel=0, iBrain = 0)
@@ -653,7 +649,10 @@ messages:
          piMonsterCastInterval = 5000;
       }
       
-      ptMonsterCastTimer = CreateTimer(self,@MonsterCastSpell,piMonsterCastInterval);
+      if NOT IsClass(self, &Store)
+      {
+         ptMonsterCastTimer = CreateTimer(self,@MonsterCastSpell,piMonsterCastInterval);
+      }
       
       propagate;
    }
@@ -3352,7 +3351,7 @@ messages:
    "Return TRUE if the offer should go through, meaning that the monster will "
    "offer the value of the items in return."
    {
-      local i,j, lArgList, iValueOffered, oQuestNode, bIsBuyer, bWarnAboutUnwantedItems;
+      local i,j, lArgList, iValueOffered, oQuestNode, bIsBuyer, bWarnAboutUnwantedItems, iPlatinum, iShillings;
       
       poOffer_who = what;
 
@@ -3435,6 +3434,8 @@ messages:
          }
 
          iValueOffered = 0;
+         iPlatinum = 0;
+         iShillings = 0;
 
          foreach i in item_list
          {
@@ -3448,16 +3449,36 @@ messages:
 
             if NOT Send(self,@ObjectDesired,#what=i)
             {
-               Send(self,@SayToOne,#target=what,
-                     #message_rsc=Lm_buyer_unwanted);
-
+               if IsClass(i, &Money)
+               {
+                  Send(self,@SayToOne,#target=what,
+                        #message_rsc=Lm_buyer_unwanted_surprised_money);
+               }
+               else
+               {
+                  Send(self,@SayToOne,#target=what,
+                        #message_rsc=Lm_buyer_unwanted);
+               }
+               
                return FALSE;
             }
 
-            iValueOffered = iValueOffered + Send(i,@GetValue);
+            //Debug(Send(i,@GetName),"is worth",Send(i,@GetValue,#type=&Platinum),"plat");
+
+            iPlatinum = iPlatinum + Send(i,@GetValue,#type=&Platinum);
+
+            if iPlatinum <= 0
+            {
+               // It's not worth platinum, it may be worth shillings though.
+               iShillings = iShillings + Send(i,@GetValue);
+               //Debug(Send(i,@GetName),"is worth",iShillings,"shillings");
+            }
          }
 
-         if iValueOffered = 0
+         //Debug(Send(i,@GetName),"is shillings worth",Send(i,@GetValue),"shillings");
+         //Debug("iPlatinum",iPlatinum,"iShillings",iShillings);
+
+         if iPlatinum = 0 AND iShillings = 0
          {
             Send(self,@SayToOne,#target=what,#message_rsc=Lm_buyer_no_value);
 
@@ -3554,12 +3575,12 @@ messages:
    "We have been given an item on our wanted list. This is either a banker"
    "type, or a quest completion of some kind or an intrigue token."
    {
-      //Debug("GotWantedMonster",obj,who);
+      Debug(Send(self,@GetName),"GotWantedItem",obj,who);
       
       // Handle the kludgy banker interface immediately.
       if (piAttributes & MOB_BANKER) AND IsClass(obj,&Money)
       {
-         Send(self,@BankDeposit,#who=who,#amount=Send(obj,@GetNumber));
+         Send(self,@BankDeposit,#what=obj,#who=who,#amount=Send(obj,@GetNumber));
 
          return;
       }
@@ -3597,6 +3618,8 @@ messages:
    "Someone just randomly gave us an object we didnt really want."
    "They could be fishing for a quest, so occasionally, lets keep it."
    {
+      Debug(Send(self,@GetName),"GotUnwantedItem",obj,who);
+
       // Quickly, lets check to see if it's a signet ring.  If so, give a
       //  special message.
       if IsClass(obj,&SignetRing)
@@ -4371,7 +4394,7 @@ messages:
    Offer(what = $,item_list = $)
    "Offer the player money in exchange for their goods - MOB_BUYER"
    {
-      local i, iValue_offered, iAdd, x, y;
+      local i, iValue_offered, iAdd, x, y, iPlatinum, iShillings, xPlatinum, xShillings, iAddShillings, iAddPlatinum;
 
       // The Faction Pricing bonus was selling items to NPCs at higher prices
       // than the new price.  This has been taken out.
@@ -4380,19 +4403,68 @@ messages:
          OR piAttributes & MOB_RECEIVE)
       {
          iValue_offered = 0;
+         iPlatinum = 0;
+         iShillings = 0;
+         plOffer_items = [];
+
          foreach i in item_list
          {
-            x = Send(i,@GetValue) * (100 - 10*viMerchant_markup) / 100;
-            iAdd = Bound(x,1,$);
+            iAddShillings = 0;
+            iAddPlatinum = 0;
 
-            iValue_offered = iValue_offered + iAdd;
+            if Send(i,@GetValue,#type=&Shilling) < 0
+            {
+               // MAX_KOD_INT reached, only deal in platinum.
+               iAddPlatinum = Send(i,@GetValue,#type=&Platinum);
+               iAddShillings = 0;
+            }
+            else
+            {
+               // Item has a shilling value under KOD limit.
+               iAddShillings = Send(i,@GetValue,#type=&Shilling);
+
+               if viMerchant_markup > 0
+               {
+                  // Merchant is marking up
+                  iAddShillings = iAddShillings * (100 - 10*viMerchant_markup) / 100;
+               }
+
+               iAddPlatinum = Send(SYS,@ShillingsToPlatinum,#number=iAddShillings);
+               iAddShillings = Send(SYS,@ShillingsRemaining,#number=iAddShillings);
+            }
+
+            iPlatinum = iPlatinum + iAddPlatinum;
+            iShillings = iShillings + iAddShillings;
+
+            if iShillings >= SHILLINGS_PER_PLATINUM
+            {
+               iPlatinum = iPlatinum + Send(SYS,@ShillingsToPlatinum,#number=iShillings);
+               iShillings = Send(SYS,@ShillingsRemaining,#number=iShillings);
+            }
          }
 
          poCustomer = what;
 
-         plOffer_items = [ Create(&Money,#number=iValue_offered) ];
-         Send(what,@CounterOffer,#item_list=plOffer_items);
-         ptCancelOffer = CreateTimer(self,@CancelOfferTimer,viCancel_offer_time);
+         if iPlatinum > 0
+         {
+            plOffer_items = AppendListElem(Create(&Platinum,#number=iPlatinum), plOffer_items);
+         }
+
+         if iShillings > 0
+         {
+            plOffer_items = AppendListElem(Create(&Shilling,#number=iShillings), plOffer_items);
+         }
+
+         if Length(plOffer_items)
+         {
+            Send(what,@CounterOffer,#item_list=plOffer_items);
+            ptCancelOffer = CreateTimer(self,@CancelOfferTimer,viCancel_offer_time);
+         }
+         else
+         {
+            // Nothing to offer back...
+            Send(self, @CancelOfferTimer);
+         }
       }
       else if IsClass(what,&DM)
       {
@@ -4442,7 +4514,7 @@ messages:
          Send(oHolder,@NewHold,#what=i);
          if IsClass(i,&Money)
          {
-            Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(i,@GetNumber));
+            Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=i,#amount=Send(i,@GetNumber));
          }
       }
 
@@ -4465,7 +4537,7 @@ messages:
 
    VaultDeposit(who=$,lItems=$)
    {
-      local i, oVault, iFee, oMoney, iCash;
+      local i, oVault, iFee, bCanAfford, iCash;
 
       if not Send(self,@MobIsVaultman)
       {
@@ -4511,18 +4583,9 @@ messages:
          iFee = iFee + Send(self,@GetVaultDepositFee,#what=i,#who=who);
       }
 
-      oMoney = Send(who,@GetMoneyObject);
-      if oMoney = $
-      {
-         // No cash.
-         iCash = 0;
-      }
-      else
-      {
-         iCash = Send(oMoney,@GetValue);
-      }
+      bCanAfford = Send(who,@CanAfford,#cost_shillings=iFee);
 
-      if iCash < iFee AND iFee <> 0
+      if NOT bCanAfford AND iFee <> 0
       {
          Send(self,@SayToOne,#target=who,#message_rsc=vaultman_nodeposit_cash,
                #parm1=iFee);
@@ -4543,7 +4606,7 @@ messages:
 
       if iFee <> 0
       {
-         Send(oMoney,@SubtractNumber,#number=iFee);  
+         Send(who,@Pay,#amount_shillings=iFee);
          Send(self,@SayToOne,#message_rsc=vaultman_Thanks_amount,#target=who,
                #parm1=iFee);
       }
@@ -4571,23 +4634,12 @@ messages:
 
    VaultWithdraw(what=$,lItems=$,number_list = $)
    {
-      local i, j, iFee, iCash, lStored, oVault, iBulk, oMoney, bFound,
+      local i, j, iFee, lStored, oVault, iBulk, bCanAfford, bFound,
             oSafeBox, lNumbers, iCount, bFailed;
 
       if what = $ OR lItems = $
       {
          return;
-      }
-
-      oMoney = Send(what,@GetMoneyObject);
-      if oMoney = $
-      {
-         // No cash.
-         iCash = 0;
-      }
-      else
-      {
-         iCash = Send(oMoney,@GetValue);
       }
 
       oVault = Send(SYS,@FindVaultByNum,#num=Send(self,@GetVaultNum));
@@ -4662,8 +4714,10 @@ messages:
          }
       }
 
+      bCanAfford = Send(what,@CanAfford,#cost_shillings=iFee);
+
       // Does the player have enough ca$h?
-      if iCash < iFee AND iFee <> 0
+      if NOT bCanAfford AND iFee <> 0
       {
          Send(self,@SayToOne,#target=what,
                #message_rsc=vaultman_nowithdraw_cash);
@@ -4716,7 +4770,8 @@ messages:
 
       if iFee <> 0
       {
-         Send(oMoney,@SubtractNumber,#number=iFee);
+         Send(what,@Pay,#amount_shillings=iFee);
+         
          if bFailed
          {
             Send(self,@SayToOne,#target=what,#message_rsc=vaultman_withdraw_failed);
@@ -4816,7 +4871,7 @@ messages:
       return TRUE;
    }
 
-   BankDeposit(who=$, amount = 0)
+   BankDeposit(what=$, who=$, amount = 0)
    {
       local oMoney, oBank, iBankAmt;
 
@@ -4837,7 +4892,15 @@ messages:
          return;
       }
 
-      oMoney = Send(who,@GetMoneyObject);
+      if what <> $ AND IsClass(what, &Shilling)
+      {
+         Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+               #string=Lm_bnkr_not_want_shillings);
+
+         return;
+      }
+
+      oMoney = Send(who,@GetPlatinumObject);
       if oMoney = $
       {
          Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
@@ -4940,10 +5003,11 @@ messages:
          return;
       }
 
-      oMoney = Send(who,@GetMoneyObject);
+      oMoney = Send(who,@GetPlatinumObject);
+
       if oMoney = $
       {
-         oMoney = Create(&Money,#number=amount);
+         oMoney = Create(&Platinum,#number=amount);
          Send(who,@NewHold,#what=oMoney);
       }
       else if (Send(oMoney,@GetNumber) + amount) <= 0
@@ -4961,7 +5025,7 @@ messages:
          {
             amount = MAX_KOD_INT - iPlayerAmt;
             Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_player_full,
-                  #type=SAY_RESOURCE,#parm1=amount);
+                  #type=SAY_RESOURCE);//,#parm1=amount);
 
             if amount > iBankAmt
             {
@@ -4999,8 +5063,15 @@ messages:
    "Handle things having to do with mobs who have stuff to sell. "
    "This is used for both teachers and sellers"
    {
-      local i, j, bFound, oBuy, oMoney, iPrice, iPriceOne, lNumbers,
-            iAmount, oItemAtt, iCan_hold, oSplit, bFree; 
+      local i, j, bFound, oBuy, lNumbers, iAmount, oItemAtt, iCan_hold, oSplit, index, iDepositPlatinum, iDepositShillings,
+            bFree, iPriceShillings, iPricePlatinum, bCanAfford, iCostShillings, iCostPlatinum, bIsMarketplace, oStoreOwner;
+
+      //Debug("Buy()",Send(what,@GetName),"from",Send(self,@GetName));
+
+      bIsMarketplace = (viAttributes & MOB_MARKETPLACE);
+
+      iPriceShillings = 0;
+      iPricePlatinum = 0;
 
       // Ensure that buyer and seller are in the same room
       if Send(what,@GetOwner) <> poOwner
@@ -5031,46 +5102,80 @@ messages:
 
       // Walk the objects the user selected as wanting to purchase from
       // our Sale list
+      index = 0;
+
       foreach i in item_list
       {
-         // Find the dude's money.  Do this each time in case we exactly use it
-         // up.
+         iAmount = 1;
 
-         // Get the amount of money for standard amount
-         oMoney = Send(what,@GetMoneyObject);
-
-         // Get the price for that amount
-         iPriceOne = Send(self,@GetPrice,#what=i,#who=what);
+         index = index + 1;
 
          bFree = FALSE;
 
-         if Send(i, @IsListedOnMarketplace) AND Send(i, @GetMarketplaceOwner) = what
+         if IsClass(i, &Item) AND Send(i, @IsListedOnMarketplace)
          {
-            // This is a marketplace item and owned by the buyer, it should be free.
-            bFree = TRUE;
+            // Marketplace
+            if Send(i, @GetMarketplaceOwner) = what
+            {
+               // This is a marketplace item and owned by the buyer, it should be free.
+               bFree = TRUE;
+
+               // Item is free, let's zero out the cost.
+               iPriceShillings = 0;
+               iPricePlatinum = 0;
+
+               //Debug("Item is free, marketplace owner");
+            }
          }
 
-         // Init iPrice to the cost of one item.
-         iPrice = iPriceOne;
+         if NOT bFree
+         {
+            // Item Cost (1 unit)
+            iPriceShillings = Send(self,@GetPrice,#type=&Shilling,#what=i,#who=what);
+            iPricePlatinum = Send(self,@GetPrice,#type=&Platinum,#what=i,#who=what);
+            iPricePlatinum = iPricePlatinum + Send(SYS, @ShillingsToPlatinum, #number=iPriceShillings);
+            iPriceShillings = Send(SYS, @ShillingsRemaining, #number=iPriceShillings);
+            //Debug("Unit Pricing is", iPricePlatinum, "plat", iPriceShillings, "shills");
+         }
 
+         //Debug("Value", iPriceShillings,"shill",iPricePlatinum,"plat");
+
+         // Check if we can afford the item/stack.
          if IsClass(i,&Item)
          {
-            // If the item is an item (not a skill)
+            //Debug("Buying", Send(i,@GetName));
+
+            iAmount = 1;
+
+            if index <= Length(number_list) 
+            {
+               iAmount = Nth(number_list, index);
+            }
+
+            //Debug("Quantity Purchase is",iAmount);
+
             if IsClass(i,&NumberItem)
             {
                // Check if we have a valid number list. Check is done here
                // as we don't need a number list for non-number items.
                if lNumbers = $
                {
+                  //Debug("lNumbers is empty, which must be a bug");
                   continue;
                }
+
                // See how many the player wants.
                iAmount = First(lNumbers);
+
+               //Debug("Buying Amount",iAmount);
 
                if (iAmount = $)
                {
                   iAmount = 1;
+                  //Debug("iAmount is now 1");
                }
+
+               //Debug("iAmount is ", iAmount);
 
                // Make sure requested number of items is within the
                // limits. If selling from inventory, we can only sell
@@ -5078,40 +5183,42 @@ messages:
                if vbSellFromInventory
                {
                   iAmount = Bound(iAmount,1,Send(i,@GetNumber));
+                  //Debug("Selling from inventory", iAmount);
                }
                else
                {
                   iAmount = Bound(iAmount,1,MAX_BUY_AMOUNT);
+                  //Debug("Selling from monster", iAmount);
                }
 
-               // Make sure cost for 1 item is at least one gold coin.
-               iPriceOne = Bound(iPriceOne, 1, $);
-
-               // Now figure price
-               iPrice = iPriceOne * iAmount;
-
-               // Make sure we have a price of at least one gold coin
-               iPrice = Bound(iPrice, 1, $);
-
-               // Move to next number in the list.
                lNumbers = Rest(lNumbers);
             }
          }
 
-         if bFree
+         if NOT IsClass(i, &NumberItem)
          {
-            iPrice = 0;
+            // Why did we have to do this.
+            iAmount = 1;
          }
 
-         // Does player have enough money to buy it?
-         if oMoney = $ OR Send(oMoney,@GetValue) < iPrice
+         // Can we afford this single item (or X quantity)?
+         bCanAfford = (bFree OR Send(what,@CanAfford,#cost_shillings=iPriceShillings,#cost_platinum=iPricePlatinum,#quantity=iAmount));
+
+         //Debug("Can afford?",Send(i,@GetName),i,iPriceShillings,"shil",iPricePlatinum,"plat",iAmount,"amount",bCanAfford,"afford?");
+
+         if NOT bFree AND NOT bCanAfford
          {
+            // We can't afford this item/stack, let's try a different one.
+            // We're skipping the attempted purchase of a single item / stack in our buy request.
             Post(poOwner,@SomeoneSaid,#what=self,#string=vrMrcnt_too_costly,
                   #type=SAY_RESOURCE,#parm1=Send(i,@GetDef),
                   #parm2=Send(i,@GetName));
 
             continue;
          }
+
+         // If we made it this far, we can afford the item!
+         // Woohoo!
 
          // Make sure the item is really for sale from this mob.
          bFound = FALSE;
@@ -5164,7 +5271,9 @@ messages:
                         SetNth(plFor_Sale,1,DelListElem(First(plFor_Sale),i));
                      }
 
-                     Send(i,@SubtractNumber,#Number=iAmount);
+                     //Debug("Subtracting",iAmount,"from",Send(i,@GetNumber),Send(i,@GetName));
+
+                     Send(i,@SubtractNumber,#number=iAmount);
                   }
                   else
                   {
@@ -5178,21 +5287,52 @@ messages:
                   }
                }
 
+               oStoreOwner = $;
+
+               if Send(i,@IsListedOnMarketplace)
+               {
+                  // Get the item's marketplace owner
+                  oStoreOwner = Send(i,@GetMarketplaceOwner);
+               }
+
                // Add item to buyer's inventory
                Send(what,@NewHold,#what=oBuy);
-               Send(oMoney,@SubtractNumber,#number=iPrice);
+               
+               if NOT bFree
+               {
+                  // Make them pay for the item.
+                  Send(what,@Pay,#amount_shillings=iPriceShillings,#amount_platinum=iPricePlatinum,#quantity=iAmount);
+               }
+
                Send(self,@RemoveFromConditionalList,
                      #obj=Send(self,@GetObjectOnConditionalList,
                      #class=GetClass(i)));
 
-               // Marketplace notify owner of sale (whole item)
-               if Send(self,@GetStoreOwner) <> $ AND (viAttributes & MOB_MARKETPLACE)
+               // Notify seller of transaction
+               if bIsMarketplace AND NOT bFree AND oStoreOwner <> $
                {
-                  Send(Send(SYS,@FindBankByNum,#num=BID_TOS), @DepositAccount, #what=Send(self,@GetStoreOwner), #amount=iPrice);
+                  // Deposit platinum to marketplace owner's bank
+                  iDepositPlatinum = iPricePlatinum * iAmount;
+                  iDepositShillings = iPriceShillings * iAmount;
+                  iDepositPlatinum = iDepositPlatinum + Send(SYS,@ShillingsToPlatinum,#number=iDepositShillings);
+                  iDepositShillings = Send(SYS,@ShillingsRemaining,#number=iDepositShillings);
 
-                  if iPrice > 0
+                  // Deposit platinum to bank account
+                  Send(Send(SYS,@FindBankByNum,#num=BID_TOS), @DepositAccount, #what=oStoreOwner, #amount=iDepositPlatinum);
+
+                  // Send remaining shillings to the store owner's character
+                  Send(oStoreOwner, @AddShillings, #amount=iDepositShillings);
+
+                  if iPricePlatinum > 0 OR iPriceShillings > 0
                   {
-                     Send(Send(self,@GetStoreOwner),@MsgSendUser,#message_rsc=shop_sold_offer,#parm1=Send(what,@GetName),#parm2=Send(oBuy, @GetName),#parm3=iPrice);
+                     // Send notification to store owner (mail + tell (if online))
+                     Send(self,@NotifyItemPurchased,
+                        #what=i,
+                        #buyer=what, 
+                        #store_owner=oStoreOwner,
+                        #quantity=iAmount, 
+                        #amount_platinum=iDepositPlatinum,
+                        #amount_shillings=iDepositShillings);
                   }
                }
 
@@ -5208,6 +5348,14 @@ messages:
             }
             else
             {
+               oStoreOwner = $;
+
+               if Send(i,@IsListedOnMarketplace)
+               {
+                  // Get the item's marketplace owner
+                  oStoreOwner = Send(i,@GetMarketplaceOwner);
+               }
+
                // Check if this is a number item we're buying too much of.
                if IsClass(oBuy,&NumberItem)
                   AND Send(what,@GetNumberCanHold,#what=oBuy) > 0
@@ -5218,9 +5366,14 @@ messages:
                      oSplit = Send(oBuy,@Split,#number=iCan_hold);
                      if Send(oBuy,@ReqNewOwner,#what=oSplit)
                      {
-                        Send(oMoney,@SubtractNumber,
-                              #number=iPriceOne * Send(oSplit,@GetNumber));
-                        Send(i,@SubtractNumber,#Number=Send(oSplit,@GetNumber));
+                        iAmount = Send(oSplit,@GetNumber);
+
+                        if NOT bFree
+                        {
+                           Send(what,@Pay,#amount_shillings=iPriceShillings,#amount_platinum=iPricePlatinum,#quantity=iAmount);
+                        }
+
+                        Send(i,@SubtractNumber,#Number=iAmount);
                         Send(what,@NewHold,#what=oSplit);
                         Post(poOwner,@SomeoneSaid,#what=self,
                               #string=Lm_mrcnt_can_give_some,
@@ -5243,12 +5396,30 @@ messages:
                         }
 
                         // Marketplace notify owner of sale (partial stack)
-                        if Send(self,@GetStoreOwner) <> $ AND (viAttributes & MOB_MARKETPLACE)
+                        if NOT bFree AND bIsMarketplace AND oStoreOwner <> $
                         {
-                           if (iPriceOne * Send(oSplit,@GetNumber)) > 0
+                           // Deposit platinum to marketplace owner's bank
+                           iDepositPlatinum = iPricePlatinum * iAmount;
+                           iDepositShillings = iPriceShillings * iAmount;
+                           iDepositPlatinum = iDepositPlatinum + Send(SYS,@ShillingsToPlatinum,#number=iDepositShillings);
+                           iDepositShillings = Send(SYS,@ShillingsRemaining,#number=iDepositShillings);
+
+                           // Deposit platinum to bank
+                           Send(Send(SYS,@FindBankByNum,#num=BID_TOS), @DepositAccount, #what=oStoreOwner, #amount=iDepositPlatinum);
+
+                           // Send remaining shillings to the store owner's character
+                           Send(oStoreOwner, @AddShillings, #amount=iDepositShillings);
+
+                           if iPricePlatinum > 0 OR iPriceShillings > 0
                            {
-                              Send(Send(SYS,@FindBankByNum,#num=BID_TOS), @DepositAccount, #what=Send(self,@GetStoreOwner), #amount=iPriceOne * Send(oSplit,@GetNumber));
-                              Send(Send(self,@GetStoreOwner),@MsgSendUser,#message_rsc=shop_sold_offer,#parm1=Send(what,@GetName),#parm2=Send(oBuy, @GetName),#parm3=iPriceOne * Send(oSplit,@GetNumber));
+                              // Send notification to store owner (mail + tell (if online))
+                              Send(self,@NotifyItemPurchased,
+                                 #what=i,
+                                 #buyer=what, 
+                                 #store_owner=oStoreOwner,
+                                 #quantity=iAmount, 
+                                 #amount_platinum=iDepositPlatinum,
+                                 #amount_shillings=iDepositShillings);
                            }
                         }
 
@@ -5278,11 +5449,13 @@ messages:
             {
                Send(what,@AddSpell,#num=Send(i,@GetSpellNum));
             }
-            Send(oMoney,@SubtractNumber,#number=iPrice);
+            
+            // Pay for the spell or skill
+            Send(what,@Pay,#amount_shillings=iPriceShillings,#amount_platinum=iPricePlatinum,#quantity=1);
          }
       }
 
-      if (viAttributes & MOB_MARKETPLACE)
+      if bIsMarketplace
       {
          return;
       }
@@ -5368,6 +5541,11 @@ messages:
    {
       local i, iDistance, oSpell, iRandom, lTargets, iSpellNum, iManaCost, lMinions;
       
+      if IsClass(self, &Store)
+      {
+         return;
+      }
+
       ptMonsterCastTimer = CreateTimer(self,@MonsterCastSpell,piMonsterCastInterval);
       
       // If monster knows no spells, or has no target, return.
@@ -6042,6 +6220,27 @@ messages:
       return;
    }
 
+   IsWantedItem(what=$)
+   "Checks if what is in plWantedItems."
+   {
+      local l;
+
+      if what = $ OR NOT IsClass(what, &Item) OR plWantedItems = $ OR Length(plWantedItems) <= 0
+      {
+         return FALSE;
+      }
+
+      foreach l in plWantedItems
+      {
+         if IsClass(what, l)
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
    DeleteForSaleList()
    {
       local i;
@@ -6647,15 +6846,32 @@ messages:
       return lForSale;
    }
 
-   GetPrice(what = $, who = $)
+   GetPrice(type = $, what = $, who = $)
    "Returns the value of an item, or the cost of a skill or spell"
    "No markup for skills or spells - Marketplace items have a specific cost"
    {
-      local i, x, y;
+      local i, x, y, iShillings, iPlatinum;
+
+      if type = $
+      {
+         type = &Shilling;
+      }
 
       if IsClass(what, &Item) AND Send(what,@IsListedOnMarketplace)
       {
-         return Send(what,@GetMarketplaceUnitPrice);
+         iShillings = Send(what,@GetMarketplaceUnitPriceShillings);
+         iPlatinum = Send(what,@GetMarketplaceUnitPricePlatinum);
+         
+         if type = &Shilling
+         {
+            // Shilling
+            return iShillings;
+         }
+         else
+         {
+            // Platinum
+            return iPlatinum;
+         }
       }
 
       if plFor_sale <> $ AND Length(plFor_sale) = 4
@@ -6664,7 +6880,16 @@ messages:
          {
             if what=First(i)
             {
-               return Nth(i,2);
+               if type = &Shilling
+               {
+                  // Shilling
+                  return Nth(i,2);
+               }
+               else
+               {
+                  // Platinum
+                  return 0;
+               }
             }
          }
       }
@@ -6674,17 +6899,37 @@ messages:
          x = Send(what,@GetInitValue) * (100 + 20*viMerchant_markup) / 100;
          y = Send(Send(SYS,@GetParliament),@GetFactionPriceBonus,#who=who,
                   #buying=TRUE);
-         return Bound(x*y/100, 1, $);
+
+         if type = &Shilling
+         {
+            // Shilling
+            return Bound(x*y/100, 1, $);
+         }
+         else
+         {
+            // Platinum
+            return 0;
+         }
       }
 
       if IsClass(what,&Spell) OR IsClass(what,&Skill)
       {
-         return Send(what,@GetValue);
+         if type = &Shilling
+         {
+            // Shilling
+            return Send(what,@GetValue);
+         }
+         else
+         {
+            // Platinum
+            return 0;
+         }
       }
 
       Debug("Strange item",what,":",Send(what,@GetName),"in GetPrice");
 
-      return 0;
+      // 0 is 0 for shilling or platinum.
+      return 0; // Guess it's free then
    }
 
    GetGender()
@@ -6777,10 +7022,10 @@ messages:
 
          iRandomCashAmount = iRandomCashAmount * (Send(SETTINGS_OBJECT, @GetMoneyFactor) / 100);
 
-         oMoney = Create(&Money,#corpse=corpse,#number=iRandomCashAmount + (piBoostedLevel
+         oMoney = Create(&Shilling,#corpse=corpse,#number=iRandomCashAmount + (piBoostedLevel
                      * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalCash)));
 
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=Send(oMoney,@GetNumber));
          lTreasureItems = Cons(oMoney,lTreasureItems);
       }
 
@@ -6922,8 +7167,7 @@ messages:
             {
                if iRandomCashAmount > 0
                {
-                  Send(who,@MsgSendUser,#message_rsc=autoloot_got_only_shillings_because_full,
-                        #parm1=Send(oMoney,@GetNumber));
+                  Send(who,@MsgSendUser,#message_rsc=autoloot_got_only_shillings_because_full);//,#parm1=Send(oMoney,@GetNumber));
                }
                else
                {
@@ -6940,8 +7184,7 @@ messages:
             {
                if iRandomCashAmount > 0
                {
-                  Send(who,@MsgSendUser,#message_rsc=autolooted_all,
-                        #parm1=Send(oMoney,@GetNumber));
+                  Send(who,@MsgSendUser,#message_rsc=autolooted_all);//#parm1=Send(oMoney,@GetNumber));
                }
                else
                {
@@ -6965,8 +7208,7 @@ messages:
          {
             if iRandomCashAmount > 0
             {
-               Send(who,@MsgSendUser,#message_rsc=autolooted_only_money,
-                     #parm1=Send(oMoney,@GetNumber));
+               Send(who,@MsgSendUser,#message_rsc=autolooted_only_money);//,#parm1=Send(oMoney,@GetNumber));
             }
             else if iRandomCashAmount <= 0
             {
@@ -7093,7 +7335,7 @@ messages:
 
       if piAttributes & MOB_MARKETPLACE
       {
-         Debug(Send(self,@GetName),"is Marketplace");
+         //Debug(Send(self,@GetName),"is Marketplace");
          iFlags = iFlags | OF_MARKETPLACE;
       }
 
@@ -7926,7 +8168,7 @@ messages:
    {
       local oMoney,oRoom;
 
-      oMoney=Create(&Money,#number=Random(20,120));
+      oMoney = Create(&Shilling,#number=Random(20,120));
       oRoom = Send(self,@GetOwner);
 
       if piSweepCounter < 5
@@ -7940,7 +8182,7 @@ messages:
          if Send(who,@ReqNewHold,#what=oMoney)
          {
             Send(who,@NewHold,#what=oMoney);
-            Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
+            Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=Send(oMoney,@GetNumber));
          }
       }
       

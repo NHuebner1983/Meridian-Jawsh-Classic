@@ -444,7 +444,7 @@ messages:
          }
       }
 
-      Debug("Enchantment timer went off with no enchantment",timer);
+      //Debug("Enchantment timer went off with no enchantment",timer);
 
       return;
    }
@@ -466,7 +466,7 @@ messages:
          }
       }
 
-      Debug("Enchantment timer went off with no enchantment",timer);
+      //Debug("Enchantment timer went off with no enchantment",timer);
 
       return;
    }
@@ -680,6 +680,11 @@ messages:
    {
       local iRow, iCol, iWhatRow, iWhatCol, iRow_diff, iCol_diff, iHeight_diff,
             iResult, iQflags, iRflags, iHeightF, iHeightFWD, iHeightC, iServerID;
+
+      if poOwner = $
+      {
+         return MAX_INT;
+      }
 
       // Scale to fine
       iRow = piRow * FINENESS + piFine_row;

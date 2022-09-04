@@ -1207,11 +1207,6 @@ properties:
    // Player is building a campfire to pbCamped = TRUE next.
    pbCamping = FALSE
 
-   // Player's store (Marketplace)
-   poStore = $
-   plStoreLocation = $
-   ptMoveStoreTimer = $
-
 messages:
 
    Constructor()
@@ -1292,123 +1287,15 @@ messages:
       return;
    }
 
-   GetStore()
-   {
-      return poStore;
-   }
-
-   SetStore(oStore=$)
-   {
-      poStore = oStore;
-
-      return;
-   }
-
-   SaveStoreLocation()
-   {
-      local iRoomNum;
-
-      if poStore = $
-      {
-         return FALSE;
-      }
-
-      iRoomNum = Send(Send(self,@GetOwner),@GetRoomNum);
-
-      // [Room ID, [row,col,finerow,finecol]]
-      plStoreLocation = [iRoomNum, Send(self,@GetPos)];
-
-      return TRUE;
-   }
-
-   ResetStoreLocation(change=FALSE)
-   {
-      local lPos;
-      
-      if poStore <> $ AND plStoreLocation <> $ AND IsList(plStoreLocation)
-      {
-         lPos = Nth(plStoreLocation, 2);
-
-         //Debug("plStoreLocation", plStoreLocation);
-         //Debug("plStoreLocation", First(plStoreLocation));
-         //Debug("plStoreLocation", Nth(plStoreLocation, 2));
-         //Debug("plStoreLocation", Nth(lPos, 1));
-         //Debug("plStoreLocation", Nth(lPos, 2));
-         //Debug("plStoreLocation", Nth(lPos, 3));
-         //Debug("plStoreLocation", Nth(lPos, 4));
-
-         if NOT change
-         {
-            // Place the store at its original position.
-            Send(Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)),@NewHold,#what=poStore,
-               #new_row=Nth(lPos, 1),
-               #new_col=Nth(lPos, 2),
-               #fine_row=Nth(lPos, 3),
-               #fine_col=Nth(lPos, 4));
-               //Debug("RESET STORE IN",Send(Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)), @GetName), Nth(lPos,1), Nth(lPos,2), Nth(lPos,3), Nth(lPos,4));
-         }
-         else
-         {
-            // Place the store at the player's position.
-            lPos = Send(self, @GetPos);
-
-            if Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)) = Send(self,@GetOwner)
-            {
-               // Store is in the same room, teleport it to the player's position.
-               Send(SYS,@UtilGoNearSquare,#what=poStore,#where=Send(self,@GetOwner),
-                     #new_row=Nth(lPos, 1),
-                     #new_col=Nth(lPos, 2),
-                     #fine_row=Nth(lPos, 3),
-                     #fine_col=Nth(lPos, 4),
-                     #max_distance=1000);
-            }
-            else
-            {
-               // Store needs to be moved to a new room.
-               Send(Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)),@LeaveHold,#what=poStore);
-               ptMoveStoreTimer = CreateTimer(self, @MoveStore, 500);
-            }
-            
-            //Debug("MOVED STORE TO",Send(Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)), @GetName), Nth(lPos,1), Nth(lPos,2), Nth(lPos,3), Nth(lPos,4));
-            
-            // Save the store's new location
-            Send(self, @SaveStoreLocation);
-         }
-
-         return TRUE;
-      }
-
-      return FALSE;
-   }
-
-   MoveStore()
-   {
-      local lPos;
-
-      lPos = Nth(plStoreLocation, 2);
-
-      Send(poOwner,@NewHold,#what=poStore,
-         #new_row=Nth(lPos, 1),
-         #new_col=Nth(lPos, 2),
-         #fine_row=Nth(lPos, 3),
-         #fine_col=Nth(lPos, 4));
-
-      //Debug("Did new store show up?");
-
-      ptMoveStoreTimer = $;
-      
-      return;
-   }
-
-   GetStoreLocation()
-   {
-      return plStoreLocation;
-   }
-
-   MarketplaceList(what=$,quantity=1,unit_price=1000)
+   MarketplaceList(what=$,quantity=1,unit_platinum=0,unit_shillings=500)
    "List an item on the marketplace"
    {
-      return Send(poStore,@ListOnMarketplace,#what=what,#quantity=quantity,#unit_price=unit_price);
+      return Send(Send(SYS,@GetMarketplaceObject),@ListOnMarketplace,
+         #object_owner=self,
+         #what=what,
+         #quantity=quantity,
+         #unit_platinum=unit_platinum,
+         #unit_shillings=unit_shillings);
    }
 
    MarketplaceUnList(what=$,quantity=1)
@@ -2785,44 +2672,73 @@ messages:
    GetInventoryObjectByClass(class=$)
    {
       local oObj;
-	  
-	  if class = $
-	  {
-	     return $;
-	  }
-	  
-	  if plActive <> $ AND Length(plActive)
-	  {
-	     foreach oObj in plActive
-		 {
-		    if IsClass(oObj, class)
-			{
-			   return oObj;
-			}
-		 }
-	  }
-	  
-	  if plPassive <> $ AND Length(plPassive)
-	  {
-	     foreach oObj in plPassive
-		 {
-		    if IsClass(oObj, class)
-			{
-			   return oObj;
-			}
-		 }
-	  }
+      
+      if class = $
+      {
+         return $;
+      }
+      
+      if plActive <> $ AND Length(plActive)
+      {
+         foreach oObj in plActive
+         {
+            if IsClass(oObj, class)
+            {
+               return oObj;
+            }
+         }
+      }
+      
+      if plPassive <> $ AND Length(plPassive)
+      {
+         foreach oObj in plPassive
+         {
+            if IsClass(oObj, class)
+            {
+               return oObj;
+            }
+         }
+      }
 
-	  return $;
+      return $;
    }
    
+   GetInventory()
+   {
+      local oObj, lInventory;
+
+      lInventory = [];
+      
+      if plActive <> $ AND Length(plActive)
+      {
+         foreach oObj in plActive
+         {
+            lInventory = AppendListElem(oObj, lInventory);
+         }
+      }
+      
+      if plPassive <> $ AND Length(plPassive)
+      {
+         foreach oObj in plPassive
+         {
+            lInventory = AppendListElem(oObj, lInventory);
+         }
+      }
+
+      if Length(lInventory) = 0
+      {
+         lInventory = $;
+      }
+
+      return lInventory;
+   }   
    // Prepare the logged on NPC Player.
    // One more check is performed just in case someone accidentally calls this.
    // Because it wipes out skills/spells and does a lot of WEIRD stuff to the player.
    // Normal players would really be mad if you used this on them.
    SetupRoamingNPCPlayer()
    {
-      local oObj, bHasTotem;
+      local oObj, bHasTotem, oMoney;
       
       Send(Send(SYS,@GetLore),@ExcludePlayer,#who=self);
 
@@ -2907,8 +2823,9 @@ messages:
       // If there are items already, do not add anything.
       if (plActive = $ OR Length(plActive) <= 0) AND (plPassive = $ OR Length(plPassive) <= 0)
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=35000));
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=35000);
+         oMoney = Create(&Shilling,#number=35000);
+         Send(self,@NewHold,#what=oMoney);
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=35000);
          Send(self,@AddReagentsForSpells,#iNumCasts=3);
       }
       
@@ -3632,7 +3549,7 @@ messages:
    AddDefaultObjects()
    "Add the objects a player is given when creating a character in newbie zone"
    {
-      local iInfo, oSpell, lReagents, lItems, cReagent, iNumber;
+      local iInfo, oSpell, lReagents, lItems, cReagent, iNumber, oMoney;
 
       // Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
@@ -3641,15 +3558,17 @@ messages:
       Send(self,@NewHold,#what=Create(&Gauntlet));
       Send(self,@NewHold,#what=Create(&LeatherArmor));
       Send(self,@NewHold,#what=Create(&MetalShield));
-      Send(self,@NewHold,#what=Create(&Money,#number=500));
-      Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
+      oMoney = Create(&Shilling,#number=500);
+      Send(self,@NewHold,#what=oMoney);
+      Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=500);
       Send(self,@AddReagentsForSpells,#iNumCasts=5);
 
       // If player hasn't suicided in last 5 hours, give them cash and prizes!
-      if (GetTime() - piLast_restart_time) > (5*60*60)   
+      if (GetTime() - piLast_restart_time) > (5*60*60)
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=50000));
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=50000);
+         oMoney = Create(&Shilling,#number=50000);
+         Send(self,@NewHold,#what=oMoney);
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=50000);
          Send(self,@AddReagentsForSpells,#iNumCasts=10);
       }
 
@@ -3675,14 +3594,15 @@ messages:
    AddRealWorldObjects()
    "Add the objects a player is given when character leaves the newbie zone."
    {
-      local lItems,oItem,iSchool;
+      local lItems,oItem,iSchool,oMoney;
 
       // If player hasn't suicided in last 5 hours,
       // give them cash and fancy clothes!
       if (GetTime() - piLast_restart_time) > (5*60*60)
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=1000));
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=1000);
+         oMoney = Create(&Shilling,#number=1000);
+         Send(self,@NewHold,#what=oMoney);
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=1000);
          Send(self,@NewHold,#what=create(&InkyCap,#number=5));
          Send(self,@NewHold,#what=Create(&PantsC));
          Send(self,@NewHold,#what=Create(&Shirt,#color=XLAT_TO_GRAY));
@@ -4036,7 +3956,7 @@ messages:
          }
       }
 
-      Debug("Enchantment timer went off with no enchantment",timer);
+      //Debug("Enchantment timer went off with no enchantment",timer);
 
       return;
    }
@@ -4079,7 +3999,7 @@ messages:
          }
       }
 
-      Debug("Enchantment timer went off with no enchantment",timer);
+      //Debug("Enchantment timer went off with no enchantment",timer);
 
       return;
    }
@@ -7462,9 +7382,262 @@ messages:
       return;
    }
 
-   GetMoneyObject()
+   GetShillingObject()
    {
-      return GetListElemByClass(plPassive,&Money);
+      return GetListElemByClass(plPassive,&Shilling);
+   }
+
+   GetPlatinumObject()
+   {
+      return GetListElemByClass(plPassive,&Platinum);
+   }
+
+   CanAfford(cost_shillings=0, cost_platinum=0, quantity=1)
+   "Checks shillings and platinum to see if you can cover the cost of the purchase."
+   {
+      local oShilling, oPlatinum, iShillings, iPlatinum;
+
+      iShillings = 0;
+      iPlatinum = 0;
+
+      oShilling = Send(self,@GetShillingObject);
+      oPlatinum = Send(self,@GetPlatinumObject);
+
+      //Debug("Can Afford Check", cost_shillings, cost_platinum, quantity);
+
+      if cost_shillings >= SHILLINGS_PER_PLATINUM
+      {
+         //Debug("Converting shillings to platinum", cost_shillings);
+         cost_platinum = cost_platinum + Send(SYS, @ShillingsToPlatinum, #number=cost_shillings);
+         //Debug("Converted shillings to platinum", cost_platinum);
+         cost_shillings = Send(SYS, @ShillingsRemaining, #number=cost_shillings);
+         //Debug("Converted shillings to platinum (remain)", cost_shillings);
+      }
+
+      if oShilling <> $
+      {
+         iShillings = Send(oShilling,@GetNumber);
+         //Debug("Player has",iShillings,"shillings");
+      }
+
+      if oPlatinum <> $
+      {
+         iPlatinum = Send(oPlatinum,@GetNumber);
+         //Debug("Player has",iPlatinum,"platinum");
+      }
+
+      if quantity <> $ AND quantity > 1
+      {
+         // Calculate if we can afford a stack.
+         cost_shillings = cost_shillings * quantity;
+         cost_platinum = (cost_platinum * quantity) + Send(SYS, @ShillingsToPlatinum, #number=cost_shillings);
+         cost_shillings = Send(SYS, @ShillingsRemaining, #number=cost_shillings);
+      }
+
+      //Debug("CanAfford",cost_shillings,cost_platinum,"from",iShillings,"shills",iPlatinum,"plat");
+
+      if cost_platinum > 0 AND cost_platinum < iPlatinum
+         OR (cost_platinum = iPlatinum AND cost_shillings <= iShillings)
+         OR (cost_platinum = 0 AND iPlatinum > 0)
+      {
+         // We can afford this item.
+         //Debug("Player can afford it.");
+         return TRUE;
+      }
+
+      //Debug("Player could not afford it.");
+
+      // We cannot afford this item.
+      return FALSE;
+   }
+
+   AddShillings(amount=1)
+   {
+      local oShilling;
+
+      oShilling = Send(self,@GetShillingObject);
+
+      if oShilling = $
+      {
+         // Create a shilling
+         oShilling = Create(&Shilling, #number=amount);
+         Send(self,@NewHold,#what=oShilling);
+      }
+      else
+      {
+         // Add to existing shillings.
+         Send(oShilling, @AddNumber, #number=amount);
+      }
+
+      Send(oShilling,@NewNumber);
+
+      if Send(oShilling,@GetNumber) = 0
+      {
+         // Remove a zero shilling.
+         Send(oShilling,@Delete);
+
+         return $;
+      }
+
+      return oShilling;
+   }
+
+   AddPlatinum(amount=1)
+   {
+      local oPlatinum;
+
+      oPlatinum = Send(self,@GetPlatinumObject);
+
+      if oPlatinum = $
+      {
+         // Create a platinum
+         oPlatinum = Create(&Platinum, #number=amount);
+         Send(self,@NewHold,#what=oPlatinum);
+      }
+      else
+      {
+         // Add to existing platinum.
+         Send(oPlatinum, @AddNumber, #number=amount);
+      }
+
+      return oPlatinum;
+   }
+
+   Pay(amount_shillings=0, amount_platinum=0, quantity=1)
+   "Takes shillings and platinum from a player inventory."
+   "And yeh this needs to be refactored probably."
+   {
+      local oShilling, oPlatinum, iShillings, iPlatinum, iSetShillings, iSetPlatinum, lBroken;
+
+      iShillings = 0;
+      iPlatinum = 0;
+      iSetShillings = 0;
+      iSetPlatinum = 0;
+      lBroken = $;
+
+      oShilling = Send(self,@GetShillingObject);
+      oPlatinum = Send(self,@GetPlatinumObject);
+
+      if oShilling <> $
+      {
+         // Original value
+         iSetShillings = Send(oShilling, @GetNumber);
+      }
+
+      if oPlatinum <> $
+      {
+         // Original value
+         iSetPlatinum = Send(oPlatinum, @GetNumber);
+      }
+
+      //Debug("Paying for goods", amount_shillings, amount_platinum, quantity);
+
+      if quantity = $ OR quantity <= 0
+      {
+         quantity = 1;
+      }
+
+      if oShilling <> $
+      {
+         iShillings = Send(oShilling,@GetNumber);
+      }
+
+      if oPlatinum <> $
+      {
+         iPlatinum = Send(oPlatinum,@GetNumber);
+      }
+
+      if amount_shillings >= SHILLINGS_PER_PLATINUM
+      {
+         //Debug("Converted", amount_shillings, "to platinum");
+         //Debug("Plat converting", amount_platinum);
+         amount_platinum = amount_platinum + Send(SYS, @ShillingsToPlatinum, #number=amount_shillings);
+         //Debug("Plat converted", amount_platinum);
+         amount_shillings = Send(SYS, @ShillingsRemaining, #number=amount_shillings);
+         //Debug("Remaining shills", amount_shillings);
+      }
+
+      if amount_platinum > 0
+      {
+         iSetPlatinum = iSetPlatinum - (amount_platinum * quantity);
+      }
+
+      if amount_shillings > 0
+      {
+         iSetShillings = iSetShillings - (amount_shillings * quantity);
+      }
+
+      if iSetShillings < 0
+      {
+         //Debug("Shillings went negative, breaking a platinum",iSetShillings);
+         // If our shillings went negative, it means we need to break a platinum.
+         lBroken = Send(self,@BreakPlatinumFromNegativeShillings,#amount_shillings=iSetShillings);
+         iSetShillings = Nth(lBroken, 1);
+         iSetPlatinum = iSetPlatinum - Nth(lBroken, 2);
+         //Debug("Shillings went negative, breaking a platinum",iSetShillings,iSetPlatinum);
+      }
+
+      if iSetPlatinum < 0
+      {
+         // How did we go negative on platinum?
+         // Looks like a bug.
+         iSetPlatinum = 0;
+         //Debug("Platinum went negative somehow",iSetPlatinum);
+      }
+
+      //Debug("Pay",iSetPlatinum,"newplat",iSetShillings,"new shills");
+      //Debug("Calc",amount_shillings,"(sh)",amount_platinum,"(p)",iSetShillings,"(ish)",iSetPlatinum,"(ip)");
+
+      if iSetPlatinum > 0
+      {
+         //Debug("New platinum is set to",iSetPlatinum);
+         Send(oPlatinum,@SetNumber,#number=iSetPlatinum);
+      }
+
+      if iSetShillings > 0
+      {
+         //Debug("New shillings is set to",iSetShillings);
+
+         if oShilling = $
+         {
+            // Create a shilling
+            oShilling = Send(self,@AddShillings,#amount=iSetShillings);
+         } else {
+            // Update the existing shilling
+            Send(oShilling,@SetNumber,#number=iSetShillings);
+         }
+      }
+
+      if iSetPlatinum = 0 AND oPlatinum <> $
+      {
+         //Debug("iSetPlatinum is zero, removing it from inventory");
+         Send(oPlatinum, @Delete);
+      }
+
+      if iSetShillings = 0 AND oShilling <> $
+      {
+         //Debug("iSetShillings is zero, removing it from inventory");
+         Send(oShilling, @Delete);
+      }
+
+      return;
+   }
+
+   BreakPlatinumFromNegativeShillings(amount_shillings=1)
+   "Takes a negative amount of shillings and breaks it down until it is positive. The result is [shillings, platinum]."
+   {
+      local iShillings, iPlatinum;
+
+      iShillings = amount_shillings;
+      iPlatinum = 0;
+
+      while iShillings < 0
+      {
+         iShillings = iShillings + SHILLINGS_PER_PLATINUM;
+         iPlatinum = iPlatinum + 1;
+      }
+
+      return [iShillings, iPlatinum];
    }
 
    // Returns wielded Melee/Ranged weapon.
@@ -10174,23 +10347,17 @@ messages:
       return;
    }
 
-   TryGainBaseMaxHealth()
+   TryGainBaseMaxHealth(report=TRUE, gainTP=TRUE)
    "Handles the roll for tougher based on the player's gain chance plus "
-   "the iLevel parameter.  Returns TRUE if the player gaints a hit point, "
+   "the iLevel parameter.  Returns TRUE if the player gains a hit point, "
    "FALSE otherwise.  The iLevel parameter has the player's base max HP "
    "taken from it, then divided by 5 before being bound between 1 and 10."
    {
       local bGainHP, iMaxHealth, oShrunken, iStamina;
 
-      if piFlags & PFLAG_PHASED
-      {
-         // You can't gain health while phased.
-         return FALSE;
-      }
-
       bGainHP = FALSE;
 
-      while (Send(self,@GetBaseMaxHealth) < (101 + Send(self,@GetStamina))
+      while (Send(self,@GetBaseMaxHealth) < (101 + (Send(self,@GetStamina)*2))
          AND Send(self,@GetXPRemainingForNextLevel) <= 0)
       {
          Send(self,@GainBaseMaxHealth,#amount=1);
@@ -10209,12 +10376,17 @@ messages:
 
          if pbLogged_on
          {
-            Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
-            Send(self,@WaveSendUser,#what=self,#wave_rsc=player_tougher_wav_rsc);
+            if report
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
+               Send(self,@WaveSendUser,#what=self,#wave_rsc=player_tougher_wav_rsc);
 
-            // Boost the player to max health, and give them 200 vigor.
-            Send(self,@MsgSendUser,#message_rsc=player_improve_health_invigorate);
+               // Boost the player to max health, and give them 200 vigor.
+               Send(self,@MsgSendUser,#message_rsc=player_improve_health_invigorate);
+            }
+
             piHealth = piMax_Health * 100;
+
             Send(self,@DrawHealth);
             Send(self,@EatSomething,#nutrition=200);
             Post(self,@DrawOffense);
@@ -10222,7 +10394,7 @@ messages:
 
             // Report to shrunken head, if they have one.
             oShrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-            if oShrunken <> $
+            if oShrunken <> $ AND report
             {
                Send(oShrunken,@Tougher,#hp=Send(self,@GetBaseMaxHealth));
             }
@@ -10238,10 +10410,10 @@ messages:
          // Awards the TP when the player hits max HP also (reward!).
          iStamina = Send(self,@GetStamina);
 
-         iMaxHealth = Send(self,@GetBaseMaxHealth);
+         iMaxHealth = Send(self,@GetBaseMaxHealth) * 2;
 
          if (iMaxHealth >= 100 + iStamina
-            OR iMaxHealth >= MAX_HP)
+            OR iMaxHealth >= MAX_HP) AND gainTP
          {
             Send(self,@AddTrainingPoints,#points=iMaxHealth * 3,#bCap=FALSE);
          }
@@ -10257,7 +10429,7 @@ messages:
       return piXP_total;
    }
 
-   AddXP(iAmount=0,report=TRUE)
+   AddXP(iAmount=0, report=TRUE, gainTP=TRUE)
    "All code that adds or subtracts XP should go through this message. "
    "Handles resource display and toughers."
    {
@@ -10272,7 +10444,7 @@ messages:
       // TryGainBaseMaxHealth checks if player can be awarded a hit point.
       if (piXP_total >= iXPNeeded)
       {
-         Send(self,@TryGainBaseMaxHealth);
+         Send(self,@TryGainBaseMaxHealth, #report=report, #gainTP=gainTP);
       }
       else
       {
@@ -17004,6 +17176,86 @@ messages:
 	  }
 	  
 	  return $;
+   }
+
+   IsMaxHP()
+   "TRUE if you're at your Max HP, FALSE if you can still gain HP."
+   {
+      return piMax_Health >= (100 + piStamina);
+   }
+
+   GainMaxHP(force_max=FALSE)
+   "Iterates the player's experience by 25k until they reach their max HP, which is randomized 1 through Stamina."
+   "You must already be at your Max HP To use this function."
+   {
+      local i, iLoopProtect, iRandomized, iFaction, bSoldier, bAo3, bSoth;
+
+      if Send(self,@IsMaxHP)
+      {
+         // Let's remember their faction / soldier status
+         iFaction = Send(self,@GetFaction);
+         bAo3 = Send(self,@PossessesA,#class=&NecromancerAmulet);
+         bSoth = Send(self,@PossessesA,#class=&HunterSword);
+         bSoldier = Send(self,@PossessesA,#class=&SoldierShield);
+
+         piXP_total = 0;
+
+         Send(self, @AddXP, #iAmount=1, #report=FALSE, #gainTP=FALSE);
+
+         iLoopProtect = 0;
+
+         if force_max
+         {
+            // Take the player all the way to their max.
+            iRandomized = 100 + piStamina;
+         }
+         else
+         {
+            // Make it interesting.
+            iRandomized = Random(1, piStamina);
+         }
+
+         while piMax_Health < (100 + iRandomized)
+         {
+            iLoopProtect = iLoopProtect + 1;
+
+            if iLoopProtect > 150
+            {
+               break;
+            }
+
+            Send(self, @AddXP, #iAmount=25000, #report=FALSE, #gainTP=FALSE);
+         }
+
+         if iFaction <> FACTION_NEUTRAL AND Send(self,@GetFaction) <> iFaction
+         {
+            // Put the player back in the faction
+            Send(self,@ResetFaction, #faction=iFaction);
+         }
+
+         if bAo3 AND NOT Send(self,@PossessesA,#class=&NecromancerAmulet)
+         {
+            // Put the AO3 back on the player
+            Send(self,@NewHold,#what=Create(&NecromancerAmulet));
+         }
+
+         if bSoth AND NOT Send(self,@PossessesA,#class=&HunterSword)
+         {
+            // Put the soth back on the player
+            Send(self,@NewHold,#what=Create(&HunterSword));
+         }
+
+         if bSoldier AND NOT Send(self,@PossessesA,#class=&SoldierShield)
+         {
+            // Put the soldier shield back on the player
+            Send(self,@NewHold,#what=Create(Send(SYS,@FactionToShield,#iFaction=iFaction)));
+         }
+
+         // Draw new XP bar
+         Post(self,@DrawXP);
+      }
+
+      return;
    }
 
 end

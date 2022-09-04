@@ -394,6 +394,9 @@ properties:
    poHolder1 = $ // Temporary holders used in offers
    poHolder2 = $
 
+   // This object should be created once and never recreated.
+   poHolderMarketplace = $
+
    piHour = 0
    piDay = 0
    piYear = 0
@@ -417,9 +420,6 @@ properties:
    poRentableRoomMaintenance = $
    poSurvivalRoomMaintenance = $
 
-   // plStores is only used when rooms are recreated.
-	plStores = $
-
    // Singleton object that keeps track of various game statistics
    poStatistics = $
 
@@ -441,6 +441,7 @@ properties:
    phXPTable
 
    poMoney = $
+   poPlatinum = $
 
    piMaintenance_delay = GUILD_MAINTENANCE_DELAY
 
@@ -536,13 +537,140 @@ properties:
    // Used for testing game time.
    ptTestTimer = $
 
+   // Migration timer
+   ptMigrationTimer = $
+
    plAttackTypes = $
    plSpellTypes = $
+
+   // Global marketplace
+   poMarketplace = $
+
 messages:
 
    GetName()
    {
       return system_name_rsc;
+   }
+
+   GetMarketplaceObject()
+   {
+      if poMarketplace = $
+      {
+         Send(self,@CreateMarketplace);
+      }
+
+      return poMarketplace;
+   }
+
+   CreateMarketplace()
+   {
+      if poMarketplace = $
+      {
+         if poHolderMarketplace = $
+         {
+            poHolderMarketplace = Create(&Holder);
+         }
+
+         poMarketplace = Create(&Store);
+      }
+
+      return poMarketplace;
+   }
+   
+   MigrateShillingsToPlatinum()
+   "SHILLINGS TO PLATINUM MIGRATION - This should only be run one time, but is protected."
+   {
+      local i, oBank, oShilling;
+
+      Debug("---SHILLINGS-TO-PLATINUM--- ATTEMPT");
+      if Send(SETTINGS_OBJECT, @GetShillingsToPlatinumMigrated)
+      {
+         // Operation is already complete.
+         Debug("---SHILLINGS-TO-PLATINUM--- PROTECTED");
+         return FALSE;
+      }
+
+      Debug("---SHILLINGS-TO-PLATINUM--- PROCESSING");
+
+      // Note: Server 420 combined banks.
+      // If you uncombine banks, you will need to run this on KOC bank.
+      // If you started this server for the first time, you do not need to run this.
+      // Just run this command:  Send(SETTINGS_OBJECT, @SetShillingsToPlatinumMigrated);
+      // And the migration will be skipped.
+      oBank = Send(SYS,@FindBankByNum,#num=BID_TOS);
+      
+      Debug("----------------------------------");
+      Debug("Total users found",Length(plUsers));
+      Debug("----------------------------------");
+
+      foreach i in plUsers
+      {
+         Debug("Processing",Send(i,@GetName));
+         // Go through each user's bank and divide their total amount by SHILLINGS_PER_PLATINUM
+         Send(oBank,@MigrateShillingsToPlatinum,#who=i);
+
+         // Go through each user's inventory and perform Send(i,@ConvertInventoryMoney)
+         Send(i,@ConvertInventoryMoney, #deep_scan=TRUE);
+
+         // Delete any leftover artifacts that have zero number.
+         Send(i,@DeleteZeroObjectFromInventory,#class=&Shilling);
+         Send(i,@DeleteZeroObjectFromInventory,#class=&Platinum);
+      }
+
+      // Migration is complete.
+      // Everyone is now using platinum instead of shillings for banking.
+      Send(SETTINGS_OBJECT, @SetShillingsToPlatinumMigrated);
+
+      Debug("---SHILLINGS-TO-PLATINUM--- PERFORMED SUCCESSFULLY");
+
+      // Migration timer ends.
+      ptMigrationTimer = $;
+
+      return;
+   }
+
+   ShillingsToPlatinum(number=1)
+   "Converts shillings to platinum (by calculation only) - Does not physically convert objects."
+   {
+      if number <> $ AND number > 0 AND number >= SHILLINGS_PER_PLATINUM
+      {
+         return number / SHILLINGS_PER_PLATINUM;
+      }
+
+      if number = $
+      {
+         number = 0;
+      }
+
+      return 0;
+   }
+
+   ShillingsRemaining(number=1)
+   "Remaining shillings after converting to platinum. Should return 0 through 999"
+   {
+      local iRemainder;
+
+      iRemainder = 0;
+
+      if number <> $ AND number > 0
+      {
+         iRemainder = number;
+
+         if number >= SHILLINGS_PER_PLATINUM
+         {
+            iRemainder = number - (Send(self,@ShillingsToPlatinum,#number=number) * SHILLINGS_PER_PLATINUM);
+         }
+      }
+
+      return iRemainder;
+   }
+
+   PlatinumToShillings(number=1)
+   "Takes the number of platinum and converts it to shillings."
+   "WARNINGS: Caps at MAX_KOD_INT"
+   {
+      return number * SHILLINGS_PER_PLATINUM;
    }
 
    Constructor()
@@ -598,7 +726,8 @@ messages:
       poHolder1 = Create(&Holder);
       poHolder2 = Create(&Holder);
 
-      poMoney = Create(&Money,#number=1);
+      poMoney = Create(&Shilling,#number=1);
+      poPlatinum = Create(&Platinum,#number=1);
       poTotem = Create(&Totem);
       poTotemOne = Create(&TotemOne);
       poTotemTwo = Create(&TotemTwo);
@@ -741,6 +870,18 @@ messages:
       // bug we've since fixed.
       //Send(self,@CreateAllSpellsIfNew);
       //Send(self,@CreateAllRoomsIfNew);
+
+      // ----420 Update to circumvent MAX_KOD_INT-----
+      // Migrate Shillings to Platinum
+      // If you are starting your server for the first time, this is harmless to run.
+      // Your system will run on platinum instead of shillings for banking moving forward.
+      // Shillings are still a calculative currency, but are not the final banking storage 
+      // currency due to number limitations.
+      if NOT Send(SETTINGS_OBJECT, @GetShillingsToPlatinumMigrated)
+      {
+         // Start migrating accounts in 1 second.
+         ptMigrationTimer = CreateTimer(self, @MigrateShillingsToPlatinum, 1000);
+      }
 
       if lSavedFlagStates <> $
       {
@@ -1718,6 +1859,16 @@ messages:
       return poHolder2;
    }
 
+   GetMarketplaceHolder()
+   {
+      if poHolderMarketplace = $
+      {
+         poHolderMarketplace = Create(&Holder);
+      }
+
+      return poHolderMarketplace;
+   }
+
    GetUsersLoggedOn()
    {
       return plUsers_logged_on;
@@ -1780,6 +1931,37 @@ messages:
          {
             return i;
          }
+      }
+
+      return $;
+   }
+
+   FactionToShield(iFaction = FACTION_NEUTRAL)
+   "Converts a faction to the soldier shield class."
+   {
+      switch (iFaction)
+      {
+         case FACTION_NEUTRAL:
+            return $;
+         break;
+         case FACTION_DUKE:
+            return &DukeShield;
+         break;
+         case FACTION_PRINCESS:
+            return &PrincessShield;
+         break;
+         case FACTION_REBEL:
+            return &RebelShield;
+         break;
+         case FACTION_HOLY:
+            return &HolyShield;
+         break;
+         case FACTION_NECROMANCER:
+            return &NecromancerShield;
+         break;
+         case FACTION_KOC:
+            return &KocShield;
+         break;
       }
 
       return $;
@@ -4634,6 +4816,11 @@ messages:
       return poMoney;
    }
 
+   GetSystemPlatinumObject()
+   {
+      return poPlatinum;
+   }
+
    GetLibrary()
    {
       return poLibrary;
@@ -4916,9 +5103,13 @@ messages:
 
    FixMoney(amount = 50000, bAreYouSure = 0)
    {
+      // We no longer need to fix money. We fixed this with platinum.
+      return;
+
       if (bAreYouSure = 701583)
       {
-         Send(&Money,@FixMoney,#amount=amount);
+         Send(&Shilling,@FixMoney,#amount=amount);
+         Send(&Platinum,@FixMoney,#amount=amount);
       }
 
       return;
@@ -5509,7 +5700,7 @@ messages:
       plMonsterTemplates = cons(create(&Servant),plMonsterTemplates);
       
       // Stores (Marketplace)
-      plMonsterTemplates = cons(create(&Store),plMonsterTemplates);
+      plMonsterTemplates = cons(Send(self,@GetMarketplaceObject),plMonsterTemplates);
 
       return;
    }
@@ -5597,7 +5788,8 @@ messages:
       plItemTemplates = cons(create(&ScrollSplitter),plItemTemplates);
       plItemTemplates = cons(create(&ReagentBag),plItemTemplates);
 
-      plItemTemplates = cons(create(&Money),plItemTemplates);
+      plItemTemplates = cons(create(&Shilling),plItemTemplates);
+      plItemTemplates = cons(create(&Platinum),plItemTemplates);
       plItemTemplates = cons(create(&StatsResetToken,#temporary=FALSE),
                               plItemTemplates);
 
@@ -5758,6 +5950,8 @@ messages:
       plItemTemplates = cons(create(&ResistAcidPotion),plItemTemplates);
       plItemTemplates = cons(create(&FreeActionPotion),plItemTemplates);
       plItemTemplates = cons(create(&MinorHealPotion),plItemTemplates);
+
+      plItemTemplates = cons(create(&ForgetPotionExperience),plItemTemplates);
 
       plItemTemplates = cons(create(&Arsenic),plItemTemplates);
       plItemTemplates = cons(create(&Flask),plItemTemplates);
@@ -5934,51 +6128,11 @@ messages:
       return;
    }
 
-   AddStoreToList(oStore=$)
-   "Adds Store objects or box objects to list of Stores and boxes."
-   {
-      local iRoom, iRow, iCol, iFineRow, iFineCol;
-
-      if oStore <> $
-      {
-         if IsClass(Send(oStore,@GetOwner), &Player) AND Send(Send(oStore,@GetOwner), @IsLoggedOn)
-         {
-            Send(Send(oStore,@GetOwner),@SaveStoreLocation);
-         }
-         
-         plStores = Cons(oStore,plStores);
-
-         return TRUE;
-      }
-
-      return FALSE;
-   }
-
    RecreateStores()
    "When recreateall takes place, all stores should reappear in their original location."
    {
       Send(&Store, @Recreate);
-
-      return;
-   }
-
-   RemoveStoreFromList(oStore=$)
-   {
-      local i;
-
-      if oStore = $ OR plStores = $ OR NOT IsList(plStores)
-      {
-         return FALSE;
-      }
-
-      foreach i in plStores
-      {
-         if i = oStore
-         {
-            plStores = DelListElem(plStores,i);
-         }
-      }
-
+      
       return;
    }
 
@@ -5990,7 +6144,8 @@ messages:
    RecreateMoneyTemplates()
    {
       plMoneyTemplates = $;
-      plMoneyTemplates = Cons(create(&Money),plMoneyTemplates);
+      plMoneyTemplates = Cons(create(&Shilling),plMoneyTemplates);
+      plMoneyTemplates = Cons(create(&Platinum),plMoneyTemplates);
 
       return;
    }

@@ -68,6 +68,10 @@ messages:
 
       Send(self,@NewHold,#what=Create(&Chest,#receivesDonations=TRUE),#new_row=13,#new_col=11);
 
+      // Show a Marketplace sign in JASP AH jashall.roo
+      Send(self,@NewHold,#what=Create(&Store),
+           #new_row=13,#new_col=3,#fine_row=25,#fine_col=2,#new_angle=ANGLE_EAST);
+           
       propagate;
    }
 

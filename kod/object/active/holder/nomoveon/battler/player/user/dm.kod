@@ -880,8 +880,6 @@ messages:
          return;
       }
 
-      oMonster = Send(self,@DMSayMakeMonster,#string="giant daemon skeleton");
-      Send(oMonster, @Killed, #what=self);
       oMonster = Send(self,@DMSayMakeMonster,#string="ghost");
       Send(oMonster, @Killed, #what=self);
       oMonster = Send(self,@DMSayMakeMonster,#string="ogre");
@@ -889,6 +887,8 @@ messages:
       oMonster = Send(self,@DMSayMakeMonster,#string="minotaur");
       Send(oMonster, @Killed, #what=self);
       oMonster = Send(self,@DMSayMakeMonster,#string="yeti");
+      Send(oMonster, @Killed, #what=self);
+      oMonster = Send(self,@DMSayMakeMonster,#string="mimic");
       Send(oMonster, @Killed, #what=self);
 
       ptGenerateMonstersAndDieTimer = CreateTimer(self, @GenerateMonstersAndDie, 100);
@@ -944,6 +944,17 @@ messages:
                {
                   if Send(oObj, @CanIdentify) OR NOT StringEqual("special %s", Send(oObject, @GetName))
                   {
+                     if IsClass(oObj, &Hammer) 
+                        OR IsClass(oObj, &MetalShield) 
+                        OR IsClass(oObj, &LongSword) 
+                        OR IsClass(oObj, &Mace) 
+                        OR IsClass(oObj, &ShortSword)
+                        OR IsClass(oObj, &Axe)
+                     {
+                        // Let's just ignore this garbage.
+                        continue;  
+                     }
+
                      // Put the "odd" item in our inventory
                      Send(self,@NewHold,#what=oObj);
 
@@ -1864,7 +1875,7 @@ messages:
       {
          if StringEqual(string,dm_get_money_command)
          {
-            Send(self,@NewHold,#what=Create(&Money,#number=500000));
+            Send(self,@NewHold,#what=Create(&Shilling,#number=10000000));
 
             return;
          }

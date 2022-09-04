@@ -44,8 +44,33 @@ properties:
 
 messages:
 
-    GetValue()
+    Constructor()
+    "Store contracts are no longer used for global marketplace."
     {
+        // We can turn back on personal stores, but it's annoying to see signs everywhere from individuals.
+        // We now have one sign everyone can use, it should be good enough.
+        Send(self, @Delete);
+
+        return;
+    }
+
+    GetValue(type=$)
+    {
+        if type = $
+        {
+            type = &Shilling;
+        }
+
+        if type = &Shilling
+        {
+            return 10;
+        }
+
+        if type = &Platinum
+        {
+            return 0;
+        }
+        
         // Can't really tell the value of an item in a box.
         return 10;
     }
@@ -60,7 +85,7 @@ messages:
         local oRoom, oStore, bNewStore;
 
         oRoom = Send(poOwner,@GetOwner);
-        oStore = Send(poOwner,@GetStore);
+        //oStore = Send(poOwner,@GetStore);
 
         bNewStore = FALSE;
 
@@ -71,38 +96,38 @@ messages:
             return;
         }
 
-        if (oStore = $)
-        {
-            bNewStore = TRUE;
+        // if (oStore = $)
+        // {
+        //     bNewStore = TRUE;
 
-            oStore = Create(&Store,#oStoreOwner=poOwner);
-            Send(oStore,@SetStoreOwner,#who=who);
+        //     oStore = Create(&Store,#oStoreOwner=poOwner);
+        //     Send(oStore,@SetStoreOwner,#who=who);
 
-            // poMaster set in Reflection's Constructor, but not added as a minion.
-            Send(oStore,@SetStoreOwner,#oStoreOwner=poOwner,#bContracted=bContracted);
-            Send(poOwner,@SetStore,#oStore=oStore);
-            Send(oRoom,@NewHold,#what=oStore,#new_row=Send(poOwner,@GetRow),
-                #new_col=Send(poOwner,@GetCol),#fine_row=Send(poOwner,@GetFineRow),
-                #fine_col=Send(poOwner,@GetFineCol));
+        //     // poMaster set in Reflection's Constructor, but not added as a minion.
+        //     Send(oStore,@SetStoreOwner,#oStoreOwner=poOwner,#bContracted=bContracted);
+        //     Send(poOwner,@SetStore,#oStore=oStore);
+        //     Send(oRoom,@NewHold,#what=oStore,#new_row=Send(poOwner,@GetRow),
+        //         #new_col=Send(poOwner,@GetCol),#fine_row=Send(poOwner,@GetFineRow),
+        //         #fine_col=Send(poOwner,@GetFineCol));
             
-            // Save the store location
-            Send(poOwner, @SaveStoreLocation);
-        }
+        //     // Save the store location
+        //     Send(poOwner, @SaveStoreLocation);
+        // }
 
-        if NOT bNewStore AND pbAllowMovingStore
-        {
-            // Move the store to our current position
-            Send(poOwner, @ResetStoreLocation, #change=TRUE);
-            Send(poOwner,@MsgSendUser,#message_rsc=Store_scroll_moved_store,
-                #parm1=Send(oStore,@GetRoomName),
-                #parm2=Send(oRoom,@GetName));
-        }
-        else if NOT bNewStore AND NOT pbAllowMovingStore
-        {
-            // We are not allowed to move our store, just tell the user where it is.
-            Send(poOwner,@MsgSendUser,#message_rsc=Store_scroll_store_already_open,
-                #parm1=Send(oStore,@GetRoomName));
-        }
+        // if NOT bNewStore AND pbAllowMovingStore
+        // {
+        //     // Move the store to our current position
+        //     Send(poOwner, @ResetStoreLocation, #change=TRUE);
+        //     Send(poOwner,@MsgSendUser,#message_rsc=Store_scroll_moved_store,
+        //         #parm1=Send(oStore,@GetRoomName),
+        //         #parm2=Send(oRoom,@GetName));
+        // }
+        // else if NOT bNewStore AND NOT pbAllowMovingStore
+        // {
+        //     // We are not allowed to move our store, just tell the user where it is.
+        //     Send(poOwner,@MsgSendUser,#message_rsc=Store_scroll_store_already_open,
+        //         #parm1=Send(oStore,@GetRoomName));
+        // }
 
         return;
     }

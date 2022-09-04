@@ -181,9 +181,17 @@ messages:
       }
 
       iMoney = 0;
+
       foreach i in item_list
       {
-         iMoney = iMoney + Send(i,@GetValue);
+         if IsClass(i, &Platinum)
+         {
+            iMoney = iMoney + (Send(i,@GetNumber) * SHILLINGS_PER_PLATINUM);
+         }
+         if IsClass(i, &Shilling)
+         {
+            iMoney = iMoney + Send(i,@GetNumber);
+         }
       }
 
       oRoomMaint = Send(SYS,@GetRentableRoomMaintenance);

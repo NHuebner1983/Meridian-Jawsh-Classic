@@ -107,20 +107,7 @@ messages:
          return FALSE;
       }
 
-      oMoney = Send(who,@GetMoneyObject);
-
-      if oMoney = $
-      {
-         // No cash.
-         iCash = 0;
-      }
-      else
-      {
-         iCash = Send(oMoney,@GetValue);
-      }
-
-      if iCash < iFee
-         AND iFee <> 0
+      if iFee <> 0 AND NOT Send(who,@CanAfford,#cost_shillings=iFee)
       {
          Send(who,@MsgSendUser,#message_rsc=conveyance_not_enough_cash,
                #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
@@ -136,7 +123,7 @@ messages:
 
          if iFee > 0
          {
-            Send(oMoney,@SubtractNumber,#number=iFee);
+            Send(who,@Pay,#amount_shillings=iFee);
          }
       }
       else

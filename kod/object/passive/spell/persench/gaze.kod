@@ -33,7 +33,7 @@ resources:
    paralyze_off_rsc = "Your eyes return to normal."
    paralyze_already_enchanted_rsc = \
       "You already have the gaze of the basilisk."
-   paralyze_caster = "%s%s meets your gaze and freezes in place."
+   paralyze_caster = "%s%s meets your gaze and freezes in place for %i ms."
    paralyze_target_on = \
       "As you meet %s%s's terrible gaze you feel your limbs stiffen "
       "and freeze."
@@ -114,7 +114,12 @@ messages:
       if what <> $
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
-         iDuration = Bound(Bound(state, 1, 10000) * Random(20,45),1300,4500);
+         iDuration = Random(1300, 2000);
+
+         if IsClass(what, &Monster)
+         {
+            iDuration = 4500;
+         }
 
          // TODO: Make chance to paralyze based on if caster is facing opponent?
 
@@ -143,7 +148,7 @@ messages:
             }
 
             Send(who,@MsgSendUser,#message_rsc=paralyze_caster,
-                  #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
+                  #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName),#parm3=iDuration);
 
             Send(oSpell,@DoSpell,#what=who,#oTarget=what,#iDuration=iDuration,
                   #report=FALSE);

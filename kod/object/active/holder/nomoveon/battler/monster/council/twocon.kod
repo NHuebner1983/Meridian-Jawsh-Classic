@@ -138,9 +138,8 @@ messages:
       local iMoney;
 
       piStateBump = 1;
-      iMoney = Send(who,@GetMoneyObject);
-      if iMoney <> $
-         AND (Send(iMoney,@GetValue) >= NUM_COINS_FOR_SPECIAL)
+      
+      if IsClass(who, &Player) AND Send(who,@CanAfford,#cost_shillings=NUM_COINS_FOR_SPECIAL)
       {
          piStateBump = 2;
 
