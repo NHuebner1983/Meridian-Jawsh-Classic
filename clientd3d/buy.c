@@ -54,14 +54,21 @@ static void DoAlignLists(void)
 {
    /* Ensure that cost list shows same index at top that item list does */
    int index1 = ListBox_GetTopIndex(info->hwndItemList);
-   int index2 = ListBox_GetTopIndex(info->hwndCostShillList);
-   int index3 = ListBox_GetTopIndex(info->hwndCostPlatList);
-   int index4 = ListBox_GetTopIndex(info->hwndQuanList);
-   if ((index1 != index2) || (index1 != index3) || (index1 != index4))
+   int index2 = ListBox_GetTopIndex(info->hwndQuanList);
+   int index3 = ListBox_GetTopIndex(info->hwndShillList);
+   int index4 = ListBox_GetTopIndex(info->hwndPlatList);
+   
+   if (index1 != index2)
    {
-      ListBox_SetTopIndex(info->hwndCostShillList, index1);
-      ListBox_SetTopIndex(info->hwndCostPlatList, index1);
-      ListBox_SetTopIndex(info->hwndQuanList, index1);
+       ListBox_SetTopIndex(info->hwndQuanList, index1);
+   }
+   if (index1 != index3)
+   {
+       ListBox_SetTopIndex(info->hwndShillList, index1);
+   }
+   if (index1 != index4)
+   {
+       ListBox_SetTopIndex(info->hwndPlatList, index1);
    }
 }
 
@@ -157,15 +164,15 @@ BOOL BuyInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
 
    // Draw objects in owner-drawn list box
    SetWindowLong(info->hwndItemList, GWL_USERDATA, OD_DRAWOBJ);
+   SetWindowLong(info->hwndQuanList, GWL_USERDATA, OD_DRAWOBJ);
    SetWindowLong(info->hwndShillList, GWL_USERDATA, OD_DRAWOBJ);
    SetWindowLong(info->hwndPlatList, GWL_USERDATA, OD_DRAWOBJ);
-   SetWindowLong(info->hwndQuanList, GWL_USERDATA, OD_DRAWOBJ);
 
    /* Add items & costs to list boxes */
    WindowBeginUpdate(info->hwndItemList);
+   WindowBeginUpdate(info->hwndQuanList);
    WindowBeginUpdate(info->hwndShillList);
    WindowBeginUpdate(info->hwndPlatList);
-   WindowBeginUpdate(info->hwndQuanList);
    for (l = info->items; l != NULL; l = l->next)
    {
       DWORD amount = 1;
@@ -182,6 +189,9 @@ BOOL BuyInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
       plat = buy_obj->plat;
       shill = buy_obj->shill;
 
+      ListBox_InsertString(info->hwndQuanList, index, " ");
+      ListBox_SetItemData(info->hwndQuanList, index, 0);
+
       sprintf(temp, "%d", shill);
       ListBox_InsertString(info->hwndShillList, index, temp);
       ListBox_SetItemData(info->hwndShillList, index, shill);
@@ -189,14 +199,11 @@ BOOL BuyInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
       sprintf(temp, "%d", plat);
       ListBox_InsertString(info->hwndPlatList, index, temp);
       ListBox_SetItemData(info->hwndPlatList, index, plat);
-
-      ListBox_InsertString(info->hwndQuanList, index, " ");
-      ListBox_SetItemData(info->hwndQuanList, index, 0);
    }
-   WindowEndUpdate(info->hwndShillList);
-   WindowEndUpdate(info->hwndPlatList);
    WindowEndUpdate(info->hwndItemList);
    WindowEndUpdate(info->hwndQuanList);
+   WindowEndUpdate(info->hwndShillList);
+   WindowEndUpdate(info->hwndPlatList);
 
    /* Set seller's name */
    Edit_SetText(GetDlgItem(hDlg, IDC_SELLER), 
@@ -286,6 +293,8 @@ static void HandleSelectionChange(void)
    object_node *obj = (object_node *) ListBox_GetItemData(info->hwndItemList, index);
 
    WindowBeginUpdate(info->hwndQuanList);
+   WindowBeginUpdate(info->hwndShillList);
+   WindowBeginUpdate(info->hwndPlatList);
    ListBox_DeleteString(info->hwndQuanList,index);
    if (ListBox_GetSel(info->hwndItemList,index))
    {
@@ -304,6 +313,8 @@ static void HandleSelectionChange(void)
    ListBox_InsertString(info->hwndQuanList,index,temp);
    ListBox_SetItemData(info->hwndQuanList,index,amount);
    WindowEndUpdate(info->hwndQuanList);
+   WindowEndUpdate(info->hwndShillList);
+   WindowEndUpdate(info->hwndPlatList);
    UpdateCost();
 }
 

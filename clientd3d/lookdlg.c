@@ -101,7 +101,7 @@ void LookListFreeContents(HWND hwndListBox)
  */
 BOOL CALLBACK LookDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 {
-   int index1,index2;
+   int index1,index2,index3,index4;
 
    switch (message)
    {
@@ -129,24 +129,24 @@ BOOL CALLBACK LookDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
       /* Ensure that cost list shows same index at top that item list does */
       index1 = ListBox_GetTopIndex(info->hwndListBox);
       index2 = ListBox_GetTopIndex(info->hwndQuanList);
+	  index3 = ListBox_GetTopIndex(info->hwndShillList);
+	  index4 = ListBox_GetTopIndex(info->hwndPlatList);
+
 	  if (index1 != index2)
       {
          ListBox_SetTopIndex(info->hwndQuanList, index1);
-      }
+	  }
 
-	  index1 = ListBox_GetTopIndex(info->hwndQuanList);
-	  index2 = ListBox_GetTopIndex(info->hwndShillList);
-	  if (index1 != index2)
+	  if (index1 != index3)
 	  {
 		  ListBox_SetTopIndex(info->hwndShillList, index1);
 	  }
 
-	  index1 = ListBox_GetTopIndex(info->hwndQuanList);
-	  index2 = ListBox_GetTopIndex(info->hwndPlatList);
-	  if (index1 != index2)
+	  if (index1 != index4)
 	  {
 		  ListBox_SetTopIndex(info->hwndPlatList, index1);
 	  }
+
 	  return TRUE;
 
    case WM_DESTROY:
@@ -340,10 +340,13 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	 obj = (object_node *) ListBox_GetItemData(info->hwndListBox, index);
 	 WindowBeginUpdate(info->hwndQuanList);
 	 ListBox_DeleteString(info->hwndQuanList,index);
+
 	 WindowBeginUpdate(info->hwndShillList);
 	 ListBox_DeleteString(info->hwndShillList, index);
+
 	 WindowBeginUpdate(info->hwndPlatList);
 	 ListBox_DeleteString(info->hwndPlatList, index);
+
 	 if (ListBox_GetSel(info->hwndListBox,index))
 	 {
 		 noamountplat = 1;
@@ -356,6 +359,7 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 		 else {
 			 amount = 1;
 		 }
+
 	    sprintf(temp, "%d", amount);
 		sprintf(tempplat, "%d", noamountplat);
 		sprintf(tempshills, "%d", noamountplat);
@@ -365,25 +369,33 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	    amount = 0;
 		noamountplat = 0;
 		noamountshill = 0;
+
 		strcpy(temp," ");
 		strcpy(tempplat, " ");
 		strcpy(tempshills, " ");
 	 }
 	 ListBox_InsertString(info->hwndQuanList,index,temp);
 	 ListBox_SetItemData(info->hwndQuanList,index,amount);
+
 	 ListBox_InsertString(info->hwndPlatList, index, tempplat);
 	 ListBox_SetItemData(info->hwndPlatList, index, noamountplat);
+
 	 ListBox_InsertString(info->hwndShillList, index, tempshills);
 	 ListBox_SetItemData(info->hwndShillList, index, noamountshill);
+
 	 ListBox_SetSel(info->hwndListBox,amount > 0,index);
+
 	 info->selected[index] = (amount > 0);
 	 obj->temp_amount = amount;
 	 obj->temp_listprice_shills = noamountshill;
 	 obj->temp_listprice_plat = noamountplat;
+
 	 ListBox_SetSel(info->hwndQuanList,FALSE,index);
 	 WindowEndUpdate(info->hwndQuanList);
+
 	 ListBox_SetSel(info->hwndShillList, FALSE, index);
 	 WindowEndUpdate(info->hwndShillList);
+
 	 ListBox_SetSel(info->hwndPlatList, FALSE, index);
 	 WindowEndUpdate(info->hwndPlatList);
 
@@ -483,8 +495,10 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	       }
 	       ListBox_InsertString(info->hwndQuanList,index,temp);
 	       ListBox_SetItemData(info->hwndQuanList,index,amount);
+
 		   ListBox_InsertString(info->hwndPlatList, index, temp);
 		   ListBox_SetItemData(info->hwndPlatList, index, amount);
+
 		   ListBox_InsertString(info->hwndShillList, index, temp);
 		   ListBox_SetItemData(info->hwndShillList, index, amount);
 		}
@@ -493,13 +507,15 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	 info->selected[index] = (amount > 0);
 	 obj->temp_amount = amount;
 	 ListBox_SetCurSel(info->hwndQuanList,-1);
-      }
+	 ListBox_SetCurSel(info->hwndPlatList, -1);
+	 ListBox_SetCurSel(info->hwndShillList, -1);
+	  }
       break;
 
    case IDC_PRICE_SHILL_LIST:
 	   if (codeNotify == LBN_SELCHANGE)
 	   {
-		   index = (int)ListBox_GetCurSel(info->hwndShillList);
+		   index = (int)ListBox_GetCurSel(info->hwndListBox);
 
 		   if (!ListBox_GetSel(info->hwndListBox, index))
 		   {
@@ -548,14 +564,17 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 		   if (obj->temp_listprice_plat == 0 && obj->temp_listprice_shills == 0)
 		   {
 			   ListBox_DeleteString(info->hwndQuanList, index);
-			   ListBox_DeleteString(info->hwndPlatList, index);
-			   ListBox_DeleteString(info->hwndShillList, index);
 			   ListBox_InsertString(info->hwndQuanList, index, " ");
 			   ListBox_SetItemData(info->hwndQuanList, index, 0);
+
+			   ListBox_DeleteString(info->hwndPlatList, index);
 			   ListBox_InsertString(info->hwndPlatList, index, " ");
 			   ListBox_SetItemData(info->hwndPlatList, index, 0);
+
+			   ListBox_DeleteString(info->hwndShillList, index);
 			   ListBox_InsertString(info->hwndShillList, index, " ");
 			   ListBox_SetItemData(info->hwndShillList, index, 0);
+
 			   ListBox_SetSel(info->hwndListBox, false, index);
 		   }
 		   else {
@@ -567,7 +586,7 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
    case IDC_PRICE_PLAT_LIST:
 	   if (codeNotify == LBN_SELCHANGE)
 	   {
-		   index = (int)ListBox_GetCurSel(info->hwndPlatList);
+		   index = (int)ListBox_GetCurSel(info->hwndListBox);
 
 		   if (!ListBox_GetSel(info->hwndListBox, index))
 		   {
@@ -618,12 +637,16 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 			   ListBox_DeleteString(info->hwndQuanList, index);
 			   ListBox_DeleteString(info->hwndPlatList, index);
 			   ListBox_DeleteString(info->hwndShillList, index);
+
 			   ListBox_InsertString(info->hwndQuanList, index, " ");
 			   ListBox_SetItemData(info->hwndQuanList, index, 0);
+
 			   ListBox_InsertString(info->hwndPlatList, index, " ");
 			   ListBox_SetItemData(info->hwndPlatList, index, 0);
+
 			   ListBox_InsertString(info->hwndShillList, index, " ");
 			   ListBox_SetItemData(info->hwndShillList, index, 0);
+
 			   ListBox_SetSel(info->hwndListBox, false, index);
 		   }
 		   else {
