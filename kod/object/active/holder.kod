@@ -433,18 +433,18 @@ messages:
                            AND Send(each_obj, @GetMarketplaceUnitPriceShillings) = marketplace_shillings)
                         {
                            // This marketplace item needs to be unique because its cost is different than the item.
-                           //Debug("Did not stack an item because marketplace unit prices did not match");
+                           Debug("Did not stack an item because marketplace unit prices did not match");
                            continue;
                         }
                         else
                         {
-                           //Debug("Stacking existing marketplace item, unit prices match", marketplace_platinum,marketplace_shillings);
+                           Debug("Stacking existing marketplace item, unit prices match", marketplace_platinum,marketplace_shillings);
                         }
                      }
                      else
                      {
                         // This marketplace item has a different owner, we shouldn't touch their stack.
-                        //Debug("Skipping item for stacking, it's not owned by the same store owner.");
+                        Debug("Skipping item for stacking, it's not owned by the same store owner.");
                         continue;
                      }
                   }
@@ -465,6 +465,8 @@ messages:
 
    NewHoldObject(what = $)
    {
+      //Debug("NewHoldObject", what, Send(what,@GetName));
+
       Send(self,@HolderAddNode,#node=what);
 
       return;

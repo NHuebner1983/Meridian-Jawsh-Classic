@@ -9,7 +9,7 @@ CnSer_forget_potion_sale = de \
    "Gut, ich erfreue mich, dass Du kommst um dir %s%s zu holen, damit du "
    "all den Krieger Gott Zauber Kram vergessen kannst."
 CnSer_forget_xp_potion_sale = de \
-   "So you think you know everything?"
+   "So you think you know everything? "
    "I will most gladly sell %s%s that strips all "
    "experience from your being. Be warned though, it is best not to move "
    "or attack anything 10 to 15 seconds before digesting or you may forget "

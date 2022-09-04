@@ -16,26 +16,27 @@ constants:
 
 resources:
 
-   Store_name_rsc = "Store Catalog"
+   Store_name_rsc = "Marketplace"
+   
    Store_icon_rsc = jbook.bgf
    Store_desc_rsc = \
-     "Welcome to %s's marketplace! \n\n"
+     "Welcome to the public marketplace! \n\n"
 	  "Feel free to browse the list of items to purchase. The "
 	  "item will immediatly be given to you and the owner will "
 	  "receive their payment. There are no refunds - all sales are final!"
 
    Store_mail_sender = "Marketplace"
    Store_mail = \
-      "Subject: %s bought %i of your %s\n"
-      "%s,\n\n"
-      "%s purchased %i of your %s from the marketplace.\n\n"
+      "Subject: %q bought %q of your %q\n"
+      "Hey %q,\n\n"
+      "%q purchased %q of your %q from the marketplace.\n\n"
       "Total earnings from sale:\n\n"
-      "%i platinum\n"
-      "%i shillings\n"
-      "\n"
-      "* Platinum is deposited to your bank account.\n"
-      "* Shillings are placed on your character.\n\n"
-      "- Marketplace"
+      "%q Platinum (deposited to your bank account)\n"
+      "%q Shillings (transferred to your character)\n\n"
+      "It was a pleasure doing business with you.\n\n"
+      " - Meridian 59 Marketplace"
+
+   Store_sold_message = "~B~y%s bought your %s for %i platinum and %i shillings.~k"
 
 classvars:
 
@@ -58,15 +59,16 @@ classvars:
 
 properties:
 
-   poStoreOwner = $
-
 messages:
 
     Recreate()
     {
-        if poStoreOwner <> $
+        if poOwner = $
         {
-            Send(poStoreOwner, @ResetStoreLocation);
+            // If we're not in a room, we don't need to exist.
+            Send(self,@Delete);
+
+            return;
         }
 
         return;
@@ -74,72 +76,107 @@ messages:
 
     GetRoomName()
     {
-        if poOwner <> $
-        {
-            return Send(poOwner, @GetName);
-        }
-
-        return Send(Send(poStoreOwner, @GetOwner), @GetName);
-    }
-
-    ShowDesc()
-    {
-        AddPacket(4,vrDesc,4,send(poStoreOwner,@GetTrueName));
-
-        return;
+        return Send(poOwner, @GetName);
     }
 
     SetForSale()
+    "Let's get everything available for sale and sort it by name and lowest price."
     {
-        local i, oJunk, lForSale;
+        local i, oJunk, lForSale, oHolder, lHolding;
 
         lForSale = $;
 
-        Send(self,@NewHold,#what=oJunk);
+        plFor_sale = [lForSale,$,$];
 
-        plFor_sale = [ lForSale,$,$ ];
+        oHolder = Send(SYS,@GetMarketplaceHolder);
 
-        return;
-    }
-
-    Someonesaid(what = $,type = $,string = $)
-    {
-        if type = SAY_NORMAL
+        foreach lHolding in [ Send(oHolder,@GetHolderActive),
+                            Send(oHolder,@GetHolderPassive) ]
         {
-            if StringEqual(string,"close-store")
-                AND what <> $
-                AND IsClass(what,&User)
-                AND what = poStoreOwner 
+            foreach i in lHolding
             {
-                Post(self,@Delete);
-                Send(poStoreOwner,@SetStore,#ostore=$);
+                //Debug("Holding", Send(i,@GetName));
+
+                if NOT IsClass(i, &Item)
+                {
+                    //Debug("Skipped non item");
+                    continue;
+                }
+
+                if NOT IsClass(i,&NumberItem)
+                {
+                    // If this is a spell item, then stop the go bad timer.
+                    if IsClass(i,&SpellItem)
+                    {
+                        Send(i,@StopGoBadTimer);
+                    }
+                }
+
+                if NOT FindListElem(lForSale, i)
+                {
+                    lForSale = Cons(i,lForSale);
+                    //Debug("Adding for sale",Send(i,@GetName));
+                }
+                else
+                {
+                    //Debug("Already listed",i,Send(i,@GetName),"for sale");
+                }
             }
         }
-        
+
+        // Set the items for sale
+        SetNth(plFor_Sale,1,lForSale);
+
+        Send(self,@SortForSale);
+
+        return plFor_sale;
+    }
+
+    SortForSale()
+    {
+        local lForSaleShillings, lForSalePlatinum, i, lForSale, lSortOrder, lPriceSort, lFinalForSale;
+
+        if First(plFor_sale) = $ OR Length(First(plFor_sale)) <= 0
+        {
+            //Debug(Nth(plFor_sale, 1),"empty");
+            return;
+        }
+
+        lForSale = [];
+        lFinalForSale = [];
+
+        foreach i in First(plFor_sale)
+        {
+            lPriceSort = (Bound((Send(i, @GetMarketplaceUnitPricePlatinum) + 1) * 1000, 1000, MAX_KOD_INT)) + (Bound(Send(i, @GetMarketplaceUnitPriceShillings) + 100, 100, 999));
+
+            lForSale = Send(SYS,@AddToSortedList,#what=i,
+                                    #lList=lForSale,#number=lPriceSort,
+                                    #bIgnoreDuplicate=TRUE, #bReverse=TRUE);
+        }
+
+        foreach i in lForSale
+        {
+            lFinalForSale = Cons(First(i), lFinalForSale);
+        }
+
+        SetNth(plFor_Sale,1,lFinalForSale);
+
         return;
     }
 
     CanAcceptOffer(who=$)
     {
-        return (who = poStoreOwner) OR IsClass(who,&DM);
+        return TRUE;
     }
 
     ReqOffer(what = $)
     {
-        if (what = poStoreOwner) OR IsClass(what,&DM)
-        {
-            return TRUE;
-        }
-
-        return FALSE;
+        return TRUE;
     }
 
     Offer(what = $)
     {
-        if (what = poStoreOwner) OR IsClass(what,&DM)
-        {
-            Send(what,@CounterOffer,#item_list=$);
-        }
+        Send(what,@CounterOffer,#item_list=$);
 
         return;
     }
@@ -156,7 +193,14 @@ messages:
         return Send(what, @CanListOnMarketplace);
     }
 
-    ListOnMarketplace(what=$, quantity=1, unit_platinum=1, unit_shillings=500)
+    GetForSale()
+    {
+        Send(self,@SetForSale);
+       
+        propagate;
+    }
+
+    ListOnMarketplace(object_owner = $, what=$, quantity=1, unit_platinum=1, unit_shillings=500)
     "Lists an item for sale and removes it from the player's inventory"
     {
         local i, j, oHolder, lTake_items, bHadSomeNum, lForSale, oNewItem, oNewHoldObj;
@@ -183,16 +227,16 @@ messages:
             what = Create(GetClass(what),#number=quantity);
         }
 
-        //Debug(Send(what,@GetName),poStoreOwner,quantity,unit_platinum,unit_shillings);
+        //Debug(Send(what,@GetName),quantity,unit_platinum,unit_shillings);
 
         lForSale = First(plFor_Sale);
         
         // Holder where our marketplace items will be stored
-        oHolder = Send(SYS,@GetSystemHolder2);
+        oHolder = Send(SYS,@GetMarketplaceHolder);
         
         // Set the item's properties as listed on marketplace
         Send(what,@ListOnMarketplace,
-            #who=poStoreOwner,
+            #who=object_owner,
             #quantity=quantity,
             #unit_platinum=unit_platinum,
             #unit_shillings=unit_shillings);
@@ -204,53 +248,30 @@ messages:
             #what=what,
             #stack_number_items=FALSE,
             #stack_marketplace=TRUE,
-            #marketplace_owner=poStoreOwner,
+            #marketplace_owner=object_owner,
             #marketplace_platinum=unit_platinum,
             #marketplace_shillings=unit_shillings);
 
-        if oNewHoldObj <> $
+        if oNewHoldObj <> $ AND what <> oNewHoldObj
         {
+            // Remove the marketplace properties from the item we marked as listed.
+            // Because it's either a copy, deleted or still in our inventory.
+            Send(what,@RemoveFromMarketplace);
+
             what = oNewHoldObj;
+
+            // It looks like our marketplace item is completely different.
+            // Mark the new item as listed on the marketplace.
+            Send(what,@ListOnMarketplace,
+                #who=object_owner,
+                #quantity=quantity,
+                #unit_platinum=unit_platinum,
+                #unit_shillings=unit_shillings);
         }
 
-        foreach lTake_items in [ Send(oHolder,@GetHolderActive),
-                            Send(oHolder,@GetHolderPassive) ]
-        {
-            foreach i in lTake_items
-            {
-                //Debug("lTake_items", Send(i,@GetName),i,Send(i,@GetNumber));
-                
-                if NOT IsClass(i, &Item) OR NOT (Send(i,@GetMarketplaceOwner) = poStoreOwner)
-                {
-                    continue;
-                }
+        Debug("Marketplace Listing by",Send(object_owner,@GetName),Send(what,@GetName),what,quantity,unit_platinum,unit_shillings);
 
-                if IsClass(i,&NumberItem)
-                {
-                    bHadSomeNum = FALSE;
-                }
-                else
-                {
-                    // If this is a spell item, then stop the go bad timer.
-                    if IsClass(i,&SpellItem)
-                    {
-                        Send(i,@StopGoBadTimer);
-                    }
-                }
-
-                if NOT FindListElem(lForSale, i)
-                {
-                    lForSale = Cons(i,lForSale);
-                    //Debug("Sellable Found",Send(i, @GetName),Send(Send(i,@GetMarketplaceOwner),@GetName),Send(i,@GetValue));
-                }
-            }
-        }
-
-        // Set the items for sale
-        SetNth(plFor_Sale,1,lForSale);
-
-        //Debug("plFor_sale", plFor_sale);
-        //Debug("lForSale", lForSale);
+        Send(self,@SetForSale);
 
         return TRUE;
     }
@@ -272,18 +293,6 @@ messages:
         return;
     }
 
-    SetStoreOwner(oStoreOwner=$)
-    {
-        poStoreOwner = oStoreOwner;
-
-        return;
-    }
-
-    GetStoreOwner()
-    {
-        return poStoreOwner;
-    }
-
     Delete()
     "Upon deleting a store, we need to make sure all of the items go back to the seller"
     "or if that's not an issue, we'll see."
@@ -298,11 +307,6 @@ messages:
     "Notifies the store owner of a purchase. Sends them an in-game message if they're online and mails them."
     {
         local rMail;
-
-        if store_owner = $
-        {
-            store_owner = poStoreOwner;
-        }
 
         if store_owner = $
         {
@@ -350,16 +354,27 @@ messages:
             #dest_list=[store_owner],
             #nest_list=[
                 4,Store_mail, 
-                4,Send(buyer,@GetName),                        // subject (buyer name)
-                4,Send(SYS,@IntToString,#num=quantity),        // subject (quantity)
-                4,Send(what,@GetName),                         // subject (item name)
-                4,Send(store_owner,@GetName),                  // greeting (store owner name)
-                4,Send(buyer,@GetName),                        // body (buyer name)
-                4,Send(SYS,@IntToString,#num=quantity),        // body (quantity)
-                4,Send(what,@GetName),                         // body (item name)
-                4,Send(SYS,@IntToString,#num=amount_platinum), // body (platinum earnings)
-                4,Send(SYS,@IntToString,#num=amount_shillings) // body (shilling earnings)
+                6,Send(buyer,@GetName),                        // subject (buyer name)
+                6,Send(SYS,@IntToString,#num=quantity),        // subject (quantity)
+                6,Send(what,@GetName),                         // subject (item name)
+                6,Send(store_owner,@GetName),                  // greeting (store owner name)
+                6,Send(buyer,@GetName),                        // body (buyer name)
+                6,Send(SYS,@IntToString,#num=quantity),        // body (quantity)
+                6,Send(what,@GetName),                         // body (item name)
+                6,Send(SYS,@IntToString,#num=amount_platinum), // body (platinum earnings)
+                6,Send(SYS,@IntToString,#num=amount_shillings) // body (shilling earnings)
             ]);
+        
+        if Send(store_owner,@IsLoggedOn)
+        {
+            // Send a tell to the store owner
+            Send(store_owner,@MsgSendUser,
+                #message_rsc=Store_sold_message,
+                #parm1=Send(buyer,@GetName),
+                #parm2=Send(what, @GetName),
+                #parm3=amount_platinum,
+                #parm4=amount_shillings);
+        }
 
         return TRUE;
     }

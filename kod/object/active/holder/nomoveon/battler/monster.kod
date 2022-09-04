@@ -269,8 +269,6 @@ resources:
    monster_faction_heretic = "Cult of the Three"
    monster_faction_undead = "Minions of Death"
 
-   shop_sold_offer = "~B~y%s bought your %s for %i platinum and %i shillings.~k"
-
 classvars:
 
    vrKocName = monster_koc_name
@@ -540,9 +538,6 @@ properties:
    viCurrentState = STATE_WAIT
 
    ptFollowTimer = $
-
-   // Store owner
-   poStoreOwner = $
 
 messages:
 
@@ -5069,7 +5064,7 @@ messages:
    "This is used for both teachers and sellers"
    {
       local i, j, bFound, oBuy, lNumbers, iAmount, oItemAtt, iCan_hold, oSplit, index, iDepositPlatinum, iDepositShillings,
-            bFree, iPriceShillings, iPricePlatinum, bCanAfford, iCostShillings, iCostPlatinum, bIsMarketplace;
+            bFree, iPriceShillings, iPricePlatinum, bCanAfford, iCostShillings, iCostPlatinum, bIsMarketplace, oStoreOwner;
 
       //Debug("Buy()",Send(what,@GetName),"from",Send(self,@GetName));
 
@@ -5111,6 +5106,8 @@ messages:
 
       foreach i in item_list
       {
+         iAmount = 1;
+
          index = index + 1;
 
          bFree = FALSE;
@@ -5198,10 +5195,16 @@ messages:
             }
          }
 
+         if NOT IsClass(i, &NumberItem)
+         {
+            // Why did we have to do this.
+            iAmount = 1;
+         }
+
          // Can we afford this single item (or X quantity)?
          bCanAfford = (bFree OR Send(what,@CanAfford,#cost_shillings=iPriceShillings,#cost_platinum=iPricePlatinum,#quantity=iAmount));
 
-         //Debug("Can afford?",iPriceShillings,iPricePlatinum,iAmount,"??",bCanAfford);
+         //Debug("Can afford?",Send(i,@GetName),i,iPriceShillings,"shil",iPricePlatinum,"plat",iAmount,"amount",bCanAfford,"afford?");
 
          if NOT bFree AND NOT bCanAfford
          {
@@ -5284,6 +5287,14 @@ messages:
                   }
                }
 
+               oStoreOwner = $;
+
+               if Send(i,@IsListedOnMarketplace)
+               {
+                  // Get the item's marketplace owner
+                  oStoreOwner = Send(i,@GetMarketplaceOwner);
+               }
+
                // Add item to buyer's inventory
                Send(what,@NewHold,#what=oBuy);
                
@@ -5298,7 +5309,7 @@ messages:
                      #class=GetClass(i)));
 
                // Notify seller of transaction
-               if bIsMarketplace AND NOT bFree AND Send(self,@GetStoreOwner) <> $
+               if bIsMarketplace AND NOT bFree AND oStoreOwner <> $
                {
                   // Deposit platinum to marketplace owner's bank
                   iDepositPlatinum = iPricePlatinum * iAmount;
@@ -5306,14 +5317,22 @@ messages:
                   iDepositPlatinum = iDepositPlatinum + Send(SYS,@ShillingsToPlatinum,#number=iDepositShillings);
                   iDepositShillings = Send(SYS,@ShillingsRemaining,#number=iDepositShillings);
 
-                  Send(Send(SYS,@FindBankByNum,#num=BID_TOS), @DepositAccount, #what=Send(self,@GetStoreOwner), #amount=iDepositPlatinum);
+                  // Deposit platinum to bank account
+                  Send(Send(SYS,@FindBankByNum,#num=BID_TOS), @DepositAccount, #what=oStoreOwner, #amount=iDepositPlatinum);
 
                   // Send remaining shillings to the store owner's character
-                  Send(Send(self,@GetStoreOwner), @AddShillings, #amount=iDepositShillings);
+                  Send(oStoreOwner, @AddShillings, #amount=iDepositShillings);
 
                   if iPricePlatinum > 0 OR iPriceShillings > 0
                   {
-                     Send(Send(self,@GetStoreOwner),@MsgSendUser,#message_rsc=shop_sold_offer,#parm1=Send(what,@GetName),#parm2=Send(oBuy, @GetName),#parm3=iDepositPlatinum,#parm4=iDepositShillings);
+                     // Send notification to store owner (mail + tell (if online))
+                     Send(self,@NotifyItemPurchased,
+                        #what=i,
+                        #buyer=what, 
+                        #store_owner=oStoreOwner,
+                        #quantity=iAmount, 
+                        #amount_platinum=iDepositPlatinum,
+                        #amount_shillings=iDepositShillings);
                   }
                }
 
@@ -5329,6 +5348,14 @@ messages:
             }
             else
             {
+               oStoreOwner = $;
+
+               if Send(i,@IsListedOnMarketplace)
+               {
+                  // Get the item's marketplace owner
+                  oStoreOwner = Send(i,@GetMarketplaceOwner);
+               }
+
                // Check if this is a number item we're buying too much of.
                if IsClass(oBuy,&NumberItem)
                   AND Send(what,@GetNumberCanHold,#what=oBuy) > 0
@@ -5369,7 +5396,7 @@ messages:
                         }
 
                         // Marketplace notify owner of sale (partial stack)
-                        if NOT bFree AND bIsMarketplace AND Send(self,@GetStoreOwner) <> $
+                        if NOT bFree AND bIsMarketplace AND oStoreOwner <> $
                         {
                            // Deposit platinum to marketplace owner's bank
                            iDepositPlatinum = iPricePlatinum * iAmount;
@@ -5377,14 +5404,22 @@ messages:
                            iDepositPlatinum = iDepositPlatinum + Send(SYS,@ShillingsToPlatinum,#number=iDepositShillings);
                            iDepositShillings = Send(SYS,@ShillingsRemaining,#number=iDepositShillings);
 
-                           Send(Send(SYS,@FindBankByNum,#num=BID_TOS), @DepositAccount, #what=Send(self,@GetStoreOwner), #amount=iDepositPlatinum);
+                           // Deposit platinum to bank
+                           Send(Send(SYS,@FindBankByNum,#num=BID_TOS), @DepositAccount, #what=oStoreOwner, #amount=iDepositPlatinum);
 
                            // Send remaining shillings to the store owner's character
-                           Send(Send(self,@GetStoreOwner), @AddShillings, #amount=iDepositShillings);
+                           Send(oStoreOwner, @AddShillings, #amount=iDepositShillings);
 
                            if iPricePlatinum > 0 OR iPriceShillings > 0
                            {
-                              Send(Send(self,@GetStoreOwner),@MsgSendUser,#message_rsc=shop_sold_offer,#parm1=Send(what,@GetName),#parm2=Send(oBuy, @GetName),#parm3=iDepositPlatinum,#parm4=iDepositShillings);
+                              // Send notification to store owner (mail + tell (if online))
+                              Send(self,@NotifyItemPurchased,
+                                 #what=i,
+                                 #buyer=what, 
+                                 #store_owner=oStoreOwner,
+                                 #quantity=iAmount, 
+                                 #amount_platinum=iDepositPlatinum,
+                                 #amount_shillings=iDepositShillings);
                            }
                         }
 

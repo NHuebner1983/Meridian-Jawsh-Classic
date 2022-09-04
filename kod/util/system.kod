@@ -394,6 +394,9 @@ properties:
    poHolder1 = $ // Temporary holders used in offers
    poHolder2 = $
 
+   // This object should be created once and never recreated.
+   poHolderMarketplace = $
+
    piHour = 0
    piDay = 0
    piYear = 0
@@ -416,9 +419,6 @@ properties:
    poNodeAttack = $
    poRentableRoomMaintenance = $
    poSurvivalRoomMaintenance = $
-
-   // plStores is only used when rooms are recreated.
-	plStores = $
 
    // Singleton object that keeps track of various game statistics
    poStatistics = $
@@ -543,11 +543,39 @@ properties:
    plAttackTypes = $
    plSpellTypes = $
 
+   // Global marketplace
+   poMarketplace = $
+
 messages:
 
    GetName()
    {
       return system_name_rsc;
+   }
+
+   GetMarketplaceObject()
+   {
+      if poMarketplace = $
+      {
+         Send(self,@CreateMarketplace);
+      }
+
+      return poMarketplace;
+   }
+
+   CreateMarketplace()
+   {
+      if poMarketplace = $
+      {
+         if poHolderMarketplace = $
+         {
+            poHolderMarketplace = Create(&Holder);
+         }
+
+         poMarketplace = Create(&Store);
+      }
+
+      return poMarketplace;
    }
    
    MigrateShillingsToPlatinum()
@@ -1829,6 +1857,16 @@ messages:
    GetSystemHolder2()
    {
       return poHolder2;
+   }
+
+   GetMarketplaceHolder()
+   {
+      if poHolderMarketplace = $
+      {
+         poHolderMarketplace = Create(&Holder);
+      }
+
+      return poHolderMarketplace;
    }
 
    GetUsersLoggedOn()
@@ -5662,7 +5700,7 @@ messages:
       plMonsterTemplates = cons(create(&Servant),plMonsterTemplates);
       
       // Stores (Marketplace)
-      plMonsterTemplates = cons(create(&Store),plMonsterTemplates);
+      plMonsterTemplates = cons(Send(self,@GetMarketplaceObject),plMonsterTemplates);
 
       return;
    }
@@ -6090,51 +6128,11 @@ messages:
       return;
    }
 
-   AddStoreToList(oStore=$)
-   "Adds Store objects or box objects to list of Stores and boxes."
-   {
-      local iRoom, iRow, iCol, iFineRow, iFineCol;
-
-      if oStore <> $
-      {
-         if IsClass(Send(oStore,@GetOwner), &Player) AND Send(Send(oStore,@GetOwner), @IsLoggedOn)
-         {
-            Send(Send(oStore,@GetOwner),@SaveStoreLocation);
-         }
-         
-         plStores = Cons(oStore,plStores);
-
-         return TRUE;
-      }
-
-      return FALSE;
-   }
-
    RecreateStores()
    "When recreateall takes place, all stores should reappear in their original location."
    {
       Send(&Store, @Recreate);
-
-      return;
-   }
-
-   RemoveStoreFromList(oStore=$)
-   {
-      local i;
-
-      if oStore = $ OR plStores = $ OR NOT IsList(plStores)
-      {
-         return FALSE;
-      }
-
-      foreach i in plStores
-      {
-         if i = oStore
-         {
-            plStores = DelListElem(plStores,i);
-         }
-      }
-
+      
       return;
    }
 

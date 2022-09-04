@@ -1207,11 +1207,6 @@ properties:
    // Player is building a campfire to pbCamped = TRUE next.
    pbCamping = FALSE
 
-   // Player's store (Marketplace)
-   poStore = $
-   plStoreLocation = $
-   ptMoveStoreTimer = $
-
 messages:
 
    Constructor()
@@ -1292,123 +1287,11 @@ messages:
       return;
    }
 
-   GetStore()
-   {
-      return poStore;
-   }
-
-   SetStore(oStore=$)
-   {
-      poStore = oStore;
-
-      return;
-   }
-
-   SaveStoreLocation()
-   {
-      local iRoomNum;
-
-      if poStore = $
-      {
-         return FALSE;
-      }
-
-      iRoomNum = Send(Send(self,@GetOwner),@GetRoomNum);
-
-      // [Room ID, [row,col,finerow,finecol]]
-      plStoreLocation = [iRoomNum, Send(self,@GetPos)];
-
-      return TRUE;
-   }
-
-   ResetStoreLocation(change=FALSE)
-   {
-      local lPos;
-      
-      if poStore <> $ AND plStoreLocation <> $ AND IsList(plStoreLocation)
-      {
-         lPos = Nth(plStoreLocation, 2);
-
-         //Debug("plStoreLocation", plStoreLocation);
-         //Debug("plStoreLocation", First(plStoreLocation));
-         //Debug("plStoreLocation", Nth(plStoreLocation, 2));
-         //Debug("plStoreLocation", Nth(lPos, 1));
-         //Debug("plStoreLocation", Nth(lPos, 2));
-         //Debug("plStoreLocation", Nth(lPos, 3));
-         //Debug("plStoreLocation", Nth(lPos, 4));
-
-         if NOT change
-         {
-            // Place the store at its original position.
-            Send(Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)),@NewHold,#what=poStore,
-               #new_row=Nth(lPos, 1),
-               #new_col=Nth(lPos, 2),
-               #fine_row=Nth(lPos, 3),
-               #fine_col=Nth(lPos, 4));
-               //Debug("RESET STORE IN",Send(Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)), @GetName), Nth(lPos,1), Nth(lPos,2), Nth(lPos,3), Nth(lPos,4));
-         }
-         else
-         {
-            // Place the store at the player's position.
-            lPos = Send(self, @GetPos);
-
-            if Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)) = Send(self,@GetOwner)
-            {
-               // Store is in the same room, teleport it to the player's position.
-               Send(SYS,@UtilGoNearSquare,#what=poStore,#where=Send(self,@GetOwner),
-                     #new_row=Nth(lPos, 1),
-                     #new_col=Nth(lPos, 2),
-                     #fine_row=Nth(lPos, 3),
-                     #fine_col=Nth(lPos, 4),
-                     #max_distance=1000);
-            }
-            else
-            {
-               // Store needs to be moved to a new room.
-               Send(Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)),@LeaveHold,#what=poStore);
-               ptMoveStoreTimer = CreateTimer(self, @MoveStore, 500);
-            }
-            
-            //Debug("MOVED STORE TO",Send(Send(SYS,@FindRoomByNum,#num=First(plStoreLocation)), @GetName), Nth(lPos,1), Nth(lPos,2), Nth(lPos,3), Nth(lPos,4));
-            
-            // Save the store's new location
-            Send(self, @SaveStoreLocation);
-         }
-
-         return TRUE;
-      }
-
-      return FALSE;
-   }
-
-   MoveStore()
-   {
-      local lPos;
-
-      lPos = Nth(plStoreLocation, 2);
-
-      Send(poOwner,@NewHold,#what=poStore,
-         #new_row=Nth(lPos, 1),
-         #new_col=Nth(lPos, 2),
-         #fine_row=Nth(lPos, 3),
-         #fine_col=Nth(lPos, 4));
-
-      //Debug("Did new store show up?");
-
-      ptMoveStoreTimer = $;
-      
-      return;
-   }
-
-   GetStoreLocation()
-   {
-      return plStoreLocation;
-   }
-
    MarketplaceList(what=$,quantity=1,unit_platinum=0,unit_shillings=500)
    "List an item on the marketplace"
    {
-      return Send(poStore,@ListOnMarketplace,
+      return Send(Send(SYS,@GetMarketplaceObject),@ListOnMarketplace,
+         #object_owner=self,
          #what=what,
          #quantity=quantity,
          #unit_platinum=unit_platinum,
@@ -7587,6 +7470,14 @@ messages:
       }
 
       Send(oShilling,@NewNumber);
+
+      if Send(oShilling,@GetNumber) = 0
+      {
+         // Remove a zero shilling.
+         Send(oShilling,@Delete);
+
+         return $;
+      }
 
       return oShilling;
    }

@@ -7617,6 +7617,9 @@ messages:
 
       lSaleItems = $;
       lSaleItems = Send(what,@GetForSale,#who=self);
+
+      //Debug("GetForSale",lSaleItems);
+
       if lSaleItems = $
       {
          return;
@@ -7631,6 +7634,7 @@ messages:
       {
          foreach i in lSaleItems
          {
+            //Debug(Send(i,@GetName),"is for sale (vault)");
             Send(self,@ToCliObject,#what=i);
             iShillings = Send(what,@GetVaultRetrievalFee,#type=&Shilling,#what=i,#who=self);
             iPlatinum = Send(what,@GetVaultRetrievalFee,#type=&Platinum,#what=i,#who=self);
@@ -7646,6 +7650,7 @@ messages:
       {
          foreach i in lSaleItems
          {
+            //Debug(Send(i,@GetName),"is for sale (normal sale)");
             Send(self,@ToCliObject,#what=i);
             iShillings = Send(what,@GetPrice,#type=&Shilling,#what=i,#who=self);
             iPlatinum = Send(what,@GetPrice,#type=&Platinum,#what=i,#who=self);
@@ -7748,7 +7753,7 @@ messages:
          //Debug("UserBuyItems (quantity list)",i);
          if i < 1
          {
-            Debug("Bad buy quantity", i, "from user", self);
+            //Debug("Bad buy quantity", i, "from user", self);
             return;
          }
       }
@@ -8172,7 +8177,7 @@ messages:
             if GetClass(l) = class AND IsClass(l, &NumberItem) AND Send(l, @GetNumber) = 0
             {
                Send(l,@Delete);
-               Debug("Deleting zero object",Send(l,@GetName),"from",Send(self,@GetName));
+               //Debug("Deleting zero object",Send(l,@GetName),"from",Send(self,@GetName));
             }
          }
       }
