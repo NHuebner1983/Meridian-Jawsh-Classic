@@ -4953,10 +4953,6 @@ messages:
       }
 
       oMoney = Send(who,@GetPlatinumObject);
-      if oMoney = $
-      {
-         Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-               #string=Lm_bnkr_not_enough_deposit,#parm1=0);
 
       if IsClass(oRoom,&DeathRealm)
       {
@@ -4981,8 +4977,7 @@ messages:
          if oMoney = $
          {
             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-               #string=Lm_bnkr_not_enough_deposit,
-               #parm1=Send(oMoney,@GetValue));
+               #string=Lm_bnkr_not_enough_deposit,#parm1=0);
 
             return;
          }
@@ -7215,22 +7210,23 @@ messages:
            iRandomCashAmount = Random(viCashMin,viCashMax);
         if iRandomCashAmount > 0
         {
-             // Don't send a corpse unless the player killed the mob. Minion kills
-             // already handed to the player in KilledSomething and double-checked
-             // in Killed. Corpse is used for the loot timer, which GenerateTreasure
-             // handles for monster kills but Constructor in Item does not.
-             if NOT IsClass(who,&Player)
-            {
-               corpse = $;
-            }
+                // Don't send a corpse unless the player killed the mob. Minion kills
+                // already handed to the player in KilledSomething and double-checked
+                // in Killed. Corpse is used for the loot timer, which GenerateTreasure
+                // handles for monster kills but Constructor in Item does not.
+                if NOT IsClass(who,&Player)
+               {
+                  corpse = $;
+               }
 
-         iRandomCashAmount = iRandomCashAmount * (Send(SETTINGS_OBJECT, @GetMoneyFactor) / 100);
+            iRandomCashAmount = iRandomCashAmount * (Send(SETTINGS_OBJECT, @GetMoneyFactor) / 100);
 
-         oMoney = Create(&Shilling,#corpse=corpse,#number=iRandomCashAmount + (piBoostedLevel
-                     * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalCash)));
+            oMoney = Create(&Shilling,#corpse=corpse,#number=iRandomCashAmount + (piBoostedLevel
+                        * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalCash)));
 
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=Send(oMoney,@GetNumber));
-         lTreasureItems = Cons(oMoney,lTreasureItems);
+            Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=Send(oMoney,@GetNumber));
+            lTreasureItems = Cons(oMoney,lTreasureItems);
+        }
       }
       // Add money to the treasure
       
