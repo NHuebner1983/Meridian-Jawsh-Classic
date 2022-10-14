@@ -31,8 +31,6 @@ constants:
 
 resources:
 
-   include OgreCave1.lkod
-
    room_name_OgreCave1 = "Ancient Vault of the Ogre Guardians"
    room_OgreCave1 = OgreCave1.roo
    OgreCave1_music = ksong.ogg
@@ -53,7 +51,7 @@ properties:
    piRoom_num = RID_OGRE_CAVE1
 
    prMusic = OgreCave1_music
-
+ 
    pbDoorOpen = FALSE
 
 messages:
