@@ -32,12 +32,13 @@ messages:
                      [ &PlateArmor, 10 ],
                      [ &Scimitar, 10 ],
                      [ &OrcShield, 10 ],
+                     [ &BloodCirclet, 10 ],
                      [ &KnightShield, 10 ],
                      [ &MysticSword, 5 ],
                      [ &RingInvisibility, 5 ],
                      [ &FireRing, 5 ],
                      [ &SeduceWand, 5 ],
-		             [ &GoldenArrow, 5 ],
+		               [ &GoldenArrow, 5 ],
                      [ &BlindWand, 5 ]
                    ];
 

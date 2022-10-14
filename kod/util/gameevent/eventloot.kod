@@ -33,7 +33,7 @@ messages:
 
    GetRandomMonster(who = $)
    {
-		local i, iLoopProtect, oRoom, iRoom, sRoomName, lMonsters, iMonsterCount, oMonster, oMonsterChosen;
+		local i, iLoopProtect, oRoom, iRoom, sRoomName, lMonsters, iMonsterCount, oMonster, oMonsterChosen, aMobAttributes;
 		
 		oRoom = Send(who, @GetOwner);
 		iRoom = Send(oRoom,@GetRoomNum);
@@ -64,8 +64,25 @@ messages:
 				oMonster = First(i);
 				
 				if oMonster <> $ AND IsClass(oMonster, &Monster) 
+				   AND NOT IsClass(oMonster, &Servant)
+				   AND NOT IsClass(oMonster, &Reflection)
+				   AND NOT IsClass(oMonster, &EvilTwin)
+				   AND Send(oMonster, @GetMaster) = $
 				   AND (poLastMonsterChosen = $ OR poLastMonsterChosen <> oMonster)
 				{
+					if IsClass(oMonster, &Monster)
+					{
+						aMobAttributes = Send(oMonster,@GetAttributes);
+
+						if (aMobAttributes & MOB_RECEIVE)
+							OR (aMobAttributes & MOB_SELLER)
+							OR (aMobAttributes & MOB_NOFIGHT)
+						{
+							// We only count real monsters.
+							continue;
+						}
+					}
+
 					iMonsterCount++;
 					
 					if Random(0, Length(lMonsters)) = 1
@@ -121,8 +138,11 @@ messages:
 							
 							if oMonster <> $
 							{
+								// The item will be wrapped in a gift box
+								Send(c, @MakeWrappedAndAutoLooted);
+								
 								Send(oMonster, @NewHold, #what=c);
-								Debug("Gave", Send(c, @GetName),"to",Send(oMonster, @GetName));
+								//Debug("Gave", Send(c, @GetName),"to",Send(oMonster, @GetName));
 								Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
                						#string=EventLoot_stolen,#parm1=Send(c, @GetName),#parm2=Send(oMonster,@GetName),#parm3=Send(Send(oMonster,@GetOwner),@GetName));
 							}

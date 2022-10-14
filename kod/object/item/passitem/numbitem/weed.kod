@@ -22,10 +22,11 @@ resources:
    Weed_icon_rsc = weed.bgf
    Weed_desc_rsc = \
       "This is a special strain of cannabis home grown by Cyrus  "
-      "in a grow room hidden under the temple of Riija.  With  "
-      "Riijas magic combining with the herbs I assure you stoned  "
-      "isn't all you'll be.  \nBetter save these up, Cyrus will  "
-      "trade you items for good weed.  "
+      "in a grow room hidden under the temple of Riija.  With "
+      "Riija's magic combined with herbs, I assure you stoned "
+      "isn't all you'll be. Better save these up, the resident "
+      "pothead of Tos, Paddock, will trade you money for them. "
+      "\n\n- Paddock buys each of these for 5,000 platinum"
 
 classvars:
 
@@ -38,7 +39,7 @@ classvars:
    viBulk = 0
    viWeight = 0
 
-   viValue_average = 100
+   viValue_average = 5000000
 
    viUse_type = ITEM_CANT_USE
 

@@ -105,7 +105,7 @@ messages:
 
    GetWaitTime(who=$)
    {
-      local iStamina, iWaitTime;
+      local iStamina, iWaitTime, iWaitFactor;
 
       if who = $
       {
@@ -114,10 +114,27 @@ messages:
          return FALSE;
       }
 
+      // PVE
+      iWaitFactor = 3;
+
+      if (Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+         OR Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW))
+      {
+         // Player is a PKer
+         iWaitFactor = 600;
+      }
+
+      if NOT Send(who, @CanHelpPlayer)
+      {
+         // Player is engaged in PVP
+         iWaitFactor = 1000;
+      }
+
+
       iStamina = Send(self,@GetRequisiteStat,#who=who);
       iWaitTime = ((100-iStamina) * Send(who,@GetSkillAbility,#Skill_num=viSkill_num)/100) + iStamina;
       // 5 to 10 minutes wait time before you can leap into the action again.
-      iWaitTime = (600 - (iWaitTime*3)) * 1; // * 1000
+      iWaitTime = (600 - (iWaitTime*3)) * iWaitFactor; // * 1000
 
       return iWaitTime;
    }

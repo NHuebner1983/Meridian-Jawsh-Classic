@@ -166,7 +166,7 @@
    BP_SET_VIEW              = 237
    BP_RESET_VIEW            = 238
    BP_SECTOR_CHANGE         = 239
-
+   
    // user command protocol
    UC_SEND_QUIT = 1
    UC_LOOK_PLAYER = 2
@@ -222,6 +222,10 @@
    UC_MINIGAME_RESET_PLAYERS= 49
 
    UC_REQ_TIME  = 60
+
+   // Marketplace
+   UC_MARKETPLACE_LIST   = 61
+   UC_MARKETPLACE_UNLIST = 62
 
    // enchantment byte
    ENCHANTMENT_PLAYER = 1

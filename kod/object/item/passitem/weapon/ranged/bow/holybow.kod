@@ -35,7 +35,7 @@ classvars:
    vrName = HolyBow_name_rsc
    vrDesc = HolyBow_desc_rsc
 
-   viValue_average = 25000
+   viValue_average = 125000
    viBulk = 70
    viWeight = 70
 

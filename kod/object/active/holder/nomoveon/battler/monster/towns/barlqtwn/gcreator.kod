@@ -36,7 +36,6 @@ resources:
    GuildCreator_no_halls = "All of the guild halls have already been rented."
    GuildCreator_no_rent = \
       "Why dost thou make offers to me?  Thou owest not any guild rent."
-   GuildCreator_not_enough_money = "Thou hast not %i shillings to give me!"
    GuildCreator_thanks = "I thank thee for thy payment."
 
    GuildCreator_player_active = \
@@ -47,7 +46,7 @@ resources:
 
    gcreator_no_guild = "Thou belongest to no guild, and thus owest no rent."
    gCreator_no_rent = "Thou owest no rent at this time."
-   gcreator_rent_due = "%s%q owes %i coins in rent at this time."
+   gcreator_rent_due = "%s%q owes %i platinum and %i shillings in rent at this time."
    gcreator_hours_til_rent = \
       "The guild members have %i hours to pay off their balance, or the guild "
       "will be disbanded."
@@ -58,14 +57,14 @@ resources:
       "The guild members have an hour to pay off their balance, or the guild "
       "will be disbanded."
    gcreator_positive_balance = \
-      "%s%q has a positive balance of %i shillings.  I thank thee for thy "
+      "%s%q has a positive balance of %i platinum and %i shillings.  I thank thee for thy "
       "timely payments."
 
    gcreator_low_level = \
       "Thou art not yet ready to brave the dangers of guild intrigue."
 
    gcreator_unwanted_give = \
-      "~k%s%s tells you, \"Thou canst pay thy rent only with shillings!~n~k\""
+      "~k%s%s tells you, \"Thou canst pay thy rent only with platinum and shillings!~n~k\""
 
    GuildCreator_rent_command = "rent"
 
@@ -188,7 +187,7 @@ messages:
 
    ReportRent(who=$)
    {
-      local oRent, oGuild, oHours;
+      local oRent, oGuild, oHours, iShillings, iPlatinum;
 
       oGuild = Send(who,@GetGuild);
       if oGuild = $
@@ -212,9 +211,12 @@ messages:
 
       if oRent > 0
       {
+         iShillings = oRent;
+         iPlatinum = Send(SYS,@ShillingsToPlatinum,#number=iShillings);
+         iShillings = Send(SYS,@ShillingsRemaining,#number=iShillings);
          Send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
                #string=gcreator_rent_due,#parm1=Send(oGuild,@GetCapDef),
-               #parm2=Send(oGuild,@GetName),#parm3=oRent);
+               #parm2=Send(oGuild,@GetName),#parm3=iPlatinum,#parm4=iShillings);
 
          oHours = Send(oGuild,@GetRentCounter)/10;
 
@@ -241,10 +243,14 @@ messages:
 
       if oRent < 0
       {
+         iShillings = -(oRent);
+         iPlatinum = Send(SYS,@ShillingsToPlatinum,#number=iShillings);
+         iShillings = Send(SYS,@ShillingsRemaining,#number=iShillings);
+
          Send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
                #string=gcreator_positive_balance,
                #parm1=Send(oGuild,@GetCapDef),
-               #parm2=Send(oGuild,@GetName),#parm3=-(oRent));
+               #parm2=Send(oGuild,@GetName),#parm3=iPlatinum,#parm4=iShillings);
 
          return;
       }
@@ -336,7 +342,7 @@ messages:
 
    ReqOffer(what = $,item_list = $)
    {
-      local i, iMoney, oMoney, oGuild;
+      local i, oGuild;
 
       // Check for if in the same room.
       if Send(what,@GetOwner) <> poOwner
@@ -357,6 +363,7 @@ messages:
       }
 
       oGuild = Send(what,@GetGuild);
+
       if oGuild = $ OR IsClass(oGuild,&NecromancerGuild)
       {
          Send(what,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
@@ -365,28 +372,23 @@ messages:
          return FALSE;
       }
 
-      iMoney = 0;
       foreach i in item_list
       {
-         iMoney = iMoney + Send(i,@GetValue);
+         if IsClass(i, &Shilling) AND Send(what,@CanAfford,#cost_shillings=Send(i, @GetNumber))
+         {
+            Send(what,@Pay,#amount_shillings=Send(i, @GetNumber));
+            Send(Send(what,@GetGuild),@PayRent,#amount=Send(i, @GetNumber));
+         }
+         if IsClass(i, &Platinum) AND Send(what,@CanAfford,#cost_platinum=Send(i, @GetNumber))
+         {
+            Send(what,@Pay,#amount_platinum=Send(i, @GetNumber));
+            Send(Send(what,@GetGuild),@PayRent,#amount=Send(i, @GetNumber) * SHILLINGS_PER_PLATINUM);
+         }
       }
 
-      oMoney = Send(what,@GetMoneyObject);
-
-      if oMoney = $
-         OR Send(oMoney,@GetNumber) < iMoney
-      {
-         Send(what,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-               #string=GuildCreator_not_enough_money,#parm1=iMoney);
-
-         return FALSE;
-      }
-
-      Send(oMoney,@SubtractNumber,#number=iMoney);
       Send(what,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
             #string=GuildCreator_thanks);
       Send(self,@AffectMood,#why=MOODMOD_ACCEPT_RENT);
-      Send(Send(what,@GetGuild),@PayRent,#amount=iMoney);
 
       return FALSE;
    }

@@ -19,11 +19,11 @@ constants:
 
    include blakston.khd
 
-//   HUNGER_1 = 2   // one session (assuming 3-4 hours of play per day)
-//   HUNGER_2 = 4   // one to two sessions
-//   HUNGER_3 = 6   // two sessions
-//   HUNGER_4 = 8   // two to three sessions
-//   HUNGER_5 = 10  // three sessions
+   //   HUNGER_1 = 2   // one session (assuming 3-4 hours of play per day)
+   //   HUNGER_2 = 4   // one to two sessions
+   //   HUNGER_3 = 6   // two sessions
+   //   HUNGER_4 = 8   // two to three sessions
+   //   HUNGER_5 = 10  // three sessions
 
    // BASE_HUNGER_GAIN = 2 in units of FineHunger.
    // Gain should be equivalent to one 60hp neutral player solo-kill
@@ -86,6 +86,10 @@ resources:
       "Your sword drinks in %s%s's impure blood.  You can feel it course "
       "along its roots into your body, filling you with energy."
 
+   HunterSword_hunger_resist = \
+      "Your sword resists feeding on %s%s's pure blood. Your actions "
+      "will have consequences. You fear pain and suffering lie ahead."
+
    HunterSword_lose_sword = \
       "Your unworthiness has offended your sword of the hunt.  Writhing "
       "violently in your hands for a few moments, the sword suddenly "
@@ -136,9 +140,9 @@ properties:
    piFineHunger = 0
    ptHungerTimer = $
    ptHoldingDamage = $
-   piHoldingDamageInterval = 10 * 1000     // Ten seconds.
-   piHpWorthyThreshold = 60
-   piKarmaWorthyThreshold = -30
+   piHoldingDamageInterval = 5 * 1000     // Ten seconds.
+   piHpWorthyThreshold = 50
+   piKarmaWorthyThreshold = 50
 
    piAttack_type = ATCK_WEAP_SLASH
    piAttack_Spell = ATCK_SPELL_HOLY
@@ -161,22 +165,22 @@ messages:
    {
       return 0;
    }
-   
+
    // If the SOTH does not have an owner, let's remove it from the system.
    Reset()
    {
-   	  if poOwner <> $ AND IsClass(poOwner, &Player)
-	  {
-	     Debug("SOTH held by",Send(poOwner,@GetName));
-	  }
+         if poOwner <> $ AND IsClass(poOwner, &Player)
+      {
+         Debug("SOTH held by",Send(poOwner,@GetName));
+      }
 
-	  if poOwner <> $ AND NOT IsClass(poOwner, &Player)
-	  {
-	     Debug("SOTH Orphan Removed", poOwner);
-	     Send(self, @Delete);
-	  }
-	  	  
-	  return;
+      if poOwner <> $ AND NOT IsClass(poOwner, &Player)
+      {
+         Debug("SOTH Orphan Removed", poOwner);
+         Send(self, @Delete);
+      }
+         
+      return;
    }
 
    NewOwner(what = $)
@@ -205,7 +209,7 @@ messages:
          // Post these so that they happen after 'what' actually becomes our owner.
          Post(self,@AdjustStats);
          Post(self,@AdjustColor);
-		 Post(self,@BecomeHolySoldier);
+         Post(self,@BecomeHolySoldier);
 
          ptHungerTimer = CreateTimer(self,@HungerTrigger,Send(Send(SYS,@GetNecromancerBalance),
                               @GetHungerInterval));
@@ -228,35 +232,35 @@ messages:
 
       propagate;
    }
-   
+
    // We will obtain a Holy Soldier Shield &HolyShield
    // and become part of Shal'ille's faction.
    BecomeHolySoldier()
    {
       local oShield;
-	  
+      
       if poOwner <> $ AND IsClass(poOwner, &Battler)
-	  {
-	     oShield = Create(&HolyShield);
-		 
-	     Send(poOwner, @ResetFaction, #faction=FACTION_HOLY);
+      {
+         oShield = Create(&HolyShield);
+         
+         Send(poOwner, @ResetFaction, #faction=FACTION_HOLY);
          Send(poOwner, @RemoveFromInventory, #class=&HolyShield);
-		 Send(poOwner, @NewHold, #what=oShield);
-		 Send(poOwner, @TryUseItem, #what=oShield);
-		 Send(poOwner, @TryUseItem, #what=self);
-	  }
-	  
+         Send(poOwner, @NewHold, #what=oShield);
+         Send(poOwner, @TryUseItem, #what=oShield);
+         Send(poOwner, @TryUseItem, #what=self);
+      }
+      
       return;
    }
-   
+
    LoseHolySoldier()
    {
       if poOwner <> $ AND IsClass(poOwner, &Battler)
-	  {
+      {
          Send(poOwner, @RemoveFromInventory, #class=&HolyShield);
-		 Send(poOwner, @ResetFaction, #faction=FACTION_NEUTRAL);
-	  }
-	  
+         Send(poOwner, @ResetFaction, #faction=FACTION_NEUTRAL);
+      }
+      
       return;
    }
 
@@ -347,7 +351,7 @@ messages:
 
          return FALSE;
       }
-	  
+      
       propagate;
    }
 
@@ -712,8 +716,10 @@ messages:
 
          Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_holding_damage_using);
 
+         Send(poOwner,@GainKarma,#amount=(1 + (pbIn_Use*3)));
+
          if Send(poOwner,@AssessDamage,#what=self,
-                  #damage=(Random(1,3)),#report=FALSE) = $
+                  #damage=(Random(1,3)+pbIn_Use*8),#report=FALSE) = $
          {
             // We killed them off... heh heh heh.
             Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
@@ -767,11 +773,20 @@ messages:
          AND IsClass(poOwner,&User)
          AND victim <> poOwner
       {
-         Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_hunger_assuaged,
-               #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
-         iGain = Send(Send(SYS,@GetNecromancerBalance),@CalculateSwordHungerSatisfied,
-                     #HuntSw=self,#killer=what,#victim=victim);
-         Send(self,@SatisfyHunger,#amount=iGain);
+         if Send(victim, @GetKarma) > 0
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_hunger_resist,
+                  #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
+            Send(self, @HoldingDamageTrigger);
+         }
+         else
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_hunger_assuaged,
+                  #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
+            iGain = Send(Send(SYS,@GetNecromancerBalance),@CalculateSwordHungerSatisfied,
+                        #HuntSw=self,#killer=what,#victim=victim);
+            Send(self,@SatisfyHunger,#amount=iGain);
+         }
       }
 
       return;
@@ -785,9 +800,9 @@ messages:
       }
       else
       {
-	      // Lose the Holy Shield.
-		   Send(self,@LoseHolySoldier);
-		 
+         // Lose the Holy Shield.
+         Send(self,@LoseHolySoldier);
+         
          // Instead of deleting the sword, we put it back in circulation.
          //Post(self,@Delete);
          Post(Send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
@@ -827,11 +842,11 @@ messages:
    Delete()
    {
       if poOwner = $
-	   {
-	      return;
-	   }
-	  
-	   Send(self,@LoseHolySoldier);
+      {
+         return;
+      }
+      
+      Send(self,@LoseHolySoldier);
       Send(self,@NewOwner,#what=$);
 
       if pbCounted
@@ -949,10 +964,10 @@ messages:
       return;
    }
 
-//////////////////////
-// ActiveItem Stuff: //
-//////////////////////
-//
+   //////////////////////
+   // ActiveItem Stuff: //
+   //////////////////////
+   //
    GetObjectType()
    {
       return ACTIVE;
@@ -972,8 +987,8 @@ messages:
                #damage=(Send(poOwner,@GetHealth)*2/3),#report=FALSE);
       }
       
-	  Debug("SOTH-DELETE-FROM", Send(poOwner,@GetName));
-	  
+      Debug("SOTH-DELETE-FROM", Send(poOwner,@GetName));
+      
       Send(self,@Delete);
 
       return;

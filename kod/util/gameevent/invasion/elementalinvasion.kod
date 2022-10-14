@@ -1,0 +1,328 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+ElementalInvasion is Invasion
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ElementalInvasion_start_location_msg = "~B~k[Event]~n ~B~v You sense a disturbance in %s!"
+
+   ElementalInvasion_end_location_msg = "~B~k[Event]~n ~B~v Elementals and their champions have been driven from %s!"
+
+   ElementalInvasion_start_msg = \
+      "~B~k[Event]~n ~B~v Ice Elementals have started to form."
+
+   ElementalInvasion_end_msg = \
+      "~B~k[Event]~n ~B~v All hail who have protected this land!"
+
+   ElementalInvasion_phase2_msg = \
+      "~B~k[Event]~n ~B~v Fire Elementals have started to take structure."
+
+   ElementalInvasion_phase3_msg = \
+      "~B~k[Event]~n ~B~v Earth Elementals have started forming from lava."
+
+   ElementalInvasion_finalphase_msg = \
+      "~B~k[Event]~n ~B~v Elemental Champions have descended to challenge you."
+
+   ElementalInvasion_attack_sound_rsc = ndanger.ogg
+
+classvars:
+
+   vrStartMessage = ElementalInvasion_start_msg
+   vrEndMessage = ElementalInvasion_end_msg
+
+   vbAnnounce = TRUE
+
+properties:
+
+   plEventRooms = $
+   piMonsterA = 50
+   piMonsterB= 50
+   piMonsterC = 10
+   piMonsterBoss = 3
+   piActiveRoom = RID_TOS
+   poActiveRoom = $
+   piPhase = 0
+   piRelativeHeight = 0
+   ptEventUpdateTimer = $
+   plBlinkCoords = $
+
+   pcMonsterA = $
+   pcMonsterB = $
+   pcMonsterC = $
+   pcMonsterBossA = $
+   pcMonsterBossB = $
+   pcMonsterBossC = $
+   pcMonsterBossD = $
+
+messages:
+
+   Constructor(who=$)
+   {
+      pcMonsterA = &IceElemental;
+      pcMonsterB = &FireElemental;
+      pcMonsterC = &EarthElemental;
+      pcMonsterBossA = &IceElementalChampion;
+      pcMonsterBossB = &FireElementalChampion;
+      pcMonsterBossC = &EarthElementalChampion;
+      pcMonsterBossD = &NeruElementalChampion;
+
+      if who <> $ AND IsClass(who, &DM)
+      {
+         piRelativeHeight = Send(who, @GetHeightAtObject);
+         piActiveRoom = Send(Send(who, @GetOwner), @GetRoomNum);
+      }
+
+      poActiveRoom = Send(SYS, @FindRoomByNum, #num=piActiveRoom);
+      plBlinkCoords = [Send(poActiveRoom, @GetTeleportRow), Send(poActiveRoom, @GetTeleportCol)];
+      
+      Send(self,@StartEvent);
+
+      propagate;
+   }
+   
+   StartEvent()
+   {
+      local oUser, lUsersLoggedOn;
+
+      Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=ElementalInvasion_start_location_msg,#parm1=Send(poActiveRoom,@GetName));
+
+      lUsersLoggedOn = Send(SYS,@GetUsersLoggedOn);
+
+      foreach oUser in lUsersLoggedOn
+      {
+         Send(oUser,@WaveSendUser,#wave_rsc=ElementalInvasion_attack_sound_rsc);
+      }
+
+      piPhase = 0;
+
+      ptEventUpdateTimer = CreateTimer(self, @Update, 5000);
+
+      propagate;
+   }
+
+   Update()
+   {
+      if (poActiveRoom = $)
+      {
+         propagate;
+      }
+
+      if piPhase = 0
+      {
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterA) = 0
+         {
+            Send(self,@PhaseOne);
+         }
+      }
+      else if piPhase = 1
+      {
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterA) = 0
+         {
+            Send(self,@PhaseTwo);
+         }
+      }
+      else if piPhase = 2
+      {
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterB) = 0
+            AND Send(poActiveRoom,@CountMonsters,#class=pcMonsterA) = 0
+         {
+            Send(self,@PhaseThree);
+         }
+      }
+      else if piPhase = 3
+      {
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterC) = 0
+            AND Send(poActiveRoom,@CountMonsters,#class=pcMonsterB) = 0
+            AND Send(poActiveRoom,@CountMonsters,#class=pcMonsterA) = 0
+         {
+            Send(self,@FinalPhase);
+         }
+      }
+      else if piPhase = 4
+      {
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterBossA) = 0
+            AND Send(poActiveRoom,@CountMonsters,#class=pcMonsterBossB) = 0
+            AND Send(poActiveRoom,@CountMonsters,#class=pcMonsterBossC) = 0
+            AND Send(poActiveRoom,@CountMonsters,#class=pcMonsterBossD) = 0
+         {
+            Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=ElementalInvasion_end_location_msg,#parm1=Send(poActiveRoom,@GetName));
+
+            Send(self,@NotifyEngineEndEvent);
+
+            propagate;
+         }
+      }
+
+      ptEventUpdateTimer = CreateTimer(self, @Update, 5000);
+
+      propagate;
+   }
+
+   PhaseOne()
+   {
+      local i;
+
+      piPhase = 1;
+
+      i = piMonsterA;
+
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterA),
+            #piSurvivalLevel=25,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      return;
+   }
+
+   PhaseTwo()
+   {
+      local i;
+
+      piPhase = 2;
+
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
+               #string=ElementalInvasion_phase2_msg);
+      }
+
+      i = piMonsterA;
+
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterA),
+            #piSurvivalLevel=50,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      i = piMonsterB;
+
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterB),
+            #piSurvivalLevel=50,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      return;
+   }
+
+   PhaseThree()
+   {
+      local i;
+
+      piPhase = 3;
+
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
+               #string=ElementalInvasion_phase3_msg);
+      }
+
+      i = piMonsterA;
+
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterA),
+            #piSurvivalLevel=75,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      i = piMonsterB;
+
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterB),
+            #piSurvivalLevel=75,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      i = piMonsterC;
+      
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterC),
+            #piSurvivalLevel=75,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      return;
+   }
+
+   FinalPhase()
+   {
+      local i;
+
+      piPhase = 4;
+
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
+               #string=ElementalInvasion_finalphase_msg);
+      }
+
+      i = piMonsterBoss;
+      
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterBossA),
+            #piSurvivalLevel=95,#bStack=TRUE, #iRow=(Nth(plBlinkCoords, 1) + Random(1, 4)), #iCol=(Nth(plBlinkCoords, 2) + Random(1, 4)),
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      i = piMonsterBoss;
+
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterBossB),
+            #piSurvivalLevel=95,#bStack=TRUE, #iRow=(Nth(plBlinkCoords, 1) + Random(1, 4)), #iCol=(Nth(plBlinkCoords, 2) + Random(1, 4)),
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      i = piMonsterBoss;
+
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterBossC),
+            #piSurvivalLevel=95,#bStack=TRUE, #iRow=(Nth(plBlinkCoords, 1) + Random(1, 4)), #iCol=(Nth(plBlinkCoords, 2) + Random(1, 4)),
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      i = piMonsterBoss;
+
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterBossD),
+            #piSurvivalLevel=95,#bStack=TRUE, #iRow=(Nth(plBlinkCoords, 1) + Random(1, 4)), #iCol=(Nth(plBlinkCoords, 2) + Random(1, 4)),
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      return;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

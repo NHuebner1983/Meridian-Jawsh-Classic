@@ -100,6 +100,8 @@ void MaintenanceInputChar(session_node *s,char ch)
    if (s == NULL)
       return;
 
+   cprintf(s->session_id, "\n\n-----ready-----\n\n", s->mtn->command);
+
    if (s->state == STATE_MAINTENANCE)
    {
       /* set string to zero because the rest of line parameters (R) go past

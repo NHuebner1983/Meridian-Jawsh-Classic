@@ -9,6 +9,7 @@
  * gameuser.c:  Handle user's game commands
  */
 
+#include <string>
 #include "client.h"
 
 #define ATTACK_DELAY 250  // Minimum number of milliseconds between user attacks
@@ -422,8 +423,14 @@ void UserQuit(void)
  */
 void UserMakeOffer(void)
 {
+   
    list_type sel_list, items, recipients;
    ID recipient;
+   bool isMarketplace;
+   list_type l;
+   object_node* obj;
+   
+   isMarketplace = false;
 
    /* Only allow 1 offer at a time */
    if (OfferInProgress())
@@ -464,13 +471,34 @@ void UserMakeOffer(void)
    ObjectListDestroy(sel_list);
    
    /* Now get items user wants to offer */
-   items = DisplayLookList(hMain, GetString(hInst, IDS_OFFERITEMS), player.inventory, 
-			   LD_MULTIPLESEL | LD_AMOUNTS);
+   if (((object_node*)(sel_list->data))->flags & OF_MARKETPLACE)
+   {
+	   isMarketplace = true;
+	   items = DisplayLookList(hMain, GetString(hInst, IDS_MARKETITEMS), player.inventory,
+		   LD_MULTIPLESEL | LD_AMOUNTS | LD_MARKETPLACE);
+   } else {
+	   items = DisplayLookList(hMain, GetString(hInst, IDS_OFFERITEMS), player.inventory,
+		   LD_MULTIPLESEL | LD_AMOUNTS);
+   }
+
    if (items == NULL)
       return;
 
-   /* Send offer to server */
-   RequestOffer(recipient, items);
+   if (isMarketplace)
+   {
+	   // Do not use a normal offer, we'll use the marketplace protocol.
+
+	   for (l = items; l != NULL; l = l->next)
+	   {
+		   obj = (object_node*)(l->data);
+		   MarketplaceList(obj->id, obj->temp_amount, obj->temp_listprice_plat, obj->temp_listprice_shills);
+	   }
+   }
+   else {
+	   /* Send offer to server */
+	   RequestOffer(recipient, items);
+   }
+
    ObjectListDestroy(items);
 }
 /************************************************************************/

@@ -79,6 +79,24 @@ messages:
       return;
    }
 
+   CastSpell(who=$,lTargets=$)
+   {
+      local oTarget;
+      
+      if (lTargets <> $)
+      {
+         oTarget = First(lTargets);
+      }
+      else
+      {
+         oTarget = who;
+      }
+
+      Send(self, @RemoveRadiusEnchant, #who=oTarget, #iSpellNum=SID_MIRTH);
+
+      propagate;
+   }
+
    AddEnchantmentEffects(who=$,state=$)
    {
       if IsClass(who,&User)

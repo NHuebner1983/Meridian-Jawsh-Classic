@@ -13,7 +13,7 @@ SewerKingLair is BossRoom
 constants:
 
    include blakston.khd
-   DOOR_RESET_TIME = 60000
+   DOOR_RESET_TIME = 10000
    SECTOR_DOOR1 = 1
    H_DOOR1_UP =1160
    H_DOOR1_DN =961
@@ -38,10 +38,10 @@ constants:
 
    DOOR_UP = 1
    DOOR_DN = 0
-   DOOR_UP_SPEED = 4
-   DOOR_DN_SPEED = 4
-   WATER_UP_SPEED = 10
-   WATERFALL_DN_SPEED = 2000
+   DOOR_UP_SPEED = 8
+   DOOR_DN_SPEED = 8
+   WATER_UP_SPEED = 30
+   WATERFALL_DN_SPEED = 4000
 
    REGION_W=1
    REGION_C=2
@@ -55,9 +55,9 @@ constants:
    BLINKBOX2_E = 43
    BLINKBOX2_N = 1
 
-   DROWN_COUNTDOWN_TIME = 11500
-   DROWN_INTERVAL = 5000
-   DROWN_DAMAGE = 10
+   DROWN_COUNTDOWN_TIME = 2000
+   DROWN_INTERVAL = 250
+   DROWN_DAMAGE = 300
    DROWNBOX1_S = 28
    DROWNBOX1_W = 24
    DROWNBOX1_E = 41
@@ -80,8 +80,47 @@ resources:
    SewerKingLair_lever_desc = \
       "This lever is caked with years' worth of accumulated rust and slime."
    SewerKingLair_drowning = \
-      "You gasp for breath in the last half-inch of air left near the "
-      "ceiling, taking as much water as air into your lungs."
+      "You feel crushed by the intense pressure of the rising water in the chamber."
+
+   SewerKingLair_jumped_mistake = "~B~r~IYou sense you've made a grave mistake as you fall to your death.~B~r~I"
+
+   SewerKingLair_Signname = "DEADLY CLIFF"
+   SewerKingLair_Sign = \
+      "WATCH YOUR STEP!"
+      "\n\n"
+      "As you look down into the Lupogg King's lair, you can see several "
+      "rocky areas and shallow water. It's certainly not the best place "
+      "to go diving."
+      "\n\n"
+      "You may think it's a clever idea to jump into the Lupogg King's lair "
+      "but this is most certainly a leap to your death. "
+      "\n\n"
+      "Your corpse will be devoured by the Lupogg King and you may find it "
+      "difficult to return to your defiled body."
+      "\n\n"
+      "---YOU HAVE BEEN WARNED---"
+      "\n\n"
+      "Sincerely yours, \n"
+      "The Barloque & Jasper City Council Safety Board"
+      "\n\n"
+      
+   SewerKingLair_Drown_Signname = "DROWN WARNING"
+   SewerKingLair_Drown_Sign = \
+      "THIS CAVE ENTRANCE IS VERY UNSTABLE."
+      "\n\n"
+      "As dangerous as this sounds, the only advice "
+      "that can be given is to make your way through this cave and into "
+      "the Lupogg King's chamber, or turn back and exit this cave immediately."
+      "\n\n"
+      "If the Lupogg King collapses, the area you are in will be filled with water in "
+      "a matter of seconds. You will not survive without the help of the gods."
+      "\n\n"
+      "---LEAVE THIS AREA IMMEDIATELY---"
+      "---YOU WILL DIE IF YOU REMAIN---"
+      "\n\n"
+      "Sincerely yours, \n"
+      "The Barloque & Jasper City Council Safety Board"
+      "\n\n"
 
 //   sewking_bones_name = "pile of bones"
 //   sewking_bones_icon = skelX.bgf
@@ -96,8 +135,8 @@ classvars:
 
    vrName = room_name_SewerKingLair
 
-   viTeleport_row = 38
-   viTeleport_col = 33
+   viTeleport_row = 40
+   viTeleport_col = 13
    viTeleport_rowW = 40
    viTeleport_colW = 10
    viTeleport_rowE = 18
@@ -116,7 +155,7 @@ properties:
    piOutside_factor = 0
 
    piGen_time = 25000
-   piGen_percent = 80
+   piGen_percent = 10
 
    piInit_count_min = 7
    piInit_count_max = 9
@@ -133,6 +172,15 @@ properties:
    ptDrownCountdownTimer = $
    ptDrownIntervalTimer = $
 
+   ptResetEntranceTimer = $
+   
+   // Jumping to your death, trying to cheat the Lupogg King entrance.
+   // A sign warns them, should be funny.
+   plJumpers = $
+   plJumped = $
+   ptCheckJumped = $
+   poCheckJumped = $
+   
 messages:
 
    Constructor()
@@ -182,6 +230,8 @@ messages:
 
    CreateStandardObjects()
    {
+      local oObj;
+
       poLever1 = Create(&Lever,#description=SewerKingLair_lever_desc);
       Send(self,@NewHold,#what=poLever1,#new_row=39,#new_col=13,
             #fine_row=00,#fine_col=32);
@@ -192,6 +242,15 @@ messages:
 
       Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,
             #fine_row=48,#fine_col=00);
+
+      // Cliff back into the pog king lair (deadly jump warning sign)
+      oObj = Create(&Sign,#desc=SewerKingLair_Sign,#newbie=TRUE,#name=SewerKingLair_Signname);
+      Send(self,@NewHold,#what=oObj,#new_row=12,#new_col=24,
+         #fine_row=18,#fine_col=7);
+      
+      // Drown warning
+      oObj = Create(&Sign,#desc=SewerKingLair_Drown_Sign,#newbie=TRUE,#name=SewerKingLair_Drown_Signname);
+      Send(self,@NewHold,#what=oObj,#new_row=21,#new_col=26);
 
       //Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=00,#fine_col=00);
       //Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=16,#fine_col=00);
@@ -223,6 +282,228 @@ messages:
 // Lever/Door Code //
 ////////////////////
 //
+   ResetEntrance()
+   {
+      local oMonster;
+
+      oMonster = Send(self,@FindHolding,#class=&LupoggKing);
+
+      if oMonster = $ OR (oMonster <> $ AND Send(oMonster,@GetCurrentState) = 1)
+      {
+         // Dead lupogg king or none at all.
+         // Check if players are in area of pogg king still.
+         // If they are, we'll wait for theme to leave and then reset the boss.
+         if Send(self, @ArePlayersInBossRoom)
+         {
+            // Players are in the boss room still. Let's wait till they leave before we do anything.
+            ptResetEntranceTimer = CreateTimer(self, @ResetEntrance, 3000);
+
+            return;
+         }
+
+         // Players are not in the boss room and the pog king is either dead or not there.
+         
+         // Let's reset the boss!
+         Send(self, @ResetBoss);
+      }
+
+      // The pog king is in his lair, we do nothing.
+
+      return;
+   }
+
+   ArePlayersInBossRoom()
+   "Checks if players are still in the boss room."
+   {
+      local o, lPlayersInRoom, bPlayersFound, lPos;
+
+      lPlayersInRoom = Send(self, @GetHoldingByClass, #class=&Player);
+
+      if lPlayersInRoom = $ OR NOT IsList(lPlayersInRoom) OR Length(lPlayersInRoom) <= 0
+      {
+         //Debug("no players in the room");
+         return FALSE;
+      }
+
+      foreach o in lPlayersInRoom
+      {
+         lPos = Send(o, @GetPos);
+         
+         if Send(self,@FindRegion,#testrow=Nth(lPos,1),#testcol=Nth(lPos,2)) = REGION_C
+            AND (Nth(lPos,1) < BLINKBOX1_N)
+         {
+            //Debug(Send(o, @GetName),"is in the king room");
+            return TRUE;
+         } else{
+            //Debug(Send(o, @GetName),"IS NOT in the king room");
+         }
+      }
+
+      return FALSE;
+   }
+
+   CheckJumpedOffCliff()
+   {
+      local iHeight, lPos, what, new_row, new_col, fine_row, fine_col;
+
+      ptCheckJumped = $;
+
+      what = poCheckJumped;
+      //Debug("what is # 1",what);
+      poCheckJumped = $;
+      //Debug("what is # 2",what);
+
+      if what = $
+      {
+         //Debug("what is $, falsing check jumped off cliff");
+         return FALSE;
+      }
+
+      if what <> $ AND IsClass(what, &Player)
+      {
+         lPos = Send(what, @GetPos);
+         iHeight = Send(what, @GetHeightAtObject);
+
+         new_row = Nth(lPos, 1);
+         new_col = Nth(lPos, 2);
+         fine_row = Nth(lPos, 3);
+         fine_col = Nth(lPos, 4);
+
+         //Debug("Check Jumped",new_row,new_col,fine_row,fine_col,"Height",Send(what, @GetHeightAtObject));
+         
+         if new_col >= 24 AND iHeight < 700
+         {
+            //Debug("They jumped!");
+
+            // This player jumped off the cliff.
+            if FindListElem(plJumpers, what)
+            {
+               plJumpers = DelListElem(plJumpers, what);
+            }
+
+            if plJumped = $
+            {
+               plJumped = [];
+            }
+
+            if NOT FindListElem(plJumped, what)
+            {
+               //Debug("Added to KillPlayer List");
+               plJumped = AppendListElem(what, plJumped);
+            }
+            else
+            {
+               //Debug("Player already jumped, skipping");
+               // This player has already jumped.
+               return;
+            }
+
+            //Debug("Killing Player Now");
+
+            // Kill the player!
+            Send(what, @KillPlayer, 
+               #wait_time=900, 
+               #rscMistakeMessage=SewerKingLair_jumped_mistake,
+               #oRoomOrPlayerWhoKilledMe=self);
+         }
+      }
+
+      return;
+   }
+
+   SomethingMoved(what = $, new_row = $, new_col = $, fine_row = FINENESS/2,
+                  fine_col = FINENESS/2, cause = CAUSE_UNKNOWN, speed = 0,
+                  non_monsters_only = FALSE)
+   {
+      local iHeight;
+
+      // if what <> $ AND IsClass(what, &Player)
+      // {
+      //    //Debug("Something Moved",new_row,new_col,fine_row,fine_col,"Height",Send(what, @GetHeightAtObject));
+      // }
+
+      if piWaterPosition = DOOR_DN
+      {
+         iHeight = Send(what, @GetHeightAtObject);
+
+         // Player is looking down into the Pog King Lair from the "DEADLY CLIFF" sign.
+         if what <> $ AND IsClass(what, &Player)
+            AND (new_row = 11 OR new_row = 12) 
+            AND new_col < 18
+         {
+            //Debug("They backed away!");
+            if plJumpers = $
+            {
+               plJumpers = [];
+            }
+
+            if FindListElem(plJumpers, what)
+            {
+               plJumpers = DelListElem(plJumpers, what);
+            }
+
+            propagate;
+         }
+
+         if what <> $ AND IsClass(what, &Player)
+            AND (new_row = 11 OR new_row = 12) 
+            AND new_col <= 24
+            AND new_col >= 18
+         {
+            //Debug("Jumper detected!");
+
+            if plJumpers = $
+            {
+               plJumpers = [];
+            }
+
+            if NOT FindListElem(plJumpers, what)
+            {
+               // This player will die if they go new_row = 12 OR 11 AND >=24 new_col
+               plJumpers = AppendListElem(what, plJumpers);
+            }
+
+            if ptCheckJumped <> $ AND IsTimer(ptCheckJumped) AND GetTimeRemaining(ptCheckJumped) > 0
+            {
+               DeleteTimer(ptCheckJumped);
+               ptCheckJumped = $;
+            }
+
+            poCheckJumped = what;
+            ptCheckJumped = CreateTimer(self, @CheckJumpedOffCliff, 1000);
+            //Debug("Started Jump Detect Timer");
+
+            propagate;
+         }
+      }
+
+      propagate;
+   }
+
+   RemoveKilledPlayer(who=$)
+   "After the player is killed, report back letting us know to remove them from the jumper list."
+   {
+      local bRemoved;
+
+      bRemoved = FALSE;
+
+      if who <> $ AND IsClass(who, &Player) AND plJumped <> $ AND IsList(plJumped) AND FindListElem(plJumped, who)
+      {
+         // Remove them from the Jumped list.
+         plJumped = DelListElem(plJumped, who);
+         bRemoved = TRUE;
+         //Debug("Removed",Send(who,@GetName),"from jumped");
+      }
+
+      if who <> $ AND IsClass(who, &Player) AND plJumpers <> $ AND IsList(plJumpers) AND FindListElem(plJumpers, who)
+      {
+         // Just in case they somehow got back on the jumpers list.
+         plJumpers = DelListElem(plJumpers, who);
+         //Debug("Removed",Send(who,@GetName),"from jumpers");
+      }
+
+      return bRemoved;
+   }
 
    SomethingChanged(what=$)
    {
@@ -230,14 +511,22 @@ messages:
          AND Send(poLever1,@GetState) = LEVER_DOWN
       {
          Send(poLever1,@SetStuck,#newstuck=true);
-         Send(poDoor2,@Toggle);
       }
 
       if what = poLever2
          AND Send(poLever2,@GetState) = LEVER_DOWN
       {
          Send(poLever2,@SetStuck,#newstuck=true);
+      }
+
+      if (what = poLever1 OR what = poLever2)
+         AND Send(poLever1,@GetState) = LEVER_DOWN
+         AND Send(poLever2,@GetState) = LEVER_DOWN
+      {
+         // Both levers must be toggled to open the doors.
          Send(poDoor1,@Toggle);
+         Send(poDoor2,@Toggle);
+         ptResetEntranceTimer = CreateTimer(self, @ResetEntrance, 3000);
       }
       if what = poDoor2
       {
@@ -491,12 +780,13 @@ messages:
    DrownIntervalTrigger()
    {
       local i,UsersStillDrowning;
+
       UsersStillDrowning = FALSE;
       ptDrownIntervalTimer = $;
 
       foreach i in plActive
       {
-         if IsClass(First(i),&User)
+         if IsClass(First(i),&User) AND NOT IsClass(First(i), &DM)
             AND Send(self,@IsInDrownArea,#who=First(i))
          {
             // Do horrible nasty drowning stuff here.  (heh, heh, heh...)

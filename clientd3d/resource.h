@@ -481,6 +481,16 @@
 #define ID_COLOR_QUESTHEADER            3517
 #define ID_GRAPHICS_MENU                3518
 
+#define IDD_ITEMLISTMARKETPLACE         3520
+#define IDC_STATIC2                     3521
+#define IDC_PRICE_PLAT_LIST             3522 // Price from Player to NPC
+#define IDC_PRICE_SHILL_LIST            3523 // Price from Player to NPC
+#define IDS_MARKETITEMS                 3524 
+#define IDC_COST_PLAT_LIST              3525 // Cost to Player from NPC
+#define IDC_COST_SHILL_LIST             3526 // Cost to Player from NPC
+#define IDC_COST_PLAT                   3527 // Label for "Platinum Cost" (totals)
+#define IDC_COST_SHILL                  3528 // Label for "Shilling Cost" (totals)
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

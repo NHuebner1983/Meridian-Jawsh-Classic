@@ -14,7 +14,7 @@ constants:
 
    include blakston.khd
 
-   HOURS_PER_TOY = 50
+   HOURS_PER_TOY = 24
 
 resources:
 
@@ -61,13 +61,32 @@ messages:
          plFind = [ &TrueLute,
                     &Tanktop,
                     &ShrunkenHead,
+                    &MummyMask,
+                    &ShrunkenHeadMask,
+                    &DaemonMask,
+                    &SkullMask,
+                    &FeyMask,
+                    &XeoMask,
+                    &Shilling,
+                    &EntrootBerry,
+                    &PurpleMushroom,
+                    &BlueMushroom,
+                    &RedMushroom,
+                    &YellowMushroom,
+                    &YrxlSap,
+                    &PolishedSeraphym,
+                    &KriipaClaw,
+                    &ShamanBlood,
+                    &MagicBow,
+                    &NeruditeBow,
                     &Book,
                     &Rose,
                     &GuildShield,
                     &AphrodesiacPotion,
                     &LabeledWand,
-                    &SpiderBaby,
-                    &NarthylWorm,
+                    &GiantDaemonSkeleton,
+                    &Mimic,
+                    &Ghost,
                     &Junk ];
       }
 
@@ -109,7 +128,7 @@ messages:
 
    SomethingTryGo(what = $,row = $,col = $)
    {
-      local find, iNewRow, iNewCol;
+      local find, iNewRow, iNewCol, iNumbered;
 
       if (row = 10) AND (col = 7)
       {
@@ -136,14 +155,14 @@ messages:
          // Have to post this here, happens no matter what after the rest.
          Post(self,@RemovePlayerFromCrate,#who=what);
 
-         if what = poLastFinder
-         {
-            return TRUE;
-         }
+         // if what = poLastFinder
+         // {
+         //    return TRUE;
+         // }
 
-         if piHoursCounter < 0
+         if piHoursCounter <= 0
          {
-            piHoursCounter = HOURS_PER_TOY + Random(0,100) - 50;
+            piHoursCounter = HOURS_PER_TOY + Random(1, 10);
 
             if plFind = $
             {
@@ -165,6 +184,23 @@ messages:
             }
 
             find = Create(find);
+
+            if IsClass(find, &NumberItem)
+            {
+               // Numbered items
+               if IsClass(find,&Shilling)
+               {
+                  // Shillings
+                  iNumbered = 250000;
+               }
+               else
+               {
+                  // Number of Reagents
+                  iNumbered = 250;
+               }
+
+               Send(find,@AddNumber,#number=iNumbered);
+            }
 
             if find = $
             {
@@ -188,6 +224,9 @@ messages:
                {
                   Send(find,@Randomize);
                }
+
+               // Wrap the item in a gift box!
+               find = Send(find,@WrapMe);
 
                Send(what,@NewHold,#what=find);
             }
@@ -220,8 +259,7 @@ messages:
 
    RemovePlayerFromCrate(who = $)
    {
-      if (who = $
-         OR Send(who,@GetOwner) <> self)
+      if (who = $ OR Send(who,@GetOwner) <> self) OR (who <> $ AND IsClass(who, &DM))
       {
          return;
       }

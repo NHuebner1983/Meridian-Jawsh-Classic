@@ -27,7 +27,7 @@ classvars:
    vrName = MagicBow_name_rsc
    vrDesc = MagicBow_desc_rsc
 
-   viValue_average = 3000
+   viValue_average = 130000
    viBulk = 70
    viWeight = 70
 

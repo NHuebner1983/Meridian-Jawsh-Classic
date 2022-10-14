@@ -143,6 +143,22 @@ properties:
 
    // The outfits this item is part of for the player
    plOutfit = $
+
+   // This item can be gift wrapped and automatically put in the player's inventory regardless of weight.
+   // Mainly used for events.
+   pbWrapAndLoot = FALSE
+
+   // Wearing this item buffs the wearer with a spell
+   piBuffSpellNum = $
+   ptBuffTimer = $
+
+   // Marketplace settings for each object
+   pbMarketplaceListed = FALSE
+   poMarketplaceOwner = $
+   piMarketplaceQuantity = 1
+   piMarketplaceUnitPriceShillings = 1
+   piMarketplaceUnitPricePlatinum = 0
+   poMarketplacePurchasedFrom = $
    
 messages:
 
@@ -178,6 +194,199 @@ messages:
       }
 
       propagate;
+   }
+
+   IsListedOnMarketplace()
+   "Is this a marketplaced item"
+   {
+      return pbMarketplaceListed;
+   }
+
+   GetMarketplaceOwner()
+   "Original owner of the item"
+   {
+      return poMarketplaceOwner;
+   }
+
+   SetMarketplaceOwner(who=$)
+   "Set the marketplace owner of this item"
+   {
+      poMarketplaceOwner = who;
+
+      return;
+   }
+
+   GetMarketplaceUnitPriceShillings()
+   "Unit price for marketplace sale"
+   {
+      return piMarketplaceUnitPriceShillings;
+   }
+
+   GetMarketplaceUnitPricePlatinum()
+   "Unit price for marketplace sale"
+   {
+      return piMarketplaceUnitPricePlatinum;
+   }
+
+   SetMarketplaceUnitPrice(amount_platinum=0, amount_shillings=500)
+   "Set the Shilling Unit Price for this item on the marketplace"
+   {
+      local iPlatinum, iRemainingShillings;
+
+      if amount_shillings = $ OR amount_shillings < 0
+      {
+         amount_shillings = 0;
+      }
+
+      if amount_platinum = $ OR amount_platinum < 0
+      {
+         amount_platinum = 0;
+      }
+
+      iPlatinum = Send(SYS, @ShillingsToPlatinum, #number=amount_shillings);
+      iRemainingShillings = Send(SYS, @ShillingsRemaining, #number=amount_shillings);
+
+      piMarketplaceUnitPriceShillings = iRemainingShillings;
+      piMarketplaceUnitPricePlatinum = iPlatinum + amount_platinum;
+
+      return;
+   }
+
+   GetMarketplaceQuantity()
+   "Quantity available for purchase on marketplace"
+   {
+      return piMarketplaceQuantity;
+   }
+
+   SetMarketplaceQuantity(amount=1)
+   "Set the quantity of this item on the marketplace"
+   {
+      piMarketplaceQuantity = amount;
+
+      return;
+   }
+
+   CanListOnMarketplace()
+   "Item can be listed on the marketplace"
+   {
+      return Send(self,@CanBeStoredInVault) AND NOT Send(self,@IsCursed);
+   }
+
+   ListOnMarketplace(who=$, quantity=1, unit_platinum=1, unit_shillings=500)
+   "List this item on the marketplace"
+   {
+      if who = $
+      {
+         return FALSE;
+      }
+
+      poMarketplaceOwner = who;
+      piMarketplaceQuantity = quantity;
+      
+      Send(self, @SetMarketplaceUnitPrice, #amount_platinum=unit_platinum, #amount_shillings=unit_shillings);
+
+      pbMarketplaceListed = TRUE;
+
+      //Debug("Listed",self,Send(self,@GetName),"for",unit_platinum,"plat",unit_shillings,"shills");
+
+      return TRUE;
+   }
+
+   RemoveFromMarketplace()
+   "Removes the item from the marketplace because it was purchased. New owner is a player!"
+   {
+      //Debug("Remove from marketplace", self, Send(self,@GetName));
+
+      if poMarketplaceOwner <> $
+      {
+         // Item was purchased from this player.
+         poMarketplacePurchasedFrom = poMarketplaceOwner;
+      }
+      
+      pbMarketplaceListed = FALSE;
+      poMarketplaceOwner = $;
+      piMarketplaceQuantity = 0;
+      piMarketplaceUnitPricePlatinum = 0;
+      piMarketplaceUnitPriceShillings = 0;
+
+      return;
+   }
+
+   SetBuffSpell(num=$)
+   "Makes an item have an enchantment for the wearer"
+   {
+      if num <> $
+      {
+         piBuffSpellNum = num;
+
+         if Send(self, @InUse)
+         {
+            Send(self, @StartBuffTimer);
+         }
+      }
+
+      return;
+   }
+
+   TryBuff()
+   "Tries to put an enchantment on the wearer if it has a buffSpellNum"
+   {
+      local oSpell;
+      
+      if piBuffSpellNum <> $ AND poOwner <> $ AND IsClass(poOwner, &Player) AND Send(self,@InUse) AND Send(poOwner, @IsLoggedOn)
+      {
+         oSpell = Send(SYS,@FindSpellByNum,#num=piBuffSpellNum);
+
+         if oSpell <> $ AND NOT Send(poOwner,@IsEnchanted,#what=oSpell)
+         {
+            Send(oSpell,@CastSpell,#who=poOwner,#lTargets=[poOwner],#iSpellPower=99,#bItemCast=TRUE);
+         }
+
+         Send(self, @StartBuffTimer);
+      }
+
+      return;
+   }
+
+   TryUnbuff()
+   {
+      local oSpell;
+      
+      if piBuffSpellNum <> $ AND poOwner <> $ AND IsClass(poOwner, &Player)
+      {
+         oSpell = Send(SYS,@FindSpellByNum,#num=piBuffSpellNum);
+
+         if oSpell <> $ AND Send(poOwner,@IsEnchanted,#what=oSpell)
+         {
+            Send(poOwner,@RemoveEnchantment,#what=oSpell);
+         }
+      }
+
+      Send(self,@StopBuffTimer);
+
+      return;
+   }
+
+   StartBuffTimer()
+   {
+      if ptBuffTimer <> $
+      {
+         Send(self,@StopBuffTimer);
+      }
+
+      if piBuffSpellNum <> $
+      {
+         ptBuffTimer = CreateTimer(self, @TryBuff, 5000);
+      }
+
+      return;
+   }
+
+   StopBuffTimer()
+   {
+      ptBuffTimer = $;
+
+      return;
    }
 
    InOutfit(outfitNum=0)
@@ -728,6 +937,47 @@ messages:
       return;
    }
 
+   SetOwner(who=$)
+   "Really, this has never existed?"
+   {
+      poOwner = who;
+
+      return;
+   }
+
+   WrapMe(from=$)
+   {
+      local oObj;
+
+      if NOT IsClass(self, &Gift)
+      {
+         return Create(&Gift,#contents=self,#giver=from);
+      }
+
+      pbWrapAndLoot = FALSE;
+
+      return self;
+   }
+
+   DoNotWrapAgain()
+   {
+      pbWrapAndLoot = FALSE;
+
+      return;
+   }
+
+   MakeWrappedAndAutoLooted()
+   {
+      pbWrapAndLoot = TRUE;
+
+      return;
+   }
+
+   IsWrappedAndAutoLooted()
+   {
+      return pbWrapAndLoot;
+   }
+
    GetMinDamageWithOwnerStats()
    {
       return 0;
@@ -1033,9 +1283,27 @@ messages:
       return viValue_average;
    }
 
-   GetValue()
+   GetValue(type=$)
    {
       local iPercent, iValue, iFinal, i, oItemAtt, iNum;
+
+      if type = $
+      {
+         type = &Shilling;
+      }
+
+      if pbMarketplaceListed
+      {
+         // Marketplace items do not have a degredation value calculation.
+         if type = &Shilling
+         {
+            return piMarketplaceUnitPriceShillings;
+         }
+         if type = &Platinum
+         {
+            return piMarketplaceUnitPricePlatinum;
+         }
+      }
 
       // Okay, new way of figuring value, considering 
       // max_hits, current_max_hits, and hits.
@@ -1071,6 +1339,16 @@ messages:
                        #iCompound=First(i));
       }
       
+      if type = &Shilling
+      {
+         return iFinal;
+      }
+      
+      if type = &Platinum
+      {
+         return iFinal / SHILLINGS_PER_PLATINUM;
+      }
+
       return iFinal;
    }
 
@@ -1166,19 +1444,41 @@ messages:
          Send(poOwner,@SetPlayerFlag,#flag=iSpecial,#value=TRUE);
       }
 
+      Send(self, @StartBuffTimer);
+
       return;
    }
 
    UserLogoff()
    "Called when we're used by someone, and they logoff."
    {
+      if Send(self,@InUse)
+      {
+         Send(self,@TryUnbuff);
+      }
+      
       return;
    }
 
    UserLogon()
    "Called when we're used by someone, and they logon."
    {
+      if Send(self,@InUse)
+      {
+         Send(self,@StartBuffTimer);
+      }
+      
       return;
+   }
+   
+   IsBroken()
+   {
+      if viBroken_group = $
+      {
+         return FALSE;
+      }
+
+      return piHits <= 0;
    }
 
    ReqUse()
@@ -1215,6 +1515,13 @@ messages:
             return FALSE;
          }
       }
+
+      if ptBuffTimer <> $
+      {
+         DeleteTimer(ptBuffTimer);
+      }
+      
+      Send(self,@TryUnbuff);
       
       return TRUE;
    }
@@ -1254,6 +1561,12 @@ messages:
          }
       }
 
+      if ptBuffTimer <> $
+      {
+         DeleteTimer(ptBuffTimer);
+      }
+
+      Send(self,@TryUnbuff);
       Send(self,@ClearOutfit);
 
       propagate;
@@ -1475,6 +1788,7 @@ messages:
    
    Delete()
    {
+      Send(self,@TryUnbuff);
       Send(self,@ClearOutfit);
       Send(self,@ClearAllItemAttributes);
       
@@ -1738,6 +2052,12 @@ messages:
    CanBeStoredInVault()
    "Black daggers and tokens, especially, cannot be stored in vaults."
    {
+      if IsClass(self, &Money)
+      {
+         // We should not store money in our vaults.
+         return FALSE;
+      }
+
       return TRUE;
    }
 

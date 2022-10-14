@@ -42,6 +42,7 @@ properties:
 
    // Money Created this save period
    piMoneyCreated = 0
+   piPlatinumCreated = 0
 
    // Highest level in a Survival Arenas
    piPublicSurvivalLevel = 0
@@ -86,9 +87,40 @@ messages:
       return piSoloSurvivalLevel;
    }
 
-   MoneyCreated(amount = 0)
+   MoneyCreated(what=$, amount = 0)
    {
-      piMoneyCreated += amount;
+      local iPlatinum, iShilling;
+
+      iShilling = amount;
+      iPlatinum = 0;
+
+      if what = $
+      {
+         // We need to know what kind of money was created...
+         Debug("MoneyCreated but no what provided");
+         return FALSE;
+      }
+
+      if IsClass(what, &Shilling)
+      {
+         if iShilling >= SHILLINGS_PER_PLATINUM
+         {
+            iPlatinum = Send(SYS, @ShillingsToPlatinum, #number=iShilling);
+            iShilling = Send(SYS, @ShillingsRemaining, #number=iShilling);
+
+            if iShilling < 0
+            {
+               // Not sure how this could be negative, it should always be zero or positive.
+               iShilling = 0;
+               //Debug("MoneyCreated got negative shilling conversion", amount, iPlatinum, iShilling);
+            }
+         }
+      } else if IsClass(what, &Platinum) {
+         iPlatinum = amount;
+      }
+
+      piMoneyCreated += iShilling;
+      piPlatinumCreated += iPlatinum;
 
       return;
    }
@@ -118,6 +150,7 @@ messages:
       {
          foreach j in Send(i,@GetBankAccounts)
          {
+            // Banks calculate in Platinum now
             iMoney += Nth(j,2);
             if (iMoney >= 1000000)
             {
@@ -129,7 +162,8 @@ messages:
 
       foreach i in Send(SYS,@GetUsers)
       {
-         oPlayerMoney = Send(i,@GetMoneyObject);
+         // Stats operate in platinum now
+         oPlayerMoney = Send(i,@GetPlatinumObject);
 
          if oPlayerMoney <> $
          {
@@ -209,7 +243,8 @@ messages:
 
       foreach u in Send(SYS,@GetUsers)
       {
-         oPlayerMoney = Send(u,@GetMoneyObject);
+         // Calculates in platinum now.
+         oPlayerMoney = Send(u,@GetPlatinumObject);
 
          if oPlayerMoney <> $
          {

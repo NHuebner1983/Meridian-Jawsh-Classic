@@ -191,7 +191,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
    
    /* Add "Date:" field to message */
    date[0] = 0;
-   if (DateFromSeconds(msg_time + 211458440, date) == True)
+   if (DateFromSeconds(msg_time + 211465640, date) == True)
    {
       strcat(new_msg, GetString(hInst, IDS_DATE));      
       strcat(new_msg, date);      

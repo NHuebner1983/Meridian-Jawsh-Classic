@@ -36,9 +36,9 @@ classvars:
    vrDesc = IvyCirclet_desc_rsc
 
    viHits_init_min = 255
-   viHits_init_max = 300
+   viHits_init_max = 450
 
-   viValue_average = 450
+   viValue_average = 8000
    viWeight = 10
    viBulk = 20
 
@@ -69,7 +69,8 @@ messages:
    GetResistanceModifiers()
    {
       return [ [-ATCK_SPELL_FIRE,-10],
-               [-ATCK_SPELL_UNHOLY,-20]
+               [-ATCK_SPELL_UNHOLY,-5],
+               [-ATCK_SPELL_HOLY,5]
              ];
    }
 

@@ -131,6 +131,10 @@ messages:
       send(self,@NewHold,#what=Create(&MarionBartender),
            #new_row=14,#new_col=9,#fine_row=48,#fine_col=0,#new_angle=ANGLE_NORTH);
 
+      // Show a Marketplace sign in MAR Inn marinn.roo
+      Send(self,@NewHold,#what=Create(&Store),
+           #new_row=14,#new_col=6,#fine_row=41,#fine_col=7,#new_angle=ANGLE_NORTH);
+           
       propagate;
    }
 

@@ -37,10 +37,14 @@ constants:
    DEFLT_START_TIME = 15000
    
    // Report goals every 1 minute
-   REPORT_TIME = 60000
+   REPORT_TIME = 15000
 
    // Starts when Miniboss is killed
-   RESPAWN_MINIBOSS_TIME = 60000
+   RESPAWN_MINIBOSS_TIME = 15000
+
+   // To go over 100, set this higher. 
+   // You will need to adjust rewards though.
+   MAX_SURVIVAL_LEVEL = 100
 
 resources:
 
@@ -84,7 +88,7 @@ resources:
       "You now have %i lives."
    wall_blitz_activated = "~BA surge of ethereal fury overcomes the horde!"
    fixed_reward_msg = \
-      "It seems one of the fallen enemies has dropped one %s on the battlefield!"
+      "Your persistence in the battlefield has encouraged the gods to bestow you a %s, neatly wrapped in a gift box!"
    your_lives_remain = "You have %i lives remaining."
    spectator_only_msg = \
       "Combat has already begun. You may spectate until all participants "
@@ -93,7 +97,8 @@ resources:
       "You must wait at least %i seconds after the creation of a Survival "
       "Arena before you may exit."
    survivalroom_user_say_leave = "leave survival"
-   survivalroom_public_waves_until_lockout = "~IPublic survival complete wave %i. In %i waves you will not be able to join. To join, visit an inn and type say join public survival.~I"
+   survivalroom_public_waves_until_lockout = "~IPublic survival completed wave %i. You have %i more waves until public survival is locked. To join, visit an inn and type ~Bsay join public survival~B.~I"
+   survivalroom_public_complete = "~IPublic survival has completed the maximum level, ~Bcongratulations~B to the champions!~I"
 
    round_begin_wav = gong.ogg
 
@@ -125,12 +130,12 @@ properties:
    ptNextLevelTimer = $
    piWallBlitzTime = 300000
 
-   piGen_time = 5000
-   piGen_percent = 100
+   piGen_time = 1000
+   piGen_percent = 20
 
    piInit_count_min = 0
    piInit_count_max = 0
-   piMonster_count_max = 30
+   piMonster_count_max = 20
 
    pbSpawnWaves = FALSE
    piAllowJoins = TRUE
@@ -149,6 +154,8 @@ properties:
    plAllMonsters = $
 
    plFixedRewards = $
+   plRandomFinalRewardsGG = $
+   plRandomFinalRewardsMasks = $
    piSpawnedBossThisRound = FALSE
    ptReportGoalsTimer = $
    ptRespawnMiniBossTimer = $
@@ -170,6 +177,15 @@ properties:
    // after the room is made. Stops survival arena spam or large amounts
    // of rooms being created and deleted.
    piCreationTime = $
+
+   // When we reach 100, it's over with.
+   ptFinalFoundBoot = $
+
+   // Dispose of everything
+   piDispose_delay = 30000
+
+   // Remove bodies
+   piDisposeDeadBodiesInterval = 5000
 
 messages:
 
@@ -383,22 +399,26 @@ messages:
                   &Yeti,
                   &DarkAngel,
                   &EarthDragon,
-                  &Mimic,
                   &Thrasher,
+                  &Ogre,
+                  &DarkOgre,
+                  &DarkFrogman,
+                  &BlackDragon,
                   &Ghost];
 
       plMinibosses = [&GroundWormQueen,
                       &OrcPitBoss,
-					  &GiantDaemonSkeleton,
+                      &GiantDaemonSkeleton,
                       &DragonFlyQueen,
                       &Shadowbeast,
                       &SpiderQueen,
                       &GiantRatKing,
                       &EarthElemental,
-                      &Minotaur,
-                      &BlackDragon,
                       &FireElemental,
                       &IceElemental,
+                      &BlackDragon,
+                      &DarkFrogman,
+                      &DarkOgre,
                       &NeruElemental];
                       
       plMonsters = plRoundOneMonsters;
@@ -411,12 +431,18 @@ messages:
                         [&ShrunkenHeadMask,35],
                         [&DaemonMask,40],
                         [&FeyMask,50],
-                        [&XeoMask,60],
-                        [&FarenCharm,100],
-                        [&RiijaCharm,100],
-                        [&ShalilleCharm,100],
-                        [&QorCharm,100],
-                        [&KraananCharm,100]];
+                        [&XeoMask,60]];
+      
+      plRandomFinalRewardsGG = [&FarenCharm,
+                                &RiijaCharm,
+                                &ShalilleCharm,
+                                &QorCharm,
+                                &KraananCharm];
+
+      plRandomFinalRewardsMasks = [&DaemonMask,
+                                   &ShrunkenHeadMask,
+                                   &MummyMask];
+
 
       Send(self,@RecalcLightAndWeather);
 
@@ -450,6 +476,9 @@ messages:
    InitiateNextLevel(timer=$)
    {
       local i, n, p;
+
+      // Remove all of the bodies before we bring more monsters in.
+      Send(self,@ClearDeadBodies);
 
       piHasBegun = TRUE;
       ptNextLevelTimer = $;
@@ -544,11 +573,13 @@ messages:
             else if iGoal = GOAL_BOSS
             {
                Send(each_obj,@MsgSendUser,#message_rsc=boss_goal_msg);
+               Send(self,@NeedBosses,#num=1);
             }
             else if iGoal = GOAL_MINIBOSSES
             {
                Send(each_obj,@MsgSendUser,#message_rsc=minibosses_goal_msg,
                      #parm1=Nth(n,2));
+               Send(self,@NeedMiniBosses,#num=Nth(n,2));
             }
          }
 
@@ -573,6 +604,52 @@ messages:
                Send(each_obj,@MsgSendUser,#message_rsc=kill_friendly_msg);
             }
          }
+      }
+
+      return;
+   }
+
+   NeedMiniBosses(num=2)
+   "If our goal says we need these, we need to make sure they are spawned"
+   {
+      local i, iCount;
+
+      iCount = 0;
+
+      foreach i in plActive
+      {
+         if IsClass(First(i),&Monster) AND Send(self,@IsMiniBoss,#what=First(i))
+         {
+            iCount = iCount + 1;
+         }
+      }
+
+      if iCount < num
+      {
+         Send(self,@SpawnMiniboss);
+      }
+
+      return;
+   }
+
+   NeedBosses(num=1)
+   "If our goal says we need these, we need to make sure they are spawned"
+   {
+      local i, iCount;
+
+      iCount = 0;
+
+      foreach i in plActive
+      {
+         if IsClass(First(i),&Monster) AND Send(self,@IsBoss,#what=First(i))
+         {
+            iCount = iCount + 1;
+         }
+      }
+
+      if iCount < num
+      {
+         Send(self,@SpawnBoss);
       }
 
       return;
@@ -652,40 +729,69 @@ messages:
          ptRespawnMiniBossTimer = $;
       }
 
+      if piLevel = MAX_SURVIVAL_LEVEL
+      {
+         // Boot everyone in 2 minutes.
+         Send(&Player,@MsgSendUser,#message_rsc=survivalroom_public_complete);
+         ptFinalFoundBoot = CreateTimer(self, @Delete, 120000);
+
+         // Give out final rewards
+         foreach i in plActive
+         {
+            if IsClass(First(i),&User)
+            {
+               // Random GG to each player for making it to level 100!
+               oReward = Create(Nth(plRandomFinalRewardsGG, Random(1, Length(plRandomFinalRewardsGG))));
+               Send(First(i),@NewHold,#what=Create(&Gift,#contents=oReward,#giver=$));
+               Send(First(i),@MsgSendUser,#message_rsc=fixed_reward_msg,
+                                    #parm1=Send(oReward,@GetName));
+
+               // Random rare mask to each player
+               oReward = Create(Nth(plRandomFinalRewardsMasks, Random(1, Length(plRandomFinalRewardsMasks))));
+               Send(First(i),@NewHold,#what=Create(&Gift,#contents=oReward,#giver=$));
+               Send(First(i),@MsgSendUser,#message_rsc=fixed_reward_msg,
+                                    #parm1=Send(oReward,@GetName));
+            }
+         }
+      }
+
       foreach lFixedReward in plFixedRewards
       {
          if Nth(lFixedReward,2) = piLevel
          {
             oReward = Create(First(lFixedReward));
+
             foreach i in plActive
             {
                if IsClass(First(i),&User)
                {
                   Send(First(i),@MsgSendUser,#message_rsc=fixed_reward_msg,
                                       #parm1=Send(oReward,@GetName));
+
+                  // Random mask to each player
+                  Send(First(i),@NewHold,#what=Create(&Gift,#contents=oReward,#giver=$));
                }
             }
             
-            if plGenerators <> $
-            {
-               lRandomSpawnPoint = Nth(plGenerators,
-                                       Random(1,Length(plGenerators)));
-            }
-            else
-            {
-               lRandomSpawnPoint = [Send(self,@GetTeleportRow),
-                                    Send(self,@GetTeleportCol)];
-            }
+            // if plGenerators <> $
+            // {
+            //    lRandomSpawnPoint = Nth(plGenerators,
+            //                            Random(1,Length(plGenerators)));
+            // }
+            // else
+            // {
+            //    lRandomSpawnPoint = [Send(self,@GetTeleportRow),
+            //                         Send(self,@GetTeleportCol)];
+            // }
 
-            Send(self,@NewHold,#what=oReward,
-                  #new_row=First(lRandomSpawnPoint),
-                  #new_col=Nth(lRandomSpawnPoint,2));
+            // Send(self,@NewHold,#what=oReward,
+            //       #new_row=First(lRandomSpawnPoint),
+            //       #new_col=Nth(lRandomSpawnPoint,2));
             iRewardTime = iRewardTime + 75000;
          }
       }
 
-      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,
-                              piRegroupTime + iRewardTime);
+      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,piRegroupTime);
       
       foreach i in plActive
       {
@@ -704,7 +810,7 @@ messages:
                }
             }
             Send(each_obj,@MsgSendUser,#message_rsc=next_level_in_seconds,
-                  #parm1=piLevel,#parm2=(piRegroupTime + iRewardTime) / 1000);
+                  #parm1=piLevel,#parm2=(piRegroupTime) / 1000);
          }
       }
 
@@ -811,6 +917,18 @@ messages:
 
       if IsClass(victim,&User)
       {
+         if Send(victim, @HasBecomeMonster) 
+            AND NOT Send(victim, @IsRoamingNPCPlayer)
+         {
+            // While being a monster, you get a riija servant cuz they rock.
+            Send(Send(SYS,@FindSpellByNum,#num=SID_RIIJA_SERVANT),
+               @CastSpell,#who=victim,#lTargets=[victim],#iSpellPower=99);
+         }
+
+         // AOG the player so they can withstand a bit more damage...
+         Send(Send(SYS,@FindSpellByNum,#num=SID_ARMOR_OF_GORT),
+            @CastSpell,#who=victim,#lTargets=[victim],#iSpellPower=99);
+
          propagate;
       }
 
@@ -1046,10 +1164,12 @@ messages:
 
    NewHoldObject(what=$)
    {
-      local oTarget, i, count;
+      local oTarget, i, count, lPos;
 
       if IsClass(what,&User)
       {
+         lPos = Send(what, @GetPos);
+
          foreach i in plCrashProtection
          {
             if what = First(i)
@@ -1068,7 +1188,12 @@ messages:
 
          if piHasBegun
             AND piLevel > piLastJoinLevel
+            AND NOT IsClass(what, &DM)
+            AND NOT Send(what,@IsRoamingNPCPlayer)
+            AND NOT Send(what,@HasBecomeMonster)
+            AND Nth(lPos, 1) = viTeleport_row AND Nth(lPos, 2) = viTeleport_col
          {
+            // Users brought in by DM will not be in blink spot, they should not be spectating.
             Send(self,@SpectateUser,#who=what);
             Post(what,@MsgSendUser,#message_rsc=spectator_only_msg);
 

@@ -121,6 +121,9 @@ properties:
    ptGateTwo = $
    ptGateThree = $
 
+   // Checks the final room for remaining monsters.
+   ptFinalRoom = $
+
     // Spawns this % of the time.
    piNecroSpawnRate = 100
 
@@ -312,7 +315,7 @@ messages:
       if (iSectorID = AREA_2)
       {
          if (ptGateTwo = $
-            AND NOT Send(self,@IsSkeletonInSectorID,#iNum=iSectorID))
+            AND NOT Send(self,@IsMonsterInSectorID,#iNum=iSectorID))
          {
             Send(self,@Teleport,#what=who,#foyer=TRUE);
          }
@@ -320,7 +323,7 @@ messages:
       else if (iSectorID = AREA_3)
       {
          if (ptGateThree = $
-            AND NOT Send(self,@IsSkeletonInSectorID,#iNum=iSectorID))
+            AND NOT Send(self,@IsMonsterInSectorID,#iNum=iSectorID))
          {
             Send(self,@Teleport,#what=who,#foyer=TRUE);
          }
@@ -392,41 +395,62 @@ messages:
       {
          switch(Send(victim,@GetSectorIDAtObject))
          {
-         case AREA_1:
-            if (Send(self,@CountSkeletonsInSectorID,#iNum=AREA_1) = 1)
-            {
-               Send(self,@RaiseGate,#iNum=GATE_1);
-            }
+            case AREA_1:
+               if (Send(self,@CountSkeletonsInSectorID,#iNum=AREA_1) = 1)
+               {
+                  Send(self,@RaiseGate,#iNum=GATE_1);
+               }
             break;
-         case AREA_2:
-            if (Send(self,@CountSkeletonsInSectorID,#iNum=AREA_2) = 1)
-            {
-               Send(self,@RaiseGate,#iNum=GATE_2);
-            }
+            case AREA_2:
+               if (Send(self,@CountSkeletonsInSectorID,#iNum=AREA_2) = 1)
+               {
+                  Send(self,@RaiseGate,#iNum=GATE_2);
+               }
             break;
-         case AREA_3:
-            if (Send(self,@CountSkeletonsInSectorID,#iNum=AREA_3) = 1)
-            {
-               //if (Random(1,100) <= piNecroSpawnRate)
-               //{
+            case AREA_3:
+               if (Send(self,@CountSkeletonsInSectorID,#iNum=AREA_3) = 1)
+               {
                   Send(self,@SpawnNecromancer);
-               //}
-               //else
-               //{
-                  //Send(self,@RaiseGate,#iNum=GATE_3);
-               //}
-            }
+               }
+
+               if ptFinalRoom <> $
+               {
+                  DeleteTimer(ptFinalRoom);
+               }
+               
+               ptFinalRoom = CreateTimer(self, @CheckFinalRoomForMonsters, 1000);
             break;
          }
       }
-      else if (cClass = &Mimic)
+      else if (cClass = &Mimic OR cClass = &Minotaur)
       {
-         Send(self,@RaiseGate,#iNum=GATE_3);
+         if ptFinalRoom <> $
+         {
+            DeleteTimer(ptFinalRoom);
+         }
+
+         ptFinalRoom = CreateTimer(self, @CheckFinalRoomForMonsters, 1000);
       }
 
       propagate;
    }
    #endregion Room Overrides
+
+   CheckFinalRoomForMonsters()
+   {
+      ptFinalRoom = $;
+
+      if NOT Send(self,@IsMonsterInSectorID,#iNum=AREA_3)
+      {
+         Send(self,@RaiseGate,#iNum=GATE_3);
+
+         return;
+      }
+
+      ptFinalRoom = CreateTimer(self, @CheckFinalRoomForMonsters, 1000);
+
+      return;
+   }
 
    CountSkeletonsInSectorID(iNum=AREA_1)
    "Includes giant daemon skeleton, but not necromancer."
@@ -457,7 +481,7 @@ messages:
       return iCount;
    }
 
-   IsSkeletonInSectorID(iNum=0)
+   IsMonsterInSectorID(iNum=0)
    "Includes giant daemon skeleton and necromancer."
    {
       local i, each_obj, cClass;
@@ -465,7 +489,7 @@ messages:
       if (iNum < AREA_1
          OR iNum > AREA_3)
       {
-         Debug("Invalid sector ID sent to IsSkeletonInSectorID: ",iNum);
+         Debug("Invalid sector ID sent to IsMonsterInSectorID: ",iNum);
 
          return FALSE;
       }
@@ -475,7 +499,8 @@ messages:
          each_obj = First(i);
          cClass = GetClass(each_obj);
          if ((cClass = &GiantDaemonSkeleton
-               OR cClass = &Mimic)
+               OR cClass = &Mimic 
+               OR cClass = &Minotaur)
             AND NOT Send(each_obj,@IsIllusion) // No animated mobs etc.
             AND Send(each_obj,@GetSectorIDAtObject) = iNum)
          {
@@ -498,7 +523,7 @@ messages:
       }
 
       // Determine if we have skeletons in this area already.
-      if (Send(self,@IsSkeletonInSectorID,#iNum=bArea))
+      if (Send(self,@IsMonsterInSectorID,#iNum=bArea))
       {
          return;
       }

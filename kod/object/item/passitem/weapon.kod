@@ -517,6 +517,12 @@ messages:
       return iDisarm;
    }
 
+   GetTauntBonus()
+   "Weapon's bonus to taunt attempts, roughly in percent"
+   {
+      return 0;
+   }
+
    GetBaseSpellModifier()
    {
       local iModifier;

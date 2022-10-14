@@ -37,7 +37,7 @@ classvars:
    viBulk = 2
    viWeight = 2
 
-   viValue_average = 1000
+   viValue_average = 25000
 
 properties:
 
@@ -104,19 +104,9 @@ messages:
          iValue = iValue * 5;
       }
 
-      oMoney = Send(who,@GetMoneyObject);
+      oMoney = Send(who,@AddShillings,#amount=iValue);
 
-      if oMoney = $
-      {
-         oMoney = Create(&Money,#number=iValue);
-         Send(who,@NewHold,#what=oMoney);
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,
-               #amount=Send(oMoney,@GetNumber));
-      }
-      else
-      {
-         Send(oMoney,@AddNumber,#number=iValue);
-      }
+      Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=Send(oMoney,@GetNumber));
 
       return;
    }

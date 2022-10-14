@@ -51,7 +51,7 @@ classvars:
    viWeight = 20
    viHits_init_min = 3
    viHits_init_max = 5
-   viValue_average = 350000
+   viValue_average = 25000
 
 properties:
 

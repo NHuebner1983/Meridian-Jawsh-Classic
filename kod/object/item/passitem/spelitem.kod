@@ -605,8 +605,30 @@ messages:
       return viValue_average * piHits;
    }
 
-   GetValue()
+   GetValue(type=$)
    {
+      if type = $
+      {
+         type = &Shilling;
+      }
+
+      if type = &Shilling
+      {
+         return viValue_average * piHits;
+      }
+
+      if type = &Platinum
+      {
+         if (viValue_average * piHits) >= SHILLINGS_PER_PLATINUM
+         {
+            return Send(SYS,@ShillingsToPlatinum,#number=viValue_average * piHits);
+         }
+         else
+         {
+            return 0;
+         }
+      }
+
       return viValue_average * piHits;
    }
 

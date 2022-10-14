@@ -98,6 +98,11 @@ messages:
 	   #new_row=13,#fine_row=0,#new_col=14, #fine_col=0);
       Send(self,@NewHold,#what=Create(&Brazier),
 	   #new_row=17,#fine_row=0,#new_col=14,#fine_col=0);
+
+      // Show a Marketplace sign in BQ AH barhall.roo
+      Send(self,@NewHold,#what=Create(&Store),
+           #new_row=9,#new_col=4,#fine_row=49,#fine_col=59,#new_angle=ANGLE_SOUTH);
+                 
       propagate;
    }
 

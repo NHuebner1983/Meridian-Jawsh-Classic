@@ -47,7 +47,7 @@ properties:
    plExcludedRoomsList = $
 
    // Default time between rounds
-   piRegroupTime = 15000
+   piRegroupTime = 5000
 
    // Default time between wall blitzes (mobs walk through walls)
    piWallBlitzTime = 300000
@@ -63,7 +63,14 @@ messages:
    Constructor()
    {
       Send(self,@Recreate);
-      
+
+      return;
+   }
+
+   Recreate()
+   {
+      piLastJoinLevel = 50;
+
       plExcludedRoomsList = [RID_MAR_SMITHY,
                              RID_MAR_ELDER_HUT,
                              RID_SEWER_KING,
@@ -74,7 +81,6 @@ messages:
                              RID_MAR_CRYPT1,
                              RID_FOREST4,
                              RID_FOREST5,
-                             RID_KOCATAN,
                              RID_KOC_INN,
                              RID_FOREST1,
                              RID_FOREST2,
@@ -94,21 +100,17 @@ messages:
                              RID_KC5,
                              RID_KA3,
                              RID_H9,
-                             RID_VICTORIA,
-                             RID_CASTLE1,
-                             RID_CASTLE1B,
                              RID_BRAX_CASTLE2,
                              RID_MARSMITH,
                              RID_MARELDER,
                              RID_SEWKING,
-                             RID_TEMPLE_RIIJA];
-
-      return;
-   }
-
-   Recreate()
-   {
-      piLastJoinLevel = 50;
+                             RID_TEMPLE_RIIJA,
+                             RID_JAS_AB5,
+                             RID_JAS_AB6,
+                             RID_JAS_AB7,
+                             RID_JAS_AB8,
+                             RID_JAS_AB9
+                             ];
 
       return;
    }
@@ -181,8 +183,7 @@ messages:
       // DMs can choose any room, but users can only pick from the allowed
       // rooms.  Set oBaseRoom to the chosen room so it can be checked
       // in the following code.
-      if NOT IsClass(who,&DM)
-         AND oForceBaseRoom <> $
+      if oForceBaseRoom <> $
       {
          oBaseRoom = oForceBaseRoom;
          oForceBaseRoom = $;

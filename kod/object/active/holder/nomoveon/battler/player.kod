@@ -91,19 +91,19 @@ constants:
    
    // How steep is the curve for learning new levels of spells?
    //  A higher number means a greater slope (less points at low levels)
-   POINTS_SLOPE = 7                 
+   POINTS_SLOPE = 7
 
    // Sets a reasonable lower level on the number of percents needed to
    //  advance to the next level of spells/skills.
-   MIN_NEEDED_TO_ADVANCE = 75       
+   MIN_NEEDED_TO_ADVANCE = 75
                                     
    // How many weapon swings until we get an improve check?
-   SWINGS_PER_IMPROVE_CHECK = 75    
+   SWINGS_PER_IMPROVE_CHECK = 75
 
    // What's the length after having a player attacked before we let "mules" 
    //  cast on them again.  Currently set to 15 minutes.  Should be bigger 
    //  than logoff ghost time (currently 10 mins)
-   ATTACKED_PLAYER_WAIT = 15 * 60
+   ATTACKED_PLAYER_WAIT = 5 * 60
 
    // Damage is capped at piBase_Max_Health divided by this number.  Reduces
    //  newbie slaughter.
@@ -833,7 +833,13 @@ resources:
    bad_line_of_sight = \
       "Your hindered line of sight makes a successful hit more difficult."
 
-      
+   player_camp_return_rsc = "~B~I~rYou wake up from a deep sleep, let out a loud yawn and begin to stretch your legs. How long was I asleep?~r~I~B"
+
+   player_already_store_owner = \
+      "You already have a store.  You will have to "
+      "let them know that you need to ~Ipart ways~I, before you can start "
+      "a new one."
+
    pvp_notify_wav = gong.ogg
 
 classvars:
@@ -1152,6 +1158,9 @@ properties:
    // Player's summoned servant
    poServant = $
 
+   // Remember's your servant's settings (such as last commands you gave them).
+   plServantSettings = $
+
    // Player's list of resources that build up over time (but have a maximum).
    // Resources, such as "heal me", "feed me", "mystify me"
    // If the player can receive the whole amount, they will.
@@ -1192,6 +1201,17 @@ properties:
    // When a new expansion is released, some modifications need to happen to the player when they logon.
    pbExpansionAdjusted_DeathRealm = FALSE
    
+   // When the player goofs up, like jumping off a cliff in Pog King Layer.
+   pbKillingPlayer = FALSE
+   ptKillPlayer = $
+   poKillPlayerCredit = $
+
+   // Player is resting at a campfire, prevent their ghost from penalties / inns.
+   pbCamped = FALSE
+
+   // Player is building a campfire to pbCamped = TRUE next.
+   pbCamping = FALSE
+
 messages:
 
    Constructor()
@@ -1202,7 +1222,166 @@ messages:
 
       propagate;
    }
-   
+
+   GetServantSettings()
+   {
+      return plServantSettings;
+   }
+
+   SaveServantSettings(lSettings=$)
+   {
+      plServantSettings = lSettings;
+
+      return;
+   }
+
+   IsCamping()
+   "Is the player trying to camp."
+   {
+      return pbCamping;
+   }
+
+   IsCamped()
+   "Is the player camped (should be a logoff ghost + campfire)."
+   {
+      return pbCamped;
+   }
+
+   StopCamping(caller=$)
+   "Stops a camping attempt but also pulls the player out of a Camped state."
+   {
+      if pbCamped
+      {
+         Send(self, @MsgSendUser, #message_rsc=player_camp_return_rsc);
+
+         if caller = $ OR NOT IsClass(caller, &Phase)
+         {
+            Send(self, @PhaseTimerEnd);
+
+            piRemainingPhaseTime = Send(self,@GetBasePhaseTime);
+         }
+      }
+
+      pbCamped = FALSE;
+      pbCamping = FALSE;
+
+      Send(Send(SYS,@FindSpellByNum,#num=SID_PHASE),@AdjustVisualEffectBasedOnTimeRemaining,#who=self);
+
+      return;
+   }
+
+   StartCamping()
+   "Player is concentrating on building a campfire."
+   {
+      pbCamping = TRUE;
+      pbCamped = FALSE;
+
+      return;
+   }
+
+   SetCamped()
+   "Player has camped successfully and can now log off safely."
+   {
+      local oSpell;
+
+      pbCamped = TRUE;
+      pbCamping = FALSE;
+
+      Send(self, @RefreshPhaseTimeToBase);
+
+      return;
+   }
+
+   MarketplaceList(what=$,quantity=1,unit_platinum=0,unit_shillings=500)
+   "List an item on the marketplace"
+   {
+      return Send(Send(SYS,@GetMarketplaceObject),@ListOnMarketplace,
+         #object_owner=self,
+         #what=what,
+         #quantity=quantity,
+         #unit_platinum=unit_platinum,
+         #unit_shillings=unit_shillings);
+   }
+
+   MarketplaceUnList(what=$,quantity=1)
+   "TODO: Remove a listed marketplace item"
+   {
+      return;
+   }
+
+
+   KillPlayer(real_death=TRUE, wait_time=0, rscMistakeMessage=$, oRoomOrPlayerWhoKilledMe=$)
+   "This will kill the player (#real_death=TRUE default), but can be delayed for dramatic effect."
+   "Comes with a warning RSC and a customized death message RSC."
+   "Timer is useful for falling and hitting the ground..."
+   {
+      local oKillerCredit;
+
+      if oRoomOrPlayerWhoKilledMe <> $
+      {
+         oKillerCredit = oRoomOrPlayerWhoKilledMe;
+      }
+      else
+      {
+         oKillerCredit = poKillPlayerCredit;   
+      }
+
+      poKillPlayerCredit = oKillerCredit;
+
+      if oKillerCredit = $
+      {
+         Debug("[Failed] KillPlayer",Send(self,@GetName),"without someone or something taking credit.");
+
+         return FALSE;
+      }
+
+      if (pbKillingPlayer AND wait_time <> $ AND wait_time > 0)
+      {
+         // We're already killing or killed the player.
+         //Debug("Already killing",Send(self,@GetName));
+         return;
+      }
+
+      if wait_time <> $ AND wait_time > 0
+      {
+         pbKillingPlayer = TRUE;
+
+         // We will kill the player, but not yet.
+         // Let's create a timer, and recall this function.
+         if rscMistakeMessage <> $
+         {
+            // You've made a mistake message.
+            Send(self,@MsgSendUser,#message_rsc=rscMistakeMessage);
+         }
+
+         // "Dramatic Effect" (such as falling to your death).
+         ptKillPlayer = CreateTimer(self, @KillPlayer, wait_time);
+
+         return;
+      }
+
+      // Kill the player here.
+      Send(self, @Killed, #what=oKillerCredit);
+
+      if oKillerCredit <> $
+      {
+         // Let the caller know the player was killed.
+         // Helps remove them from any lists for accidental repeat deaths.
+         Send(oKillerCredit, @RemoveKilledPlayer, #who=self);
+      }
+
+      pbKillingPlayer = FALSE;
+      poKillPlayerCredit = $;
+
+      return;
+   }
+
+   RemoveKilledPlayer()
+   {
+      // Only supported for rooms or objects right now. Add code here to support it from the function above.
+      return;
+   }
+
    ResetNPCPlayerProfile()
    {
       plNPCProfile = $;
@@ -1227,11 +1406,21 @@ messages:
          return 9999;
       }
 
+      if piLastMoved = $ OR piLastMoved <= 0
+      {
+         piLastMoved = GetTime();
+      }
+
       return GetTime() - piLastMoved;
    }
 
    SinceLastAttack()
    {
+      if piLastAttack = $
+      {
+         piLastAttack = GetTime();
+      }
+
       return GetTime() - piLastAttack;
    }
 
@@ -2522,137 +2711,167 @@ messages:
    GetInventoryObjectByClass(class=$)
    {
       local oObj;
-	  
-	  if class = $
-	  {
-	     return $;
-	  }
-	  
-	  if plActive <> $ AND Length(plActive)
-	  {
-	     foreach oObj in plActive
-		 {
-		    if IsClass(oObj, class)
-			{
-			   return oObj;
-			}
-		 }
-	  }
-	  
-	  if plPassive <> $ AND Length(plPassive)
-	  {
-	     foreach oObj in plPassive
-		 {
-		    if IsClass(oObj, class)
-			{
-			   return oObj;
-			}
-		 }
-	  }
+      
+      if class = $
+      {
+         return $;
+      }
+      
+      if plActive <> $ AND Length(plActive)
+      {
+         foreach oObj in plActive
+         {
+            if IsClass(oObj, class)
+            {
+               return oObj;
+            }
+         }
+      }
+      
+      if plPassive <> $ AND Length(plPassive)
+      {
+         foreach oObj in plPassive
+         {
+            if IsClass(oObj, class)
+            {
+               return oObj;
+            }
+         }
+      }
 
-	  return $;
+      return $;
    }
    
+   GetInventory()
+   {
+      local oObj, lInventory;
+
+      lInventory = [];
+      
+      if plActive <> $ AND Length(plActive)
+      {
+         foreach oObj in plActive
+         {
+            lInventory = AppendListElem(oObj, lInventory);
+         }
+      }
+      
+      if plPassive <> $ AND Length(plPassive)
+      {
+         foreach oObj in plPassive
+         {
+            lInventory = AppendListElem(oObj, lInventory);
+         }
+      }
+
+      if Length(lInventory) = 0
+      {
+         lInventory = $;
+      }
+
+      return lInventory;
+   }   
    // Prepare the logged on NPC Player.
    // One more check is performed just in case someone accidentally calls this.
    // Because it wipes out skills/spells and does a lot of WEIRD stuff to the player.
    // Normal players would really be mad if you used this on them.
    SetupRoamingNPCPlayer()
    {
-      local oObj, bHasTotem;
-	   
+      local oObj, bHasTotem, oMoney;
+      
       Send(Send(SYS,@GetLore),@ExcludePlayer,#who=self);
 
       if pbRoamingNPCPlayerInitialized OR NOT Send(self, @IsRoamingNPCPlayer)
-	   {
-	      return;
-	   }
-	  
-	  pbRoamingNPCPlayerInitialized = TRUE;
-	  
-	  Debug("Roaming NPC-Player ONLINE",Send(self,@GetName));
-	  
-	  // Leave the name color alone until population returns to normal.
-	  //Send(self,@SetNameColor,#red=130,#green=130,#blue=130);
-	  
-	  // Adjust stats
-	  piMight = 50;
-	  piIntellect = 50;
-	  piStamina = 50;
-	  piAgility = 50;
-	  piMysticism = 50;
-	  piAim = 50;
-	  
-	  // Stat mods
-	  piMightMod = 20;
-	  piIntellectMod = 20;
-	  piStaminaMod = 20;
-	  piAgilityMod = 20;
-	  piMysticismMod = 20;
-	  piAimMod = 20;
-	  
-	  // Hp, Mana, Vigor
-	  piMana = 200;
-	  piVigor = 200;
+      {
+         return;
+      }
+      
+      pbRoamingNPCPlayerInitialized = TRUE;
+      
+      Debug("Roaming NPC-Player ONLINE",Send(self,@GetName));
+      
+      // Leave the name color alone until population returns to normal.
+      //Send(self,@SetNameColor,#red=130,#green=130,#blue=130);
+      
+      // Adjust stats
+      piMight = 50;
+      piIntellect = 50;
+      piStamina = 50;
+      piAgility = 50;
+      piMysticism = 50;
+      piAim = 50;
+      
+      // Stat mods
+      piMightMod = 0;
+      piIntellectMod = 0;
+      piStaminaMod = 0;
+      piAgilityMod = 0;
+      piMysticismMod = 0;
+      piAimMod = 0;
+      
+      // Hp, Mana, Vigor
+      piMana = 200;
+      piVigor = 200;
       piHealth = 150 * 100; // 150 HP.
       
-	  // Set HP
-	  Send(self,@NewHealth);
+      // Set HP
+      Send(self,@NewHealth);
       
-	  piBase_Max_Health = 150;
+      piBase_Max_Health = 150;
       piMax_health = piBase_max_health;
-	  
-	  // Gain HP
+      
+      // Gain HP
       Send(self,@GainBaseMaxHealth);
-      	  
-	  // Set XP to Max Health
-	  Send(self, @ResetXPToLevel);
-	  
-	  // Skills
-	  Send(self, @GivePlayerAllSkills, #level=6, #iability=99, #override=TRUE);
-	  
-	  // Spells
-	  Send(self, @GivePlayerAllSpells, #level=6, #iability=99, #override=TRUE);
-	  
+            
+      // Set XP to Max Health
+      Send(self, @ResetXPToLevel);
+      
+      // Skills
+      Send(self, @GivePlayerAllSkills, #level=6, #iability=75, #override=TRUE);
+      
+      // Spells
+      Send(self, @GivePlayerAllSpells, #level=6, #iability=75, #override=TRUE);
+      
       // Make sure the NPC has the NPC Totem.
-	  // The totem is basically the entire NPC system!
-	  bHasTotem = Send(self,@PossessesA,#class=&NPCTotem);
+      // The totem is basically the entire NPC system!
+      bHasTotem = Send(self,@PossessesA,#class=&NPCTotem);
 
-	  if bHasTotem
-	  {
-	     oObj = Send(self,@FindHaving,#class=&NPCTotem);
-		 
-		 if oObj <> $
-		 {
-		    Send(self,@LeaveHold,#what=oObj);
-		    Send(oObj,@Delete);
-		 }
-	  }
-	  
-	  bHasTotem = Send(self,@PossessesA,#class=&NPCTotem);
+      if bHasTotem
+      {
+         oObj = Send(self,@FindHaving,#class=&NPCTotem);
+         
+         if oObj <> $
+         {
+            Send(self,@LeaveHold,#what=oObj);
+            Send(oObj,@Delete);
+         }
+      }
+      
+      bHasTotem = Send(self,@PossessesA,#class=&NPCTotem);
 
-	  if NOT bHasTotem
-	  {
+      if NOT bHasTotem
+      {
          Send(self,@NewHold,#what=Create(&NPCTotem));
-	  }
-	  else
-	  {
-	     Debug("UNABLE TO REMOVE NPCTOTEM");
-	  }
-	  
-	  // Do not empty the inventory.
-	  // If there are items already, do not add anything.
-	  if (plActive = $ OR Length(plActive) <= 0) AND (plPassive = $ OR Length(plPassive) <= 0)
-	  {
-         Send(self,@NewHold,#what=Create(&Money,#number=35000));
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=35000);
+      }
+      else
+      {
+         Debug("UNABLE TO REMOVE NPCTOTEM");
+      }
+      
+      // Do not empty the inventory.
+      // If there are items already, do not add anything.
+      if (plActive = $ OR Length(plActive) <= 0) AND (plPassive = $ OR Length(plPassive) <= 0)
+      {
+         oMoney = Create(&Shilling,#number=35000);
+         Send(self,@NewHold,#what=oMoney);
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=35000);
          Send(self,@AddReagentsForSpells,#iNumCasts=3);
-	  }
-	  
-	  // Make the NPC Player PKable
-	  Send(self,@SetAge,#age=100);
-	  Send(self,@PKillEnable);
-	  
+      }
+      
+      // Make the NPC Player PKable
+      Send(self,@SetAge,#age=100);
+      Send(self,@PKillEnable);
+      
       return;
    }
 
@@ -2669,16 +2888,24 @@ messages:
       SendList(plPassive, 0, @UserLogon);
       SendList(plActive, 0, @UserLogon);
 
-	  if Send(self, @IsRoamingNPCPlayer)
-	  {
-	     pbRoamingNPCPlayerInitialized = FALSE;
-		  Send(Send(SYS,@GetLore),@ExcludePlayer,#who=self);
-	     Send(self, @SetupRoamingNPCPlayer);
-	  }
-	  else
-	  {
-	     piLastMoved = GetTime();
-	  }
+      // You login without a servant, your autoloot should be inventory by default.
+      Send(self, @SetAutolootMethod);
+
+      if pbCamped
+      {
+         Send(self, @StopCamping);
+      }
+
+      if Send(self, @IsRoamingNPCPlayer)
+      {
+         pbRoamingNPCPlayerInitialized = FALSE;
+         Send(Send(SYS,@GetLore),@ExcludePlayer,#who=self);
+         Send(self, @SetupRoamingNPCPlayer);
+      }
+      else
+      {
+         piLastMoved = GetTime();
+      }
 	  
       // Restart Unbound Energy, Health and Mana timers
       Send(self,@NewUnboundEnergy);
@@ -3359,16 +3586,18 @@ messages:
    "Add the spells a player is given when creating a character"
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_PHASE,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_TRANSFERENCE,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_RIIJA_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_KRAN_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_SHAL_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_FAREN_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_QOR_SERVANT,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_JALA_SERVANT,#initial=TRUE);
-      Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
-      Send(self,@AddSpell,#num=SID_TRANSFERENCE,#initial=TRUE);
-      Send(self,@AddSpell,#num=SID_PHASE,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_MEDITATE,#initial=TRUE,#iability=1);
+      Send(self,@AddSpell,#num=SID_CAMP,#initial=TRUE,#iability=1);
+      Send(self,@AddSpell,#num=SID_DONATE,#initial=TRUE,#iability=1);
 
       return;
    }
@@ -3382,20 +3611,27 @@ messages:
    AddDefaultObjects()
    "Add the objects a player is given when creating a character in newbie zone"
    {
-      local iInfo, oSpell, lReagents, lItems, cReagent, iNumber;
+      local iInfo, oSpell, lReagents, lItems, cReagent, iNumber, oMoney;
 
       // Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
-      Send(self,@NewHold,#what=Create(&Money,#number=50));
-      Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=50);
-      Send(self,@AddReagentsForSpells,#iNumCasts=10);
+      Send(self,@NewHold,#what=Create(&Shirt));
+      Send(self,@NewHold,#what=Create(&PantsC,#translation=PT_GRAY_TO_BLACK));
+      Send(self,@NewHold,#what=Create(&Gauntlet));
+      Send(self,@NewHold,#what=Create(&LeatherArmor));
+      Send(self,@NewHold,#what=Create(&MetalShield));
+      oMoney = Create(&Shilling,#number=500);
+      Send(self,@NewHold,#what=oMoney);
+      Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=500);
+      Send(self,@AddReagentsForSpells,#iNumCasts=5);
 
       // If player hasn't suicided in last 5 hours, give them cash and prizes!
-      if (GetTime() - piLast_restart_time) > (5*60*60)   
+      if (GetTime() - piLast_restart_time) > (5*60*60)
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=35000));
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=35000);
-         Send(self,@AddReagentsForSpells,#iNumCasts=15);
+         oMoney = Create(&Shilling,#number=50000);
+         Send(self,@NewHold,#what=oMoney);
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=50000);
+         Send(self,@AddReagentsForSpells,#iNumCasts=10);
       }
 
       return;
@@ -3420,14 +3656,15 @@ messages:
    AddRealWorldObjects()
    "Add the objects a player is given when character leaves the newbie zone."
    {
-      local lItems,oItem,iSchool;
+      local lItems,oItem,iSchool,oMoney;
 
       // If player hasn't suicided in last 5 hours,
       // give them cash and fancy clothes!
       if (GetTime() - piLast_restart_time) > (5*60*60)
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=1000));
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=1000);
+         oMoney = Create(&Shilling,#number=1000);
+         Send(self,@NewHold,#what=oMoney);
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=1000);
          Send(self,@NewHold,#what=create(&InkyCap,#number=5));
          Send(self,@NewHold,#what=Create(&PantsC));
          Send(self,@NewHold,#what=Create(&Shirt,#color=XLAT_TO_GRAY));
@@ -3781,7 +4018,7 @@ messages:
          }
       }
 
-      Debug("Enchantment timer went off with no enchantment",timer);
+      //Debug("Enchantment timer went off with no enchantment",timer);
 
       return;
    }
@@ -3824,7 +4061,7 @@ messages:
          }
       }
 
-      Debug("Enchantment timer went off with no enchantment",timer);
+      //Debug("Enchantment timer went off with no enchantment",timer);
 
       return;
    }
@@ -5248,10 +5485,13 @@ messages:
             AND Send(oSoldierShield,@IsEnemyAttack,#what=victim))
       {
          // Okay, attack is against a player, so record the time
-         if actual = TRUE
-         {
-            piTimeAttackedPlayer = GetTime();
-         }
+         //if actual = TRUE
+         //{
+            // Why would we engage in PVP without an actual attack?
+            // This needs to be put somewhere else.
+            //Send(self, @DoPvpNotify);
+            //Send(victim, @DoPvpNotify);
+         //}
 
          return TRUE;
       }
@@ -5438,6 +5678,42 @@ messages:
       return TRUE;
    }
 
+   ClearInventory(preventAccidentalClear=FALSE)
+   "You should really only use this carefully. It will literally delete everything in the player's inventory."
+   {
+      local i;
+
+      if NOT preventAccidentalClear
+      {
+         // Whew.
+         return FALSE;
+      }
+
+      foreach i in plActive
+      {
+         if NOT IsClass(i, &NPCTotem)
+            AND NOT IsClass(i, &SoldierShield)
+            AND NOT IsClass(i, &HunterSword)
+            AND NOT IsClass(i, &NecromancerAmulet)
+         {
+            Send(i,@Delete);
+         }
+      }
+
+      foreach i in plPassive
+      {
+         if NOT IsClass(i, &NPCTotem)
+            AND NOT IsClass(i, &SoldierShield)
+            AND NOT IsClass(i, &HunterSword)
+            AND NOT IsClass(i, &NecromancerAmulet)
+         {
+            Send(i,@Delete);
+         }
+      }
+
+      return TRUE;
+   }
+
    TryAttack(what = $,use_weapon = $,stroke_obj=$)
    {
       local i, iRange, oSpell, state;
@@ -5452,9 +5728,8 @@ messages:
 
       // Check attack time.
       if NOT Send(self,@IsOkayAttackTime)
-         AND NOT Send(self,@HasBecomeMonster)
       {
-         return FALSE;
+         return $;
       }
 
       // Is it in the same room?
@@ -5475,6 +5750,7 @@ messages:
       // Can pay costs?  Only check for skills, spells have already been cast.
       if IsClass(stroke_obj,&Skill)
          AND NOT Send(stroke_obj,@CanPayCosts,#who=self,#oTarget=what)
+         AND NOT Send(self, @HasBecomeMonster)
       {
          return FALSE;
       }
@@ -5527,13 +5803,13 @@ messages:
          }
       }
 
-	 if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
-	 {
-		Send(self,@MsgSendUser,#message_rsc=Jig_cannot_attack,
-			  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
+      {
+      Send(self,@MsgSendUser,#message_rsc=Jig_cannot_attack,
+            #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
 
-		return FALSE;
-	 }
+      return FALSE;
+      }
 
       if IsClass(what,&Monster)
       {
@@ -5559,6 +5835,8 @@ messages:
       // initially, but then not again until PVP_NOTIFY_DECAY has passed
       if IsClass(what,&User)
       {
+         Debug("PVP Notify",Send(self,@GetName),"vs",Send(what,@GetName));
+         Send(self,@DoPvpNotify);
          Send(what,@DoPvpNotify);
       }
 
@@ -5626,58 +5904,58 @@ messages:
             Send(First(i),@ImproveAbility,#who=self,#target=what);
          }
       }
-	  
-	  Send(self,@AddAttacked,#victim=what);
+      
+      Send(self,@AddAttacked,#victim=what);
 
       propagate;
    }
-   
+
    AddAttacked(victim=$)
    {
       if plAttacked = $ OR Length(plAttacked) >= 39
-	  {
-	     plAttacked = [];
-	  }
-	  
-	  plAttacked = AppendListElem(victim, plAttacked);
-	  
-	  return;
+      {
+         plAttacked = [];
+      }
+      
+      plAttacked = AppendListElem(victim, plAttacked);
+      
+      return;
    }
-   
+
    RemoveAttacked(victim=$)
    {
       if plAttacked = $ OR Length(plAttacked) >= 39
-	  {
-	     plAttacked = [];
-		 
-		 return;
-	  }
-	  
-	  if Send(self, @HasAttacked, #victim=victim)
-	  {
-	     plAttacked = DelListElem(plAttacked, victim);
-	  }
-	  
-	  return;
+      {
+         plAttacked = [];
+         
+         return;
+      }
+      
+      if Send(self, @HasAttacked, #victim=victim)
+      {
+         plAttacked = DelListElem(plAttacked, victim);
+      }
+      
+      return;
    }
    
    HasAttacked(victim=$)
    {
       if plAttacked = $
-	  {
-	     plAttacked = [];
-		 
-		 return FALSE;
-	  }
+      {
+         plAttacked = [];
+         
+         return FALSE;
+      }
       
-	  return FindListElem(plAttacked, victim);
+      return FindListElem(plAttacked, victim);
    }
-   
+
    ClearAttacked()
    {
       plAttacked = [];
-	  
-	  return;
+      
+      return;
    }
 
    // Determines if target is within attacking range, and within sight.
@@ -5692,6 +5970,7 @@ messages:
       // We are always in range of ourselves or anything we carry.
       if oTarget = self
          OR oTargetOwner = self
+         OR Send(self,@HasBecomeMonster)
       {
          return TRUE;
       }
@@ -6132,6 +6411,11 @@ messages:
       local i, j, iResistance, oSoldierShield, gainchance, color_rsc,
             iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken;
 
+      if what <> $ AND IsClass(what, &Monster)
+      {
+         Send(self,@JoinBuilderGroup);
+      }
+      
       if NOT precision
       {
          damage = damage * 100;
@@ -6368,6 +6652,17 @@ messages:
          }
 
          Send(Send(SYS,@FindSkillByNum,#num=SKID_DISARM),@DoSkill,#who=self,
+               #oTarget=what,#oWeapon=oWeapon);
+      }
+
+      if Send(self,@GetSkillAbility,#Skill_num=SKID_TAUNT) > 0
+      {
+         if oWeapon <> $ AND IsClass(oWeapon,&Spell)
+         {
+            oWeapon = $;
+         }
+
+         Send(Send(SYS,@FindSkillByNum,#num=SKID_TAUNT),@DoSkill,#who=self,
                #oTarget=what,#oWeapon=oWeapon);
       }
 
@@ -7152,9 +7447,262 @@ messages:
       return;
    }
 
-   GetMoneyObject()
+   GetShillingObject()
    {
-      return GetListElemByClass(plPassive,&Money);
+      return GetListElemByClass(plPassive,&Shilling);
+   }
+
+   GetPlatinumObject()
+   {
+      return GetListElemByClass(plPassive,&Platinum);
+   }
+
+   CanAfford(cost_shillings=0, cost_platinum=0, quantity=1)
+   "Checks shillings and platinum to see if you can cover the cost of the purchase."
+   {
+      local oShilling, oPlatinum, iShillings, iPlatinum;
+
+      iShillings = 0;
+      iPlatinum = 0;
+
+      oShilling = Send(self,@GetShillingObject);
+      oPlatinum = Send(self,@GetPlatinumObject);
+
+      //Debug("Can Afford Check", cost_shillings, cost_platinum, quantity);
+
+      if cost_shillings >= SHILLINGS_PER_PLATINUM
+      {
+         //Debug("Converting shillings to platinum", cost_shillings);
+         cost_platinum = cost_platinum + Send(SYS, @ShillingsToPlatinum, #number=cost_shillings);
+         //Debug("Converted shillings to platinum", cost_platinum);
+         cost_shillings = Send(SYS, @ShillingsRemaining, #number=cost_shillings);
+         //Debug("Converted shillings to platinum (remain)", cost_shillings);
+      }
+
+      if oShilling <> $
+      {
+         iShillings = Send(oShilling,@GetNumber);
+         //Debug("Player has",iShillings,"shillings");
+      }
+
+      if oPlatinum <> $
+      {
+         iPlatinum = Send(oPlatinum,@GetNumber);
+         //Debug("Player has",iPlatinum,"platinum");
+      }
+
+      if quantity <> $ AND quantity > 1
+      {
+         // Calculate if we can afford a stack.
+         cost_shillings = cost_shillings * quantity;
+         cost_platinum = (cost_platinum * quantity) + Send(SYS, @ShillingsToPlatinum, #number=cost_shillings);
+         cost_shillings = Send(SYS, @ShillingsRemaining, #number=cost_shillings);
+      }
+
+      //Debug("CanAfford",cost_shillings,cost_platinum,"from",iShillings,"shills",iPlatinum,"plat");
+
+      if cost_platinum > 0 AND cost_platinum < iPlatinum
+         OR (cost_platinum = iPlatinum AND cost_shillings <= iShillings)
+         OR (cost_platinum = 0 AND iPlatinum > 0)
+      {
+         // We can afford this item.
+         //Debug("Player can afford it.");
+         return TRUE;
+      }
+
+      //Debug("Player could not afford it.");
+
+      // We cannot afford this item.
+      return FALSE;
+   }
+
+   AddShillings(amount=1)
+   {
+      local oShilling;
+
+      oShilling = Send(self,@GetShillingObject);
+
+      if oShilling = $
+      {
+         // Create a shilling
+         oShilling = Create(&Shilling, #number=amount);
+         Send(self,@NewHold,#what=oShilling);
+      }
+      else
+      {
+         // Add to existing shillings.
+         Send(oShilling, @AddNumber, #number=amount);
+      }
+
+      Send(oShilling,@NewNumber);
+
+      if Send(oShilling,@GetNumber) = 0
+      {
+         // Remove a zero shilling.
+         Send(oShilling,@Delete);
+
+         return $;
+      }
+
+      return oShilling;
+   }
+
+   AddPlatinum(amount=1)
+   {
+      local oPlatinum;
+
+      oPlatinum = Send(self,@GetPlatinumObject);
+
+      if oPlatinum = $
+      {
+         // Create a platinum
+         oPlatinum = Create(&Platinum, #number=amount);
+         Send(self,@NewHold,#what=oPlatinum);
+      }
+      else
+      {
+         // Add to existing platinum.
+         Send(oPlatinum, @AddNumber, #number=amount);
+      }
+
+      return oPlatinum;
+   }
+
+   Pay(amount_shillings=0, amount_platinum=0, quantity=1)
+   "Takes shillings and platinum from a player inventory."
+   "And yeh this needs to be refactored probably."
+   {
+      local oShilling, oPlatinum, iShillings, iPlatinum, iSetShillings, iSetPlatinum, lBroken;
+
+      iShillings = 0;
+      iPlatinum = 0;
+      iSetShillings = 0;
+      iSetPlatinum = 0;
+      lBroken = $;
+
+      oShilling = Send(self,@GetShillingObject);
+      oPlatinum = Send(self,@GetPlatinumObject);
+
+      if oShilling <> $
+      {
+         // Original value
+         iSetShillings = Send(oShilling, @GetNumber);
+      }
+
+      if oPlatinum <> $
+      {
+         // Original value
+         iSetPlatinum = Send(oPlatinum, @GetNumber);
+      }
+
+      //Debug("Paying for goods", amount_shillings, amount_platinum, quantity);
+
+      if quantity = $ OR quantity <= 0
+      {
+         quantity = 1;
+      }
+
+      if oShilling <> $
+      {
+         iShillings = Send(oShilling,@GetNumber);
+      }
+
+      if oPlatinum <> $
+      {
+         iPlatinum = Send(oPlatinum,@GetNumber);
+      }
+
+      if amount_shillings >= SHILLINGS_PER_PLATINUM
+      {
+         //Debug("Converted", amount_shillings, "to platinum");
+         //Debug("Plat converting", amount_platinum);
+         amount_platinum = amount_platinum + Send(SYS, @ShillingsToPlatinum, #number=amount_shillings);
+         //Debug("Plat converted", amount_platinum);
+         amount_shillings = Send(SYS, @ShillingsRemaining, #number=amount_shillings);
+         //Debug("Remaining shills", amount_shillings);
+      }
+
+      if amount_platinum > 0
+      {
+         iSetPlatinum = iSetPlatinum - (amount_platinum * quantity);
+      }
+
+      if amount_shillings > 0
+      {
+         iSetShillings = iSetShillings - (amount_shillings * quantity);
+      }
+
+      if iSetShillings < 0
+      {
+         //Debug("Shillings went negative, breaking a platinum",iSetShillings);
+         // If our shillings went negative, it means we need to break a platinum.
+         lBroken = Send(self,@BreakPlatinumFromNegativeShillings,#amount_shillings=iSetShillings);
+         iSetShillings = Nth(lBroken, 1);
+         iSetPlatinum = iSetPlatinum - Nth(lBroken, 2);
+         //Debug("Shillings went negative, breaking a platinum",iSetShillings,iSetPlatinum);
+      }
+
+      if iSetPlatinum < 0
+      {
+         // How did we go negative on platinum?
+         // Looks like a bug.
+         iSetPlatinum = 0;
+         //Debug("Platinum went negative somehow",iSetPlatinum);
+      }
+
+      //Debug("Pay",iSetPlatinum,"newplat",iSetShillings,"new shills");
+      //Debug("Calc",amount_shillings,"(sh)",amount_platinum,"(p)",iSetShillings,"(ish)",iSetPlatinum,"(ip)");
+
+      if iSetPlatinum > 0
+      {
+         //Debug("New platinum is set to",iSetPlatinum);
+         Send(oPlatinum,@SetNumber,#number=iSetPlatinum);
+      }
+
+      if iSetShillings > 0
+      {
+         //Debug("New shillings is set to",iSetShillings);
+
+         if oShilling = $
+         {
+            // Create a shilling
+            oShilling = Send(self,@AddShillings,#amount=iSetShillings);
+         } else {
+            // Update the existing shilling
+            Send(oShilling,@SetNumber,#number=iSetShillings);
+         }
+      }
+
+      if iSetPlatinum = 0 AND oPlatinum <> $
+      {
+         //Debug("iSetPlatinum is zero, removing it from inventory");
+         Send(oPlatinum, @Delete);
+      }
+
+      if iSetShillings = 0 AND oShilling <> $
+      {
+         //Debug("iSetShillings is zero, removing it from inventory");
+         Send(oShilling, @Delete);
+      }
+
+      return;
+   }
+
+   BreakPlatinumFromNegativeShillings(amount_shillings=1)
+   "Takes a negative amount of shillings and breaks it down until it is positive. The result is [shillings, platinum]."
+   {
+      local iShillings, iPlatinum;
+
+      iShillings = amount_shillings;
+      iPlatinum = 0;
+
+      while iShillings < 0
+      {
+         iShillings = iShillings + SHILLINGS_PER_PLATINUM;
+         iPlatinum = iPlatinum + 1;
+      }
+
+      return [iShillings, iPlatinum];
    }
 
    GetSoulsObject()
@@ -7259,12 +7807,12 @@ messages:
    "Find the first instance of 'class' that player has equipped. "
    "Returns $ if nothing is found."
    {
-      if class <> $ AND IsList(plUsing)
+      if IsList(plUsing) AND class <> $
       {
          return GetListElemByClass(plUsing,class);
       }
 
-      return $;
+	  return $;
    }
 
    FindHaving(class=$)
@@ -7427,10 +7975,11 @@ messages:
    }
 
    LoseUnboundEnergy()
+   "Decays your unbound energy. Prevent losing the last 25 unbound energy in case you need to cast a touch spell."
    {
       local iReduction;
 
-      if NOT Send(self,@IsInCannotInteractMode)
+      if NOT Send(self,@IsInCannotInteractMode) AND piUnbound_energy > 25
       {
          iReduction = Bound(piUnbound_energy * Send(SETTINGS_OBJECT,@GetUnboundDecay)
                            / 1000,1,$);
@@ -7539,32 +8088,44 @@ messages:
    
    GainVigor(amount=$)
    {
+      if piFlags & PFLAG_PHASED
+      {
+         // You can't gain vigor while phased.
+         return FALSE;
+      }
+
       if amount = $ OR amount <= 0
-	  {
-	     return FALSE;
-	  }
-	  
-	  piVigor = piVigor + amount;
-	  piVigor = Bound(piVigor, 1, viMax_vigor);
+      {
+         return FALSE;
+      }
+      
+      piVigor = piVigor + amount;
+      piVigor = Bound(piVigor, 1, viMax_vigor);
 
       Send(self,@NewVigor);
-	  
-	  return TRUE;
+      
+      return TRUE;
    }
    
    GainMana(amount=$)
    {
+      if piFlags & PFLAG_PHASED
+      {
+         // You can't gain mana while phased.
+         return FALSE;
+      }
+
       if amount = $ OR amount <= 0
-	  {
-	     return FALSE;
-	  }
-	  
-	  piMana = piMana + amount;
-	  piMana = Bound(piMana, 1, piMax_Mana);
+      {
+         return FALSE;
+      }
+      
+      piMana = piMana + amount;
+      piMana = Bound(piMana, 1, piMax_Mana);
 
       Send(self,@NewMana);
-	  
-	  return TRUE;
+      
+      return TRUE;
    }
 
    NewUnboundEnergy(bDelay = FALSE)
@@ -9759,7 +10320,6 @@ messages:
             }
             else
             {
-            
                // Grant only one fourth of the energy if the mob didn't attack the player.
                if ((piFlags & PFLAG_TOOK_DAMAGE) OR (piFlags & PFLAG_DODGED))
                {
@@ -16085,6 +16645,16 @@ messages:
       
       oPhase = Send(SYS,@FindSpellByNum,#num=SID_PHASE);
       Send(self,@RemoveEnchantment,#what=oPhase);
+      
+      // Helps remove the brightness.
+      Send(self,@PhaseVisualEffect);
+      
+      if pbCamped
+      {
+         // We're camped.
+         return;
+      }
+      
       Send(oPhase,@InflictPenalties,#who=self);
 
       Post(self,@AdminGoToLastSafeRoom);
@@ -16096,6 +16666,18 @@ messages:
 
    GetRemainingPhaseTime()
    {
+      if pbCamped
+      {
+         // We're camped.
+         if ptPhaseTimer <> $
+         {
+            DeleteTimer(ptPhaseTimer);
+            ptPhaseTimer = $;
+         }
+
+         return 86400;
+      }
+
       if ptPhaseTimer <> $
       {
          return GetTimeRemaining(ptPhaseTimer);
@@ -16186,6 +16768,9 @@ messages:
 
       // Set our attacked-by time here.
       piTimeAttackedByPlayer = iTime;
+      
+      // New update, both parties are PVP flagged when PVP engages!
+      piTimeAttackedPlayer = iTime;
 
       return;
    }
@@ -16327,7 +16912,7 @@ messages:
       return iSavedNum;
    }
 
-   UseOutfit(num=$)
+   UseOutfit(num=$, retry=0)
    {
       local i, ap, c, oObj, lInventory, lCantUnequip, bSkip, iOutfit;
 
@@ -16387,6 +16972,14 @@ messages:
                continue;
             }
 
+            if NOT Send(oObj,@IsCursed) 
+               AND Send(oObj,@InUse)
+               AND NOT Send(oObj,@InOutfit,#outfitNum=num)
+            {
+               // Unequip things that weren't saved!
+               Send(self,@TryUnuseItem,#what=oObj);
+            }
+
             if NOT Send(oObj,@InUse) 
                AND NOT Send(oObj,@IsCursed) 
                AND Send(oObj,@InOutfit,#outfitNum=num)
@@ -16394,17 +16987,12 @@ messages:
                // Let's use this item
                Send(self,@TryUseItem,#what=oObj);
             }
-            else
-            {
-               if NOT Send(oObj,@IsCursed) 
-                  AND Send(oObj,@InUse)
-                  AND NOT Send(oObj,@InOutfit,#outfitNum=num)
-               {
-                  // Unequip things that weren't saved!
-                  Send(self,@TryUnuseItem,#what=oObj);
-               }
-            }
          }
+      }
+
+      if retry = 0
+      {
+         return Send(self, @UseOutfit, #num=num, #retry=1);
       }
 
       return TRUE;
@@ -16667,38 +17255,82 @@ messages:
 	  return $;
    }
 
-   AdjustExpansionDeathRealm()
+   IsMaxHP()
+   "TRUE if you're at your Max HP, FALSE if you can still gain HP."
    {
-      local i, iLoopProtect;
+      return piMax_Health >= (100 + piStamina);
+   }
 
-      // DeathRealm 200 HP Update:  Make sure Player XP total is reduced to the 150HP cap.
-      if piMax_Health >= (100 + piStamina)
+   GainMaxHP(force_max=FALSE)
+   "Iterates the player's experience by 25k until they reach their max HP, which is randomized 1 through Stamina."
+   "You must already be at your Max HP To use this function."
+   {
+      local i, iLoopProtect, iRandomized, iFaction, bSoldier, bAo3, bSoth;
+
+      if Send(self,@IsMaxHP)
       {
-         // Gradually rebuild HP
+         // Let's remember their faction / soldier status
+         iFaction = Send(self,@GetFaction);
+         bAo3 = Send(self,@PossessesA,#class=&NecromancerAmulet);
+         bSoth = Send(self,@PossessesA,#class=&HunterSword);
+         bSoldier = Send(self,@PossessesA,#class=&SoldierShield);
+
          piXP_total = 0;
 
          Send(self, @AddXP, #iAmount=1, #report=FALSE, #gainTP=FALSE);
 
          iLoopProtect = 0;
 
-         while piMax_Health < (100 + piStamina)
+         if force_max
+         {
+            // Take the player all the way to their max.
+            iRandomized = 100 + piStamina;
+         }
+         else
+         {
+            // Make it interesting.
+            iRandomized = Random(1, piStamina);
+         }
+
+         while piMax_Health < (100 + iRandomized)
          {
             iLoopProtect = iLoopProtect + 1;
 
             if iLoopProtect > 150
             {
-               Debug("Loop Protected at 100 iterations", Send(self,@GetName));
                break;
             }
 
             Send(self, @AddXP, #iAmount=25000, #report=FALSE, #gainTP=FALSE);
          }
+
+         if iFaction <> FACTION_NEUTRAL AND Send(self,@GetFaction) <> iFaction
+         {
+            // Put the player back in the faction
+            Send(self,@ResetFaction, #faction=iFaction);
+         }
+
+         if bAo3 AND NOT Send(self,@PossessesA,#class=&NecromancerAmulet)
+         {
+            // Put the AO3 back on the player
+            Send(self,@NewHold,#what=Create(&NecromancerAmulet));
+         }
+
+         if bSoth AND NOT Send(self,@PossessesA,#class=&HunterSword)
+         {
+            // Put the soth back on the player
+            Send(self,@NewHold,#what=Create(&HunterSword));
+         }
+
+         if bSoldier AND NOT Send(self,@PossessesA,#class=&SoldierShield)
+         {
+            // Put the soldier shield back on the player
+            Send(self,@NewHold,#what=Create(Send(SYS,@FactionToShield,#iFaction=iFaction)));
+         }
+
+         // Draw new XP bar
+         Post(self,@DrawXP);
       }
-
-      Debug(Send(self,@GetName),"has",piMax_Health,"at",piXP_total);
-
-      // Player adjustments complete.
-      pbExpansionAdjusted_DeathRealm = TRUE;
 
       return;
    }

@@ -125,6 +125,10 @@ messages:
             #desc=kocbank_sign_desc),
             #new_row=22,#new_col=11,#fine_row=40,#fine_col=12);
 
+      // Show a Marketplace sign in KOC VAULT kocbank.roo
+      Send(self,@NewHold,#what=Create(&Store),
+           #new_row=24,#new_col=6,#fine_row=32,#fine_col=48,#new_angle=ANGLE_NORTH);
+           
       propagate;
    }
 

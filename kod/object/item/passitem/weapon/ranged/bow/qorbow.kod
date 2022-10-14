@@ -46,7 +46,7 @@ classvars:
 
    vrWeaponBroke = QorBow_explodes
 
-   viValue_average = 25000
+   viValue_average = 125000
    viBulk = 70
    viWeight = 70
 

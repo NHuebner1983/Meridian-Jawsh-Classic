@@ -25,7 +25,7 @@ resources:
    frogman_name_rsc = "frogman"
    frogman_icon_rsc = frogman.bgf
    frogman_desc_rsc = \
-      "This is a frogman, a gentle race of amphibioids. They are known "
+      "This is a frogman. A gentle race of amphibioids. They are known "
       "for their hatred of those who follow the evil path."
 
    frogman_dead_icon_rsc = frogmanX.bgf
@@ -72,9 +72,9 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [ 65, ATCK_WEAP_NONMAGIC],
-                        [-30, -ATCK_SPELL_UNHOLY ],
-                        [-10, -ATCK_SPELL_COLD ] ];
+      plResistances = [ [ ATCK_WEAP_NONMAGIC, 65],
+                        [-ATCK_SPELL_UNHOLY, -30 ],
+                        [-ATCK_SPELL_COLD, -10 ] ];
 
       plReputationEnemies = [REP_UNDEAD];
 

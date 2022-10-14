@@ -41,10 +41,10 @@ classvars:
    vrIcon = captain_icon_rsc
    vrDesc = captain_desc_rsc
 
-   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_SELLER | MOB_RECEIVE
+   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_SELLER | MOB_RECEIVE | MOB_TEACHER | MOB_LISTEN
    viOccupation = MOB_ROLE_MERCHANT
    viMerchant_markup = MERCHANT_DISCOUNT
-
+   
    // Boat captain only sells boat tickets.
    vbSellFromInventory = FALSE
    
@@ -59,8 +59,11 @@ messages:
    Constructor()
    {
       // We came into existence.
-	  Send(self,@SetForSale);
-	  
+      Send(self,@SetForSale);
+
+      // We're an NPC
+      Send(Send(SYS,@GetLibrary),@AddNPC,#who=self);
+      
       propagate;
    }
    
@@ -91,37 +94,39 @@ messages:
 
    SetForSale()
    {
-     local iRoom, lDestinations;
-	  
-     if poOwner = $
-     {
-        return;
-     }
-     
-	  // We only accept boat tickets.
-	  plWantedItems = [&BoatTicket];
-	  
-	  iRoom = Send(poOwner,@GetRoomNum);
-	  
-	  if iRoom = RID_KOC_SOUTH
-	  {
-	     // Boat on Ko'catan sells tickets to these destinations
-	     lDestinations = [
-		    Create(&BoatTicket,#model=$,#destination=RID_BAR_PORT)
-		 ];
-	  }
-	  
-	  if iRoom = RID_BAR_PORT
-	  {
-	     // Boat on Barloque Port sells tickets to these destinations
-	     lDestinations = [
-		    Create(&BoatTicket,#model=$,#destination=RID_KOC_SOUTH)
-		 ];
-	  }
+      local iRoom, lDestinations;
+      
+      if poOwner = $
+      {
+         plFor_sale = [$,[ SKID_TAUNT ],$,$];
+
+         return;
+      }
+      
+      // We only accept boat tickets.
+      plWantedItems = [&BoatTicket];
+      
+      iRoom = Send(poOwner,@GetRoomNum);
+      
+      if iRoom = RID_KOC_SOUTH
+      {
+         // Boat on Ko'catan sells tickets to these destinations
+         lDestinations = [
+            Create(&BoatTicket,#model=$,#destination=RID_BAR_PORT)
+         ];
+      }
+      
+      if iRoom = RID_BAR_PORT
+      {
+         // Boat on Barloque Port sells tickets to these destinations
+         lDestinations = [
+            Create(&BoatTicket,#model=$,#destination=RID_KOC_SOUTH)
+         ];
+      }
 
       plFor_sale = [ 
          lDestinations,
-      $,$,$];
+      [ SKID_TAUNT ],$,$];
 
       return;
    }

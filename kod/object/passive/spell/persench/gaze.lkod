@@ -8,7 +8,7 @@ paralyze_on_rsc = de \
 paralyze_off_rsc = de "Deine Augen kehren zur normalen Sichtweise zurück."
 paralyze_already_enchanted_rsc = de "Du besitzt bereits den Basiliskenblick."
 paralyze_caster = de \
-   "%s%s trifft den Basiliskenblick und friert an Ort und Stelle ein."
+   "%s%s trifft den Basiliskenblick und friert an Ort und Stelle ein %i ms."
 paralyze_target_on = de \
    "Als Du %s%ss schrecklichen Blick triffst, frieren all deine Gliedmaßen "
    "ein und Du bist gelähmt."

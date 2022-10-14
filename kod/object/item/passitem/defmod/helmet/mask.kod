@@ -29,6 +29,7 @@ classvars:
    vrDesc = FaceMask_desc_rsc
    vrIcon = FaceMask_icon_male_rsc
 
+   viValue_average = 45000
    viGround_group = 2
    viInventory_group = 3
 

@@ -96,6 +96,20 @@ messages:
       return poQuester;
    }
 
+   SetMaster(who=$)
+   "Alias in case we forgot."
+   {
+      return Send(self,@SetQuester,#who=who);
+   }
+
+   SetQuester(who=$)
+   "Sets the owner of the sword."
+   {
+      poQuester = who;
+
+      return;
+   }
+
    ForgetQuester(quester=$)
    "Sent to all swords when someone suicides."
    {
@@ -136,6 +150,7 @@ messages:
       if poOwner <> $
          AND poQuester <> $
          AND poOwner <> poQuester
+         AND NOT IsClass(poOwner, &DM)
       {
          // Return a big number, since normally chance to-hit goes up to 1000.
          return -10000;
@@ -145,8 +160,15 @@ messages:
    }
 
    WeaponHitTarget()
-   "Sword wears down rapidly in the hands of someone else, but does not break."
+   "Sword wears down rapidly in the hands of someone else, but does not break. Owner never loses hits."
    {
+      if poOwner = poQuester
+      {
+         piHits = Send(self,@GetMaxHits);
+
+         return;
+      }
+
       if poOwner <> poQuester
          AND piHits > 1
       {
@@ -189,10 +211,10 @@ messages:
          // Casting spells while the sword is wielded "heals" the sword.
          piHits = Bound(piHits + Send(oSpell,@GetLevel),1,Send(self,@GetMaxHits));
 
-         return 10;
+         return 25;
       }
 
-      return -10;
+      return -5;
    }
 
 end

@@ -69,7 +69,7 @@ messages:
       return FALSE;
    }
    
-   CanPayCosts(who = $, lTargets = $)
+   CanPayCosts(who = $, lTargets = $, Report = TRUE)
    {
       local oTarget;
      
@@ -85,21 +85,26 @@ messages:
       
       if send(oTarget,@HasAttribute,#itematt=IA_ENGRAVED)
       {
-         Send(who,@MsgSendUser,#message_rsc=engrave_already_engraved,
-              #parm1=send(oTarget,@GetCapDef),#parm2=send(oTarget,@GetName));
+         if Report
+         {
+            Send(who,@MsgSendUser,#message_rsc=engrave_already_engraved,
+               #parm1=send(oTarget,@GetCapDef),#parm2=send(oTarget,@GetName));
+         }
               
          return FALSE;
       }    
       
       if isClass(oTarget,&NumberItem)
       {
-         Send(who,@MsgSendUser,#message_rsc=engrave_cant_engrave,
-              #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
-              
+         if Report
+         {
+            Send(who,@MsgSendUser,#message_rsc=engrave_cant_engrave,
+               #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
+         }    
          return FALSE;
       }
 
-      propagate;
+      return TRUE;
    }
 
    CastSpell(who = $)
@@ -115,16 +120,18 @@ messages:
       return viCast_time;
    }
 
-   PerformEngrave(caster = $,oTarget = $, sMessage = $)
+   PerformEngrave(caster = $,oTarget = $, sMessage = $, Report = TRUE)
    "Realistically, this will usually be called by SomethingSaidDuringTrance."
    {
       local oItemAtt;
       
       if send(oTarget,@HasAttribute,#itematt=IA_ENGRAVED)
       {
-         Send(caster,@MsgSendUser,#message_rsc=engrave_already_engraved,
-              #parm1=send(oTarget,@GetCapDef),#parm2=send(oTarget,@GetName));
-              
+         if Report
+         {
+            Send(caster,@MsgSendUser,#message_rsc=engrave_already_engraved,
+               #parm1=send(oTarget,@GetCapDef),#parm2=send(oTarget,@GetName));
+         }    
          return FALSE;
       }
       
@@ -135,9 +142,12 @@ messages:
          send(oItemAtt,@AddToItem,#oItem=oTarget,#state1=sMessage);
       }
       
-      send(caster,@MsgSendUser,#message_rsc=engrave_do,#parm1=sMessage,
-           #parm2=send(oTarget,@GetDef),#parm3=send(oTarget,@GetName));
-           
+      if Report
+      {
+         send(caster,@MsgSendUser,#message_rsc=engrave_do,#parm1=sMessage,
+            #parm2=send(oTarget,@GetDef),#parm3=send(oTarget,@GetName));
+      }    
+      
       return;
    }
 

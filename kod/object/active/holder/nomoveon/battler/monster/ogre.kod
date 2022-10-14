@@ -13,6 +13,7 @@ Ogre is Monster
 constants:
 
    include blakston.khd
+   include protocol.khd
 
 resources:
    
@@ -20,9 +21,8 @@ resources:
    ogre_icon_rsc = ogre.bgf
    ogre_desc_rsc = \
       "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. Ogres are known to be much more  "
-      "violent then friendly.  "
-
+      "who comes across it. Ogres are friendly by nature but are "
+      "known to be much more violent around evil entities."
 
    ogre_dead_icon_rsc = ogreX.bgf
    ogre_dead_name_rsc = "dead ogre"
@@ -47,11 +47,11 @@ classvars:
    viDifficulty = 9
    viVisionDistance = 15
    // Attack range of 192, or 3 row/col.
-   viAttackRange = 136
-   viKarma = -100
-   viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
+   viAttackRange = 192
+   viKarma = 100
+   viDefault_behavior = AI_FIGHT_SWITCHALOT | AI_FIGHT_NEWBIESAFE
    viCashmin = 5000
-   viCashmax = 10000
+   viCashmax = 15000
    vrSound_hit = ogre_sound_hit
    vrSound_miss = ogre_sound_miss
    vrSound_aware = ogre_sound_aware
@@ -68,11 +68,21 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_ACID, 80 ],
+      plResistances = [ 
+                        [ATCK_WEAP_NONMAGIC, 80 ],
+                        [ATCK_WEAP_MAGIC, -10 ],
+                        [ATCK_WEAP_BLUDGEON, -20 ],
                         [ATCK_WEAP_NERUDITE, -10 ],
-                        [ATCK_WEAP_NONMAGIC, 80 ] ];
+                        [-ATCK_SPELL_QUAKE, 40 ],
+                        [-ATCK_SPELL_UNHOLY, -50 ],
+                        [-ATCK_SPELL_ACID, -30 ],
+                        [-ATCK_SPELL_HOLY, 80 ],
+                        [-ATCK_SPELL_COLD, 40 ],
+                        [-ATCK_SPELL_FIRE, 40 ],
+                        [-ATCK_SPELL_SHOCK, 40 ]
+                      ];
 
-      propagate;
+      return;
    }
 
    MonsterAttack(what = $)
