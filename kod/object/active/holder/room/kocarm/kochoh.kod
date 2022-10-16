@@ -117,8 +117,8 @@ messages:
       // Do not create statues here.  We don't know if they are legal.
 
       // Show a Marketplace sign in HALL OF HEROES VAULT kochoh.roo
-      Send(self,@NewHold,#what=Create(&Store),
-           #new_row=12,#new_col=12,#fine_row=58,#fine_col=60,#new_angle=ANGLE_WEST);
+      //Send(self,@NewHold,#what=Create(&Store),
+      //     #new_row=12,#new_col=12,#fine_row=58,#fine_col=60,#new_angle=ANGLE_WEST);
            
       propagate;
    }

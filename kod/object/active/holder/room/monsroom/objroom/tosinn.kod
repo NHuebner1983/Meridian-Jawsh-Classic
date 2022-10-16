@@ -134,8 +134,8 @@ messages:
            #new_row=5,#new_col=8,#fine_row=48,#fine_col=32);
 
       // Show a Marketplace sign in Tos Inn.
-      Send(self,@NewHold,#what=Create(&Store),
-           #new_row=1,#new_col=8,#fine_row=49,#fine_col=0,#new_angle=ANGLE_SOUTH);
+      //Send(self,@NewHold,#what=Create(&Store),
+      //     #new_row=1,#new_col=8,#fine_row=49,#fine_col=0,#new_angle=ANGLE_SOUTH);
 
       propagate;
    }

@@ -90,8 +90,8 @@ messages:
             #new_row=9,#new_col=4,#fine_row=62,#fine_col=32);
 
       // Show a Marketplace sign in JASP VAULT jasvault.roo
-      Send(self,@NewHold,#what=Create(&Store),
-           #new_row=6,#new_col=8,#fine_row=38,#fine_col=36,#new_angle=ANGLE_SOUTH);
+      //Send(self,@NewHold,#what=Create(&Store),
+      //     #new_row=6,#new_col=8,#fine_row=38,#fine_col=36,#new_angle=ANGLE_SOUTH);
            
       propagate;
    }

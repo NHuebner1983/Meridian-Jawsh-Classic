@@ -88,8 +88,8 @@ messages:
             #new_row=3,#new_col=2,#fine_row=56,#fine_col=16);
 
       // Show a Marketplace sign in CN AH corhall.roo
-      Send(self,@NewHold,#what=Create(&Store),
-           #new_row=9,#new_col=5,#fine_row=29,#fine_col=14,#new_angle=ANGLE_NORTH);
+      //Send(self,@NewHold,#what=Create(&Store),
+      //     #new_row=9,#new_col=5,#fine_row=29,#fine_col=14,#new_angle=ANGLE_NORTH);
            
       propagate;
    }

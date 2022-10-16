@@ -78,8 +78,8 @@ messages:
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=4,#new_col=12);
 
       // Show a Marketplace sign in CN Inn corinn.roo
-      Send(self,@NewHold,#what=Create(&Store),
-           #new_row=6,#new_col=2,#fine_row=51,#fine_col=51,#new_angle=ANGLE_NORTH);
+      //Send(self,@NewHold,#what=Create(&Store),
+      //     #new_row=6,#new_col=2,#fine_row=51,#fine_col=51,#new_angle=ANGLE_NORTH);
            
       propagate;
    }
