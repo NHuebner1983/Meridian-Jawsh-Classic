@@ -114,7 +114,8 @@ messages:
                #quest_node_index=QNT_ID_UNHOLY_JOIN_ONE)
       {
          Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_UNHOLY_JOIN_ONE,
-               #new_NPC_list=Send(oLib,@GetOccupationList,#cNPC_class=&TosInnKeeper));
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+               #iJob=MOB_ROLE_ROYALTY,#cNPC_class=&UnholyLiege));
       }
       else
       {
