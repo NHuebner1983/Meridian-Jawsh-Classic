@@ -4952,8 +4952,6 @@ messages:
          return;
       }
 
-      oMoney = Send(who,@GetPlatinumObject);
-
       if IsClass(oRoom,&DeathRealm)
       {
          oSouls = Send(who,@GetSoulsObject);
@@ -4973,7 +4971,7 @@ messages:
       }
       else
       {
-         oMoney = Send(who,@GetMoneyObject);
+         oMoney = Send(who,@GetPlatinumObject);
          if oMoney = $
          {
             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
