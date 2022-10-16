@@ -905,10 +905,10 @@ messages:
                        ROTATE_NONE, DISTANCE_NORMAL ],plExits);
       plExits = Cons([ 30, 18, RID_MAR_CRYPT2, 37, 27,
                        ROTATE_NONE, DISTANCE_NORMAL ],plExits);
-      plExits = Cons([ 35, 26, RID_MAR_CRYPT4, 39, 6,
-                       ROTATE_225, DISTANCE_NORMAL ],plExits);
-      plExits = Cons([ 35, 27, RID_MAR_CRYPT4, 39, 6,
-                       ROTATE_225, DISTANCE_NORMAL ],plExits);
+      //plExits = Cons([ 35, 26, RID_MAR_CRYPT4, 39, 6,
+      //                 ROTATE_225, DISTANCE_NORMAL ],plExits);
+      //plExits = Cons([ 35, 27, RID_MAR_CRYPT4, 39, 6,
+      //                 ROTATE_225, DISTANCE_NORMAL ],plExits);
       //Gates
       plExits = Cons([ 22, 26, ROOM_LOCKED_DOOR,
                        marcrypt3a_cant_pass ],plExits);
