@@ -37,7 +37,6 @@ messages:
                      [ &GrayMushroom, 1 ],
                      [ &YellowMushroom, 1 ],
                      [ &GreenMushroom, 1 ],
-                     [ &WeaponWand, 1 ],
 					      [ &Wizardhat, 1 ],
                      [ &TrueLute, 1 ],
                      [ &OrcShield, 1 ],
