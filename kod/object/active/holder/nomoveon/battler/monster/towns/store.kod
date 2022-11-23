@@ -61,6 +61,13 @@ properties:
 
 messages:
 
+    DisableMarketplace()
+    {
+        Send(self,@Delete);
+
+        return;
+    }
+
     Recreate()
     {
         if poOwner = $
@@ -70,6 +77,8 @@ messages:
 
             return;
         }
+
+        Send(self,@SetForSale);
 
         return;
     }
@@ -86,7 +95,10 @@ messages:
 
         lForSale = $;
 
-        plFor_sale = [lForSale,$,$];
+        if plFor_sale = $ OR Length(plFor_sale) < 3
+        {
+            plFor_sale = [lForSale,$,$];
+        }
 
         oHolder = Send(SYS,@GetMarketplaceHolder);
 
@@ -95,11 +107,11 @@ messages:
         {
             foreach i in lHolding
             {
-                //Debug("Holding", Send(i,@GetName));
+                Debug("Holding", Send(i,@GetName));
 
                 if NOT IsClass(i, &Item)
                 {
-                    //Debug("Skipped non item");
+                    Debug("Skipped non item");
                     continue;
                 }
 
@@ -115,11 +127,11 @@ messages:
                 if NOT FindListElem(lForSale, i)
                 {
                     lForSale = Cons(i,lForSale);
-                    //Debug("Adding for sale",Send(i,@GetName));
+                    Debug("Adding for sale",Send(i,@GetName));
                 }
                 else
                 {
-                    //Debug("Already listed",i,Send(i,@GetName),"for sale");
+                    Debug("Already listed",i,Send(i,@GetName),"for sale");
                 }
             }
         }
@@ -129,7 +141,7 @@ messages:
 
         Send(self,@SortForSale);
 
-        return plFor_sale;
+        return;
     }
 
     SortForSale()
@@ -195,8 +207,17 @@ messages:
 
     GetForSale()
     {
+        local i;
+
         Send(self,@SetForSale);
-       
+
+        Debug("GetForSale Length",Length(plFor_sale));
+
+        foreach i in plFor_sale
+        {
+            Debug("GetForSale",i);
+        }
+
         propagate;
     }
 
@@ -207,10 +228,7 @@ messages:
         
         //Debug("List on Marketplace",what,quantity,unit_platinum,unit_shillings);
 
-        if plFor_Sale = $ OR NOT IsList(plFor_Sale)
-        {
-            Send(self,@SetForSale);
-        }
+        Send(self,@SetForSale);
 
         if NOT Send(self, @ObjectDesired, #what=what)
         {
@@ -294,13 +312,9 @@ messages:
     }
 
     Delete()
-    "Upon deleting a store, we need to make sure all of the items go back to the seller"
-    "or if that's not an issue, we'll see."
+    "The store does not actually hold items, so it can be safely deleted."
     {
-        // We really shouldn't allow deleting a store until it has been emptied back to the owners.
-        // We have tagged every item on the marketplace with the owner / quantity / unit price.
-        // But if this hold deletes, it may delete its contents.
-        return FALSE;
+        propagate;
     }
 
     NotifyItemPurchased(what = $, buyer = $, store_owner = $, quantity = 1, amount_platinum = 0, amount_shillings = 0)

@@ -545,12 +545,35 @@ properties:
 
    // Global marketplace
    poMarketplace = $
+   pbMarketplaceEnabled = TRUE
 
 messages:
 
    GetName()
    {
       return system_name_rsc;
+   }
+
+   DisableMarketplace()
+   {
+      pbMarketplaceEnabled = FALSE;
+      Send(&Store,@DisableMarketplace);
+
+      return;
+   }
+
+   EnableMarketplace()
+   {
+      pbMarketplaceEnabled = TRUE;
+      Send(&Room,@CreateMarketplace);
+      Send(&Store,@Recreate);
+
+      return;
+   }
+
+   IsMarketplaceEnabled()
+   {
+      return pbMarketplaceEnabled;
    }
 
    GetMarketplaceObject()
