@@ -359,6 +359,7 @@ messages:
       Send(self,@CreateStandardExits);
       Send(self,@CreateYellZoneList);
       Send(self,@ComputeFarenBonus);
+      Send(self,@CreateMarketplace);
 
       iTerrain = Send(self,@GetTerrainType);
 
@@ -3699,6 +3700,12 @@ messages:
          }
       }
 
+      return;
+   }
+
+   CreateMarketplace()
+   "Not all rooms will support this, so this is a catch-all."
+   {
       return;
    }
 
