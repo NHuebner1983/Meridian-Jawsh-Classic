@@ -176,11 +176,11 @@ messages:
          // Skivlat needs to include markup to prevent scams
          // where he buys more than he sells.
          iValue = iValue * (100 - 10*viMerchant_markup) / 100;
-         oMoney=Create(&Money,#number=iValue);
+         oMoney=Create(&Shilling,#number=iValue);
          if Send(who,@ReqNewHold,#what=oMoney)
          {
             Send(who,@NewHold,#what=oMoney);
-            Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=iValue);
+            Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=iValue);
             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
                   #string=TBank_gems_traded,#parm1=Send(obj,@GetName));
 

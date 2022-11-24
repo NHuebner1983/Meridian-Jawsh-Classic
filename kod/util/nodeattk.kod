@@ -81,7 +81,7 @@ properties:
    // Base percent chance to actually be severed from the node.
    piSeveredChance = 2
    // Number of users that must be on before a node attack goes on.
-   piNumIPsOnForAttack = 10
+   piNumIPsOnForAttack = 3
 
    // NOTE: See specific notes in Recreate() for more information.
    // The current node being attacked.
@@ -273,7 +273,7 @@ messages:
 
       // General fail conditions, not enough users, bad node, attacking an
       //  already dead node.
-      iNum = Send(SYS,@GetUniqueIPs,#with_movement_since=120);
+      iNum = Send(SYS,@GetUniqueIPs,#with_movement_since=240);
       if poAttackedNode <> $
          OR (iNum < piNumIPsOnForAttack AND NOT bOverride)
       {

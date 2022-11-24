@@ -841,8 +841,10 @@ void ResetTimerReference(val_type *vtimer_ptr)
    t = GetTimerByID(vtimer_ptr->v.data);
    if (t == NULL)
    {
-      eprintf("ResetTimerReference found a reference to non-existent timer %i\n",
-         vtimer_ptr->v.data);
+      // Again, another useless debug statement.
+      // It doesn't tell us how to fix it or where it came from, so let's squelch.
+       //eprintf("ResetTimerReference found a reference to non-existent timer %i\n",
+      //   vtimer_ptr->v.data);
       return;
    }
 

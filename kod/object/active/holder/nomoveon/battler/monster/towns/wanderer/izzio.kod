@@ -278,7 +278,7 @@ messages:
       {
          if GetClass(i) = GetClass(what)
          {
-            if IsClass(what,&numberitem)
+            if IsClass(what,&NumberItem)
             {
                 return TRUE;
             }

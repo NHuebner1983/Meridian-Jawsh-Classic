@@ -77,7 +77,7 @@ messages:
 
    Constructor()
    {
-      plWantedItems = [&Money];
+      plWantedItems = [];
 
       propagate;
    }
@@ -91,29 +91,8 @@ messages:
 
    AllowContrabandToPass(What=$)
    {
-      local i, bThreatened;
-	  
-	  bThreatened = pbThreatened;
-	  
-	  if bThreatened
-	  {
-	     pbThreatened = FALSE;
-		 
-	     return TRUE;
-	  }
-
-      foreach i in plBribes
-      {
-         if i = what
-         {
-            Send(self,@SayToOne,#target=what,#message_rsc=evilguard_Pass);
-            plBribes = DelListElem(plBribes,i);
-
-            return TRUE;
-         }
-      }
-
-      return FALSE;
+      // Let everyone through.
+      return TRUE;
    }
 
    Delete()
@@ -125,16 +104,12 @@ messages:
 
    GotWantedItem(obj=$,who=$)
    {
-      if Send(self,@CheckForBribe,#obj=obj,#who=who)
-      {
-         return;
-      }
-
-      propagate;
-
+      // We aren't accepting anything right now.
+      return FALSE;
    }
 
    SomeoneSaid(what = $,type = $,string = $)
+   "We'll leave this on for fun."
    {
       if StringEqual(string, evilguard_bullied_said)
 	  {
@@ -157,48 +132,7 @@ messages:
 
    CheckForBribe(who=$,obj=0)
    {
-      local oMoney, oBank, amount;
-
-      if NOT IsClass(obj,&Money)
-      {
-         return FALSE;
-      }
-
-      amount = Send(obj,@GetNumber);
-      if amount <= 0
-      {
-         return FALSE;
-      }
-
-      oMoney = Send(who,@GetMoneyObject);
-      if oMoney = $
-      {
-         Post(poOwner,@SomeoneSaid,#what=self,#string=Evilguard_no_money,
-               #type=SAY_RESOURCE);
-
-         return FALSE;
-      }
-
-      if Send(oMoney,@GetValue) < amount
-      {
-         Post(poOwner,@SomeoneSaid,#what=self,#string=EvilGuard_no_money,
-               #type=SAY_RESOURCE,#parm1=Send(oMoney,@GetValue));
-
-         return FALSE;
-      }
-
-      if amount < BRIBE_AMOUNT
-      {
-         Post(poOwner,@SomeoneSaid,#what=self,#string=EvilGuard_not_enough,
-               #type=SAY_RESOURCE,#parm1=Send(oMoney,@GetValue));
-
-         return TRUE;
-      }
-
-      Send(oMoney,@SubtractNumber,#number=amount);
-      plBribes = cons(who,plBribes);
-      Post(self,@SayToOne,#target=who,#message_rsc=evilguard_winknudge);
-      Post(who,@MsgSendUser,#message_rsc=evilguard_winknudge_action);
+      // Turned off bribing now that Ko'Catan is in power.
 
       return TRUE;
    }

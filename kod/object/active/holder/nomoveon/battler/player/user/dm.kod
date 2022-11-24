@@ -154,6 +154,21 @@ resources:
    dm_move_back = "move back"
    dm_move_left = "move left"
    dm_move_right = "move right"
+   dm_generate_monster_and_die = "make monsters die"
+   dm_sweep = "sweep"
+   dm_clear_floor = "clean"
+   dm_animate = "animate"
+   dm_adventurer_kit_pf = "adventurer kit fighter"
+   dm_adventurer_kit_mage = "adventurer kit mage"
+   dm_adventurer_kit_hybrid = "adventurer kit hybrid"
+
+   // Invasions that can be started by DM
+   dm_invasion_orc = "orc invasion"
+   dm_invasion_spider = "spider invasion"
+   dm_invasion_skeleton = "skeleton invasion"
+   dm_invasion_rat = "rat invasion"
+   dm_invasion_dragon = "dragon invasion"
+   dm_invasion_elemental = "elemental invasion"
    
    dm_hidden_command = "hidden"
    dm_blank_command = "blank"
@@ -403,6 +418,9 @@ properties:
    pbSetLowRoll = FALSE
    piLowRoll = 0
    piHighRoll = 0
+
+   ptGenerateMonstersAndDieTimer = $
+   pbStopGenerateMonstersAndDie = FALSE
 
 messages:
 
@@ -853,10 +871,118 @@ messages:
 
 		 return;
    }
-   
+
+   GenerateMonstersAndDie()
+   {
+      local oMonster;
+
+      if pbStopGenerateMonstersAndDie
+      {
+         // DM says stop.
+         ptGenerateMonstersAndDieTimer = $;
+
+         return;
+      }
+
+      oMonster = Send(self,@DMSayMakeMonster,#string="ghost");
+      Send(oMonster, @Killed, #what=self);
+      oMonster = Send(self,@DMSayMakeMonster,#string="ogre");
+      Send(oMonster, @Killed, #what=self);
+      oMonster = Send(self,@DMSayMakeMonster,#string="minotaur");
+      Send(oMonster, @Killed, #what=self);
+      oMonster = Send(self,@DMSayMakeMonster,#string="yeti");
+      Send(oMonster, @Killed, #what=self);
+      oMonster = Send(self,@DMSayMakeMonster,#string="mimic");
+      Send(oMonster, @Killed, #what=self);
+
+      ptGenerateMonstersAndDieTimer = CreateTimer(self, @GenerateMonstersAndDie, 100);
+
+      Send(poOwner, @ClearDeadBodies);
+      Send(self, @CleanFloor);
+
+      return;
+   }
+
+   SweepRoom()
+   {
+      local i, j, k, l, m, n, bBool, iInt, sString, oObj, oObject, rResource, lList, lSecondlist, lThirdlist;
+
+      // Sweep everything from the floor into your inventory
+      lList = Send(poOwner, @GetHolderPassive);
+
+      foreach i in lList
+      {
+         oObj = First(i);
+
+         if oObj <> $ AND IsClass(oObj, &Item)
+         {
+            Send(self,@NewHold,#what=oObj);
+         }
+      }
+               
+      return;
+   }
+   CleanFloor()
+   {
+      local i, j, k, l, m, n, bBool, iInt, sString, oObj, oObject, rResource, lList, lSecondlist, lThirdlist;
+
+      // Clear all loot and dead bodies from the floor
+      lList = Send(poOwner, @GetHolderPassive);
+
+      foreach i in lList
+      {
+         oObj = First(i);
+
+         bBool = FALSE;
+
+         if oObj <> $ AND IsClass(oObj, &Item)
+         {
+            lSecondList = Send(oObj, @GetAttributes);
+
+            foreach j in lSecondList
+            {
+               k = Send(oObj,@GetNumFromCompound,#compound=First(j));
+               oObject = Send(SYS,@FindItemAttByNum,#num=k);
+               
+               if oObject <> $
+               {
+                  if Send(oObj, @CanIdentify) OR NOT StringEqual("special %s", Send(oObject, @GetName))
+                  {
+                     if IsClass(oObj, &Hammer) 
+                        OR IsClass(oObj, &MetalShield) 
+                        OR IsClass(oObj, &LongSword) 
+                        OR IsClass(oObj, &Mace) 
+                        OR IsClass(oObj, &ShortSword)
+                        OR IsClass(oObj, &Axe)
+                     {
+                        // Let's just ignore this garbage.
+                        continue;  
+                     }
+
+                     // Put the "odd" item in our inventory
+                     Send(self,@NewHold,#what=oObj);
+
+                     bBool = TRUE;
+
+                     break;
+                  }
+               }
+            }
+
+            if NOT bBool
+            {
+               // Delete item from floor..
+               Send(oObj, @Delete);
+            }
+         }
+      }
+
+      return;      
+   }
+
    UserSay(string=$,type=$)
    {
-      local i, iInt, sString, oObject, rResource, lList;
+      local i, j, k, l, m, n, bBool, iInt, iInteger, sString, oObj, oObject, rResource, lList, lSecondlist, lThirdlist;
 
       if type <> SAY_DM
       {
@@ -898,9 +1024,196 @@ messages:
          return;
       }
 
+      if StringContain(string, dm_generate_monster_and_die)
+      {
+         // Will generate a monster every 1/2 second until you use the same command.
+         if ptGenerateMonstersAndDieTimer <> $
+         {
+            pbStopGenerateMonstersAndDie = TRUE;
+            Debug("Stop Generating Monsters");
+         }
+
+         if pbStopGenerateMonstersAndDie
+         {
+            pbStopGenerateMonstersAndDie = FALSE;
+
+            if ptGenerateMonstersAndDieTimer <> $ AND IsTimer(ptGenerateMonstersAndDieTimer)
+            {
+               DeleteTimer(ptGenerateMonstersAndDieTimer);
+               ptGenerateMonstersAndDieTimer = $;
+            }
+
+            return;
+         }
+
+         ptGenerateMonstersAndDieTimer = CreateTimer(self, @GenerateMonstersAndDie, 100);
+
+         return;
+      }
+
+      if StringContain(string, dm_invasion_orc)
+      {
+         Send(&OrcInvasion, @Delete);
+         Create(&OrcInvasion, #who=self);
+
+         return;
+      }
+
+      if StringContain(string, dm_invasion_spider)
+      {
+         Send(&SpiderInvasion, @Delete);
+         Create(&SpiderInvasion, #who=self);
+
+         return;
+      }
+
+      if StringContain(string, dm_invasion_skeleton)
+      {
+         Send(&SkeletonInvasion, @Delete);
+         Create(&SkeletonInvasion, #who=self);
+
+         return;
+      }
+
+      if StringContain(string, dm_invasion_rat)
+      {
+         Send(&RatInvasion, @Delete);
+         Create(&RatInvasion, #who=self);
+
+         return;
+      }
+
+      if StringContain(string, dm_invasion_dragon)
+      {
+         Send(&DragonInvasion, @Delete);
+         Create(&DragonInvasion, #who=self);
+
+         return;
+      }
+
+      if StringContain(string, dm_invasion_elemental)
+      {
+         Send(&ElementalInvasion, @Delete);
+         Create(&ElementalInvasion, #who=self);
+
+         return;
+      }
+
+      if StringContain(string, dm_sweep)
+      {
+         Send(self, @SweepRoom);
+         Send(poOwner, @ClearDeadBodies);
+
+         return;
+      }
+
+      if StringContain(string, dm_clear_floor)
+      {
+         Send(self, @CleanFloor);
+         Send(poOwner, @ClearDeadBodies);
+
+         return;
+      }
+
+      if StringContain(string, dm_adventurer_kit_pf)
+         OR StringContain(string, dm_adventurer_kit_mage)
+         OR StringContain(string, dm_adventurer_kit_hybrid)
+      {
+         // This prepares some loot for a character.
+         lList = [
+            [Create(&WeaponWand,#school=1),$,$],
+            [Create(&WeaponWand,#school=2),$,$],
+            [Create(&WeaponWand,#school=3),$,$],
+            [Create(&WeaponWand,#school=4),$,$],
+            [Create(&WeaponWand,#school=5),$,$],
+            [Create(&Wizardhat,#school=1),SID_HOLY_RESOLVE,$],
+            [Create(&Wizardhat,#school=2),SID_UNHOLY_RESOLVE,$],
+            [Create(&Wizardhat,#school=3),SID_DEFLECT,$],
+            [Create(&Wizardhat,#school=4),SID_RESIST_FIRE,$],
+            [Create(&Wizardhat,#school=5),SID_RESIST_COLD,$],
+            [Create(&Wizardhat,#school=6),SID_RESIST_ACID,$],
+            [Create(&RiijaCharm),SID_RESIST_MAGIC,$],
+            [Create(&JalaNecklace),SID_RESTORATE,$],
+            [Create(&TrueLute),SID_WOLFPACK,$],
+            [Create(&DiscipleRobe,#school=3),SID_RESIST_MAGIC,$],
+            [Create(&DiscipleRobe,#school=5),SID_RESIST_MAGIC,$],
+            [Create(&RiijaSword),SID_WOLFPACK,$],
+            [Create(&RoyalShirt),SID_EAGLE_EYES,$],
+            [Create(&PantsC,#translation=PT_GRAY_TO_BLACK),SID_SUPER_STRENGTH,$],
+            [Create(&PlateArmor),SID_ARMOR_OF_GORT,$],
+            [Create(&DaemonHelm),SID_NIGHT_VISION,23],
+            [Create(&Gauntlet),SID_FREE_ACTION,$],
+            [Create(&IvyCirclet),SID_DETECT_INVISIBLE,$],
+            [Create(&Circlet),SID_REJUVENATE,$],
+            [Create(&RingDefense),SID_GAZE_OF_THE_BASILISK,$],
+            [Create(&FireRing),SID_RESIST_FIRE,$]
+         ];
+         
+         if StringContain(string, dm_adventurer_kit_pf) OR StringContain(string, dm_adventurer_kit_hybrid)
+         {
+            lList = AppendListElem([Create(&GoldShield),SID_MAGIC_SHIELD,$], lList);
+            lList = AppendListElem([Create(&NeruditeSword),SID_BLESS,$], lList);
+            lList = AppendListElem([Create(&BattleBow),SID_BLESS,$], lList);
+         }
+
+         if StringContain(string, dm_adventurer_kit_mage) OR StringContain(string, dm_adventurer_kit_hybrid)
+         {
+            lList = AppendListElem([Create(&JewelOfFroz),SID_ICY_FINGERS,78], lList);
+            lList = AppendListElem([Create(&JewelOfFroz),SID_BLESS,78], lList);
+         }
+
+         foreach oObj in lList
+         {
+            iInt = Nth(oObj, 2);     // Buff
+            iInteger = Nth(oObj, 3); // Color
+            oObj = Nth(oObj, 1);     // Object
+
+            if iInt <> $
+            {
+               // Add buff to the item
+               Send(oObj, @SetBuffSpell, #num=iInt);
+            }
+
+            if iInteger <> $
+            {
+               // Color the item
+               Send(oObj, @SetItemColor, #flags=iInteger);
+            }
+
+            // Add hits to the item
+            Send(oObj,@SetMaxHits,#number=10000);
+            Send(oObj,@SetHits,#number=10000);
+
+            // Add XP to the item
+            Send(Send(SYS, @FindItemAttByNum, #num=IA_XP_KILL_BONUS), @AddToItem, #oItem=oObj, #iPower=2000);
+
+            // Put in DM inventory
+            Send(self,@NewHold,#what=oObj);
+
+            // Bond the item
+            Send(Send(SYS,@FindItemAttByNum,#Num=IA_TRANSCENDANT),@AddToItem,#oItem=oObj);
+
+            // Reveal the item
+            if Send(oObj,@RevealHiddenAttributes)
+            {
+               Send(oObj,@RevealHiddenColor);
+               Send(self,@SomethingChanged,#what=oObj);
+            }
+         }
+
+         return;
+      }
+
+      if StringContain(string, dm_animate)
+      {
+         // Animate all dead bodies on the floor
+         Send(poOwner, @ClearDeadBodies, #animated=TRUE);
+
+         return;
+      }
+
       if StringContain(string, dm_move_forward)
       {
-         Debug("Moving forward",(Nth(Send(self,@GetPos),1)+1),(Nth(Send(self,@GetPos),2)+1));
          Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)+1),#new_col=(Nth(Send(self,@GetPos),2)+1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
          Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)+1), #new_col=(Nth(Send(self,@GetPos),2)+1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
          return;
@@ -908,7 +1221,6 @@ messages:
 
       if StringContain(string, dm_move_back)
       {
-         Debug("Moving back",(Nth(Send(self,@GetPos),1)-1),(Nth(Send(self,@GetPos),2)-1));
          Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)-1),#new_col=(Nth(Send(self,@GetPos),2)-1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
          Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)-1), #new_col=(Nth(Send(self,@GetPos),2)-1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
          return;
@@ -916,7 +1228,6 @@ messages:
 
       if StringContain(string, dm_move_left)
       {
-         Debug("Moving left",(Nth(Send(self,@GetPos),1)+1),(Nth(Send(self,@GetPos),2)-1));
          Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)+1),#new_col=(Nth(Send(self,@GetPos),2)-1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
          Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)+1), #new_col=(Nth(Send(self,@GetPos),2)-1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
          return;
@@ -924,7 +1235,6 @@ messages:
 
       if StringContain(string, dm_move_right)
       {
-         Debug("Moving right",(Nth(Send(self,@GetPos),1)-1),(Nth(Send(self,@GetPos),2)+1));
          Send(self, @UserMove, #new_row=(Nth(Send(self,@GetPos),1)-1),#new_col=(Nth(Send(self,@GetPos),2)+1),#fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF,#speed=50);
          Send(self, @SomethingMoved, #what=self, #new_row=(Nth(Send(self,@GetPos),1)-1), #new_col=(Nth(Send(self,@GetPos),2)+1), #fine_row = FINENESS_HALF, #fine_col = FINENESS_HALF, #cause = $, #speed = 25, #force = TRUE);
          return;
@@ -1293,6 +1603,9 @@ messages:
       if StringContain(string,dm_makemonsters)
          AND NOT StringContain(string,dm_monster_authorize_command)
       {
+         StringSubstitute(string, "monster ", "");
+         StringSubstitute(string, "monsters ", "");
+
          Send(self,@DMSayMakeMonster,#string=string);
          Send(self,@DMSayMakeMonster,#string=string);
          Send(self,@DMSayMakeMonster,#string=string);
@@ -1304,6 +1617,10 @@ messages:
       if StringContain(string,dm_makemonster)
          AND NOT StringContain(string,dm_monster_authorize_command)
       {
+
+         StringSubstitute(string, "monster ", "");
+         StringSubstitute(string, "monsters ", "");
+
          Send(self,@DMSayMakeMonster,#string=string);
 
          return;
@@ -1575,7 +1892,7 @@ messages:
       {
          if StringEqual(string,dm_get_money_command)
          {
-            Send(self,@NewHold,#what=Create(&Money,#number=500000));
+            Send(self,@NewHold,#what=Create(&Shilling,#number=10000000));
 
             return;
          }
@@ -2356,21 +2673,21 @@ messages:
 
       if (string = $)
       {
-         return;
+         return $;
       }
 
       bFound = FALSE;
+      bAllowed = FALSE;
+
       lTemplate = Send(SYS,@GetMonsterTemplates);
-	  StringSubstitute(string, "monster ", "");
-	  StringSubstitute(string, "monsters ", "");
-	  
+      
       foreach i in lTemplate
       {
-	     sName = Send(i,@GetName);
-		 
+         sName = Send(i,@GetName);
+         
          if StringEqual(sName, string)
          {
-		    bFound = TRUE;
+            bFound = TRUE;
             bAllowed = FALSE;
 
             // Two levels of mob creation abilities:
@@ -2428,6 +2745,8 @@ messages:
                         #string=dm_void,#parm1=vrName,
                         #parm2=Send(i,@GetIndef),#parm3=Send(i,@GetName));
                }
+
+               return oObject;
             }
          }
       }
@@ -2437,7 +2756,7 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=dm_no_monster);
       }
 
-      return;
+      return $;
    }
 
    DMSayMobAuthorize(string=$)

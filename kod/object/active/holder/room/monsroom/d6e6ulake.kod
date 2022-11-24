@@ -20,6 +20,7 @@ resources:
 
    room_d6e6ulake = d6e6ulake.roo
    room_name_d6e6ulake = "Underground Lake - Home of the Mollusk"
+   gotocave_OutdoorsD6E7 = "You step deeper into dark cave, sensing evil creatures are lurking."
 
    d6e6ulake_music = song.ogg
 
@@ -59,8 +60,13 @@ messages:
    {
       plEdge_Exits = $;
       
-      plEdge_Exits = Cons([LEAVE_EAST, RID_D6E6, 15, 53, ROTATE_180], plEdge_exits);
-  
+      plEdge_Exits = Cons([LEAVE_EAST, RID_D6E6, 15, 53, ROTATE_NONE], plEdge_exits);
+      //plEdge_Exits = Cons([LEAVE_WEST, RID_D6E7ULAKE, 16, 40, ROTATE_NONE], plEdge_exits);
+      plExits = Cons([ 16, 4, RID_D6E7ULAKE, 16, 40, ROTATE_NONE, gotocave_OutdoorsD6E7 ],plExits);
+      plExits = Cons([ 16, 5, RID_D6E7ULAKE, 16, 40, ROTATE_NONE, gotocave_OutdoorsD6E7 ],plExits);
+      plExits = Cons([ 17, 4, RID_D6E7ULAKE, 16, 40, ROTATE_NONE, gotocave_OutdoorsD6E7 ],plExits);
+      plExits = Cons([ 17, 5, RID_D6E7ULAKE, 16, 40, ROTATE_NONE, gotocave_OutdoorsD6E7 ],plExits);
+
       propagate;
    }
    

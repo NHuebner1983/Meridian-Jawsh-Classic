@@ -121,9 +121,21 @@ messages:
       Send(self,@NewHold,#what=Create(&Brazier),
 	   #new_row=10,#new_col=8,#fine_col=0,#fine_row=0);
 
-
       propagate;
    }
+
+   CreateMarketplace()
+   {
+      if Send(SYS,@IsMarketplaceEnabled)
+      {
+         // Show a Marketplace sign in PIETROS AH jastavrn.roo
+         Send(self,@NewHold,#what=Create(&Store),
+            #new_row=16,#new_col=10,#fine_row=3,#fine_col=9,#new_angle=ANGLE_NORTH);
+      }
+
+      return;
+   }
+
    CreateStandardExits()
    {
       plExits = $;

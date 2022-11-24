@@ -72,7 +72,7 @@ classvars:
 
 properties:
 
-   viMultiCast_Spellpower = 10800   // 3 hours (in seconds) base casting time
+   viMultiCast_Spellpower = 1080    // 20+ min
    piBaseCastTime = 900             // 15 minutes (in seconds) minimum casting time.
    piGuildWarnTime = 180            // warn once (per caster) every 3 minutes on average
 

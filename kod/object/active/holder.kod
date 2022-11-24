@@ -105,6 +105,50 @@ messages:
       return $;
    }
 
+   GetHoldingByClass(class = &Object, bAllowLogGhosts = FALSE)
+   "Returns a list of objects by class in this room."
+   {
+      local i, each_obj, iFound, lObjsList;
+
+      foreach i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+
+         if IsClass(each_obj, class)
+            AND (bAllowLogGhosts OR NOT IsClass(each_obj, &Player) 
+               OR (NOT bAllowLogGhosts AND IsClass(each_obj, &Player) AND Send(each_obj, @IsLoggedOn)))
+         {
+            if lObjsList = $
+            {
+               lObjsList = [];
+            }
+
+            lObjsList = AppendListElem(each_obj, lObjsList);
+            Debug(Send(each_obj, @GetName),"is in room");
+         }
+      }
+
+      foreach i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+
+         if IsClass(each_obj,class)
+            AND (bAllowLogGhosts OR NOT IsClass(each_obj, &Player) 
+               OR (NOT bAllowLogGhosts AND IsClass(each_obj, &Player) AND Send(each_obj, @IsLoggedOn)))
+         {
+            if lObjsList = $
+            {
+               lObjsList = [];
+            }
+            
+            lObjsList = AppendListElem(each_obj, lObjsList);
+            Debug(Send(each_obj, @GetName),"is in room");
+         }
+      }
+
+      return lObjsList;
+   }
+
    FindHoldingActive(class = &Object, sequence = 1)
    "Finds the 'sequence'th (default first) entry of type 'class' "
    "in the active list."
@@ -358,7 +402,7 @@ messages:
                   #bulk=iBulk_can_hold);
    }
 
-   NewHold(what = $)
+   NewHold(what = $, stack_number_items = TRUE, stack_marketplace = FALSE, marketplace_owner = $, marketplace_platinum = 0, marketplace_shillings = 0)
    {
       local i, each_obj;
 
@@ -368,7 +412,7 @@ messages:
          return;
       }
 
-      if IsClass(what,&NumberItem)
+      if (stack_number_items OR stack_marketplace) AND IsClass(what,&NumberItem)
       {
          foreach i in plPassive
          {
@@ -380,10 +424,35 @@ messages:
                {
                   // should only be one of these, so can quit loop if found
 
+                  if stack_marketplace AND marketplace_platinum <> 0 AND marketplace_shillings <> 0
+                  {
+                     if Send(each_obj, @GetMarketplaceOwner) = marketplace_owner
+                     {
+                        // This should only be stacked if the marketplace value of the item is the same.
+                        if NOT (Send(each_obj, @GetMarketplaceUnitPricePlatinum) = marketplace_platinum
+                           AND Send(each_obj, @GetMarketplaceUnitPriceShillings) = marketplace_shillings)
+                        {
+                           // This marketplace item needs to be unique because its cost is different than the item.
+                           Debug("Did not stack an item because marketplace unit prices did not match");
+                           continue;
+                        }
+                        else
+                        {
+                           Debug("Stacking existing marketplace item, unit prices match", marketplace_platinum,marketplace_shillings);
+                        }
+                     }
+                     else
+                     {
+                        // This marketplace item has a different owner, we shouldn't touch their stack.
+                        Debug("Skipping item for stacking, it's not owned by the same store owner.");
+                        continue;
+                     }
+                  }
+
                   Send(each_obj,@AddNumber,#number=Send(what,@GetNumber));
                   Send(what,@Delete);
 
-                  return;
+                  return each_obj;
                }
             }
          }
@@ -396,6 +465,8 @@ messages:
 
    NewHoldObject(what = $)
    {
+      //Debug("NewHoldObject", what, Send(what,@GetName));
+
       Send(self,@HolderAddNode,#node=what);
 
       return;

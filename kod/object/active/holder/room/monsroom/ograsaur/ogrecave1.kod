@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-OgreCave1 is MonsterRoom
+OgreCave1 is Ograsaur
 
 constants:
 
@@ -31,51 +31,36 @@ constants:
 
 resources:
 
-   include ogrecave1.lkod
+   include OgreCave1.lkod
 
-   room_name_ogrecave1 = "Ancient Vault of the Ogre Guardians"
-   room_ogrecave1 = ogrecave1.roo
-   ogrecave1_music = ksong.ogg
+   room_name_OgreCave1 = "Ancient Vault of the Ogre Guardians"
+   room_OgreCave1 = OgreCave1.roo
+   OgreCave1_music = ksong.ogg
 
-   ogrecave1_sound_rsc = wtemple1.ogg
-   waterfall_soundOgrecave1 = wfall2.ogg
+   OgreCave1_sound_rsc = wtemple1.ogg
+   waterfall_soundOgreCave1 = wfall2.ogg
 
 classvars:
 
-   vrName = room_name_ogrecave1
+   vrName = room_name_OgreCave1
 
    viTeleport_row = 74
    viTeleport_col = 34
 
-   viTerrain_Type = TERRAIN_LAKE | TERRAIN_WATERFALL | TERRAIN_CAVES
-
 properties:
 
-   prRoom = room_ogrecave1
+   prRoom = room_OgreCave1
    piRoom_num = RID_OGRE_CAVE1
 
-   prMusic = ogrecave1_music
+   prMusic = OgreCave1_music
 
-   piBaseLight = LIGHT_DARK
-   piOutside_factor = 1
    pbDoorOpen = FALSE
-
-   // A dynamic light that appears when the Froz jewel appears.
-   poLight = $
-
-   piGen_time = 25000
-   piGen_percent = 80
-
-   piInit_count_min = 7
-   piInit_count_max = 9
-
-   piMonster_count_max = 25
 
 messages:
 
    Constructed()
    {
-      plLooping_sounds = [[ waterfall_soundOgrecave1, 50, 67, 60, 100 ]];
+      plLooping_sounds = [[ waterfall_soundOgreCave1, 50, 67, 60, 100 ]];
       plMonsters = [ [&Ogre, 100] ];
       plGenerators = [ 
                         [27,41],
@@ -99,6 +84,10 @@ messages:
       plExits = $;
       plExits = Cons([ 75, 34, RID_J3, 20, 10, ROTATE_NONE ],plExits);
 
+      plExits = Cons([ 24, 36, RID_OGRE_CAVE2, 56, 76, ROTATE_NONE ],plExits);
+      plExits = Cons([ 24, 37, RID_OGRE_CAVE2, 56, 76, ROTATE_NONE ],plExits);
+      plExits = Cons([ 24, 38, RID_OGRE_CAVE2, 56, 76, ROTATE_NONE ],plExits);
+
       propagate;
    }
 
@@ -107,6 +96,11 @@ messages:
       if isClass(what,&User) AND new_row < 69
       {
          send(SYS,@UtilGoNearSquare,#what=what,#where=self,#new_row=74,#new_col=34);
+      } else {
+          if NOT pbDoorOpen
+          {
+               Send(self,@RaiseTemple);
+          }
       }
 
       propagate;
@@ -199,7 +193,6 @@ messages:
    {
       pbDoorOpen = FALSE;
       send(self,@LowerTemple);
-      send(self,@DeleteLight);
 
       propagate;
    }
@@ -208,19 +201,6 @@ messages:
    {
       propagate;
    }
-
-   DeleteLight()
-   "Deletes any dynamic lights in the area."
-   {
-      if poLight <> $
-      {
-         send(poLight,@Delete);
-         poLight = $;
-      }
-
-      return;
-   }
-
 
 end
 ////////////////////////////////////////////////////////////////////////////////

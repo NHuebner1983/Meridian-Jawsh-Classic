@@ -54,12 +54,21 @@ static void DoAlignLists(void)
 {
    /* Ensure that cost list shows same index at top that item list does */
    int index1 = ListBox_GetTopIndex(info->hwndItemList);
-   int index2 = ListBox_GetTopIndex(info->hwndCostList);
-   int index3 = ListBox_GetTopIndex(info->hwndQuanList);
-   if ((index1 != index2) || (index1 != index3))
+   int index2 = ListBox_GetTopIndex(info->hwndQuanList);
+   int index3 = ListBox_GetTopIndex(info->hwndShillList);
+   int index4 = ListBox_GetTopIndex(info->hwndPlatList);
+   
+   if (index1 != index2)
    {
-      ListBox_SetTopIndex(info->hwndCostList, index1);
-      ListBox_SetTopIndex(info->hwndQuanList, index1);
+       ListBox_SetTopIndex(info->hwndQuanList, index1);
+   }
+   if (index1 != index3)
+   {
+       ListBox_SetTopIndex(info->hwndShillList, index1);
+   }
+   if (index1 != index4)
+   {
+       ListBox_SetTopIndex(info->hwndPlatList, index1);
    }
 }
 
@@ -147,39 +156,54 @@ BOOL BuyInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
 
    CenterWindow(hDlg, GetParent(hDlg));
    info->hwndItemList = GetDlgItem(hDlg, IDC_ITEMLIST);
-   info->hwndCostList = GetDlgItem(hDlg, IDC_COSTLIST);
+   info->hwndShillList = GetDlgItem(hDlg, IDC_COST_SHILL_LIST);
+   info->hwndPlatList = GetDlgItem(hDlg, IDC_COST_PLAT_LIST);
    info->hwndQuanList = GetDlgItem(hDlg, IDC_QUANLIST);
-   info->hwndCost = GetDlgItem(hDlg, IDC_COST);
+   info->hwndCostShills = GetDlgItem(hDlg, IDC_COST_SHILL);
+   info->hwndCostPlat = GetDlgItem(hDlg, IDC_COST_PLAT);
 
    // Draw objects in owner-drawn list box
    SetWindowLong(info->hwndItemList, GWL_USERDATA, OD_DRAWOBJ);
-   SetWindowLong(info->hwndCostList, GWL_USERDATA, OD_DRAWOBJ);
    SetWindowLong(info->hwndQuanList, GWL_USERDATA, OD_DRAWOBJ);
+   SetWindowLong(info->hwndShillList, GWL_USERDATA, OD_DRAWOBJ);
+   SetWindowLong(info->hwndPlatList, GWL_USERDATA, OD_DRAWOBJ);
 
    /* Add items & costs to list boxes */
    WindowBeginUpdate(info->hwndItemList);
-   WindowBeginUpdate(info->hwndCostList);
    WindowBeginUpdate(info->hwndQuanList);
+   WindowBeginUpdate(info->hwndShillList);
+   WindowBeginUpdate(info->hwndPlatList);
    for (l = info->items; l != NULL; l = l->next)
    {
       DWORD amount = 1;
-      DWORD cost;
+      DWORD plat;
+      DWORD shill;
       buy_object *buy_obj = (buy_object *) l->data;
       index = ItemListAddItem(info->hwndItemList, &buy_obj->obj, -1, False);
+      
       if (IsNumberObj(buy_obj->obj.id))
 	 amount = buy_obj->obj.amount;
       else
 	 amount = 1;
-      cost = buy_obj->cost; // this WAS for a group: buy_obj->cost / amount;
-      sprintf(temp, "%d", cost);
-      ListBox_InsertString(info->hwndCostList, index, temp);
-      ListBox_SetItemData(info->hwndCostList, index, cost);
+
+      plat = buy_obj->plat;
+      shill = buy_obj->shill;
+
       ListBox_InsertString(info->hwndQuanList, index, " ");
       ListBox_SetItemData(info->hwndQuanList, index, 0);
+
+      sprintf(temp, "%d", shill);
+      ListBox_InsertString(info->hwndShillList, index, temp);
+      ListBox_SetItemData(info->hwndShillList, index, shill);
+
+      sprintf(temp, "%d", plat);
+      ListBox_InsertString(info->hwndPlatList, index, temp);
+      ListBox_SetItemData(info->hwndPlatList, index, plat);
    }
-   WindowEndUpdate(info->hwndCostList);
    WindowEndUpdate(info->hwndItemList);
    WindowEndUpdate(info->hwndQuanList);
+   WindowEndUpdate(info->hwndShillList);
+   WindowEndUpdate(info->hwndPlatList);
 
    /* Set seller's name */
    Edit_SetText(GetDlgItem(hDlg, IDC_SELLER), 
@@ -269,6 +293,8 @@ static void HandleSelectionChange(void)
    object_node *obj = (object_node *) ListBox_GetItemData(info->hwndItemList, index);
 
    WindowBeginUpdate(info->hwndQuanList);
+   WindowBeginUpdate(info->hwndShillList);
+   WindowBeginUpdate(info->hwndPlatList);
    ListBox_DeleteString(info->hwndQuanList,index);
    if (ListBox_GetSel(info->hwndItemList,index))
    {
@@ -287,6 +313,8 @@ static void HandleSelectionChange(void)
    ListBox_InsertString(info->hwndQuanList,index,temp);
    ListBox_SetItemData(info->hwndQuanList,index,amount);
    WindowEndUpdate(info->hwndQuanList);
+   WindowEndUpdate(info->hwndShillList);
+   WindowEndUpdate(info->hwndPlatList);
    UpdateCost();
 }
 
@@ -398,23 +426,39 @@ void UpdateCost(void)
 {
    int num, i;
 
-   info->cost = 0;
+   info->shills = 0;
+   info->plat = 0;
    num = ListBox_GetCount(info->hwndItemList);
    for (i=0; i < num; i++)
    {
 #if 0
+      if (ListBox_GetSel(info->hwndItemList, i) > 0) 
+          info->shills += ListBox_GetItemData(info->hwndShillList, i);
       if (ListBox_GetSel(info->hwndItemList, i) > 0)
-	 info->cost += ListBox_GetItemData(info->hwndCostList, i);
+          info->plat += ListBox_GetItemData(info->hwndPlatList, i);
 #else
       int quantity = (int)ListBox_GetItemData(info->hwndQuanList,i);
-      int cost = (int)ListBox_GetItemData(info->hwndCostList,i);
-      info->cost += quantity * cost;
+      int shills = (int)ListBox_GetItemData(info->hwndShillList,i);
+      int plat = (int)ListBox_GetItemData(info->hwndPlatList, i);
+      info->shills += quantity * shills;
+      info->plat += quantity * plat;
 #endif
    }
 
+   if (info->shills >= 1000)
+   {
+       // Convert shillings into platinum to keep the vibe!
+       int newplat = info->shills / 1000;
+       int remaining_shills = info->shills - (newplat * 1000);
+       info->plat = info->plat + newplat;
+       info->shills = remaining_shills;
+   }
+
    /* Draw new total cost */
-   sprintf(temp, "%d", info->cost);
-   SetWindowText(info->hwndCost, temp);
+   sprintf(temp, "%d Shills", info->shills);
+   SetWindowText(info->hwndCostShills, temp);
+   sprintf(temp, "%d Plat", info->plat);
+   SetWindowText(info->hwndCostPlat, temp);
 }
 /************************************************************************/
 /*
@@ -474,7 +518,8 @@ void BuyList(object_node seller, list_type items)
    dlg_info.items = items;
    dlg_info.seller_id = seller.id;
    dlg_info.seller_name = seller.name_res;
-   dlg_info.cost = 0;
+   dlg_info.shills = 0;
+   dlg_info.plat = 0;
 
    if (hwndBuyDialog == NULL)
       /* Give user list of things to select from */
@@ -496,7 +541,8 @@ void WithdrawalList(object_node seller, list_type items)
    dlg_info.items = items;
    dlg_info.seller_id = seller.id;
    dlg_info.seller_name = seller.name_res;
-   dlg_info.cost = 0;
+   dlg_info.shills = 0;
+   dlg_info.plat = 0;
 
    if (hwndBuyDialog == NULL)
       /* Give user list of things to select from */

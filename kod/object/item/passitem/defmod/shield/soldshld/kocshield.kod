@@ -94,8 +94,8 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ ATCK_WEAP_PIERCE, 15],
-               [ ATCK_SPELL_ALL, 10]
+      return [ [ ATCK_WEAP_PIERCE, 5],
+               [ ATCK_SPELL_ALL, 5]
              ];
    }
 

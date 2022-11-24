@@ -143,48 +143,62 @@ properties:
 
 messages:
 
-   CreateStandardExits()
-   {
-      plExits = $;
+      CreateStandardExits()
+      {
+            plExits = $;
 
-      /// TO TOWN
-      plExits = Cons([ 6,21, RID_MARION, 50, 22, ROTATE_NONE ],plExits);
-      plExits = Cons([ 7,21, RID_MARION, 50, 22, ROTATE_NONE ],plExits);
+            /// TO TOWN
+            plExits = Cons([ 6,21, RID_MARION, 50, 22, ROTATE_NONE ],plExits);
+            plExits = Cons([ 7,21, RID_MARION, 50, 22, ROTATE_NONE ],plExits);
 
-      propagate;
-   }
+            propagate;
+      }
 
-   CreateStandardObjects()
-   {
-      local oBook, oNews;
+      CreateStandardObjects()
+      {
+            local oBook, oNews;
 
-      Send(self,@NewHold,#what=Create(&Brazier),#new_row=14,#new_col=12,
-            #fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
-      Send(self,@NewHold,#what=Create(&Brazier),#new_row=14,#new_col=18,
-            #fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
-      Send(self,@NewHold,#what=Create(&Brazier),#new_row=3,#new_col=13,
-            #fine_row=32,#fine_col=48,#new_angle=ANGLE_EAST);
+            Send(self,@NewHold,#what=Create(&Brazier),#new_row=14,#new_col=12,
+                  #fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
+            Send(self,@NewHold,#what=Create(&Brazier),#new_row=14,#new_col=18,
+                  #fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
+            Send(self,@NewHold,#what=Create(&Brazier),#new_row=3,#new_col=13,
+                  #fine_row=32,#fine_col=48,#new_angle=ANGLE_EAST);
 
-      Send(self,@NewHold,#what=Create(&Table),#new_row=12,#new_col=13,
-            #fine_row=48,#fine_col=48,#new_angle=ANGLE_EAST);
-      Send(self,@NewHold,#what=Create(&Table),#new_row=11,#new_col=16,
-            #fine_row=16,#fine_col=0,#new_angle=ANGLE_EAST);
-      Send(self,@NewHold,#what=Create(&Table),#new_row=12,#new_col=18,
-            #fine_row=32,#fine_col=0,#new_angle=ANGLE_EAST);
+            Send(self,@NewHold,#what=Create(&Table),#new_row=12,#new_col=13,
+                  #fine_row=48,#fine_col=48,#new_angle=ANGLE_EAST);
+            Send(self,@NewHold,#what=Create(&Table),#new_row=11,#new_col=16,
+                  #fine_row=16,#fine_col=0,#new_angle=ANGLE_EAST);
+            Send(self,@NewHold,#what=Create(&Table),#new_row=12,#new_col=18,
+                  #fine_row=32,#fine_col=0,#new_angle=ANGLE_EAST);
 
-      oBook = Create(&BookPedestal,#Name=MarHall_factionflag_book,
-                     #text=MarHall_factionflag_text);
-      Send(self,@NewHold,#what=oBook,#new_row=3,#new_col=19,
-            #fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
+            oBook = Create(&BookPedestal,#Name=MarHall_factionflag_book,
+                              #text=MarHall_factionflag_text);
+            Send(self,@NewHold,#what=oBook,#new_row=3,#new_col=19,
+                  #fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
 
-      oNews = Create(&Newslink,#nid=NID_TOS_HALL,
-                     #name=news_mar_hall,#desc=news_mar_hall_desc);
+            oNews = Create(&Newslink,#nid=NID_TOS_HALL,
+                              #name=news_mar_hall,#desc=news_mar_hall_desc);
 
-      Send(self,@NewHold,#what=oNews,#new_row=10,#new_col=3,
-            #fine_row=0,#fine_col=32);
+            Send(self,@NewHold,#what=oNews,#new_row=10,#new_col=3,
+                  #fine_row=0,#fine_col=32);
 
-      propagate;
-   }
+            Send(self,@NewHold,#what=Create(&Chest,#receivesDonations=TRUE),#new_row=6,#new_col=14);
+
+            propagate;
+      }
+
+      CreateMarketplace()
+      {
+            if Send(SYS,@IsMarketplaceEnabled)
+            {
+                  // Show a Marketplace sign in MAR AH marhall.roo
+                  Send(self,@NewHold,#what=Create(&Store),
+                        #new_row=4,#new_col=14,#fine_row=21,#fine_col=3,#new_angle=ANGLE_EAST);
+            }
+
+            return;
+      }
 
 end
 ////////////////////////////////////////////////////////////////////////////////

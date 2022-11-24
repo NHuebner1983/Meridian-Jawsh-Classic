@@ -394,6 +394,9 @@ properties:
    poHolder1 = $ // Temporary holders used in offers
    poHolder2 = $
 
+   // This object should be created once and never recreated.
+   poHolderMarketplace = $
+
    piHour = 0
    piDay = 0
    piYear = 0
@@ -438,6 +441,7 @@ properties:
    phXPTable
 
    poMoney = $
+   poPlatinum = $
 
    piMaintenance_delay = GUILD_MAINTENANCE_DELAY
 
@@ -533,13 +537,163 @@ properties:
    // Used for testing game time.
    ptTestTimer = $
 
+   // Migration timer
+   ptMigrationTimer = $
+
    plAttackTypes = $
    plSpellTypes = $
+
+   // Global marketplace
+   poMarketplace = $
+   pbMarketplaceEnabled = TRUE
+
 messages:
 
    GetName()
    {
       return system_name_rsc;
+   }
+
+   DisableMarketplace()
+   {
+      pbMarketplaceEnabled = FALSE;
+      Send(&Store,@DisableMarketplace);
+
+      return;
+   }
+
+   EnableMarketplace()
+   {
+      pbMarketplaceEnabled = TRUE;
+      Send(&Room,@CreateMarketplace);
+      Send(&Store,@Recreate);
+
+      return;
+   }
+
+   IsMarketplaceEnabled()
+   {
+      return pbMarketplaceEnabled;
+   }
+
+   GetMarketplaceObject()
+   {
+      if poMarketplace = $
+      {
+         Send(self,@CreateMarketplace);
+      }
+
+      return poMarketplace;
+   }
+
+   CreateMarketplace()
+   {
+      if poMarketplace = $
+      {
+         if poHolderMarketplace = $
+         {
+            poHolderMarketplace = Create(&Holder);
+         }
+
+         poMarketplace = Create(&Store);
+      }
+
+      return poMarketplace;
+   }
+   
+   MigrateShillingsToPlatinum()
+   "SHILLINGS TO PLATINUM MIGRATION - This should only be run one time, but is protected."
+   {
+      local i, oBank, oShilling;
+
+      Debug("---SHILLINGS-TO-PLATINUM--- ATTEMPT");
+      if Send(SETTINGS_OBJECT, @GetShillingsToPlatinumMigrated)
+      {
+         // Operation is already complete.
+         Debug("---SHILLINGS-TO-PLATINUM--- PROTECTED");
+         return FALSE;
+      }
+
+      Debug("---SHILLINGS-TO-PLATINUM--- PROCESSING");
+
+      // Note: Server 420 combined banks.
+      // If you uncombine banks, you will need to run this on KOC bank.
+      // If you started this server for the first time, you do not need to run this.
+      // Just run this command:  Send(SETTINGS_OBJECT, @SetShillingsToPlatinumMigrated);
+      // And the migration will be skipped.
+      oBank = Send(SYS,@FindBankByNum,#num=BID_TOS);
+      
+      Debug("----------------------------------");
+      Debug("Total users found",Length(plUsers));
+      Debug("----------------------------------");
+
+      foreach i in plUsers
+      {
+         Debug("Processing",Send(i,@GetName));
+         // Go through each user's bank and divide their total amount by SHILLINGS_PER_PLATINUM
+         Send(oBank,@MigrateShillingsToPlatinum,#who=i);
+
+         // Go through each user's inventory and perform Send(i,@ConvertInventoryMoney)
+         Send(i,@ConvertInventoryMoney, #deep_scan=TRUE);
+
+         // Delete any leftover artifacts that have zero number.
+         Send(i,@DeleteZeroObjectFromInventory,#class=&Shilling);
+         Send(i,@DeleteZeroObjectFromInventory,#class=&Platinum);
+      }
+
+      // Migration is complete.
+      // Everyone is now using platinum instead of shillings for banking.
+      Send(SETTINGS_OBJECT, @SetShillingsToPlatinumMigrated);
+
+      Debug("---SHILLINGS-TO-PLATINUM--- PERFORMED SUCCESSFULLY");
+
+      // Migration timer ends.
+      ptMigrationTimer = $;
+
+      return;
+   }
+
+   ShillingsToPlatinum(number=1)
+   "Converts shillings to platinum (by calculation only) - Does not physically convert objects."
+   {
+      if number <> $ AND number > 0 AND number >= SHILLINGS_PER_PLATINUM
+      {
+         return number / SHILLINGS_PER_PLATINUM;
+      }
+
+      if number = $
+      {
+         number = 0;
+      }
+
+      return 0;
+   }
+
+   ShillingsRemaining(number=1)
+   "Remaining shillings after converting to platinum. Should return 0 through 999"
+   {
+      local iRemainder;
+
+      iRemainder = 0;
+
+      if number <> $ AND number > 0
+      {
+         iRemainder = number;
+
+         if number >= SHILLINGS_PER_PLATINUM
+         {
+            iRemainder = number - (Send(self,@ShillingsToPlatinum,#number=number) * SHILLINGS_PER_PLATINUM);
+         }
+      }
+
+      return iRemainder;
+   }
+
+   PlatinumToShillings(number=1)
+   "Takes the number of platinum and converts it to shillings."
+   "WARNINGS: Caps at MAX_KOD_INT"
+   {
+      return number * SHILLINGS_PER_PLATINUM;
    }
 
    Constructor()
@@ -549,7 +703,7 @@ messages:
 
       Send(&NPCTotem, @Recreate);
 	  
-	  Send(self,@RecreateDamageTypeLists);
+	   Send(self,@RecreateDamageTypeLists);
 
       // Reset the list of naughty words
       Send(self,@ResetNaughtyWords);
@@ -595,7 +749,8 @@ messages:
       poHolder1 = Create(&Holder);
       poHolder2 = Create(&Holder);
 
-      poMoney = Create(&Money,#number=1);
+      poMoney = Create(&Shilling,#number=1);
+      poPlatinum = Create(&Platinum,#number=1);
       poTotem = Create(&Totem);
       poTotemOne = Create(&TotemOne);
       poTotemTwo = Create(&TotemTwo);
@@ -739,6 +894,18 @@ messages:
       //Send(self,@CreateAllSpellsIfNew);
       //Send(self,@CreateAllRoomsIfNew);
 
+      // ----420 Update to circumvent MAX_KOD_INT-----
+      // Migrate Shillings to Platinum
+      // If you are starting your server for the first time, this is harmless to run.
+      // Your system will run on platinum instead of shillings for banking moving forward.
+      // Shillings are still a calculative currency, but are not the final banking storage 
+      // currency due to number limitations.
+      if NOT Send(SETTINGS_OBJECT, @GetShillingsToPlatinumMigrated)
+      {
+         // Start migrating accounts in 1 second.
+         ptMigrationTimer = CreateTimer(self, @MigrateShillingsToPlatinum, 1000);
+      }
+
       if lSavedFlagStates <> $
       {
          Send(poTerritoryGame,@SetFlagStates,#lFlagStates=lSavedFlagStates);
@@ -851,6 +1018,7 @@ messages:
       Send(self,@RecreateChests);
       Send(self,@RecreateLore);
       Send(self,@UpdateHallOfHeroes);
+      Send(self,@RecreateStores);
 
       poTotem = Create(&Totem);
       poTotemOne = Create(&TotemOne);
@@ -1714,6 +1882,16 @@ messages:
       return poHolder2;
    }
 
+   GetMarketplaceHolder()
+   {
+      if poHolderMarketplace = $
+      {
+         poHolderMarketplace = Create(&Holder);
+      }
+
+      return poHolderMarketplace;
+   }
+
    GetUsersLoggedOn()
    {
       return plUsers_logged_on;
@@ -1776,6 +1954,37 @@ messages:
          {
             return i;
          }
+      }
+
+      return $;
+   }
+
+   FactionToShield(iFaction = FACTION_NEUTRAL)
+   "Converts a faction to the soldier shield class."
+   {
+      switch (iFaction)
+      {
+         case FACTION_NEUTRAL:
+            return $;
+         break;
+         case FACTION_DUKE:
+            return &DukeShield;
+         break;
+         case FACTION_PRINCESS:
+            return &PrincessShield;
+         break;
+         case FACTION_REBEL:
+            return &RebelShield;
+         break;
+         case FACTION_HOLY:
+            return &HolyShield;
+         break;
+         case FACTION_NECROMANCER:
+            return &NecromancerShield;
+         break;
+         case FACTION_KOC:
+            return &KocShield;
+         break;
       }
 
       return $;
@@ -2375,7 +2584,9 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_TAN,#class=&TosTan);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_GREY,#class=&TosGrey);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_FORGOTTEN,#class=&TosForgottenLovers);
-
+      Send(self,@CreateOneRoomIfNew,#num=RID_MALEVAL,#class=&MalevalDarkStudy);
+      Send(self,@CreateOneRoomIfNew,#num=RID_TOS_TRAINING,#class=&TosTraining);
+      
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_GRAVEYARD,#class=&TosGraveYard);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_APOTH,#class=&TosApoth);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_EAST,#class=&EastTos);
@@ -2521,6 +2732,7 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_D6,#class=&OutdoorsD6);
       Send(self,@CreateOneRoomIfNew,#num=RID_D6E6,#class=&OutdoorsD6E6);
       Send(self,@CreateOneRoomIfNew,#num=RID_D6E6ULAKE,#class=&UlakeD6E6);
+      Send(self,@CreateOneRoomIfNew,#num=RID_D6E7ULAKE,#class=&UlakeD6E7);
       Send(self,@CreateOneRoomIfNew,#num=RID_D7,#class=&OutdoorsD7);
       Send(self,@CreateOneRoomIfNew,#num=RID_E2,#class=&OutdoorsE2);
       Send(self,@CreateOneRoomIfNew,#num=RID_E4,#class=&OutdoorsE4);
@@ -2663,7 +2875,9 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_MAR_CRYPT3A,#class=&MarionCrypt3a);
       Send(self,@CreateOneRoomIfNew,#num=RID_MAR_CRYPT4,#class=&MarionCrypt4);
 
+      // Legends of Ograsaur Maps
       Send(self,@CreateOneRoomIfNew,#num=RID_OGRE_CAVE1,#class=&OgreCave1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_OGRE_CAVE2,#class=&OgreCave2);
 
       Send(self,@CreateOneRoomIfNew,#num=RID_OLD_JASPER,#class=&OldJasper);
       Send(self,@CreateOneRoomIfNew,#num=RID_OLD_MARION,#class=&OldMarion);
@@ -3328,17 +3542,18 @@ messages:
             iSchool = Send(oSpell,@GetSchool);
             if (iSchool >= SS_SHALILLE AND iSchool <= SS_JALA)
             {
-			    // Do not allow the new character to purchase these.
-				// They are automatically given upon creation.
-				if num <> SID_RIIJA_SERVANT
-				   AND num <> SID_KRAN_SERVANT
-				   AND num <> SID_SHAL_SERVANT
-				   AND num <> SID_FAREN_SERVANT
-				   AND num <> SID_QOR_SERVANT
-				   AND num <> SID_JALA_SERVANT
-			   {
-			      plNewCharSpells = Cons(oSpell,plNewCharSpells);
-			   }
+               // Do not allow the new character to purchase these.
+               // They are automatically given upon creation.
+               if num <> SID_RIIJA_SERVANT
+                  AND num <> SID_KRAN_SERVANT
+                  AND num <> SID_SHAL_SERVANT
+                  AND num <> SID_FAREN_SERVANT
+                  AND num <> SID_QOR_SERVANT
+                  AND num <> SID_JALA_SERVANT
+                  AND num <> SID_CAMP
+               {
+                  plNewCharSpells = Cons(oSpell,plNewCharSpells);
+               }
             }
          }
       }
@@ -3558,7 +3773,7 @@ messages:
 
       Send(self,@CreateOneSpellIfNew,#num=SID_MIRTH,#class=&Mirth);
       Send(self,@CreateOneSpellIfNew,#num=SID_MELANCHOLY,#class=&Melancholy);
-	  Send(self,@CreateOneSpellIfNew,#num=SID_WOLFPACK,#class=&Wolfpack);
+      Send(self,@CreateOneSpellIfNew,#num=SID_WOLFPACK,#class=&Wolfpack);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_CRYSTALIZE_MANA,#class=&CrystalizeMana);
       
@@ -3568,9 +3783,9 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_SET,#class=&Set);
       Send(self,@CreateOneSpellIfNew,#num=SID_LOADOUT,#class=&Loadout);
       Send(self,@CreateOneSpellIfNew,#num=SID_CONVEYANCE,#class=&Conveyance);
-	  Send(self,@CreateOneSpellIfNew,#num=SID_TRANSFERENCE,#class=&Transference);
+      Send(self,@CreateOneSpellIfNew,#num=SID_TRANSFERENCE,#class=&Transference);
       Send(self,@CreateOneSpellIfNew,#num=SID_PHASE,#class=&Phase);
-	  
+      
       Send(self,@CreateOneSpellIfNew,#num=SID_VAULT_LOADOUT,#class=&VaultLoadout);
 
       // Servant Spells
@@ -3580,6 +3795,13 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_FAREN_SERVANT,#class=&FarenServant);
       Send(self,@CreateOneSpellIfNew,#num=SID_QOR_SERVANT,#class=&QorServant);
       Send(self,@CreateOneSpellIfNew,#num=SID_JALA_SERVANT,#class=&JalaServant);
+
+      // Camp
+      Send(self,@CreateOneSpellIfNew,#num=SID_CAMP,#class=&Camp);
+
+      // Donate
+      Send(self,@CreateOneSpellIfNew,#num=SID_DONATE,#class=&Donate);
+
 
       // Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
@@ -3805,6 +4027,7 @@ messages:
 
        Send(self,@CreateOneSKillIfNew,#num=SKID_SECOND_WIND,#class=&SecondWind);
        Send(self,@CreateOneSKillIfNew,#num=SKID_DISARM,#class=&Disarm);
+       Send(self,@CreateOneSKillIfNew,#num=SKID_TAUNT,#class=&Taunt);
 
        return;
    }
@@ -4116,6 +4339,7 @@ messages:
       Create(&StatueTreasure);
       Create(&KriipaTreasure);
       Create(&MolluskTreasure);
+      Create(&CorruptedMolluskTreasure);
       Create(&ShadowbeastTreasure);
       Create(&RatKingTreasure);
       Create(&EarthElementalTreasure);
@@ -4144,6 +4368,7 @@ messages:
       Create(&MinotaurTreasure);
       Create(&KnightTreasure);
       Create(&OgreTreasure);
+      Create(&DarkOgreTreasure);
 
       //Ores
       Create(&OreVeinTreasure);
@@ -4692,6 +4917,11 @@ messages:
       return poMoney;
    }
 
+   GetSystemPlatinumObject()
+   {
+      return poPlatinum;
+   }
+
    GetLibrary()
    {
       return poLibrary;
@@ -4974,9 +5204,13 @@ messages:
 
    FixMoney(amount = 50000, bAreYouSure = 0)
    {
+      // We no longer need to fix money. We fixed this with platinum.
+      return;
+
       if (bAreYouSure = 701583)
       {
-         Send(&Money,@FixMoney,#amount=amount);
+         Send(&Shilling,@FixMoney,#amount=amount);
+         Send(&Platinum,@FixMoney,#amount=amount);
       }
 
       return;
@@ -5457,6 +5691,7 @@ messages:
       plMonsterTemplates = cons(create(&guard),plMonsterTemplates);
       plMonsterTemplates = cons(create(&ent),plMonsterTemplates);
       plMonsterTemplates = cons(create(&frogman),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DarkFrogman),plMonsterTemplates);
       plMonsterTemplates = cons(create(&fungusbeast),plMonsterTemplates);
       plMonsterTemplates = cons(create(&ghost),plMonsterTemplates);
       plMonsterTemplates = cons(create(&giantrat),plMonsterTemplates);
@@ -5536,6 +5771,7 @@ messages:
 
       plMonsterTemplates = cons(create(&DarkAngel),plMonsterTemplates);
       plMonsterTemplates = cons(create(&MolluskMonster),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&CorruptedMollusk),plMonsterTemplates);
 
       plMonsterTemplates = cons(create(&SpectralMummy),plMonsterTemplates);
       plMonsterTemplates = cons(create(&LivingStatue),plMonsterTemplates);
@@ -5562,9 +5798,13 @@ messages:
       plMonsterTemplates = cons(create(&HalfKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Ogre),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Snake),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DarkOgre),plMonsterTemplates);
       
-	  // Servant monster
-	  plMonsterTemplates = cons(create(&Servant),plMonsterTemplates);
+      // Servant
+      plMonsterTemplates = cons(create(&Servant),plMonsterTemplates);
+      
+      // Stores (Marketplace)
+      plMonsterTemplates = cons(Send(self,@GetMarketplaceObject),plMonsterTemplates);
 
       //Death Realm
       plMonsterTemplates = cons(create(&HeadlessSkeleton),plMonsterTemplates);
@@ -5705,7 +5945,8 @@ messages:
       plItemTemplates = cons(create(&ScrollSplitter),plItemTemplates);
       plItemTemplates = cons(create(&ReagentBag),plItemTemplates);
 
-      plItemTemplates = cons(create(&Money),plItemTemplates);
+      plItemTemplates = cons(create(&Shilling),plItemTemplates);
+      plItemTemplates = cons(create(&Platinum),plItemTemplates);
       plItemTemplates = cons(create(&StatsResetToken,#temporary=FALSE),
                               plItemTemplates);
 
@@ -5784,6 +6025,7 @@ messages:
       plItemTemplates = cons(create(&VaultLoadoutScroll),plItemTemplates);
       plItemTemplates = cons(create(&MirthScroll),plItemTemplates);
       plItemTemplates = cons(create(&MelancholyScroll),plItemTemplates);
+      plItemTemplates = cons(create(&StoreScroll),plItemTemplates);
 
       // Wands
       plItemTemplates = cons(create(&BonkStick),plItemTemplates);
@@ -5868,6 +6110,8 @@ messages:
       plItemTemplates = cons(create(&ResistAcidPotion),plItemTemplates);
       plItemTemplates = cons(create(&FreeActionPotion),plItemTemplates);
       plItemTemplates = cons(create(&MinorHealPotion),plItemTemplates);
+
+      plItemTemplates = cons(create(&ForgetPotionExperience),plItemTemplates);
 
       plItemTemplates = cons(create(&Arsenic),plItemTemplates);
       plItemTemplates = cons(create(&Flask),plItemTemplates);
@@ -5966,6 +6210,9 @@ messages:
 	   plItemTemplates = cons(create(&WarHelm),plItemTemplates);
 	   plItemTemplates = cons(create(&LegionHelm),plItemTemplates);
 	   plItemTemplates = cons(create(&KnightsHelm),plItemTemplates);
+      plItemTemplates = cons(create(&IvyCirclet),plItemTemplates);
+      plItemTemplates = cons(create(&BloodCirclet),plItemTemplates);
+      plItemTemplates = cons(create(&Circlet),plItemTemplates);
 
       // Shields
       plItemTemplates = cons(create(&GuildShield),plItemTemplates);
@@ -6071,6 +6318,14 @@ messages:
       return;
    }
 
+   RecreateStores()
+   "When recreateall takes place, all stores should reappear in their original location."
+   {
+      Send(&Store, @Recreate);
+      
+      return;
+   }
+
    GetItemTemplates()
    {
       return plItemTemplates;
@@ -6079,7 +6334,8 @@ messages:
    RecreateMoneyTemplates()
    {
       plMoneyTemplates = $;
-      plMoneyTemplates = Cons(create(&Money),plMoneyTemplates);
+      plMoneyTemplates = Cons(create(&Shilling),plMoneyTemplates);
+      plMoneyTemplates = Cons(create(&Platinum),plMoneyTemplates);
 
       return;
    }

@@ -35,16 +35,16 @@ messages:
                      [ &PurpleMushroom, 1 ],
                      [ &Torch, 5 ],
                      [ &DiscipleRobe, 25 ],
-                     [ &LightDiscipleRobe, 1 ],
+                     [ &LightDiscipleRobe, 15 ],
                      [ &Gauntlet, 2 ],
                      [ &Flask, 1 ],
                      [ &Lute, 3 ],
                      [ &PolishedSeraphym, 2 ],
                      [ &StaffOfJolting, 2 ],
                      [ &DispellIllusionScroll, 2 ],
-					      [ &Key, 4 ],
-					      [ &ApprenticeWand, 1]
-                   ];
+                     [ &Key, 4 ],
+                     [ &WeaponWand, 1]
+                  ];
 
       propagate;
    }

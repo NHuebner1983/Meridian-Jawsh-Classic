@@ -56,7 +56,8 @@ typedef struct
 
 typedef struct {
    object_node obj;
-   DWORD       cost;
+   DWORD       shill;
+   DWORD       plat;
 } buy_object;    /* Object to display in list of things to buy */
 
 void InitializeGame(void);

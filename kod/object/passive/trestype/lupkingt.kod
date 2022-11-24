@@ -31,6 +31,7 @@ messages:
                      [ &InkyCap, 13 ],
                      [ &PlateArmor, 12 ],
                      [ &OrcShield, 13 ],
+                     [ &BloodCirclet, 13 ],
                      [ &RingInvisibility, 6 ],
                      [ &AcidRing, 3 ],
                      [ &ColdRing, 3 ],

@@ -37,6 +37,7 @@ messages:
                      [ &UncutSeraphym, 3],
                      [ &Flask, 2],
                      [ &OrcShield, 7],
+                     [ &BloodCirclet, 7],
                      [ &PlateArmor, 1],
                      [ &HoldWand, 1 ],
                      [ &BlindWand, 1 ],

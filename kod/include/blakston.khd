@@ -33,6 +33,10 @@
    MAX_KOD_INT = 134217727
    MIN_KOD_INT = -134217728
 
+   // Our way of getting around MAX_KOD_INT
+   SHILLINGS_PER_PLATINUM = 1000
+   MAX_PLATINUM = 134217000
+
    // Time constants of the world
 
    // MS_PER_DAY = 24 * 3600 * 1000
@@ -70,10 +74,15 @@
    OF_ACTIVATABLE    = 0x00000800
    OF_APPLYABLE      = 0x00001000
    OF_NPC            = 0x00002000
+   OF_MARKETPLACE    = 0x00004000
+   OF_EQUIPPED       = 0x00008000
    OF_BOUNCING       = 0x00010000
    OF_FLICKERING     = 0x00020000
    OF_FLASHING       = 0x00040000
    OF_PHASING        = 0x00080000
+   OF_NPCHASQUESTS   = 0x00100000
+   OF_NPCACTIVEQUEST = 0x00200000
+   OF_MOBKILLQUEST   = 0x00400000
 
    // Client preference flags (stored in piPreferences in Player)
    // Default preferences - all on except safety (which is reverse)
@@ -127,6 +136,11 @@
    SERVANT_RESOURCE_MANA = 2
    SERVANT_RESOURCE_VIGOR = 3
 
+   // Autoloot Methods
+   AUTOLOOT_METHOD_INVENTORY = 0
+   AUTOLOOT_METHOD_CONVEY = 1
+   AUTOLOOT_METHOD_TRANSFER = 2
+   
    // Player name color sent as hex RGB value. Define constants
    // for ease of use as needed. Requires OF_PLAYER boolean flag
    // to be set to draw a name.
@@ -1010,8 +1024,12 @@
    RID_DTHRONE2        = 3061
    RID_DMAZE           = 3062
 
-   // Ogre Caves
+   // Latest maps from 420
    RID_OGRE_CAVE1 = 2603
+   RID_MALEVAL = 2604
+   RID_TOS_TRAINING = 2605
+   RID_D6E7ULAKE = 2606
+   RID_OGRE_CAVE2 = 2607
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia
@@ -1685,6 +1703,7 @@
    MOB_KARMA_AG         = 0x04000   // Wont attack players of like karma
    MOB_FULL_TALK        = 0x08000   // Isnt affected by the say ranges
    MOB_COND_SELLER      = 0x10000   // Has things that must be asked for
+   MOB_MARKETPLACE      = 0x20000   // Marketplace mob
 
    MOB_LAWFUL           = 0x40000   // Won't publicly do business with murderers
    MOB_VAULTMAN         = 0x80000   // Can be a vaultkeeper (set Vault ID!!!)
@@ -1924,15 +1943,16 @@
    TID_MINOTAUR = 79
    TID_KNIGHT = 80
    TID_OGRE = 81
-
-   TID_QORCITE = 82
-   TID_RUBY = 83
-   TID_SAPPHIRE = 85
-   TID_DIAMOND = 86
-   TID_UNCUT = 87
-   TID_EMERALD = 88
-   TID_ORE = 89
-   TID_NERUORE = 90
+   TID_CORRUPTED_MOLLUSK = 82
+   TID_DARK_OGRE = 83
+   TID_QORCITE = 84
+   TID_RUBY = 85
+   TID_SAPPHIRE = 86
+   TID_DIAMOND = 87
+   TID_UNCUT = 88
+   TID_EMERALD = 89
+   TID_ORE = 90
+   TID_NERUORE = 91
    
    // English articles
 
@@ -2163,7 +2183,8 @@
    SKID_BLOCK = 404
    SKID_SECOND_WIND = 405
    SKID_DISARM = 406
-
+   SKID_TAUNT = 407
+   
    // Melee weapon strokes start here.
    SKID_DEFAULT = 420
    SKID_SLASH = 421
@@ -2200,6 +2221,9 @@
    SID_QOR_SERVANT = 205
    SID_JALA_SERVANT = 206
    
+   SID_CAMP = 207
+   SID_DONATE = 208
+
    // Maximum number of pets our servant can have
    MAX_SERVANT_MINIONS = 2
 
@@ -2781,6 +2805,8 @@
    NODE_Q            = 0x0800
    NODE_AVAR         = 0x1000
    NODE_BRAX         = 0x2000
+   NODE_OGRE_CAVE    = 0x4000
+   
    // If more nodes are added, this value should go up
    //  to be at least as high as the highest node value.
    //  Extra room was consciously left.

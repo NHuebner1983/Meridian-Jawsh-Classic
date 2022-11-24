@@ -114,7 +114,7 @@ messages:
 
       propagate;
    }
-
+ 
    Constructed()
    {
       plResistances = [ [-ATCK_SPELL_COLD, 25 ],

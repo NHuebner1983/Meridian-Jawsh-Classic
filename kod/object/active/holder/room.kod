@@ -368,6 +368,7 @@ messages:
       Send(self,@CreateStandardExits);
       Send(self,@CreateYellZoneList);
       Send(self,@ComputeFarenBonus);
+      Send(self,@CreateMarketplace);
 
       iTerrain = Send(self,@GetTerrainType);
 
@@ -1132,6 +1133,14 @@ messages:
       // Free the room memory.
       FreeRoom(prmRoom);
 
+      foreach i in plActive
+      {
+         if IsClass(First(i),&Store)
+         {
+            Send(First(i),@SetForSale);
+         }
+      }
+
       propagate;
    }
 
@@ -1342,6 +1351,41 @@ messages:
    "permanent flags, ignoring whatever it may be set at at the time."
    {
       return (Send(self,@GetPermanentFlags) & flag);
+   }
+
+   CountHolding(class=$)
+   "Count how many we have in the room by class."
+   {
+      local i, oObj, iCount;
+
+      iCount = 0;
+
+      if class = $
+      {
+         return 0;
+      }
+
+      foreach i in plActive
+      {
+         oObj = Send(self, @HolderExtractObject, #data=i);
+
+         if oObj <> $ AND IsClass(oObj, class)
+         {
+            iCount = iCount + 1;
+         }
+      }
+
+      foreach i in plPassive
+      {
+         oObj = Send(self, @HolderExtractObject, #data=i);
+
+         if oObj <> $ AND IsClass(oObj, class)
+         {
+            iCount = iCount + 1;
+         }
+      }
+
+      return iCount;      
    }
 
    CountMonsters(class = $,mastered = FALSE)
@@ -2345,7 +2389,10 @@ messages:
       local i,each_obj;
 
       // make sure to unregister it as a blocker
-      BlockerRemoveBSP(prmRoom, what);
+      if NOT IsClass(what, &Store)
+      {
+         BlockerRemoveBSP(prmRoom, what);
+      }
 
       if NOT IsClass(what,&User)
       {
@@ -2868,6 +2915,37 @@ messages:
          // Users already have enchantment icon.
          Send(Nth(i,2),@StartEnchantmentNewOccupant,#who=what,
                #state=(Nth(i,3)));
+      }
+
+      return;
+   }
+
+   ClearDeadBodies(animated=FALSE)
+   {
+      local i, j, k, l, m, n, bBool, iInt, sString, oObj, oObject, rResource, lList, lSecondlist, lThirdlist, oSpell;
+
+      // Clear all the dead bodies
+      lList = Send(self, @GetHolderPassive);
+
+      foreach i in lList
+      {
+         oObj = First(i);
+
+         bBool = FALSE;
+
+         if oObj <> $ AND IsClass(oObj, &DeadBody)
+         {
+            if animated
+            {
+               oSpell = Send(SYS,@FindSpellByNum,#num=SID_ANIMATE);
+               Send(oSpell,@CastSpell,#who=self,#lTargets=[oObj],
+               #iSpellPower=Random(1,99));
+            }
+            else
+            {
+               Send(oObj, @Delete);
+            }
+         }
       }
 
       return;
@@ -3590,7 +3668,7 @@ messages:
          }
       }
 
-      Debug("Enchantment timer went off with no enchantment",timer);
+      //Debug("Enchantment timer went off with no enchantment",timer);
 
       return;
    }
@@ -3638,6 +3716,148 @@ messages:
       }
 
       return;
+   }
+
+   CreateMarketplace()
+   "Not all rooms will support this, so this is a catch-all."
+   {
+      return;
+   }
+
+   GetAverageKarma(lObjIgnore=$, iOptionalRadiusDistance=$, oOptionalRadiusFromObj=$, bIncludePlayers=TRUE, bIncludeMonsters=TRUE, bIncludeNonInteractivePlayers=FALSE, bIncludeReflections=FALSE, bIncludeEvilTwin=FALSE, bIncludeServants=FALSE)
+   "Checks players and monsters in the room and gives you an average karma."
+   "Helpful to determine if you should be using Melancholy or Mirth (jala), or Qorbane / Shallybane in PVP."
+   {
+      local i, o, each_obj, iCount, iTotal, bIsInRadius, lObjPos, lState, iRange, bSkip, aMobAttributes;
+
+      iCount = 0;
+      iTotal = 0;
+
+      if iOptionalRadiusDistance <> $ AND iOptionalRadiusDistance > 0 AND oOptionalRadiusFromObj <> $
+      {
+         lObjPos = Send(oOptionalRadiusFromObj, @GetPos);
+      }
+
+      foreach i in plActive
+      {
+         each_obj = First(i);
+
+         bSkip = FALSE;
+
+         if lObjIgnore <> $ AND IsList(lObjIgnore)
+         {
+            foreach o in lObjIgnore
+            {
+               if each_obj = o
+               {
+                  bSkip = TRUE;
+                  //Debug("[karma] ignored",Send(each_obj,@GetName));
+                  break;
+               }
+            }
+         }
+
+         if bSkip OR IsClass(each_obj, &DM)
+         {
+            continue;
+         }
+
+         if NOT IsClass(each_obj, &Player) AND NOT IsClass(each_obj, &Monster)
+         {
+            // We only count things that can return karma.
+            continue;
+         }
+
+         if IsClass(each_obj, &Monster)
+         {
+            aMobAttributes = Send(each_obj,@GetAttributes);
+
+            if (aMobAttributes & MOB_RECEIVE)
+               OR (aMobAttributes & MOB_SELLER)
+               OR (aMobAttributes & MOB_NOFIGHT)
+            {
+               // We only count real monsters.
+               continue;
+            }
+         }
+         
+         if IsClass(each_obj,&Player) AND NOT bIncludePlayers
+         {
+            // Do not count player karma in room.
+            //Debug("[karma] No count players",Send(each_obj,@GetName));
+            continue;
+         } 
+         else if IsClass(each_obj,&Player) AND bIncludePlayers 
+         {
+            // Count player karma in room.
+            if NOT ((bIncludeNonInteractivePlayers AND Send(each_obj,@IsInCannotInteractMode))
+               OR (NOT bIncludeNonInteractivePlayers AND NOT Send(each_obj,@IsInCannotInteractMode)))
+            {
+               // Do not count non-interactive players.
+               //Debug("[karma] No Count non-interactive player",Send(each_obj,@GetName));
+               continue;
+            }
+         }
+
+         if IsClass(each_obj,&Monster) AND NOT bIncludeMonsters
+         {
+            // Do not count monsters in room.
+            //Debug("[karma] No Count Monster",Send(each_obj,@GetName));
+            continue;
+         }
+         else if IsClass(each_obj,&Monster) AND bIncludeMonsters
+         {
+            if (IsClass(each_obj,&Servant) AND NOT bIncludeServants)
+               OR (IsClass(each_obj,&Reflection) AND NOT bIncludeReflections)
+               OR (IsClass(each_obj,&EvilTwin) AND NOT bIncludeEvilTwin)
+            {
+               // Do not count servants (or) reflections (or) evil twins in room.
+               //Debug("[karma] Skipped Monster",GetClass(each_obj));
+               continue;
+            }
+         }
+
+         if iOptionalRadiusDistance <> $ AND iOptionalRadiusDistance > 0 AND oOptionalRadiusFromObj <> $
+         {
+            if lObjPos <> $ AND IsList(lObjPos)
+            {
+               iRange = Send(each_obj,@SquaredFineDistanceToLocation3D,
+                  #row=Nth(lObjPos, 1),
+                  #col=Nth(lObjPos, 2),
+                  #fine_row=Nth(lObjPos, 3),
+                  #fine_col=Nth(lObjPos, 4));
+               
+               if iRange <> $ AND iRange <> 0 AND iRange > (iOptionalRadiusDistance * iOptionalRadiusDistance)
+               {
+                  // Object is outside of our radius.
+                  //Debug("[karma] outside radius",iRange,"<",(iOptionalRadiusDistance * iOptionalRadiusDistance),Send(oOptionalRadiusFromObj,@GetName));
+                  continue;
+               }
+            }
+            else
+            {
+               // We could not determine the position of the optional radius object.
+               //Debug("[karma] Could not get pos from",Send(oOptionalRadiusFromObj,@GetName));
+               continue;
+            }
+         }
+
+         // All checks are good, count this player or monster.
+         //Debug("[karma] Counted",Send(each_obj,@GetName));
+         if Send(each_obj,@GetKarma) <> 0
+         {
+            iCount = iCount + 1;
+            iTotal = iTotal + Send(each_obj,@GetKarma);
+         }
+      }
+
+      if iCount > 0 AND iTotal <> 0
+      {
+         //Debug("[karma] Average",iTotal," / ",iCount," = ",(iTotal / iCount));
+         return iTotal / iCount;
+      }
+
+      return 0;
    }
 
    EnchantPlayerStatusChanged(who=$)
@@ -4865,6 +5085,11 @@ messages:
       local i, oTarg1, oTarg2, oTarg3, oTarg4, oTarg5,
             iHate1, iHate2, iHate3, iHate4, iHate5, oBrain,
             iHate, oTarg, iTempHate, oTempTarg;
+      
+      if IsClass(what, &Store)
+      {
+         return;
+      }
 
       // We used to reset monster chasers here, but monsters have better AI
       // now and can on occasion respond before a user makes a move. Calling
@@ -4885,7 +5110,7 @@ messages:
       foreach i in plActive
       {
          oTarg = First(i);
-         if IsClass(oTarg,&Monster)
+         if IsClass(oTarg,&Monster) AND NOT IsClass(oTarg, &Store)
          {
             if oBrain = $
             {
@@ -4964,7 +5189,7 @@ messages:
    {
       local oBrain;
 
-      if mob = $
+      if mob = $ OR IsClass(mob, &Store) OR IsClass(what, &Store)
       {
          return;
       }
@@ -5127,14 +5352,14 @@ messages:
       return;
    }
 
-   GenerateMonster(oMonster=$, iRow=0, iCol=0, bStack=FALSE, bRandom=FALSE)
+   GenerateMonster(oMonster=$, iRow=0, iCol=0, bStack=FALSE, bRandom=FALSE, bWalkThroughWalls=FALSE, iRelativeHeight=$)
    "Pulled outside the function to be callable outside of the function. "
    "Can generate a monster at a specific location, or you can let it be "
    "put at a gen point.  This is now in Room, as all rooms can use it for "
    "placing either a monster or a random item."
    {
       local oOldOwner, iMRow, iMCol, iMRowFine, iMColFine, lPos, iRoll, iCount, lPatrolPath,
-            iQflags, iRflags, iHeightF, iHeightFWD, iHeightC, iServerID, iCheck;
+            iQflags, iRflags, iHeightF, iHeightFWD, iHeightC, iServerID, iCheck, iHeightWhereSpawned;
 
       iMRow = iRow;
       iMCol = iCol;
@@ -5234,8 +5459,29 @@ messages:
          AND (bStack OR NOT (iRflags & LIR_BLOCKED_OBJECT))
          AND Send(self,@ReqNewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol)
       {
+         if bWalkThroughWalls
+         {
+            // Walk through wall mobs needs to be really scary.
+            Send(oMonster,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS);
+         }
+
          Send(self,@NewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol,
                #fine_row=iMRowFine,#fine_col=iMColFine);
+
+         // Check relative height to prevent spawning monsters on rooftops in &Towns.
+         if iRelativeHeight <> $ AND iRelativeHeight >= 0
+         {
+            iHeightWhereSpawned = Send(oMonster, @GetHeightAtObject);
+
+            if iHeightWhereSpawned <> $ AND iHeightWhereSpawned <> 0
+               AND (iHeightWhereSpawned - iRelativeHeight) > 50 
+            {
+               // Monster is too high up from where we want them.
+               Send(oMonster,@Delete);
+
+               return FALSE;
+            }
+         }
 
          if (lPatrolPath <> $)
          {
@@ -5303,7 +5549,7 @@ messages:
       return FALSE;
    }
 
-   DeleteWallsAroundBattler(who=$)
+   DeleteWallsAroundBattler(who=$,includePassive=TRUE)
    "Deletes walls in a small radius around target battler."
    {
       local i, each_obj;
@@ -5323,6 +5569,8 @@ messages:
             or IsClass(each_obj,&Brambles))
             AND NOT IsClass(each_obj,&ActiveSporeCloud)
             AND NOT IsClass(each_obj,&Web)
+            AND NOT (NOT includePassive AND IsClass(each_obj,&WallOfFire))
+            AND NOT (NOT includePassive AND IsClass(each_obj,&PassiveWallofFire))
          {
             if Send(who,@SquaredDistanceTo,#what=each_obj)
                <= (WALL_DELETE_RADIUS * WALL_DELETE_RADIUS)
@@ -5336,8 +5584,9 @@ messages:
       foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
-         if IsClass(each_obj,&PassiveWallofFire)
-            OR IsClass(each_obj,&PassiveWallofLightning)
+         if includePassive 
+            AND (IsClass(each_obj,&PassiveWallofFire)
+               OR IsClass(each_obj,&PassiveWallofLightning))
          {
             if Send(who,@SquaredDistanceTo,#what=each_obj)
                <= (WALL_DELETE_RADIUS * WALL_DELETE_RADIUS)

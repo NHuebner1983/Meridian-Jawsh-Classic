@@ -6,7 +6,6 @@
 //
 // Meridian is a registered trademark.
 
-
 NecromancerAmulet is ActiveItem
 
 // originally derived from necklace, moved here to
@@ -15,11 +14,11 @@ constants:
 
    include blakston.khd
 
-//   HUNGER_1 = 2   //one session (assuming 3-4 hours of play per day)
-//   HUNGER_2 = 4   //one to two sessions
-//   HUNGER_3 = 6   //two sessions
-//   HUNGER_4 = 8   //two to three sessions
-//   HUNGER_5 = 10  //three sessions
+   //   HUNGER_1 = 2   //one session (assuming 3-4 hours of play per day)
+   //   HUNGER_2 = 4   //one to two sessions
+   //   HUNGER_3 = 6   //two sessions
+   //   HUNGER_4 = 8   //two to three sessions
+   //   HUNGER_5 = 10  //three sessions
 
    //BASE_HUNGER_GAIN = 2 // in units of FineHunger
    //                     // gain should be equivalent to one 60hp neutral player solo-kill per session-day (3-4 hrs)
@@ -171,9 +170,9 @@ properties:
    piFineHunger = 0
    ptHungerTimer = $
    ptHoldingDamage = $
-   piHoldingDamageInterval = 10 * 1000     // ten seconds
+   piHoldingDamageInterval = 5 * 1000     // ten seconds
    piHpWorthyThreshold = 50
-   piKarmaWorthyThreshold = -30
+   piKarmaWorthyThreshold = -40
 
    pbIllusioned = TRUE
    piSavedSkinColor = $
@@ -190,22 +189,22 @@ messages:
 
       propagate;
    }
-   
+
    // If the AO3 does not have an owner, let's remove it from the system.
    Reset()
    {
-   	  if poOwner <> $ AND IsClass(poOwner, &Player)
-	  {
-	     Debug("AO3 held by",Send(poOwner,@GetName));
-	  }
-	  
+         if poOwner <> $ AND IsClass(poOwner, &Player)
+      {
+         Debug("AO3 held by",Send(poOwner,@GetName));
+      }
+      
       if poOwner <> $ AND NOT IsClass(poOwner, &Player)
-	  {
-	     Debug("AO3 Orphan Removed", poOwner);
-	     Send(self, @Delete);
-	  }
-	  
-	  return;
+      {
+         Debug("AO3 Orphan Removed", poOwner);
+         Send(self, @Delete);
+      }
+      
+      return;
    }
 
    ReqNewOwner(what = $)
@@ -386,8 +385,8 @@ messages:
 
             return FALSE;
          }
-        		
-        return TRUE;
+            
+         return TRUE;
       }
 
       return FALSE;
@@ -410,12 +409,12 @@ messages:
          Send(poOwner, @MsgSendUser, #message_rsc = necamulet_used_unworthy);
       }
 
-	  if poOwner <> $ AND IsClass(poOwner, &Battler) AND NOT Send(poOwner, @PossessesA, #class=&NecromancerShield)
-	  {
-	     Send(self,@BecomeUndeadSoldier);
-	  }
+      if poOwner <> $ AND IsClass(poOwner, &Battler) AND NOT Send(poOwner, @PossessesA, #class=&NecromancerShield)
+      {
+         Send(self,@BecomeUndeadSoldier);
+      }
       
-	  Send(self,@AdjustStats);
+      Send(self,@AdjustStats);
       Send(self,@AdjustColor);
       ptHungerTimer = CreateTimer(self,@HungerTrigger,
                            Send(Send(SYS,@GetNecromancerBalance),@GetHungerInterval));
@@ -560,28 +559,28 @@ messages:
    BecomeUndeadSoldier()
    {
       local oShield;
-	  
+      
       if poOwner <> $ AND IsClass(poOwner, &Battler)
-	  {
-	     oShield = Create(&NecromancerShield);
-		 
-	     Send(poOwner, @ResetFaction, #faction=FACTION_NECROMANCER);
+      {
+         oShield = Create(&NecromancerShield);
+         
+         Send(poOwner, @ResetFaction, #faction=FACTION_NECROMANCER);
          Send(poOwner, @RemoveFromInventory, #class=&NecromancerShield);
-		 Send(poOwner, @NewHold, #what=oShield);
-		 Send(poOwner, @TryUseItem, #what=oShield);
-	  }
-	  
+         Send(poOwner, @NewHold, #what=oShield);
+         Send(poOwner, @TryUseItem, #what=oShield);
+      }
+      
       return;
    }
-   
+
    LoseUndeadSoldier()
    {
       if poOwner <> $ AND IsClass(poOwner, &Battler)
-	  {
+      {
          Send(poOwner, @RemoveFromInventory, #class=&NecromancerShield);
-		 Send(poOwner, @ResetFaction, #faction=FACTION_NEUTRAL);
-	  }
-	  
+         Send(poOwner, @ResetFaction, #faction=FACTION_NEUTRAL);
+      }
+      
       return;
    }
 
@@ -589,7 +588,7 @@ messages:
    {
       return 0;
    }
-   
+
    AdjustColor()
    {
       local Xlat;
@@ -919,7 +918,7 @@ messages:
 
          // Instead of deleting the amulet, we put it back in circulation.
          // Post(self,@Delete);
-		   Send(self, @LoseUndeadSoldier);
+         Send(self, @LoseUndeadSoldier);
          Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
       }
 
@@ -950,12 +949,12 @@ messages:
    Delete()
    {
       if poOwner = $
-	  {
-	     return;
-	  }
-	  
-	  Send(self, @LoseUndeadSoldier);
-	  
+      {
+         return;
+      }
+      
+      Send(self, @LoseUndeadSoldier);
+      
       if pbCounted
       {
          pbCounted = FALSE;
@@ -1012,13 +1011,13 @@ messages:
    "teach the user a lesson in the process."
    {
       if Send(poOwner,@PlayerIsImmortal)
-	  {
-	     return TRUE;
-	  }
-	  
+      {
+         return TRUE;
+      }
+      
       Post(self,@TortureOwner);
 
-	  return FALSE;
+      return FALSE;
    }
 
    TortureOwner()
@@ -1124,10 +1123,10 @@ messages:
    ReqUseSomething(what = $)
    {
       if what <> self
-	  {
-	     propagate;
-	  }
-   
+      {
+         propagate;
+      }
+
       if IsClass(what,&Necklace)
          OR IsClass(what,&NecromancerAmulet)
       {
@@ -1154,10 +1153,10 @@ messages:
    ReqUse(what=$)
    {
       if what <> self
-	  {
-	     propagate;
-	  }
-	  
+      {
+         propagate;
+      }
+      
       if NOT Send(what,@CanAdvance)
       {
          Send(what,@DontInterfere);
@@ -1366,7 +1365,7 @@ messages:
    {
       if NOT pbIn_Use
       {
-	     Send(self,@LoseUndeadSoldier);
+         Send(self,@LoseUndeadSoldier);
          Send(poOwner,@MsgSendUser,#message_rsc=necamulet_drops);
          Send(Send(poOwner,@GetOwner),@NewHold,#what=self,
                #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol),
@@ -1458,8 +1457,8 @@ messages:
       {
          return FALSE;
       }
-	  
-	  Send(self, @LoseUndeadSoldier);
+      
+      Send(self, @LoseUndeadSoldier);
 
       return TRUE;
    }

@@ -1,0 +1,106 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+BloodCirclet is Helmet
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   // TODO: Translate from Tyrant
+   //include bloodcirclet.lkod
+
+   BloodCirclet_name_rsc = "blood circlet"
+   BloodCirclet_icon_rsc = bloodcirclet.bgf
+   BloodCirclet_desc_rsc = \
+      "Bloody, red leaves of poison ivy are wrapped around a splintered wreath.  "
+      "This looks like it would be unpleasant against your brow."
+
+   bloodcirclet_cant = \
+      "The blood circlet stubbornly resists your attempts to place it on your brow."
+
+   BloodCirclet_overlay_rsc = bloodcircletov.bgf
+
+classvars:
+
+   vrName = BloodCirclet_name_rsc
+   vrIcon = BloodCirclet_icon_rsc
+   vrDesc = BloodCirclet_desc_rsc
+
+   viHits_init_min = 255
+   viHits_init_max = 450
+
+   viValue_average = 24000
+   viWeight = 10
+   viBulk = 20
+
+   viUse_type = ITEM_USE_HEAD
+   viUse_amount = 1
+
+   viGround_group = 1
+   viInventory_group = 2
+
+   // This is the default value for piDefense_bonus
+   viDefense_base = 10
+
+   viLayer = 1
+
+properties:
+
+   piMana_change = 0
+   piHealth_change = 0
+
+messages:
+
+   GetOverlay(animation = $)
+   {
+      // Uses different file for the overlay.
+      return BloodCirclet_overlay_rsc;
+   }
+
+   GetResistanceModifiers()
+   {
+      return [ [-ATCK_SPELL_FIRE,-10],
+               [-ATCK_SPELL_HOLY,-5],
+               [-ATCK_SPELL_UNHOLY,5]
+             ];
+   }
+
+   ReqUse()
+   {
+      if Send(poOwner,@GetKarma) > -50
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=bloodcirclet_cant);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   GetBaseSpellModifier(oSpell=$)
+   {
+      if Send(oSpell,@GetSchool) = SS_SHALILLE
+      {
+         return -15;
+      }
+
+      if Send(oSpell,@GetSchool) = SS_QOR
+      {
+         return 15;
+      }
+
+      return 0;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

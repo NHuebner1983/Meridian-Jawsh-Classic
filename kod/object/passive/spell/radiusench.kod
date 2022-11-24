@@ -323,6 +323,57 @@ messages:
 
       propagate;
    }
+
+   RemoveRadiusEnchant(who=$, iSpellNum=$)
+   "This should remove a radius enchant owned by a player much easier than the current version on player.kod."
+   {
+      local i, lRadiusEnchantments, lOldState, oOpposingEnchantment, oTarget, oSpell, lState, iSpellPower, bFoundToRemove;
+
+      if who = $ OR iSpellNum = $ AND iSpellNum <= 0
+      {
+         return FALSE;
+      }
+
+      lRadiusEnchantments = Send(who, @GetRadiusEnchantments);
+
+      if lRadiusEnchantments = $
+      {
+         // No radius enchants, nothing to check or remove.
+         return $;
+      }
+
+      bFoundToRemove = FALSE;
+
+      foreach i in lRadiusEnchantments
+      {
+         oSpell = Nth(i,2);
+         lState = Nth(i,3);
+         iSpellPower = Nth(i,4);
+
+         if (Send(oSpell,@GetSource,#state=lState) = who) AND Send(oSpell, @GetSpellNum) = iSpellNum
+         {
+            // oSpell is now set to <> $
+            bFoundToRemove = TRUE;
+            break;
+         }
+      }
+
+      if bFoundToRemove AND oSpell <> $
+      {
+         // Remove [SID_MIRTH], the opposite of this spell if we are currently using it.
+         lOldState = Send(who,@GetRadiusEnchantmentState, #what=oSpell);
+
+         if lOldState <> $
+         {
+            Send(who,@RemoveRadiusEnchantment,#what=oSpell,#state=lOldState);
+
+            return TRUE;
+         }
+      }
+
+      return $;
+   }
+
 #endregion Casting Infrastructure
 
 #region Enchant Targets
@@ -793,7 +844,7 @@ messages:
 
    BreakTrance(who = $, event = $, state = $)
    {
-      local bRecheck;
+      local bRecheck, oRoom;
 
       // The spell keeps going if you get damaged, move, cast, use an item,
       // or make an attack. Players must rest to end most radius spells.
@@ -807,25 +858,28 @@ messages:
          return FALSE;
       }
 
-      //oRoom = Send(who,@GetOwner);
+      // --------------------------------------------------
+      // NOTE: COMMENT OUT THE NEXT 10 LINES IF YOU WANT RADIUS ENCHANTS TO END WHEN CHANGING ROOMS
+      // --------------------------------------------------
+      oRoom = Send(who,@GetOwner);
 
       // Only cancel Persist spells if they are offensive & caster is
       // entering a non-combat room
-      //if (event = EVENT_NEWOWNER
-      //   OR event = EVENT_REQNEWOWNER)
-      //{
-      //   if oRoom <> $
-      //      AND NOT (viHarmful
-      //         AND Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT))
-      //   {
-      //      return FALSE;
-      //   }
-      //}
+      if (event = EVENT_NEWOWNER
+         OR event = EVENT_REQNEWOWNER)
+      {
+         if oRoom <> $
+            AND NOT (viHarmful
+               AND Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT))
+         {
+            return FALSE;
+         }
+      }
 
-      if (IsClass(self, &Wolfpack)) 
-	  {
-		return false;
-	  }
+      // if (IsClass(self, &Wolfpack))
+      // {
+      //    return false;
+      // }
 
       bRecheck = (event = EVENT_REST);
 

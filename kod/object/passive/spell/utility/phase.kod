@@ -165,9 +165,17 @@ messages:
       return TRUE;
    }
 
-   AdjustVisualEffectBasedOnTimeRemaining(who = $)
+   AdjustVisualEffectBasedOnTimeRemaining(who = $, bJustStarted=FALSE)
    {
       local iTimeLeft, iBrightnessLevel;
+
+      if NOT bJustStarted AND NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PHASED)
+      {
+         // We're not phased, let's adjust the light to normal
+         Send(who,@EffectSendUserXlat,#xlat=0);
+
+         return;
+      }
 
       iTimeLeft = Send(who,@GetRemainingPhaseTime) / 1000;
       iBrightnessLevel = 0;
@@ -206,11 +214,19 @@ messages:
 
       if Send(who,@CheckPlayerFlag,#flag=PFLAG_PHASED)
       {
+         if Send(who,@IsCamped)
+         {
+            Send(who,@StopCamping,#caller=self);
+         }
+
          Send(who,@RemoveEnchantment,#what=self);
+         
+         // Helps remove the brightness.
+         Send(who,@PhaseVisualEffect);
       }
       else
       {
-         Send(self,@AdjustVisualEffectBasedOnTimeRemaining,#who=who);
+         Send(self,@AdjustVisualEffectBasedOnTimeRemaining,#who=who,#bJustStarted=TRUE);
          Send(who,@BreakTrance,#event=EVENT_STEER);
          Send(who,@FreezeAllEnchantments);
          Send(who,@SetPlayerFlag,#flag=PFLAG_PHASED,#value=TRUE);
@@ -276,6 +292,7 @@ messages:
          // Post so it gets processed after enchantment is fully removed
          // from the player.
          Post(oRoom,@SomethingPhasedIn,#what=who);
+         Send(who,@StopCamping);
       }
 
       Send(who,@LogonDelay);
@@ -397,6 +414,11 @@ messages:
       else
       {
          iDuration = iDuration / 1000;
+      }
+
+      if Send(who, @IsCamped)
+      {
+         iDuration = 8630000; // Should say 24 hours always while camped.
       }
 
       Send(self,@SendTimeRemaining,#iTime=iDuration);

@@ -1,0 +1,37 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Ograsaur is MonsterRoom
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+classvars:
+
+   viTerrain_Type = TERRAIN_LAKE | TERRAIN_WATERFALL | TERRAIN_CAVES
+
+properties:
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = 1
+   piGen_time = 25000
+   piGen_percent = 80
+   piInit_count_min = 7
+   piInit_count_max = 9
+   piMonster_count_max = 25
+
+messages:
+
+end
+////////////////////////////////////////////////////////////////////////////////

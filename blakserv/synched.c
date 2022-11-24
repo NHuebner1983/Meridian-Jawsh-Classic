@@ -250,11 +250,15 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
          s->account->account_id, s->version_major, s->version_minor);
       if (s->version_major * 100 + s->version_minor < ConfigInt(LOGIN_CLASSIC_MIN_VERSION))
       {
-         AddByteToPacket(AP_MESSAGE);
+         /*AddByteToPacket(AP_MESSAGE);
          AddStringToPacket(strlen(ConfigStr(LOGIN_OLD_VERSION_STR)),
                            ConfigStr(LOGIN_OLD_VERSION_STR));
          AddByteToPacket(LA_LOGOFF);
-         SendPacket(s->session_id);
+         SendPacket(s->session_id);*/
+        SynchedSendGetClient(s);
+        HangupSession(s);
+        return;
+
          break;
       }
       /* if game locked, only admins allowed on */
@@ -575,9 +579,9 @@ void VerifyLogin(session_node *s)
          && s->rsb_hash[0] != 0
          && strcmp(s->rsb_hash, str) != 0)
       {
-         if (s->version_major == 50)
+         if (s->version_major < 90)
             SynchedSendClientPatchClassic(s);
-         else if (s->version_major == 90)
+         else
             SynchedSendClientPatchOgre(s);
          InterfaceUpdateSession(s);
          /* set timeout real long, since they're downloading */
@@ -675,6 +679,10 @@ void SynchedSendClientPatchOgre(session_node *s)
    UnlockConfigStr();
 
    str = LockConfigStr(UPDATE_OGRE_PATCH_TXT);
+   AddStringToPacket(strlen(str), str);
+   UnlockConfigStr();
+
+   str = LockConfigStr(UPDATE_OGRE_PATCH_UPDATER);
    AddStringToPacket(strlen(str), str);
    UnlockConfigStr();
 

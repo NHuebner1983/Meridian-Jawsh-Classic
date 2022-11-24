@@ -4,8 +4,7 @@
 
 !include $(TOPDIR)\common.mak
 
-DEPEND = ..\human.bof
+DEPEND = ..\servant.bof
 BOFS  = servkran.bof servshal.bof servqor.bof servriija.bof servjala.bof servfaren.bof
-
 
 !include $(KODDIR)\kod.mak

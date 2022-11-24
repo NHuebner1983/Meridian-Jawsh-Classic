@@ -23,27 +23,25 @@ resources:
 	  "This combination of Kraanan and Jala can only be sung by the truly gifted. "
 	  "This song requires the sacrifice of 2 rubies."
 
-   Wolfpack_on = "%s%s's song helps you to move more quickly."
-
    Wolfpack_song = ksong.ogg
 
    Wolfpack_cast = "You begin to make those around you move more quickly."
    Wolfpack_starts = "%s begins to make others move more quickly."
-   Wolfpack_ends = "The wolfpack song played by %s fades away."
+   Wolfpack_ends = "The wolfpack song played by %s%s fades away."
    Wolfpack_caster_ends = "Your wolfpack song fades."
    Wolfpack_caster_enter = "You begin to move more quickly."
-   Wolfpack_enter = "%s's wolfpack song helps you to move more quickly."
-   Wolfpack_leave = "You can no longer hear the wolfpack notes of %s's song."
+   Wolfpack_enter = "%s%s's wolfpack song helps you to move more quickly."
+   Wolfpack_leave = "You can no longer hear the upbeat melody of %s%s's wolfpack song."
 
 classvars:
 
-   radius_ench_cast = Wolfpack_cast
-   radius_ench_starts = Wolfpack_starts
-   radius_ench_ends = Wolfpack_ends
-   radius_ench_caster_ends = Wolfpack_caster_ends
-   radius_ench_caster_enter = Wolfpack_caster_enter
-   radius_ench_enter = Wolfpack_enter
-   radius_ench_leave = Wolfpack_leave
+   vrEnchantmentOn = Wolfpack_cast
+   vrEnchantmentOnOther = Wolfpack_starts
+   vrEnchantmentOff = Wolfpack_ends
+   vrEnchantmentOffOther = Wolfpack_caster_ends
+   vrEnterRadiusCaster = Wolfpack_caster_enter
+   vrEnterRadius = Wolfpack_enter
+   vrLeaveRadius = Wolfpack_leave
 
    vrName = Wolfpack_name_rsc
    vrIcon = Wolfpack_icon_rsc
@@ -58,6 +56,8 @@ classvars:
    viManaDrain = 2
    viDrainTime = 5000
 
+   viHarmful = FALSE
+
    viSpellExertion = 1
    viChance_To_Increase = 25
    viMeditate_ratio = 20
@@ -70,6 +70,7 @@ classvars:
    viAffectsAllies = TRUE
    viAffectsInnocents = TRUE
    viAffectsNewbies = TRUE
+   viAffectsEveryone = TRUE
 
    viLightColor = LIGHT_LIGHTNING
 
@@ -82,7 +83,9 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Ruby,2],plReagents);
+      plReagents = [
+         [&Ruby,2]
+      ];
 
       return;
    }

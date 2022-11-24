@@ -1,0 +1,289 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+DragonInvasion is Invasion
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   DragonInvasion_start_location_msg = "~B~k[Event]~n ~B~v You sense a disturbance in %s!"
+
+   DragonInvasion_end_location_msg = "~B~k[Event]~n ~B~v Dragons have been chased away from %s!"
+
+   DragonInvasion_start_msg = \
+      "~B~k[Event]~n ~B~v Dragon Flies have started to swarm."
+
+   DragonInvasion_end_msg = \
+      "~B~k[Event]~n ~B~v All hail who have protected this land!"
+
+   DragonInvasion_phase2_msg = \
+      "~B~k[Event]~n ~B~v Queen Dragon Flies have started to mate."
+
+   DragonInvasion_phase3_msg = \
+      "~B~k[Event]~n ~B~v Earth Dragons have come to feed on the Queen Dragon Flies."
+
+   DragonInvasion_finalphase_msg = \
+      "~B~k[Event]~n ~B~v Black Dragons have come to avenge their dragon kin."
+
+   DragonInvasion_attack_sound_rsc = ndanger.ogg
+
+classvars:
+
+   vrStartMessage = DragonInvasion_start_msg
+   vrEndMessage = DragonInvasion_end_msg
+
+   vbAnnounce = TRUE
+
+properties:
+
+   plEventRooms = $
+   piMonsterA = 50
+   piMonsterB= 50
+   piMonsterC = 10
+   piMonsterBoss = 5
+   piActiveRoom = RID_TOS
+   poActiveRoom = $
+   piPhase = 0
+   piRelativeHeight = 0
+   ptEventUpdateTimer = $
+   plBlinkCoords = $
+
+   pcMonsterA = $
+   pcMonsterB = $
+   pcMonsterC = $
+   pcMonsterBoss = $
+
+messages:
+
+   Constructor(who=$)
+   {
+      pcMonsterA = &DragonFly;
+      pcMonsterB = &DragonFlyQueen;
+      pcMonsterC = &EarthDragon;
+      pcMonsterBoss = &BlackDragon;
+
+      if who <> $ AND IsClass(who, &DM)
+      {
+         piRelativeHeight = Send(who, @GetHeightAtObject);
+         piActiveRoom = Send(Send(who, @GetOwner), @GetRoomNum);
+      }
+
+      poActiveRoom = Send(SYS, @FindRoomByNum, #num=piActiveRoom);
+      plBlinkCoords = [Send(poActiveRoom, @GetTeleportRow), Send(poActiveRoom, @GetTeleportCol)];
+      
+      Send(self,@StartEvent);
+
+      propagate;
+   }
+   
+   StartEvent()
+   {
+      local oUser, lUsersLoggedOn;
+
+      Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=DragonInvasion_start_location_msg,#parm1=Send(poActiveRoom,@GetName));
+
+      lUsersLoggedOn = Send(SYS,@GetUsersLoggedOn);
+
+      foreach oUser in lUsersLoggedOn
+      {
+         Send(oUser,@WaveSendUser,#wave_rsc=DragonInvasion_attack_sound_rsc);
+      }
+
+      piPhase = 0;
+
+      ptEventUpdateTimer = CreateTimer(self, @Update, 5000);
+
+      propagate;
+   }
+
+   Update()
+   {
+      if (poActiveRoom = $)
+      {
+         propagate;
+      }
+
+      if piPhase = 0
+      {
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterA) = 0
+         {
+            Send(self,@PhaseOne);
+         }
+      }
+      else if piPhase = 1
+      {
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterA) = 0
+         {
+            Send(self,@PhaseTwo);
+         }
+      }
+      else if piPhase = 2
+      {
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterB) = 0
+            AND Send(poActiveRoom,@CountMonsters,#class=pcMonsterA) = 0
+         {
+            Send(self,@PhaseThree);
+         }
+      }
+      else if piPhase = 3
+      {
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterC) = 0
+            AND Send(poActiveRoom,@CountMonsters,#class=pcMonsterB) = 0
+            AND Send(poActiveRoom,@CountMonsters,#class=pcMonsterA) = 0
+         {
+            Send(self,@FinalPhase);
+         }
+      }
+      else if piPhase = 4
+      {
+         if Send(poActiveRoom,@CountMonsters,#class=pcMonsterBoss) = 0
+         {
+            Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=DragonInvasion_end_location_msg,#parm1=Send(poActiveRoom,@GetName));
+
+            Send(self,@NotifyEngineEndEvent);
+
+            propagate;
+         }
+      }
+
+      ptEventUpdateTimer = CreateTimer(self, @Update, 5000);
+
+      propagate;
+   }
+
+   PhaseOne()
+   {
+      local i;
+
+      piPhase = 1;
+
+      i = piMonsterA;
+
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterA),
+            #piSurvivalLevel=25,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      return;
+   }
+
+   PhaseTwo()
+   {
+      local i;
+
+      piPhase = 2;
+
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
+               #string=DragonInvasion_phase2_msg);
+      }
+
+      i = piMonsterA;
+
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterA),
+            #piSurvivalLevel=50,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      i = piMonsterB;
+
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterB),
+            #piSurvivalLevel=50,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      return;
+   }
+
+   PhaseThree()
+   {
+      local i;
+
+      piPhase = 3;
+
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
+               #string=DragonInvasion_phase3_msg);
+      }
+
+      i = piMonsterA;
+
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterA),
+            #piSurvivalLevel=75,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      i = piMonsterB;
+
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterB),
+            #piSurvivalLevel=75,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      i = piMonsterC;
+      
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterC),
+            #piSurvivalLevel=75,#bStack=TRUE,#bRandom=TRUE,
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      return;
+   }
+
+   FinalPhase()
+   {
+      local i;
+
+      piPhase = 4;
+
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
+               #string=DragonInvasion_finalphase_msg);
+      }
+
+      i = piMonsterBoss;
+      
+      while (i > 0)
+      {
+         Send(poActiveRoom,@GenerateMonster,#oMonster=Create(pcMonsterBoss),
+            #piSurvivalLevel=95,#bStack=TRUE, #iRow=Nth(plBlinkCoords, 1) + Random(1, i), #iCol=Nth(plBlinkCoords, 2) + Random(1, i),
+            #iRelativeHeight=piRelativeHeight,#bWalkThroughWalls=TRUE);
+         i = i - 1;
+      }
+
+      return;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

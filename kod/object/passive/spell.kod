@@ -404,9 +404,14 @@ messages:
       return;
    }
 
-   GetValue()
+   GetValue(type=$)
    {
       local i,j;
+      
+      if type = $
+      {
+         type = &Shilling;
+      }
       
       i=1;
       j=2;
@@ -416,7 +421,22 @@ messages:
          j = j * 2;
          i = i + 1;
       }
-      
+
+      if type = &Shilling
+      {
+         return 250 * j;
+      }
+
+      if type = &Platinum
+      {
+         if (250 * j) >= SHILLINGS_PER_PLATINUM
+         {
+            return Send(SYS,@ShillingsToPlatinum,#number=(250 * j));
+         }
+
+         return 0;
+      }
+
       return 250 * j;
    }
 
@@ -1450,9 +1470,14 @@ messages:
       return TRUE;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0, bItemCast=FALSE)
+   CastSpell(who = $, lTargets = $, iSpellPower = 0, bItemCast=FALSE, quiet=FALSE, bAutolooted=FALSE)
    {
-      local oTarget, oRoom;
+      local oTarget, oRoom, oWho;
+
+      if NOT quiet AND bAutolooted
+      {
+         quiet = TRUE;
+      }
 
       if IsClass(who,&DM)
       {
@@ -1516,10 +1541,29 @@ messages:
                }
 
                // Notify the target that they've been attacked
-               // by another player.
-               if viHarmful
+               // by another player - Apparently Orc Wizards were counting, that should be fixed now.
+               if viHarmful AND (IsClass(who, &Reflection) OR IsClass(who, &Player)) AND IsClass(oTarget, &Player)
                {
+                  // Flag target for PVP
                   Send(oTarget,@DoPvpNotify);
+
+                  oWho = who;
+                  
+                  if IsClass(who, &Monster) AND Send(who, @GetMaster) <> $
+                  {
+                     oWho = Send(who, @GetMaster);
+
+                     if IsClass(oWho, &Monster)
+                     {
+                        oWho = Send(oWho, @GetMaster);
+                     }
+                  }
+
+                  if oWho <> $ AND IsClass(oWho, &Player)
+                  {
+                     // Flag caster for PVP.
+                     Send(who,@DoPvpNotify);
+                  }
                }
             }
          }
@@ -1585,10 +1629,14 @@ messages:
                      " while hidden.");
             }
 
-            return;
+            return TRUE;
          }
 
-         Send(self,@PlaySpellSound,#room_obj=oRoom,#what=who);
+         if NOT quiet
+         {
+            Send(self,@PlaySpellSound,#room_obj=oRoom,#what=who);
+         }
+         
          Send(oRoom,@SpellCast,#who=who,#oSpell=self,#lItems=lTargets,
                #bItemCast=bItemCast);
       }
@@ -1650,7 +1698,7 @@ messages:
       // Count that this spell was cast successfully
       Send(Send(SYS,@GetStatistics),@SpellCast,#oSpell=self,#who=who);
 
-      return;
+      return TRUE;
    }
 
    PlaySpellSound(room_obj = $,what = $)

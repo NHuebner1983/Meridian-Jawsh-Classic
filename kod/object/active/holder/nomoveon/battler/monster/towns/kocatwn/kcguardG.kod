@@ -68,87 +68,48 @@ messages:
 
    Constructor()
    {
-      plWantedItems = [&Money];
+      plWantedItems = [];
 
       propagate;
    }
 
    AllowContrabandToPass(What=$)
    {
-      local bThreatened;
-	  
-	  bThreatened = pbThreatened;
-	  
-	  if bThreatened
-	  {
-	     pbThreatened = FALSE;
-		 
-	     return TRUE;
-	  }
-	  
-	  return FALSE;
+      // Let everyone through.
+      return TRUE;
    }
 
    GotWantedItem(obj=$,who=$)
    {
-      if Send(self,@CheckForBribe,#obj=obj,#who=who)
-      {
-         return;
-      }
-
-      propagate;
-
+      // We aren't accepting anything right now.
+      return FALSE;
    }
    
    SomeoneSaid(what = $,type = $,string = $)
+   "We'll leave this on for fun."
    {
       if StringEqual(string, goodguard_bullied_said)
-	  {
+      {
          if what <> $ and IsClass(what, &Player)
-	     {
-	        if Send(what, @GetServant) <> $
-		    {
-			   pbThreatened = TRUE;
-			   Post(self,@SayToOne,#target=what,#message_rsc=goodguard_bullied);
-			}
-			else
-			{
-			   Post(self,@SayToOne,#target=what,#message_rsc=goodguard_not_bullied);
-			}
-		 }
-	  }
-	  
-	  propagate;
+         {
+            if Send(what, @GetServant) <> $
+            {
+               pbThreatened = TRUE;
+               Post(self,@SayToOne,#target=what,#message_rsc=goodguard_bullied);
+            }
+            else
+            {
+               Post(self,@SayToOne,#target=what,#message_rsc=goodguard_not_bullied);
+            }
+         }
+      }
+      
+      propagate;
    }
 
    CheckForBribe(who=$,obj=0)
    {
-      local oMoney, oBank, amount;
-
-      if NOT IsClass(obj,&Money)
-      {
-         return FALSE;
-      }
-
-      amount = Send(obj,@GetNumber);
-      if amount <= 0
-      {
-         return FALSE;
-      }
-
-      oMoney = Send(who,@GetMoneyObject);
-      if oMoney = $
-      {
-         return FALSE;
-      }
-
-      if Send(oMoney,@GetValue) < amount
-      {
-        return FALSE;
-      }
-
-      Send(oMoney,@SubtractNumber,#number=amount);
-      Post(self,@SayToOne,#target=who,#message_rsc=goodguard_thanks);
+      // We no longer accept bribes.
 
       return TRUE;
    }

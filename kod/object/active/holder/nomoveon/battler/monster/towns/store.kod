@@ -1,0 +1,397 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Store is Towns
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Store_name_rsc = "Marketplace"
+   
+   Store_icon_rsc = jbook.bgf
+   Store_desc_rsc = \
+     "Welcome to the public marketplace! \n\n"
+	  "Feel free to browse the list of items to purchase. The "
+	  "item will immediatly be given to you and the owner will "
+	  "receive their payment. There are no refunds - all sales are final!"
+
+   Store_mail_sender = "Marketplace"
+   Store_mail = \
+      "Subject: %q bought %q of your %q\n"
+      "Hey %q,\n\n"
+      "%q purchased %q of your %q from the marketplace.\n\n"
+      "Total earnings from sale:\n\n"
+      "%q Platinum (deposited to your bank account)\n"
+      "%q Shillings (transferred to your character)\n\n"
+      "It was a pleasure doing business with you.\n\n"
+      " - Meridian 59 Marketplace"
+
+   Store_sold_message = "~B~y%s bought your %s for %i platinum and %i shillings.~k"
+
+classvars:
+
+   vrName = Store_name_rsc
+   vrIcon = Store_icon_rsc
+   vrDesc = Store_desc_rsc
+
+   viAttributes = \
+      MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN \
+      | MOB_NOMOVE | MOB_BUYER | MOB_SELLER \
+	  | MOB_MARKETPLACE
+   viOccupation = MOB_ROLE_MERCHANT
+   viMerchant_markup = MERCHANT_RIPOFF
+
+   // We sell what other people have given us
+   vbSellFromInventory = TRUE
+
+   // Stores should be walk-through.
+   viMoveOn_type = MOVEON_YES
+
+properties:
+
+messages:
+
+    DisableMarketplace()
+    {
+        Send(self,@Delete);
+
+        return;
+    }
+
+    Recreate()
+    {
+        if poOwner = $
+        {
+            // If we're not in a room, we don't need to exist.
+            Send(self,@Delete);
+
+            return;
+        }
+
+        Send(self,@SetForSale);
+
+        return;
+    }
+
+    GetRoomName()
+    {
+        return Send(poOwner, @GetName);
+    }
+
+    SetForSale()
+    "Let's get everything available for sale and sort it by name and lowest price."
+    {
+        local i, oJunk, lForSale, oHolder, lHolding;
+
+        lForSale = $;
+
+        if plFor_sale = $ OR Length(plFor_sale) < 3
+        {
+            plFor_sale = [lForSale,$,$];
+        }
+
+        oHolder = Send(SYS,@GetMarketplaceHolder);
+
+        foreach lHolding in [ Send(oHolder,@GetHolderActive),
+                            Send(oHolder,@GetHolderPassive) ]
+        {
+            foreach i in lHolding
+            {
+                Debug("Holding", Send(i,@GetName));
+
+                if NOT IsClass(i, &Item)
+                {
+                    Debug("Skipped non item");
+                    continue;
+                }
+
+                if NOT IsClass(i,&NumberItem)
+                {
+                    // If this is a spell item, then stop the go bad timer.
+                    if IsClass(i,&SpellItem)
+                    {
+                        Send(i,@StopGoBadTimer);
+                    }
+                }
+
+                if NOT FindListElem(lForSale, i)
+                {
+                    lForSale = Cons(i,lForSale);
+                    Debug("Adding for sale",Send(i,@GetName));
+                }
+                else
+                {
+                    Debug("Already listed",i,Send(i,@GetName),"for sale");
+                }
+            }
+        }
+
+        // Set the items for sale
+        SetNth(plFor_Sale,1,lForSale);
+
+        Send(self,@SortForSale);
+
+        return;
+    }
+
+    SortForSale()
+    {
+        local lForSaleShillings, lForSalePlatinum, i, lForSale, lSortOrder, lPriceSort, lFinalForSale;
+
+        if First(plFor_sale) = $ OR Length(First(plFor_sale)) <= 0
+        {
+            //Debug(Nth(plFor_sale, 1),"empty");
+            return;
+        }
+
+        lForSale = [];
+        lFinalForSale = [];
+
+        foreach i in First(plFor_sale)
+        {
+            lPriceSort = (Bound((Send(i, @GetMarketplaceUnitPricePlatinum) + 1) * 1000, 1000, MAX_KOD_INT)) + (Bound(Send(i, @GetMarketplaceUnitPriceShillings) + 100, 100, 999));
+
+            lForSale = Send(SYS,@AddToSortedList,#what=i,
+                                    #lList=lForSale,#number=lPriceSort,
+                                    #bIgnoreDuplicate=TRUE, #bReverse=TRUE);
+        }
+
+        foreach i in lForSale
+        {
+            lFinalForSale = Cons(First(i), lFinalForSale);
+        }
+
+        SetNth(plFor_Sale,1,lFinalForSale);
+
+        return;
+    }
+
+    CanAcceptOffer(who=$)
+    {
+        return TRUE;
+    }
+
+    ReqOffer(what = $)
+    {
+        return TRUE;
+    }
+
+    Offer(what = $)
+    {
+        Send(what,@CounterOffer,#item_list=$);
+
+        return;
+    }
+
+    AcceptOffer()
+    "This does nothing now, we're using a special protocol"
+    {
+        return TRUE;
+    }
+
+    ObjectDesired(what=$,report=TRUE)
+    "Items our store accepts to be available for sale"
+    {
+        return Send(what, @CanListOnMarketplace);
+    }
+
+    GetForSale()
+    {
+        local i;
+
+        Send(self,@SetForSale);
+
+        Debug("GetForSale Length",Length(plFor_sale));
+
+        foreach i in plFor_sale
+        {
+            Debug("GetForSale",i);
+        }
+
+        propagate;
+    }
+
+    ListOnMarketplace(object_owner = $, what=$, quantity=1, unit_platinum=1, unit_shillings=500)
+    "Lists an item for sale and removes it from the player's inventory"
+    {
+        local i, j, oHolder, lTake_items, bHadSomeNum, lForSale, oNewItem, oNewHoldObj;
+        
+        //Debug("List on Marketplace",what,quantity,unit_platinum,unit_shillings);
+
+        Send(self,@SetForSale);
+
+        if NOT Send(self, @ObjectDesired, #what=what)
+        {
+            return FALSE;
+        }
+
+        if IsClass(what, &NumberItem) AND Send(what,@GetNumber) > quantity
+        {
+            // Remove partial stack from player's inventory (quantity).
+            Send(what,@SubtractNumber,#number=quantity);
+
+            // Create a new object with the partial stack (quantity).
+            // This object can now be safely stored in our holder.
+            what = Create(GetClass(what),#number=quantity);
+        }
+
+        //Debug(Send(what,@GetName),quantity,unit_platinum,unit_shillings);
+
+        lForSale = First(plFor_Sale);
+        
+        // Holder where our marketplace items will be stored
+        oHolder = Send(SYS,@GetMarketplaceHolder);
+        
+        // Set the item's properties as listed on marketplace
+        Send(what,@ListOnMarketplace,
+            #who=object_owner,
+            #quantity=quantity,
+            #unit_platinum=unit_platinum,
+            #unit_shillings=unit_shillings);
+
+        // Put the new marketplace listed item in our holder
+        // NewHold will handle stacking items that match the same marketplace value.
+        // Also supports checking for the correct Store Owner in case we use a global marketplace.
+        oNewHoldObj = Send(oHolder,@NewHold,
+            #what=what,
+            #stack_number_items=FALSE,
+            #stack_marketplace=TRUE,
+            #marketplace_owner=object_owner,
+            #marketplace_platinum=unit_platinum,
+            #marketplace_shillings=unit_shillings);
+
+        if oNewHoldObj <> $ AND what <> oNewHoldObj
+        {
+            // Remove the marketplace properties from the item we marked as listed.
+            // Because it's either a copy, deleted or still in our inventory.
+            Send(what,@RemoveFromMarketplace);
+
+            what = oNewHoldObj;
+
+            // It looks like our marketplace item is completely different.
+            // Mark the new item as listed on the marketplace.
+            Send(what,@ListOnMarketplace,
+                #who=object_owner,
+                #quantity=quantity,
+                #unit_platinum=unit_platinum,
+                #unit_shillings=unit_shillings);
+        }
+
+        Debug("Marketplace Listing by",Send(object_owner,@GetName),Send(what,@GetName),what,quantity,unit_platinum,unit_shillings);
+
+        Send(self,@SetForSale);
+
+        return TRUE;
+    }
+
+    NewHoldObject(what=$)
+    {
+        local oOwner;
+
+        //Debug("Store has new hold",Send(what,@GetName),what,Send(what,@GetNumber));
+
+        oOwner = Send(what,@GetOwner);
+
+        if oOwner <> $
+        {
+            Send(poOwner,@LeaveHold,#what=what);
+            Send(what,@NewOwner,#what=$);
+        }
+
+        return;
+    }
+
+    Delete()
+    "The store does not actually hold items, so it can be safely deleted."
+    {
+        propagate;
+    }
+
+    NotifyItemPurchased(what = $, buyer = $, store_owner = $, quantity = 1, amount_platinum = 0, amount_shillings = 0)
+    "Notifies the store owner of a purchase. Sends them an in-game message if they're online and mails them."
+    {
+        local rMail;
+
+        if store_owner = $
+        {
+            // No store owner...
+            return FALSE;
+        }
+
+        if buyer = $
+        {
+            // No buyer...
+            return FALSE;
+        }
+
+        if what = $
+        {
+            // No item...
+            return FALSE;
+        }
+
+        if quantity = $ OR quantity <= 0
+        {
+            // No quantity... (at least 1 is required, can't have zero quantity)
+            return FALSE;
+        }
+
+        if amount_platinum = $
+        {
+            amount_platinum = 0;
+        }
+
+        if amount_shillings = $
+        {
+            amount_shillings = 0;
+        }
+
+        if amount_platinum <= 0 AND amount_shillings <= 0
+        {
+            // No money earned... (probably purchased items from their own store and this wasn't prevented)
+            return FALSE;   
+        }
+
+        // Send the mail
+        Send(store_owner,@ReceiveNestedMail,
+            #from=Store_mail_sender,
+            #dest_list=[store_owner],
+            #nest_list=[
+                4,Store_mail, 
+                6,Send(buyer,@GetName),                        // subject (buyer name)
+                6,Send(SYS,@IntToString,#num=quantity),        // subject (quantity)
+                6,Send(what,@GetName),                         // subject (item name)
+                6,Send(store_owner,@GetName),                  // greeting (store owner name)
+                6,Send(buyer,@GetName),                        // body (buyer name)
+                6,Send(SYS,@IntToString,#num=quantity),        // body (quantity)
+                6,Send(what,@GetName),                         // body (item name)
+                6,Send(SYS,@IntToString,#num=amount_platinum), // body (platinum earnings)
+                6,Send(SYS,@IntToString,#num=amount_shillings) // body (shilling earnings)
+            ]);
+        
+        if Send(store_owner,@IsLoggedOn)
+        {
+            // Send a tell to the store owner
+            Send(store_owner,@MsgSendUser,
+                #message_rsc=Store_sold_message,
+                #parm1=Send(buyer,@GetName),
+                #parm2=Send(what, @GetName),
+                #parm3=amount_platinum,
+                #parm4=amount_shillings);
+        }
+
+        return TRUE;
+    }
+
+end
+////////////////////////////////////////////////////////////////////////////////

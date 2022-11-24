@@ -1,0 +1,92 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+UlakeD6E7 is ObjectRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   // TODO: Translate to German by Tyrant
+   //include d6e7ulake.lkod
+
+   room_d6e7ulake = d6e7ulake.roo
+   room_name_d6e7ulake = "Lair of the Corrupted Mollusks"
+
+   d6e7ulake_music = song.ogg
+
+classvars:
+
+   vrName = room_name_d6e7ulake
+
+   viTeleport_row = 15
+   viTeleport_col = 24
+
+   viTerrain_type = TERRAIN_CAVES | TERRAIN_TEMPLE
+
+properties:
+
+   prRoom = room_d6e7ulake
+   piRoom_num = RID_D6E7ULAKE
+
+   prMusic = d6e7ulake_music
+
+   piBaseLight = LIGHT_DARK
+ 
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piOutside_factor = OUTDOORS_2
+
+   piGen_percent = 80
+
+   piInit_count_min = 4
+   piInit_count_max = 8
+
+   piMonster_count_max = 12
+   
+messages:
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      
+      plEdge_Exits = Cons([LEAVE_EAST, RID_D6E6ULAKE, 18, 6, ROTATE_NONE], plEdge_exits);
+
+      // TODO: Need to add the ceiling door to a new map (when we make it).
+  
+      propagate;
+   }
+   
+   Constructed()
+   {
+      plMonsters = [ [&CorruptedMollusk, 100] ];
+
+      plGenerators = [ [17, 10], [22, 12], [17, 18], [22, 25], [13, 22],
+              [16, 29], [11, 30], [12, 36], [6, 29], [5, 23], 
+              [8, 20], [9, 11] ];
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      // TODO: Need to create the elevator
+
+
+      // Send(self,@NewHold,#what=Create(&Tree),
+      //     #new_row=20,#new_col=20,#fine_row=0,#fine_col=60,#new_angle=ANGLE_EAST); 
+      // Send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=40),
+      //     #new_row=20,#new_col=20,#fine_row=0,#fine_col=60);
+      propagate;
+   }
+   
+end
+////////////////////////////////////////////////////////////////////////////////

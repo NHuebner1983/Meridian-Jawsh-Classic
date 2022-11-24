@@ -64,20 +64,20 @@ messages:
       return 1;
    }
 
-   CastSpell(who = $, lTargets = $)
+   CastSpell(who = $, lTargets = $, bAutolooted = FALSE)
    {
       local oTarget, oVault, iFee, oMoney, iCash;
 
       if (lTargets = $)
       {
-         return;
+         return FALSE;
       }
 
       oTarget = First(lTargets);
 
       if (oTarget = $)
       {
-         return;
+         return FALSE;
       }
 
       if NOT Send(oTarget,@CanBeStoredInVault)
@@ -86,47 +86,33 @@ messages:
          Send(who,@MsgSendUser,#message_rsc=conveyance_cant,
                #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
-         return;
+         return FALSE;
       }
 
-      if NOT Send(who,@IsHolding,#what=oTarget)
+      if NOT bAutolooted AND NOT Send(who,@IsHolding,#what=oTarget)
       {
          Send(who,@MsgSendUser,#message_rsc=conveyance_not_holding);
 
-         return;
+         return FALSE;
       }
 
       oVault = Send(SYS,@FindVaultByNum,#num=VID_BARLOQUE);
       iFee = Send(oTarget,@GetBulk);
 
-      if iFee = $
-         OR iFee = 0
-         OR NOT Send(who,@ReqLeaveHold,#what=oTarget)
+      if iFee = $ OR NOT Send(who,@ReqLeaveHold,#what=oTarget)
       {
          Send(who,@MsgSendUser,#message_rsc=conveyance_cant,
                #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
-         return;
+         return FALSE;
       }
 
-      oMoney = Send(who,@GetMoneyObject);
-      if oMoney = $
-      {
-         // No cash.
-         iCash = 0;
-      }
-      else
-      {
-         iCash = Send(oMoney,@GetValue);
-      }
-
-      if iCash < iFee
-         AND iFee <> 0
+      if iFee <> 0 AND NOT Send(who,@CanAfford,#cost_shillings=iFee)
       {
          Send(who,@MsgSendUser,#message_rsc=conveyance_not_enough_cash,
                #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
-         return;
+         return FALSE;
       }
 
       if Send(oVault,@CanDepositItems,#lItems=lTargets,#who=who)
@@ -137,12 +123,14 @@ messages:
 
          if iFee > 0
          {
-            Send(oMoney,@SubtractNumber,#number=iFee);
+            Send(who,@Pay,#amount_shillings=iFee);
          }
       }
       else
       {
          Send(who,@MsgSendUser,#message_rsc=Conveyance_not_enough_space);
+
+         return FALSE;
       }
 
       propagate;

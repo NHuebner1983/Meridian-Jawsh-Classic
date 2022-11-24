@@ -1,0 +1,149 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Taunt is Skill
+
+constants:
+
+   include blakston.khd
+
+   BRAWL_THRESHOLD = 25          // Base brawl needed to attempt to taunt someone while unarmed
+
+resources:
+
+   //include taunt.lkod
+
+   Taunt_name_rsc = "taunt"
+   Taunt_icon_rsc = itaunt.bgf
+   Taunt_desc_rsc = "A skill only taught to the strongest warriors. "
+                    "Catches the attention of the enemy you hit next and "
+                    "causes them to hate you. Brawlers seem to have a natural "
+                    "ability to taunt their enemies. Taunting increases hatred "
+                    "of monsters around you. Be ready to put up a fight! "
+                    "Note: This skill is only effective against monsters."
+                     
+   Taunt_skill_intro = "Weaponcraft Lv. 6: Causes enemies to hate you."
+
+   Taunt_msg_spit = "~kYou spit in %s%s's face, taunting them.~k"
+   Taunt_msg_bash = "~kYou bash %s%s violently, taunting them.~k"
+   Taunt_msg_gesture = "~kYou make a rude gesture at %s%s, taunting them.~k"
+   Taunt_msg_growl = "~kYou growl loudly at %s%s, taunting them.~k"
+   Taunt_msg_cry = "~kYou let out a fearsome battle cry at %s%s, taunting them.~k"
+   Taunt_msg_stomp = "~kYou stomp on %s%s violently, taunting them.~k"
+   Taunt_msg_slap = "~kYou slap %s%s, taunting them.~k"
+   Taunt_msg_bite = "~kYou bite %s%s, taunting them.~k"
+   Taunt_msg_insult = "~kYou make an obscene insult at %s%s, taunting them.~k"
+
+classvars:
+
+   vrName = Taunt_name_rsc
+   vrIcon = Taunt_icon_rsc
+   vrDesc = Taunt_desc_rsc
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSkill_num = SKID_TAUNT
+   viSchool = SKS_FENCING
+   viSkill_Level = 6
+   viChance_to_Increase = 15
+   viMeditate_ratio = 200
+
+   viSkillExertion = 5
+   vbCheck_exertion = FALSE
+
+   vbAutomatic = TRUE
+
+properties:
+
+messages:
+
+   GetRequisiteStat(who=$)
+   "Varies from skill to skill and spell to spell."
+   {
+      return Send(who, @GetStamina);
+   }
+
+   PayCosts(who=$,modifier=0)
+   "Some skills may require certain stats to be depleted."
+   "return TRUE if they were successfully depleted."
+   {
+      if NOT Send(self,@SuccessChance,#who=who,#modifier=modifier)
+      {
+         return FALSE;
+      }
+
+      Send(who,@AddExertion,#amount=1000*viSkillExertion);
+
+      return TRUE;
+   }
+
+   SuccessChance(who=$,modifier=0)
+   "Modifier indicates the plusses (or minuses, if negative) to apply to the chance"
+   {
+       local iReqStat, iAbility, num;
+
+      iReqStat = Send(self,@GetRequisiteStat,#who=who);
+      iAbility = Send(who,@GetSkillAbility,#skill_num=viSkill_num);
+
+      num = ((100 - iReqStat) * iAbility / 100) + iReqStat;
+
+      if Random(1,100) < num
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   DoSkill(who=$,oTarget=$,oWeapon=$)
+   {
+      local iReqStat, iAbil, iModifier, oOppWeapon, oHoldSpell, rTauntMsg;
+
+      if who = $
+      {
+         Debug("DoSkill called with bad who.");
+
+         return FALSE;
+      }
+
+      // Get player's ability in this skill.
+      iReqStat = Send(self,@GetRequisiteStat,#who=who);
+      iAbil = Send(who,@GetSkillAbility,#skill_num=viSkill_num);
+
+      iAbil = ((100 - iReqStat) * iAbil / 100) + iReqStat;
+
+      if IsClass(oTarget,&Monster) AND Random(1,100 + iAbil) < iAbil
+      {
+         // Taunt the monster.
+
+         Send(who,@AddExertion,#amount=4 * (1000 * viSkillExertion));
+         Send(oTarget,@TargetSwitch,#what=who,#iHatred=Bound(1, 1000, Random(1, iAbil * 100)));
+         
+         rTauntMsg = Nth([
+            Taunt_msg_spit,
+            Taunt_msg_bash,
+            Taunt_msg_gesture,
+            Taunt_msg_growl,
+            Taunt_msg_cry,
+            Taunt_msg_stomp,
+            Taunt_msg_slap,
+            Taunt_msg_bite,
+            Taunt_msg_insult
+         ], Random(1, 9));
+
+         Send(who,@MsgSendUser,#message_rsc=rTauntMsg,#parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+      }
+
+      propagate;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

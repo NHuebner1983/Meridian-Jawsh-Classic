@@ -39,7 +39,7 @@ classvars:
    viRange = 60 * FINENESS
    viHit_roll_modifier = 35
 
-   viValue_average = 3500
+   viValue_average = 135000
    viBulk = 100
    viWeight = 100
 

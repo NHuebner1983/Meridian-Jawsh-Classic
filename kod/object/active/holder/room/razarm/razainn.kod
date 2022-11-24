@@ -96,6 +96,8 @@ messages:
       Send(self,@NewHold,#what=Create(&RazaInnkeeper),#new_row=7,#new_col=3,
             #fine_row=24,#fine_col=56);
 
+     Send(self,@NewHold,#what=Create(&Chest,#receivesDonations=TRUE),#new_row=7,#new_col=8);
+
       oObj = Create(&Sign,#desc=razainn_sign,#newbie=TRUE,#name=razainn_signname);
       Send(self,@NewHold,#what=oObj,#new_row=4,#new_col=5,
             #fine_row=24,#fine_col=40);
@@ -124,6 +126,18 @@ messages:
            #new_row=5,#new_col=10,#fine_row=8,#fine_col=14);
 
       propagate;
+   }
+
+   CreateMarketplace()
+   {
+      if Send(SYS,@IsMarketplaceEnabled)
+      {
+          // Show a Marketplace sign in RAZA INN razainn.roo
+          Send(self,@NewHold,#what=Create(&Store),
+               #new_row=8,#new_col=2,#fine_row=29,#fine_col=7,#new_angle=ANGLE_EAST);
+      }
+
+      return;
    }
 
 end

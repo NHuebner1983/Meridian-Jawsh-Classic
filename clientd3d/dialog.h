@@ -19,6 +19,7 @@
 #define LD_AMOUNTS     0x00000002    // True if user should enter amounts for selected items
 #define LD_SINGLEAUTO  0x00000004    // True if proc should return immediately if 1 item in list
 #define LD_SORT        0x00000008    // True if items should be sorted alphabetically
+#define LD_MARKETPLACE 0x00000010    // True if marketplace
 
 /* Structure passed to LookDialogProc as lParam of WM_INITDIALOG message */
 typedef struct {
@@ -28,7 +29,7 @@ typedef struct {
    int       flags;          // Flags for dialog; behavior; see LD_ above
 
    /* These fields are used internally in the dialog: */
-   HWND hwndListBox, hwndQuanList, hwndFind;  /* Handles of child items */
+   HWND hwndListBox, hwndQuanList, hwndShillList, hwndPlatList, hwndFind;  /* Handles of child items */
    WNDPROC lpfnDefLookProc;     /* Default list box window procedure */   
    Bool   *selected;            /* Array of booleans; true if item at index is selected */
 } LookDialogStruct;
@@ -66,8 +67,9 @@ typedef struct {
    ID seller_id;             /* Object we're buying from */
    ID seller_name;           /* Name resource of object we're buying from */
    list_type items;          /* Items available to buy */
-   DWORD cost;               /* Total cost of selected items */
-   HWND hwndItemList, hwndCostList, hwndQuanList, hwndCost;
+   DWORD shills;             /* Total cost of selected items (in shillings only) */
+   DWORD plat;               /* Total cost of selected items (in platinum only) */
+   HWND hwndItemList, hwndCostShillList, hwndCostPlatList, hwndQuanList, hwndShillList, hwndPlatList, hwndCostShills, hwndCostPlat;
 } BuyDialogStruct;
 
 /* Structure passed to AmountDialogProc as lParam of WM_INITDIALOG message */

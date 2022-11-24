@@ -74,10 +74,12 @@ typedef struct {
    ID           name_res;
    DWORD        amount;              /* If top bits of id signify CLIENT_TAG_NUMBER, then
                                         this field gives amount of object */
-   DWORD        temp_amount;         /* Scratch field used when user is selecting amount of object */
-   int          flags;               // Boolean object flags.
-   BYTE         drawingtype;        // Object flags for drawing effects (invisibility, lighting type etc.)
-   int          minimapflags;        // Flags used to draw the right color/icon on the minimap.
+   DWORD        temp_amount;            /* Scratch field used when user is selecting amount of object */
+   DWORD        temp_listprice_plat;    /* platinum listing price 0 - 999999 */
+   DWORD        temp_listprice_shills;  /* shillings list price 0 - 999 */
+   int          flags;                  // Boolean object flags.
+   BYTE         drawingtype;            // Object flags for drawing effects (invisibility, lighting type etc.)
+   int          minimapflags;           // Flags used to draw the right color/icon on the minimap.
    unsigned int namecolor;           // Player name color flags
    object_type  objecttype;          /* Enum of object type (i.e. outlaw, murderer, NPC) */
    moveon_type  moveontype;          // MoveOn type of the object

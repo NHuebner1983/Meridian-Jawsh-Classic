@@ -72,8 +72,9 @@ messages:
          }
          if Send(contents,@GetOwner) <> $
          {
-            Send(Send(contents,@GetOwner),@LeaveHold,#what=contents);
-            Send(contents,@NewOwner,#what=$);
+            // This is deleting the item?
+            //Send(Send(contents,@GetOwner),@LeaveHold,#what=contents);
+            //Send(contents,@NewOwner,#what=$);
          }
       }
       poGiftGiver = giver;
@@ -82,11 +83,17 @@ messages:
       propagate;
    }
 
+   CanBeStoredInVault()
+   {
+      return TRUE;
+   }
+
    GetBulk()
    {
       if poContents <> $
       {
-         return Send(poContents,@GetBulk) + 1;
+         // Gifts should have no bulk.
+         return 0; //Send(poContents,@GetBulk) + 1;
       }
 
       propagate;
@@ -96,14 +103,30 @@ messages:
    {
       if poContents <> $
       {
-         return Send(poContents,@GetWeight) + 1;
+         // Gifts should be weightless.
+         return 0; //Send(poContents,@GetWeight) + 1;
       }
 
       propagate;
    }
 
-   GetValue()
+   GetValue(type=$)
    {
+      if type = $
+      {
+         type = &Shilling;
+      }
+
+      if type = &Shilling
+      {
+         return 10;
+      }
+
+      if type = &Platinum
+      {
+         return 0;
+      }
+
       // Can't really tell the value of an item in a box.
       return 10;
    }
