@@ -61,11 +61,19 @@ messages:
       Send(self,@NewHold,#what=Create(&Table),
            #new_row=5,#new_col=11,#fine_col=0,#fine_row=32);
 
-      // Show a Marketplace sign in JASP Inn jasinn.roo
-      //Send(self,@NewHold,#what=Create(&Store),
-      //     #new_row=6,#new_col=8,#fine_row=13,#fine_col=38,#new_angle=ANGLE_NORTH);
-           
       propagate;
+   }
+
+   CreateMarketplace()
+   {
+      if Send(SYS,@IsMarketplaceEnabled)
+      {
+         // Show a Marketplace sign in JASP Inn jasinn.roo
+         Send(self,@NewHold,#what=Create(&Store),
+            #new_row=6,#new_col=8,#fine_row=13,#fine_col=38,#new_angle=ANGLE_NORTH);
+      }
+
+      return;
    }
 
    CreateStandardExits()

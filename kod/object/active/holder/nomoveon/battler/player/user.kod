@@ -7618,7 +7618,7 @@ messages:
       lSaleItems = $;
       lSaleItems = Send(what,@GetForSale,#who=self);
 
-      //Debug("GetForSale",lSaleItems);
+      Debug("GetForSale",lSaleItems);
 
       if lSaleItems = $
       {
@@ -7650,7 +7650,7 @@ messages:
       {
          foreach i in lSaleItems
          {
-            //Debug(Send(i,@GetName),"is for sale (normal sale)");
+            Debug(Send(i,@GetName),"is for sale (normal sale)");
             Send(self,@ToCliObject,#what=i);
             iShillings = Send(what,@GetPrice,#type=&Shilling,#what=i,#who=self);
             iPlatinum = Send(what,@GetPrice,#type=&Platinum,#what=i,#who=self);

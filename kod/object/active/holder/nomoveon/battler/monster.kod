@@ -6419,6 +6419,11 @@ messages:
    DeleteForSaleList()
    {
       local i;
+
+      if IsClass(self,&Store)
+      {
+         return;
+      }
       
       if plFor_sale = $
       {

@@ -145,11 +145,19 @@ messages:
             #new_row=5,#new_col=6,#fine_row=48,#fine_col=56,
             #new_angle=ANGLE_EAST);
 
-      // Show a Marketplace sign in AERIE GUESTHOUSE kocinn.roo
-      //Send(self,@NewHold,#what=Create(&Store),
-      //     #new_row=2,#new_col=8,#fine_row=46,#fine_col=38,#new_angle=ANGLE_WEST);
-           
       propagate;
+   }
+
+   CreateMarketplace()
+   {
+      if Send(SYS,@IsMarketplaceEnabled)
+      {
+         // Show a Marketplace sign in AERIE GUESTHOUSE kocinn.roo
+         Send(self,@NewHold,#what=Create(&Store),
+            #new_row=2,#new_col=8,#fine_row=46,#fine_col=38,#new_angle=ANGLE_WEST);
+      }
+
+      return;
    }
 
    EnterRentableRoom(who=$)
