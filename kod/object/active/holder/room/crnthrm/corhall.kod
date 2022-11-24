@@ -86,12 +86,20 @@ messages:
             #new_row=5,#new_col=11,#fine_row=16,#fine_col=48);
       Send(self,@NewHold,#what=Create(&Brazier),
             #new_row=3,#new_col=2,#fine_row=56,#fine_col=16);
-
-      // Show a Marketplace sign in CN AH corhall.roo
-      //Send(self,@NewHold,#what=Create(&Store),
-      //     #new_row=9,#new_col=5,#fine_row=29,#fine_col=14,#new_angle=ANGLE_NORTH);
            
       propagate;
+   }
+
+   CreateMarketplace()
+   {
+      if Send(SYS,@IsMarketplaceEnabled)
+      {
+         // Show a Marketplace sign in CN AH corhall.roo
+         Send(self,@NewHold,#what=Create(&Store),
+            #new_row=9,#new_col=5,#fine_row=29,#fine_col=14,#new_angle=ANGLE_NORTH);
+      }
+
+      return;
    }
 
 end
