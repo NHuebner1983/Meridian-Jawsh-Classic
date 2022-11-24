@@ -17291,7 +17291,7 @@ messages:
             iRandomized = Random(1, piStamina);
          }
 
-         while piMax_Health < (100 + iRandomized)
+         while NOT Send(self, @IsMaxHP)
          {
             iLoopProtect = iLoopProtect + 1;
 
