@@ -2768,7 +2768,7 @@ messages:
       absolute=FALSE,precision=FALSE)
    {
       local iDamage, iResist, iPercentClass, i, each_obj;
-
+      
       if NOT precision
       {
          damage = damage * 100;

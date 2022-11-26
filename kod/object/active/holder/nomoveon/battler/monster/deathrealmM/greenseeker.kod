@@ -66,11 +66,14 @@ properties:
 
    piDrawEffectFlag = OF_BOUNCING
 
+   pbIsFlying = TRUE
+
 messages:
 
    Constructed()
    {
       plResistances = [ [-ATCK_SPELL_ACID, 80 ],
+                        [-ATCK_SPELL_QUAKE, 100 ],
                         [ATCK_WEAP_NERUDITE, -10 ],
                         [ATCK_WEAP_NONMAGIC, 80 ] ];
 

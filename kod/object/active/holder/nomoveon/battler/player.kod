@@ -3908,7 +3908,16 @@ messages:
 
    GetBaseMaxHealth()
    {
-      local iStamina;
+      local iStamina, iMaxHP, iStaminaMultiplier;
+      
+      if Send(SYS, @IsDeathRealmLaunched)
+      {
+         iMaxHP = MAX_HP;
+         iStaminaMultiplier = 2;
+      } else {
+         iMaxHP = 150;
+         iStaminaMultiplier = 1;
+      }
 
       iStamina = Send(self,@GetStamina);
 

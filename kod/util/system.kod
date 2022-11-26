@@ -796,6 +796,8 @@ messages:
       if NOT pbMigratedWeaponWandsToApprenticeWands
       {
          Send(self, @MigrateWeaponWandsToApprenticeWands);
+
+         pbMigratedWeaponWandsToApprenticeWands = TRUE;
       }
 
       ptMigrateDeprecatedTimer = $;
@@ -809,22 +811,6 @@ messages:
    {
       Send(&WeaponWand, @Migrate);
 
-      // local oPlayer, lWandsInventory;
-      
-      // foreach oPlayer in plUsers
-      // {
-      //    lWandsInventory = Send(oPlayer, @GetInventoryObjectsByClass, #class=&WeaponWand);
-
-      //    Debug(Send(oPlayer, @GetName), "has", Length(lWandsInventory), "in their inventory");
-      // }
-
-      return;
-   }
-
-   CreateApprenticeWandFromWeaponWand()
-   "Migration Function"
-   "Copies a Weapon Wand and turns it into an Apprentice Wand."
-   {
       return;
    }
 
