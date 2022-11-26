@@ -15,6 +15,10 @@ constants:
    include blakston.khd
    include protocol.khd
 
+   // When ready to launch the Death Realm Expansion, set to TRUE.
+   // WARNING: The only way back from this is rolling back Game Saves.
+   DEATH_REALM_EXPANSION_LAUNCHED = FALSE
+
    // sent by server
    SYSEVENT_GARBAGE = 1
    SYSEVENT_SAVE = 2
@@ -540,6 +544,10 @@ properties:
    // Migration timer
    ptMigrationTimer = $
 
+   // Migrate Deprecated Objects
+   ptMigrateDeprecatedTimer = $
+   pbMigratedWeaponWandsToApprenticeWands = FALSE
+
    plAttackTypes = $
    plSpellTypes = $
 
@@ -552,6 +560,13 @@ messages:
    GetName()
    {
       return system_name_rsc;
+   }
+
+   IsDeathRealmLaunched()
+   "Death Realm Expansion"
+   "See top of file for constant. Set to TRUE to launch. Warning message included up top."
+   {
+      return DEATH_REALM_EXPANSION_LAUNCHED;
    }
 
    DisableMarketplace()
@@ -774,6 +789,45 @@ messages:
       return;
    }
 
+   MigrateDeprecatedItems()
+   "Sometimes an object becomes deprecated and we decide to relocate it."
+   "This feature helps us migrate the inventory/storage/chest objects to their new version."
+   {
+      if NOT pbMigratedWeaponWandsToApprenticeWands
+      {
+         Send(self, @MigrateWeaponWandsToApprenticeWands);
+      }
+
+      ptMigrateDeprecatedTimer = $;
+
+      return;
+   }
+
+   MigrateWeaponWandsToApprenticeWands()
+   "Migration Function"
+   "Converts existing WeaponWand to ApprenticeWand and deletes WeaponWand from system."
+   {
+      Send(&WeaponWand, @Migrate);
+
+      // local oPlayer, lWandsInventory;
+      
+      // foreach oPlayer in plUsers
+      // {
+      //    lWandsInventory = Send(oPlayer, @GetInventoryObjectsByClass, #class=&WeaponWand);
+
+      //    Debug(Send(oPlayer, @GetName), "has", Length(lWandsInventory), "in their inventory");
+      // }
+
+      return;
+   }
+
+   CreateApprenticeWandFromWeaponWand()
+   "Migration Function"
+   "Copies a Weapon Wand and turns it into an Apprentice Wand."
+   {
+      return;
+   }
+
    CompareLists(lListA=$,lListB=$)
    "Single dimension list compare. Could upgrade to multi-dimension comparison..."
    {
@@ -905,6 +959,9 @@ messages:
          // Start migrating accounts in 1 second.
          ptMigrationTimer = CreateTimer(self, @MigrateShillingsToPlatinum, 1000);
       }
+
+      // Deprecated features can now be migrated safely.
+      ptMigrateDeprecatedTimer = CreateTimer(self, @MigrateDeprecatedItems, 3000);
 
       if lSavedFlagStates <> $
       {
@@ -6176,8 +6233,6 @@ messages:
       plItemTemplates = cons(create(&StoutGoblet),plItemTemplates);
       plItemTemplates = cons(create(&Mug),plItemTemplates);
       plItemTemplates = cons(create(&Waterskin),plItemTemplates);
-      plItemTemplates = cons(create(&TikiTribute),plItemTemplates);
-
       plItemTemplates = cons(create(&Mint),plItemTemplates);
       plItemTemplates = cons(create(&InkyCap),plItemTemplates);
       plItemTemplates = cons(create(&Snack),plItemTemplates);
@@ -6197,10 +6252,13 @@ messages:
       plItemTemplates = cons(create(&Orange),plItemTemplates);
       plItemTemplates = cons(create(&TeloFruit),plItemTemplates);
 
+      // Holidays
       plItemTemplates = cons(create(&EasterEgg),plItemTemplates);
-      plItemTemplates = cons(create(&TikiTribute),plItemTemplates);
       plItemTemplates = cons(create(&SteakMeal),plItemTemplates);
 
+      // Rememberance
+      plItemTemplates = cons(create(&TikiTribute),plItemTemplates);
+      
       // Head
       plItemTemplates = cons(create(&Helm),plItemTemplates);
       plItemTemplates = cons(create(&SimpleHelm),plItemTemplates);
@@ -6250,7 +6308,7 @@ messages:
       plItemTemplates = cons(create(&GoldenArrow),plItemTemplates);
       plItemTemplates = cons(create(&PracticeArrow),plItemTemplates);
 
-      // Weapons
+      // Weapons (Bows)
       plItemTemplates = cons(create(&MagicBow),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeBow),plItemTemplates);
       plItemTemplates = cons(create(&HolyBow),plItemTemplates);
@@ -6259,6 +6317,7 @@ messages:
       plItemTemplates = cons(create(&BattleBow),plItemTemplates);
       plItemTemplates = cons(create(&PracticeBow),plItemTemplates);   
 
+      // Weapons (One Handed)
       plItemTemplates = cons(create(&TestSword),plItemTemplates);
       plItemTemplates = cons(create(&HunterSword),plItemTemplates);
       plItemTemplates = cons(create(&GoldSword),plItemTemplates);
@@ -6278,8 +6337,11 @@ messages:
       plItemTemplates = cons(create(&Mace),plItemTemplates);
       plItemTemplates = cons(create(&PickAxe),plItemTemplates);
 
+      // Rods
       plItemTemplates = cons(create(&ShieldRod),plItemTemplates);
       plItemTemplates = cons(create(&DamageRod),plItemTemplates);
+
+      // Narcotics
       plItemTemplates = cons(create(&Weed),plItemTemplates);
       plItemTemplates = cons(create(&Weed2),plItemTemplates);
       plItemTemplates = cons(create(&Weed3),plItemTemplates);
@@ -6288,7 +6350,7 @@ messages:
       plItemTemplates = cons(create(&Weed6),plItemTemplates);
       plItemTemplates = cons(create(&Weed7),plItemTemplates);
 
-      //WizardGear
+      //Wizardry
       plItemTemplates = cons(create(&BaseWand),plItemTemplates);
       plItemTemplates = cons(create(&ApprenticeWand),plItemTemplates);
       plItemTemplates = cons(create(&MasterWand),plItemTemplates);

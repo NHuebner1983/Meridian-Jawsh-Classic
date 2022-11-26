@@ -2741,6 +2741,42 @@ messages:
 
       return $;
    }
+
+   GetInventoryObjectsByClass(class=$)
+   {
+      local oObj, lObjs;
+
+      lObjs = [];
+      
+      if class = $
+      {
+         return lObjs;
+      }
+      
+      if plActive <> $ AND Length(plActive)
+      {
+         foreach oObj in plActive
+         {
+            if IsClass(oObj, class)
+            {
+               lObjs = Cons(oObj, lObjs);
+            }
+         }
+      }
+      
+      if plPassive <> $ AND Length(plPassive)
+      {
+         foreach oObj in plPassive
+         {
+            if IsClass(oObj, class)
+            {
+               lObjs = Cons(oObj, lObjs);
+            }
+         }
+      }
+
+      return lObjs;
+   }
    
    GetInventory()
    {
@@ -2879,10 +2915,10 @@ messages:
    {
       local i, oObj, iBonus, iDefaultBonus, iTimespan;
 
-      if NOT pbExpansionAdjusted_DeathRealm
+      if Send(SYS, @IsDeathRealmLaunched) AND NOT pbExpansionAdjusted_DeathRealm
       {
          // Adjust character for DeathRealm Expansion
-         Send(self,@AdjustExpansionDeathRealm);
+         Send(self,@GainMaxHP,#force_max=TRUE);
       }
 
       SendList(plPassive, 0, @UserLogon);
@@ -17292,7 +17328,7 @@ messages:
             iRandomized = Random(1, piStamina);
          }
 
-         while piMax_Health < (100 + iRandomized)
+         while NOT Send(self, @IsMaxHP)
          {
             iLoopProtect = iLoopProtect + 1;
 
