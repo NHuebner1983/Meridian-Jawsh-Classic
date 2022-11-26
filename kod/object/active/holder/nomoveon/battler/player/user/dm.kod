@@ -1117,11 +1117,11 @@ messages:
       {
          // This prepares some loot for a character.
          lList = [
-            [Create(&WeaponWand,#school=1),$,$],
-            [Create(&WeaponWand,#school=2),$,$],
-            [Create(&WeaponWand,#school=3),$,$],
-            [Create(&WeaponWand,#school=4),$,$],
-            [Create(&WeaponWand,#school=5),$,$],
+            [Create(&ApprenticeWand,#school=1),$,$],
+            [Create(&ApprenticeWand,#school=2),$,$],
+            [Create(&ApprenticeWand,#school=3),$,$],
+            [Create(&ApprenticeWand,#school=4),$,$],
+            [Create(&ApprenticeWand,#school=5),$,$],
             [Create(&Wizardhat,#school=1),SID_HOLY_RESOLVE,$],
             [Create(&Wizardhat,#school=2),SID_UNHOLY_RESOLVE,$],
             [Create(&Wizardhat,#school=3),SID_DEFLECT,$],

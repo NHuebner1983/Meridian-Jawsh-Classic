@@ -2702,6 +2702,42 @@ messages:
 
       return $;
    }
+
+   GetInventoryObjectsByClass(class=$)
+   {
+      local oObj, lObjs;
+
+      lObjs = [];
+      
+      if class = $
+      {
+         return lObjs;
+      }
+      
+      if plActive <> $ AND Length(plActive)
+      {
+         foreach oObj in plActive
+         {
+            if IsClass(oObj, class)
+            {
+               lObjs = Cons(oObj, lObjs);
+            }
+         }
+      }
+      
+      if plPassive <> $ AND Length(plPassive)
+      {
+         foreach oObj in plPassive
+         {
+            if IsClass(oObj, class)
+            {
+               lObjs = Cons(oObj, lObjs);
+            }
+         }
+      }
+
+      return lObjs;
+   }
    
    GetInventory()
    {
