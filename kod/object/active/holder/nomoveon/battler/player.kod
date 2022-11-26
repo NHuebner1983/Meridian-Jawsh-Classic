@@ -745,6 +745,11 @@ resources:
    player_Debug_nokarma = "%s cannot learn %s due to karma restrictions."
    player_Debug_noway = "It is impossible for %s to ever get the %s spell."
 
+   player_mining_swing1 = swrdmtl1.ogg
+   player_mining_swing2 = swrdmtl2.ogg
+   player_mining_swing3 = block1.ogg
+   player_mining_swing4 = block2.ogg
+
    player_sound_sword1 = sword1.ogg
    player_sound_sword2 = sword2.ogg
    player_sound_sword3 = sword3.ogg
@@ -6837,13 +6842,13 @@ messages:
          if stroke_obj
          {
             if NOT Send(stroke_obj,@PlayerKilledSomethingMsg,#who=self,#victim=what)
-               AND self <> what
+               AND self <> what AND NOT IsClass(what, &Ore)
             {
                Send(self,@MsgSendUser,#message_rsc=player_killed_something,
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
             }
          }
-         else if self <> what
+         else if self <> what AND NOT IsClass(what, &Ore)
          {
             Send(self,@MsgSendUser,#message_rsc=player_killed_something,
                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
@@ -7239,6 +7244,31 @@ messages:
          return;
       }
 
+      if IsClass(what, &Ore)
+      {
+         // Diggie's Mining Patch
+         iRoll = Random(1,4);
+
+         switch(iRoll) {
+            case 1:
+               rSound = player_mining_swing1;
+            break;
+            case 2:
+               rSound = player_mining_swing2;
+            break;
+            case 3:
+               rSound = player_mining_swing3;
+            break;
+            case 4:
+               rSound = player_mining_swing4;
+            break;
+         }
+
+         Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=rSound);
+
+         return;
+      }
+
       if IsClass(what,&Monster)
       {
          if damage <> $
@@ -7378,6 +7408,7 @@ messages:
       }
 
       iRoll = Random(1,3);
+
       if iRoll = 1
       {
          rSound = player_sound_hit_monster_metal1;
@@ -7393,14 +7424,14 @@ messages:
             rSound = player_sound_hit_monster_metal3;
          }
       }
-
+   
       Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=rSound);
 
       if IsClass(what,&Player)
       {
          Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=Send(what,@GetOuchSound));
       }
-
+   
       return;
    }
 
@@ -10194,14 +10225,14 @@ messages:
       {
          // Set a reasonable upper bound to handle event characters.
          monster_level = Bound(Send(what,@GetBaseMaxHealth),MIN_HP,1000);
-		 iBonusXP = 0;
-		 iBonusTP = 0;
+         iBonusXP = 0;
+         iBonusTP = 0;
       }
       else
       {
          monster_level = Send(what,@GetLevel);
-		 iBonusXP = Send(what,@GetBonusXP);
-		 iBonusTP = Send(what,@GetBonusTP);
+         iBonusXP = Send(what,@GetBonusXP);
+         iBonusTP = Send(what,@GetBonusTP);
       }
 
       if ((piFlags & PFLAG_DID_DAMAGE)
@@ -10293,7 +10324,7 @@ messages:
                iXP = monster_level / 10;
             }
          }
-         else if Random(1,100) < 30 AND killing_blow
+         else if Random(1,100) < 30 AND killing_blow AND (what = $ OR (what <> $ AND NOT IsClass(what, &Ore)))
          {
             // Monster was too easy for player to kill!
             Send(self,@MsgSendUser,#message_rsc=player_spits);
@@ -10415,7 +10446,7 @@ messages:
 
          // Let the player know how many training points they have, if they
          // either reached the max, or a multiple of 100.
-         if piTraining_points > 999
+         if piTraining_points > 999 AND (what = $ OR (what <> $ AND NOT IsClass(what, &Ore)))
          {
 		    // Always notify the user they are over max TP.
             Send(self,@MsgSendUser,#message_rsc=player_reached_maxtraining,

@@ -262,6 +262,12 @@ messages:
       iNumberItems = (Send(SETTINGS_OBJECT,@GetItemFactor) * iNumberItems) / 100;
       iNumberItems = Bound(iNumberItems,1,$);
 
+      if mob <> $ AND IsClass(mob, &Ore)
+      {
+         // Set Mined Treasure to 20 quantity.
+         iNumberItems = 20;
+      }
+
       tokengen = TRUE;
       i = 1;
 

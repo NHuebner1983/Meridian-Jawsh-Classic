@@ -130,6 +130,12 @@ resources:
    Lm_fourth_damage_level = "~B~r%s%s is weak, and near death."
    Lm_party_killed_monster = "~B%s%s has valiantly slain %s%s!"
 
+   Lm_ore_first_damage_level = "~B~r%s%s shows signs of cracking."
+   Lm_ore_second_damage_level = "~B~r%s%s starts to split in half."
+   Lm_ore_third_damage_level = "~B~r%s%s cracks into several pieces."
+   Lm_ore_fourth_damage_level = "~B~r%s%s begins to crumble."
+   Lm_ore_party_killed = "~B%s%s has mined %s%s!"
+
    Lm_monster_healing = \
       "%s%s falls back to recover for a moment, then returns to the fight."
 
@@ -231,6 +237,8 @@ resources:
    monster_default_attack = "attack"
    minion_trouble = \
       "You sense your minion has gotten you into some trouble..."
+   
+   autolooted_ore = "You gather several fragments from the pile."
 
    autolooted_all = "You loot the corpse clean and gather some useful items and shillings."
    autolooted_all_no_money = "You loot the corpse clean."
@@ -383,6 +391,12 @@ classvars:
    vrThird_damage_level = Lm_third_damage_level
    vrFourth_damage_level = Lm_fourth_damage_level
    vrParty_killed_monster = Lm_party_killed_monster
+
+   vrFirst_ore_damage_level = Lm_ore_first_damage_level
+   vrSecond_ore_damage_level = Lm_ore_second_damage_level
+   vrThird_ore_damage_level = Lm_ore_third_damage_level
+   vrFourth_ore_damage_level = Lm_ore_fourth_damage_level
+   vrParty_ore_killed = Lm_ore_party_killed
 
    vrFirst_minion_damage_level = Lm_minion_first_damage_level
    vrSecond_minion_damage_level = Lm_minion_second_damage_level
@@ -2767,7 +2781,7 @@ messages:
    AssessDamage(what=$,damage=$,atype=0,aspell=0,bonus=0,scalefactor=1000,
       absolute=FALSE,precision=FALSE)
    {
-      local iDamage, iResist, iPercentClass, i, each_obj;
+      local iDamage, iResist, iPercentClass, i, each_obj, rPartyKillMessage;
       
       if NOT precision
       {
@@ -2838,8 +2852,15 @@ messages:
                AND each_obj <> what
                AND Send(each_obj,@GetKillTarget)=self
             {
+               if IsClass(self, &Ore)
+               {
+                  rPartyKillMessage = vrParty_ore_killed;
+               } else {
+                  rPartyKillMessage = vrParty_killed_monster;
+               }
+
                Post(each_obj,@MsgSendUser,#what=self,
-                     #message_rsc=vrParty_killed_monster,
+                     #message_rsc=rPartyKillMessage,
                      #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName),
                      #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
             }
@@ -5855,21 +5876,41 @@ messages:
       {
          rDamage_report = vrFirst_damage_level;
          rDamage_report_minion = vrFirst_minion_damage_level;
+         
+         if IsClass(self, &Ore)
+         {
+            rDamage_report = vrFirst_ore_damage_level;
+         }
       }
       else if iThreshold = 2
       {
          rDamage_report = vrSecond_damage_level;
          rDamage_report_minion = vrSecond_minion_damage_level;
+
+         if IsClass(self, &Ore)
+         {
+            rDamage_report = vrSecond_ore_damage_level;
+         }
       }
       else if iThreshold = 1
       {
          rDamage_report = vrThird_damage_level;
          rDamage_report_minion = vrThird_minion_damage_level;
+
+         if IsClass(self, &Ore)
+         {
+            rDamage_report = vrThird_ore_damage_level;
+         }
       }
       else
       {
          rDamage_report = vrFourth_damage_level;
          rDamage_report_minion = vrFourth_minion_damage_level;
+
+         if IsClass(self, &Ore)
+         {
+            rDamage_report = vrFourth_ore_damage_level;
+         }
       }
       
       if IsClass(self, &Servant) AND poMaster <> $
@@ -7454,7 +7495,12 @@ messages:
                   }
                   else
                   {
-                     Send(who,@MsgSendUser,#message_rsc=autolooted_all_no_money);
+                     if IsClass(self, &Ore)
+                     {
+                        Send(who,@MsgSendUser,#message_rsc=autolooted_ore);
+                     } else {
+                        Send(who,@MsgSendUser,#message_rsc=autolooted_all_no_money);  
+                     }
                   }
                }
                else if iNumberOfItemsLooted < iNumberOfItemsDropped

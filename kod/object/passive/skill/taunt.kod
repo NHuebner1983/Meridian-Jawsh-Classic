@@ -107,6 +107,12 @@ messages:
    {
       local iReqStat, iAbil, iModifier, oOppWeapon, oHoldSpell, rTauntMsg;
 
+      if oTarget <> $ AND IsClass(oTarget, &Ore)
+      {
+         // We can't taunt a rock...
+         return FALSE;
+      }
+
       if who = $
       {
          Debug("DoSkill called with bad who.");

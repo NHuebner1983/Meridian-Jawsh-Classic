@@ -42,6 +42,7 @@ resources:
    // battler_defender_miss - Psychochild's attack is blocked by you.
    // battler_defender_fail - Psychochild's scimitar scrapes you, failing to cause any real harm.
 
+   battler_hit_ore = "You swing your pickaxe and land a sturdy hit."
    battler_attacker_hit = "%sYour %s %s %s%q for ~k~B%i~B%s damage."
    battler_attacker_slay = "%sYour %s %s %s%q."
    battler_attacker_miss = "%sYour attack %s %s%q."
@@ -1423,19 +1424,25 @@ messages:
             }
             else if damage > 99
             {
-               if (IsClass(what,&User))
+               if what <> $ AND IsClass(what, &Ore)
                {
-                  Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
-                        #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-                        #parm4=Send(what,@GetDef),#type5=STRING_RESOURCE,
-                        #parm5=Send(what,@GetName),#parm6=damage/100,#parm7=rColor);
-               }
-               else
-               {
-                  Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit_mob,
-                        #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-                        #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
-                        #parm6=damage/100,#parm7=rColor);
+                  // I be minining!
+                  Send(self,@MsgSendUser,#message_rsc=battler_hit_ore);
+               } else {
+                  if (IsClass(what,&User))
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
+                           #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                           #parm4=Send(what,@GetDef),#type5=STRING_RESOURCE,
+                           #parm5=Send(what,@GetName),#parm6=damage/100,#parm7=rColor);
+                  }
+                  else
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit_mob,
+                           #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                           #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
+                           #parm6=damage/100,#parm7=rColor);
+                  }
                }
             }
             else
