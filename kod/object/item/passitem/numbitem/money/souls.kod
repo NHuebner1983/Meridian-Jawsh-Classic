@@ -1,0 +1,55 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Souls is Money
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   souls_name_rsc = "contained soul"
+   souls_icon_rsc = souls.bgf
+   souls_desc_rsc = \
+   "This is a vial of contained souls captured by the creatures of this land. "
+   "We don't know what they want with them, unsure if there food or just "
+   "a trinket of there cruelty. I'm sure there valuable regardless.  "
+
+   souls_name_plural_rsc = "contained souls"
+
+classvars:
+
+   vrName = souls_name_rsc
+   vrIcon = souls_icon_rsc
+   vrDesc = souls_desc_rsc
+
+   vrName_plural = souls_name_plural_rsc
+
+   viBulk = 0
+   viWeight = 0
+
+   viValue_average = 1
+
+   viUse_type = ITEM_CANT_USE
+   viItem_type = ITEMTYPE_MONEY
+
+   viGround_group = 1
+   viInventory_group = 1
+
+properties:
+
+   viObject_flags = OF_GETTABLE
+   piNumber = 1
+
+messages:
+
+end
+////////////////////////////////////////////////////////////////////////////////

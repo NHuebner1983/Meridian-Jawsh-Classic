@@ -56,6 +56,7 @@ resources:
 
    // Commands
    dm_portal = "portal"
+   dm_smite_monsters = "smite"
    dm_makemonster = "monster"
    dm_makemonsters = "monsters"
    dm_event_sign_command = "event sign"
@@ -118,8 +119,11 @@ resources:
    dm_currently_in = "The ROO for `b%s`n is `k`B%s`n.  The room number is %i."
    dm_currently_at = \
       "Your Location is: `bRow: `k`B%i`n `bCol: `k`B%i`n `bfRow: `k`B%i`n "
-      "`bfCol: `k`B%i`n `bHeight: `k`B%i`n."
-
+      "`bfCol: `k`B%i`n `bHeight: `k`B%i`n `bSectorID: `k`B%i`n."
+   
+   dm_message_get_object_place = \
+      "Send(self,@NewHold,#what=Create(&NOTHING),#new_row=%i,#new_col=%i,#fine_row=%i,#fine_col=%i);"
+   
    // dm_disguise_command uses StringSubstitute, do not add separate language
    // string for this resource as it won't be substituted correctly.
    dm_disguise_command = "disguise"
@@ -1117,11 +1121,11 @@ messages:
       {
          // This prepares some loot for a character.
          lList = [
-            [Create(&WeaponWand,#school=1),$,$],
-            [Create(&WeaponWand,#school=2),$,$],
-            [Create(&WeaponWand,#school=3),$,$],
-            [Create(&WeaponWand,#school=4),$,$],
-            [Create(&WeaponWand,#school=5),$,$],
+            [Create(&ApprenticeWand,#school=1),$,$],
+            [Create(&ApprenticeWand,#school=2),$,$],
+            [Create(&ApprenticeWand,#school=3),$,$],
+            [Create(&ApprenticeWand,#school=4),$,$],
+            [Create(&ApprenticeWand,#school=5),$,$],
             [Create(&Wizardhat,#school=1),SID_HOLY_RESOLVE,$],
             [Create(&Wizardhat,#school=2),SID_UNHOLY_RESOLVE,$],
             [Create(&Wizardhat,#school=3),SID_DEFLECT,$],
@@ -1341,8 +1345,15 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=dm_currently_at,
                #parm1=piRow,#parm2=piCol,
                #parm3=piFine_Row,#parm4=piFine_Col,
-               #parm5=Send(self,@GetHeightFloorAtObjectBSP));
+               #parm5=Send(self,@GetHeightFloorAtObjectBSP),
+			   #parm6=Send(self,@GetSectorID));
 
+         return;
+      }
+
+      if StringEqual(string,"get objectplace")
+      {
+         Send(self,@DMSayObjectPlace);
          return;
       }
 
@@ -1578,6 +1589,12 @@ messages:
       {
 	     Send(self,@DMSayPortal,#string=string);
 	  }
+	  
+	  // Smite all monsters (allows you to gain HP without having to kill the monsters with spells or weapons)
+	  if StringContain(string, dm_smite_monsters)
+	  {
+	     Send(self,@DMSaySmiteMonsters);
+	  }
 
       // Monster making command.
       // DMs with DMFLAG_ALLOW_CREATE_MOB can create anything, DMs with
@@ -1711,13 +1728,13 @@ messages:
 
          piMightMod = 20;
          piIntellectMod = 20;
-         piStaminaMod = 20;
+         //piStaminaMod = 20; // Commented out to be natural HP with other players.
          piAgilityMod = 20;
          piMysticismMod = 20;
          piAimMod = 20;
 
          piVigor = 200;
-         Send(self,@GainBaseMaxHealth,#amount=150-piBase_max_health);
+         Send(self,@GainBaseMaxHealth,#amount=MAX_HP-piBase_max_health);
          Send(self,@ResetXPToLevel);
          Send(self,@NewMaxMana,#amount=200-piMax_mana);
 
@@ -1964,6 +1981,15 @@ messages:
 
 #region DM Say Command Handling
 
+   DMSayObjectPlace()
+   {
+	  Send(self,@MsgSendUser,#message_rsc=dm_message_get_object_place,
+		   #parm1=piRow,#parm2=piCol,
+		   #parm3=piFine_Row,#parm4=piFine_Col);
+		   
+	  return;
+   }
+   
    DMSayDetectInvis(string=$)
    {
       local i, iCount, oSpell, lEnchanted, oUser;
@@ -2623,6 +2649,22 @@ messages:
       }
 
       return;
+   }
+   
+   DMSaySmiteMonsters()
+   {
+      local i;
+
+      foreach i in Send(poOwner,@GetHolderActive)
+      {
+	     if IsClass(First(i), &Monster)
+		 {
+            Send(First(i),@Killed,#what=self);
+		    Send(self,@AddXP,#iAmount=5000);
+		 }
+      }
+
+      return;   
    }
 
    DMSayMakeMonster(string=$)

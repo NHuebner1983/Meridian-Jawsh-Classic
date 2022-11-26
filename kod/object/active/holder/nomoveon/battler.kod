@@ -209,6 +209,10 @@ properties:
    // 20 seconds default for players, 60 for monsters
    piHurtMeTime = 20000
 
+   // Whether the battler is above the ground
+   // Hint: Earthquake does not affect them.
+   pbIsFlying = FALSE
+
 messages:
 
    // The first lump of code here deals with resistances and immunities/etc.

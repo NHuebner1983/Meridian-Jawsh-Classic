@@ -18,10 +18,29 @@ BGFS = neeleme.bgf neelemeX.bgf iunholyt.bgf xeoneru.bgf xeoneruX.bgf \
        corncob.bgf cornbasket.bgf mashtaters.bgf stuffing.bgf turkey.bgf ham.bgf \
        hamslices.bgf rouladen.bgf pumpslice.bgf pumppie.bgf pecanslice.bgf \
        pecanpie.bgf indianhat.bgf indianhatF.bgf pilgrimhat.bgf pilgrimhatF.bgf \
-       ogre.bgf ogreX.bgf wizardhat.bgf wizardhatF.bgf \
+       ogre.bgf ogreX.bgf wizardhat.bgf wizardhatF.bgf headless.bgf key1.bgf \
+       key2.bgf key3.bgf key4.bgf key5.bgf key6.bgf key7.bgf souls.bgf vajra.bgf \
+       vajraX.bgf chimera.bgf chimeraX.bgf cyclops.bgf cyclopsX.bgf followerofqor.bgf \
+       followerofqorX.bgf minotaurb.bgf minotaurbX.bgf wasp.bgf waspX.bgf tyrant.bgf \
+       tyrantX.bgf fallenmonk.bgf fallenmonkX.bgf vozun.bgf vozunX.bgf croco.bgf \
+       crocoX.bgf dulahan.bgf dulahanX.bgf grandpatrent.bgf grandpatrentX.bgf \
+       spitter.bgf spitterX.bgf crusher.bgf crusherX.bgf frenzy.bgf frenzyX.bgf \
+       hydrab.bgf hydrabX.bgf hydrag.bgf hydragX.bgf hydrar.bgf hydrarX.bgf hydray.bgf \
+       hydrayX.bgf greyseeker.bgf greenseeker.bgf brownseeker.bgf dthmitea.bgf dthmiteaX.bgf \
+       dthmiteb.bgf dthmitebX.bgf dthmitec.bgf dthmitecX.bgf dthmited.bgf dthmitedX.bgf \
+       reavera.bgf reaveraX.bgf reaverb.bgf reaverbX.bgf reaverc.bgf reavercX.bgf \
        farenservantspell.bgf jalaservantspell.bgf kranservantspell.bgf qorservantspell.bgf \
-       riijaservantspell.bgf shalservantspell.bgf captain.bgf riijafol.bgf riijafolX.bgf \
-       shalliege.bgf minotaur.bgf
+       riijaservantspell.bgf shalservantspell.bgf captain.bgf snake.bgf snakeX.bgf whelm.bgf \
+       whelmb.bgf warhelm.bgf warhelmb.bgf shades.bgf shadesb.bgf silskllmask.bgf silskllmaskb.bgf \
+       riijafol.bgf riijafolX.bgf shalliege.bgf legionhelm.bgf legionhelmb.bgf goldnecklace.bgf \
+       croco.bgf crocoX.bgf vozun.bgf vozunX.bgf hellwasp.bgf hellwaspX.bgf seekerc.bgf seekercX.bgf \
+       lightsw.bgf lightswov.bgf povlightsw.bgf bersaxe.bgf bersaxeov.bgf povbersaxe.bgf seekera.bgf \
+	seekeraX.bgf seekerb.bgf seekerbX.bgf neruaxe.bgf neruaxeov.bgf povneruaxe.bgf khelm.bgf khelmb.bgf \
+	scale.bgf blkhyhead.bgf goldhyhead.bgf grnhyhead.bgf redhyhead.bgf tyranthorns.bgf venom.bgf \
+	twnbladov.bgf twnblad.bgf povtwnblad.bgf mountgolem.bgf mountgolemX.bgf amoeba.bgf amoebaX.bgf \
+	steakmeal.bgf masterwand.bgf masterwandov.bgf povmastwand.bgf pickaxe.bgf pickaxeov.bgf povpickaxe.bgf \
+	qorcite.bgf emeraldvein.bgf diamondvein.bgf sapphirevein.bgf rubyvein.bgf uncutvein.bgf orevein.bgf \
+	neruorevein.bof minotaur.bgf
 
 !include $(RESOURCEDIR)\copy.mak
 

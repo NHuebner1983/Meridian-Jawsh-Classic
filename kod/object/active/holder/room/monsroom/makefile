@@ -19,10 +19,9 @@ BOFS =  badland1.bof a5.bof a6.bof c4.bof c6.bof castle1b.bof d4.bof d5.bof \
         necarea3.bof necare3a.bof necare3b.bof necarea4.bof necarea5.bof \
         marcryp1.bof marcryp2.bof marcry3a.bof castle2b.bof castle2c.bof \
         throne2.bof survivalroom.bof castle1d.bof tossecret.bof farolwest.bof \
-        razaforest.bof oldtown.bof d6e6.bof necarea6.bof \
-        d6e7ulake.bof d6e6ulake.bof \
-        ograsaur.bof \
-        
+        razaforest.bof oldtown.bof d6e6.bof d6e6ulake.bof necarea6.bof deathrealm.bof \
+        marcryp4.bof d6e7ulake.bof ograsaur.bof
+
 #       g7.bof h8.bof i2.bof i4.bof i5.bof \
 #       j4.bof j5.bof j6.bof j7.bof j8.bof j9.bof k3.bof \
 #       k4.bof k5.bof k6.bof k7.bof k8.bof l2.bof l3.bof l4.bof l5.bof l6.bof \

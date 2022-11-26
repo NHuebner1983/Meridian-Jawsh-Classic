@@ -1,0 +1,89 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+Ore is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Ore_name_rsc = "ore vein"
+   Ore_icon_rsc = orevein.bgf
+   Ore_desc_rsc = \
+      "A giant hunk of rock, possibly containing usefull ore. "
+
+   ore_dead_icon_rsc = dirtpile.bgf
+   ore_dead_name_rsc = "empty vein"
+
+   Ore_cannot_hit = \
+      "Your weapon is not suitable for mining. "
+
+classvars:
+
+   vrName = Ore_name_rsc
+   vrIcon = Ore_icon_rsc
+   vrDesc = Ore_desc_rsc
+   vrDead_icon = ore_dead_icon_rsc
+   vrDead_name = ore_dead_name_rsc
+
+   viTreasure_type = TID_ORE
+   viAttributes = 0
+   viLevel = 40
+   viDifficulty = 10
+   viKarma = 0
+   viDefault_behavior = MOB_NOMOVE
+   viCashmin = 0
+   viCashmax = 0
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_ONCE);
+      AddPacket(4,400,2,1,2,1,2,1);
+
+      return;
+   }
+
+   CanMonsterFight(who=$, oStroke = $, use_weapon = $)
+   {
+      if (oStroke <> $)
+         AND (IsClass(oStroke,&DMSpell) OR IsClass(oStroke,&Smite))
+      {
+         return TRUE;
+      }
+
+      if use_weapon = $
+         OR NOT (
+               IsClass(use_weapon,&PickAxe)
+               OR IsClass(who, &DM)
+            )
+      {
+         Send(who,@MsgSendUser,#message_rsc=Ore_cannot_hit);
+
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

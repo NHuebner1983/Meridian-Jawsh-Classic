@@ -1195,6 +1195,11 @@ properties:
    
    // Number of monsters killed as NPCPlayer
    piMonstersKilledAsNPC = 0
+
+
+   // Expansion Adjustments
+   // When a new expansion is released, some modifications need to happen to the player when they logon.
+   pbExpansionAdjusted_DeathRealm = FALSE
    
    // When the player goofs up, like jumping off a cliff in Pog King Layer.
    pbKillingPlayer = FALSE
@@ -1568,11 +1573,45 @@ messages:
 		 }
 	  }
 
-	  //Debug("Anything delete?",class);
-	  
       return;
    }
    
+   GetSectorID()
+   "Gets the sector tag ID in this room for the given location.  Returns -1 on "
+   "error, as valid tags are all >= 0."
+   {
+      local iQflags, iRflags, iHeightF, iHeightFWD, iHeightC, iServerID, row, col, fine_row, fine_col;
+	  
+	  row = piRow;
+	  col = piCol;
+	  fine_col = piFine_col;
+	  fine_row = piFine_row;
+
+	 Debug("GetSectorID called for room ",
+		   Send(poOwner,@GetName));
+
+      if (row = $ OR col = $)
+      {
+         Debug("GetSectorIDAtLocation called with $ params for room ",
+               Send(poOwner,@GetName));
+
+         return -1;
+      }
+      // set query-flags, here we're only interested in the sectorinfo
+      iQflags = LIQ_GET_SECTORINFO;
+
+      // query data from bsp in c-function
+      if NOT GetLocationInfoBSP(send(poOwner, @GetRoomData), iQflags, row, col, fine_row, fine_col,
+                  *iRflags, *iHeightF, *iHeightFWD, *iHeightC, *iServerID)
+      {
+         Debug("Failed to get location info in ", Send(poOwner,@GetName));
+
+         return -1;
+      }
+
+      return iServerID;
+   }
+
    //// Player flags
 
    SetDMFlag()
@@ -2702,6 +2741,42 @@ messages:
 
       return $;
    }
+
+   GetInventoryObjectsByClass(class=$)
+   {
+      local oObj, lObjs;
+
+      lObjs = [];
+      
+      if class = $
+      {
+         return lObjs;
+      }
+      
+      if plActive <> $ AND Length(plActive)
+      {
+         foreach oObj in plActive
+         {
+            if IsClass(oObj, class)
+            {
+               lObjs = Cons(oObj, lObjs);
+            }
+         }
+      }
+      
+      if plPassive <> $ AND Length(plPassive)
+      {
+         foreach oObj in plPassive
+         {
+            if IsClass(oObj, class)
+            {
+               lObjs = Cons(oObj, lObjs);
+            }
+         }
+      }
+
+      return lObjs;
+   }
    
    GetInventory()
    {
@@ -2839,6 +2914,12 @@ messages:
    UserLogonHook()
    {
       local i, oObj, iBonus, iDefaultBonus, iTimespan;
+
+      if Send(SYS, @IsDeathRealmLaunched) AND NOT pbExpansionAdjusted_DeathRealm
+      {
+         // Adjust character for DeathRealm Expansion
+         Send(self,@GainMaxHP,#force_max=TRUE);
+      }
 
       SendList(plPassive, 0, @UserLogon);
       SendList(plActive, 0, @UserLogon);
@@ -3279,7 +3360,7 @@ messages:
       Send(self,@ResetCharacter);
 
       // Setup default stuff
-
+	  
       Send(self,@AddDefaultSpells);
       Send(self,@AddDefaultSkills);
 
@@ -3406,6 +3487,23 @@ messages:
       piTimeAttackedPlayer = 0;
       piTimeAttackedByPlayer = 0;
       piTimeLastMurder = 0;
+
+	  if IsClass(self, &DM)
+	  {
+	     // Prepare DM
+         piVigor = 200;
+		 piStamina = 50;
+         Send(self,@GainBaseMaxHealth,#amount=150-piBase_max_health);
+         Send(self,@ResetXPToLevel);
+         Send(self,@NewMaxMana,#amount=200-piMax_mana);
+         Send(self,@GainHealth,#amount=piMax_health*100-piHealth,#precision=TRUE);
+         Send(self,@GainMana,#amount=piMax_mana-piMana);
+         Send(self,@EvaluatePKStatus);
+         Send(self,@PlayerIsIntriguing);
+         Send(self,@NewVigor);
+		 
+		 Debug("New admin has logged into the game: ", Send(self,@GetName));
+	  }
 
       return;
    }
@@ -3810,13 +3908,22 @@ messages:
 
    GetBaseMaxHealth()
    {
-      local iStamina;
+      local iStamina, iMaxHP, iStaminaMultiplier;
+      
+      if Send(SYS, @IsDeathRealmLaunched)
+      {
+         iMaxHP = MAX_HP;
+         iStaminaMultiplier = 2;
+      } else {
+         iMaxHP = 150;
+         iStaminaMultiplier = 1;
+      }
 
       iStamina = Send(self,@GetStamina);
 
       // Bound twice - once for max HP this player can get, once for
       // max HP allowable by the game.
-      return Bound(Bound(piBase_max_health,MIN_HP,100 + iStamina),MIN_HP,MAX_HP);
+      return Bound(Bound(piBase_max_health,MIN_HP,101 + (iStamina*2)),MIN_HP,MAX_HP);
    }
 
    GetUncappedBaseMaxHealth()
@@ -6374,7 +6481,7 @@ messages:
          color_rsc = player_hit_color_blue;
       }
 
-      if NOT absolute
+      if what <> $ AND NOT absolute
       {
          // Armor of Gort has a special effect that must go first
          oGort = Send(SYS,@FindSpellByNum,#Num=SID_ARMOR_OF_GORT);
@@ -6483,14 +6590,14 @@ messages:
          }
       }
 
-      if IsClass(what,&Monster)
+      if what <> $ AND IsClass(what,&Monster)
       {
          RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),
             Send(what,@GetTrueName),aspell,atype,damage/100,origdamage,
             player_monster_attack_string);
       }
 
-      if IsClass(what,&Player)
+      if what <> $ AND IsClass(what,&Player)
       {
          oWeapon = Send(what,@GetWeapon);
          if oWeapon <> $
@@ -6509,7 +6616,7 @@ messages:
 
       Send(self,@LoseHealth,#amount=damage,#precision=TRUE);
 
-      if piHealth <= 0
+      if what <> $ AND piHealth <= 0
       {
          if stroke_obj = $
             OR NOT Send(stroke_obj,@PlayerWasKilledMsg,#who=self,
@@ -6527,18 +6634,18 @@ messages:
       }
 
       // flip flag for possible HP gain.
-      if poKill_target = $
+      if what <> $ AND poKill_target = $
       {
          poKill_target = what;
       }
 
-      if what = poKill_target AND damage > 0
+      if what <> $ AND what = poKill_target AND damage > 0
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_TOOK_DAMAGE,#value=TRUE);
       }
 
       // Should we print resistance message?
-      if report_resistance
+      if what <> $ AND report_resistance
       {
          if IsClass(what,&User)
          {
@@ -6552,12 +6659,15 @@ messages:
 
       // Report to shrunken head
       shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-      if damage > 0 AND shrunken <> $
+      if what <> $ AND damage > 0 AND shrunken <> $
       {
          Send(shrunken,@DamageTaken,#what=what,#amount=damage/100);
       }
       
-      Send(self,@AddHurtMeRecently,#who=what,#amount=damage);
+	  if what <> $
+	  {
+         Send(self,@AddHurtMeRecently,#who=what,#amount=damage);
+	  }
 
       return damage;
    }
@@ -7640,6 +7750,11 @@ messages:
       return [iShillings, iPlatinum];
    }
 
+   GetSoulsObject()
+   {
+      return GetListElemByClass(plPassive,&Souls);
+   }
+
    // Returns wielded Melee/Ranged weapon.
    LookupPlayerWeapon()
    {
@@ -7808,7 +7923,7 @@ messages:
       // Faster regen with higher vigor
       iTime = ((200-piVigor)*(200-piVigor))/6 + 500;
 
-      iTime = ((125-Send(self,@GetStamina)) * iTime)/100;
+      iTime = ((125-(Send(self,@GetStamina)*2)) * iTime)/100;
       iMaxHealth = bound(piMax_health,40,100);
       iTime = (iTime *100)/iMaxHealth;
 
@@ -10161,7 +10276,7 @@ messages:
 
             // Add stamina modifier here.
             // 1// bonus for 1 stamina, 70// bonus for 70 stamina.
-            iXP += iXP * Send(self,@GetStamina) / 100;
+            iXP += iXP * (Send(self,@GetStamina)*2) / 100;
          }
          else if (monster_level + 5) > iMaxHealth
                AND IsClass(what,&Monster) AND killing_blow
@@ -10273,7 +10388,11 @@ messages:
                + (Send(what,@GetBoostedLevel)
                / Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalTP));
 
-            if monster_level > 150
+            if monster_level > 151
+            {
+               piTraining_points = piTraining_points + 12;
+            }
+            else if monster_level > 150
             {
                piTraining_points = piTraining_points + 9;
             }
@@ -10540,7 +10659,7 @@ messages:
 
    CheckValidHP()
    {
-      if (piMax_health > 100 + Send(self,@GetStamina))
+      if (piMax_health > 100 + (Send(self,@GetStamina)*2))
       {
          Debug(Send(self,@GetTrueName)," has ",piMax_health," HP with ",
                Send(self,@GetStamina)," stamina.");
@@ -10798,8 +10917,8 @@ messages:
       i = GetListElemByClass(plUsing,&Token);
       if i <> $
       {
-         bNo_drop_death = TRUE;
-         piDeathCost = FALSE;
+         bNo_drop_death = FALSE;
+         piDeathCost = TRUE;
          Send(self,@MsgSendUser,#message_rsc=player_token_death);
          Send(i,@NewUnused,#what=self,#where=oRoom);
       }
@@ -10907,6 +11026,9 @@ messages:
             oItem = Create(&Mace);
             oItemAtt = Send(SYS,@FindItemAttByNum,#Num=IA_MADE);
             Send(oItemAtt,@AddtoItem,#oitem=oItem,#timer_duration=18000000);
+            Send(self,@NewHold,#what=oItem);
+
+            oItem = Create(&Torch);
             Send(self,@NewHold,#what=oItem);
          }
       }
@@ -11113,7 +11235,7 @@ messages:
       foreach i in plSkills
       {
          if Send(self,@DecodeSkillAbility,#compound=i) > 5
-            AND Random(1,100) > Send(self,@GetStamina)
+            AND Random(1,100) > (Send(self,@GetStamina)*2)
             AND Random(1,100) < piDeathCost
          {
             Send(self,@ChangeSkillAbility,#skill_num=Send(self,@DecodeSpellNum,
@@ -12877,7 +12999,7 @@ messages:
       }
 
       Send(self,@BreakTrance,#event=EVENT_REST);
-      ptRest = CreateTimer(self,@RestTimer,Send(self,@GetRestTime));
+      ptRest = CreateTimer(self,@RestTimer,Bound(Send(self,@GetRestTime), 1, 9999999));
       Send(self,@ResetPlayerFlagList);
 
       return;
@@ -12893,7 +13015,7 @@ messages:
    {
       local iTime;
 
-      iTime = 1000 + (30* (51-Send(self,@GetStamina)));
+      iTime = 1000 + (30* (51-(Send(self,@GetStamina)*2)));
 
       return iTime;
    }
@@ -17215,7 +17337,7 @@ messages:
             iRandomized = Random(1, piStamina);
          }
 
-         while piMax_Health < (100 + iRandomized)
+         while NOT Send(self, @IsMaxHP)
          {
             iLoopProtect = iLoopProtect + 1;
 

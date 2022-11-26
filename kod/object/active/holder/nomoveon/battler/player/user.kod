@@ -6219,12 +6219,12 @@ messages:
          string = psPlayerDescription;
       }
 
-      if StringContain(psPlayerDescription,"¶")
+      if StringContain(psPlayerDescription,"Â¶")
       {
          iCount = 0;
-         while StringContain(psPlayerDescription,"¶")
+         while StringContain(psPlayerDescription,"Â¶")
          {
-            StringSubstitute(psPlayerDescription,"¶","");
+            StringSubstitute(psPlayerDescription,"Â¶","");
             if ++iCount > 10
             {
                // At this point, it's malicious.

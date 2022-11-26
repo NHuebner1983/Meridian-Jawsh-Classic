@@ -1,0 +1,52 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+DeathRealmMaze is DeathRealm
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_DeathRealm_Maze = Labyrinth.roo
+
+classvars:
+
+   viTeleport_row = 29
+   viTeleport_col = 16
+
+   viWeatherZone = WEATHER_ZONE_MARION
+
+properties:
+
+   prRoom = room_DeathRealm_Maze
+   piRoom_num = RID_DMAZE
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   prMapChanges = FALSE
+   prMonsters = FALSE
+   prHeat = FALSE
+   prQuake = FALSE
+   prFireRing = FALSE
+
+messages:
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_DD4, 21, 2, ROTATE_NONE], plEdge_exits);
+
+      return;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

@@ -794,7 +794,7 @@ messages:
 
    EndEnchantment(who=$,report=TRUE,state=$,recheck=FALSE)
    {
-      local oSource, i, each_obj;
+      local oSource, i, each_obj, oSourceOwner, lHolderActive;
 
       if who = $
       {

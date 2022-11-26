@@ -83,7 +83,7 @@ messages:
       ptPeriodic = CreateTimer(self,@PeriodicEffect,
                         Send(self,@GetPeriodicDuration));
 
-      if IsClass(caster,&User)
+      if caster <> $ AND IsClass(caster,&User)
       {
          vbSummoned = TRUE;
       }
@@ -173,7 +173,7 @@ messages:
       // disallow damage if caster's safety is on or if cannot do attack.
       // AllowBattlerAttack also performs all the other required checks,
       // so they are no longer needed in this class.
-      if vbIsHarmful
+      if vbIsHarmful AND poCaster <> $
          AND NOT Send(poCaster,@AllowBattlerAttack,#victim=what,
                         #report=FALSE,#stroke_obj=self)
       {
@@ -335,7 +335,7 @@ messages:
          OR (Send(where,@IsArena)
             AND NOT Send(where,@InPlay,#what=self,#bNonPlayerOkay=TRUE))
       {
-         if IsClass(poCaster,&Player)
+         if poCaster <> $ AND IsClass(poCaster,&Player)
          {
             Send(poCaster,@MsgSendUser,#message_rsc=vrDissipateMessage);
          }

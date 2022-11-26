@@ -282,7 +282,16 @@ properties:
    plEnchantments = $
 
    pbUser_in_room = FALSE
-
+   
+   // Death Realm Updates
+   pbUser = $
+   ptLava_damage = $
+   ptHeat_damage = $
+   ptQuake_damage = $
+   ptFireRing_damage = $
+   lUser_pos = $
+   
+   
    // For wave files that go off sometimes.  plPeriodic_sounds is a list of wav
    //  resources
    plPeriodic_sounds = $
@@ -2102,11 +2111,12 @@ messages:
       }
 
       bUser = IsClass(what,&User);
-	  
-	  if bUser
-	  {
-	     Send(what, @ClearAttacked);
-	  }
+	
+      if bUser
+      {
+         pbUser = what;
+	 Send(what, @ClearAttacked);
+      }
 
       if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
          OR new_angle = $
@@ -2147,7 +2157,7 @@ messages:
 
       Send(self,@NewHoldObject,#what=what,
            #new_pos=[new_angle,new_row,new_col,fine_row,fine_col,session]);
-
+      
       return;
    }
 
@@ -2621,7 +2631,12 @@ messages:
    {
       local start_row, start_col, start_finerow, start_finecol,
             end_row, end_col, end_finerow, end_finecol, los;
-
+      
+	  if obj1 = $ OR obj2 = $
+	  {
+	     return FALSE;
+	  }
+	  
       // get coordinates of source (obj1) and target (obj2)
       start_row = Send(obj1, @GetRow);
       start_col = Send(obj1, @GetCol);
@@ -2994,7 +3009,7 @@ messages:
 
       propagate;
    }
-
+   
    LastUserLeft()
    {
       pbUser_in_room = FALSE;

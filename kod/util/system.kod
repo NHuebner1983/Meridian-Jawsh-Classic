@@ -15,6 +15,10 @@ constants:
    include blakston.khd
    include protocol.khd
 
+   // When ready to launch the Death Realm Expansion, set to TRUE.
+   // WARNING: The only way back from this is rolling back Game Saves.
+   DEATH_REALM_EXPANSION_LAUNCHED = FALSE
+
    // sent by server
    SYSEVENT_GARBAGE = 1
    SYSEVENT_SAVE = 2
@@ -540,6 +544,10 @@ properties:
    // Migration timer
    ptMigrationTimer = $
 
+   // Migrate Deprecated Objects
+   ptMigrateDeprecatedTimer = $
+   pbMigratedWeaponWandsToApprenticeWands = FALSE
+
    plAttackTypes = $
    plSpellTypes = $
 
@@ -552,6 +560,13 @@ messages:
    GetName()
    {
       return system_name_rsc;
+   }
+
+   IsDeathRealmLaunched()
+   "Death Realm Expansion"
+   "See top of file for constant. Set to TRUE to launch. Warning message included up top."
+   {
+      return DEATH_REALM_EXPANSION_LAUNCHED;
    }
 
    DisableMarketplace()
@@ -774,6 +789,31 @@ messages:
       return;
    }
 
+   MigrateDeprecatedItems()
+   "Sometimes an object becomes deprecated and we decide to relocate it."
+   "This feature helps us migrate the inventory/storage/chest objects to their new version."
+   {
+      if NOT pbMigratedWeaponWandsToApprenticeWands
+      {
+         Send(self, @MigrateWeaponWandsToApprenticeWands);
+
+         pbMigratedWeaponWandsToApprenticeWands = TRUE;
+      }
+
+      ptMigrateDeprecatedTimer = $;
+
+      return;
+   }
+
+   MigrateWeaponWandsToApprenticeWands()
+   "Migration Function"
+   "Converts existing WeaponWand to ApprenticeWand and deletes WeaponWand from system."
+   {
+      Send(&WeaponWand, @Migrate);
+
+      return;
+   }
+
    CompareLists(lListA=$,lListB=$)
    "Single dimension list compare. Could upgrade to multi-dimension comparison..."
    {
@@ -905,6 +945,9 @@ messages:
          // Start migrating accounts in 1 second.
          ptMigrationTimer = CreateTimer(self, @MigrateShillingsToPlatinum, 1000);
       }
+
+      // Deprecated features can now be migrated safely.
+      ptMigrateDeprecatedTimer = CreateTimer(self, @MigrateDeprecatedItems, 3000);
 
       if lSavedFlagStates <> $
       {
@@ -2815,6 +2858,7 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_GUILDH13,#class=&GuildHall13);
       Send(self,@CreateOneRoomIfNew,#num=RID_GUILDH14,#class=&GuildHall14);
       Send(self,@CreateOneRoomIfNew,#num=RID_GUILDH15,#class=&GuildHall15);
+      Send(self,@CreateOneRoomIfNew,#num=RID_GUILDH16,#class=&GuildHall16);
 
       Send(self,@CreateOneRoomIfNew,#num=RID_TEMPLE_KRAANAN,#class=&TempleKraanan);
       Send(self,@CreateOneRoomIfNew,#num=RID_TEMPLE_QOR,#class=&TempleQor);
@@ -2872,6 +2916,7 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_MAR_CRYPT1,#class=&MarionCrypt1);
       Send(self,@CreateOneRoomIfNew,#num=RID_MAR_CRYPT2,#class=&MarionCrypt2);
       Send(self,@CreateOneRoomIfNew,#num=RID_MAR_CRYPT3A,#class=&MarionCrypt3a);
+      Send(self,@CreateOneRoomIfNew,#num=RID_MAR_CRYPT4,#class=&MarionCrypt4);
 
       // Legends of Ograsaur Maps
       Send(self,@CreateOneRoomIfNew,#num=RID_OGRE_CAVE1,#class=&OgreCave1);
@@ -2898,6 +2943,71 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_DESERTRIVER2,#class=&DesertRiver2);
       Send(self,@CreateOneRoomIfNew,#num=RID_DESERTBRIDGE,#class=&DesertBridge);
 
+      //Death Realm
+      Send(self,@CreateOneRoomIfNew,#num=RID_DH4,#class=&DeathRealmH4);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DH3,#class=&DeathRealmH3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DI3,#class=&DeathRealmI3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DBAR_SOUTH,#class=&DeathRealmBarloqueSouth);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DBAR_NORTH,#class=&DeathRealmBarloqueNorth);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DBAR_PORT,#class=&DeathRealmBarloquePort);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DJ3,#class=&DeathRealmJ3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DCASTLE2B,#class=&DeathRealmCastle2b);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DBADLAND2,#class=&DeathRealmBadland2);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DBADLAND1,#class=&DeathRealmBadland1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DK5,#class=&DeathRealmK5);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DH5,#class=&DeathRealmH5);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DH6,#class=&DeathRealmH6);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DTOS,#class=&DeathRealmTos);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DTOS_EAST,#class=&DeathRealmEastTos);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DTOS_GRAVEYARD,#class=&DeathRealmTosGraveyard);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DTOS_CRYPT,#class=&DeathRealmTosCrypt);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DDUKE1,#class=&DeathRealmDuke1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DG4,#class=&DeathRealmG4);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DCORNOTH,#class=&DeathRealmCorNoth);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DF4,#class=&DeathRealmF4);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DF3,#class=&DeathRealmF3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DE4,#class=&DeathRealmE4);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DD5,#class=&DeathRealmD5);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DD4,#class=&DeathRealmD4);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DC5,#class=&DeathRealmC5);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DMARION,#class=&DeathRealmMarion);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DC4,#class=&DeathRealmC4);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DTEMPLE,#class=&DeathRealmTemple);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DE2,#class=&DeathRealmE2);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DF2,#class=&DeathRealmF2);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DBAR_SEWER,#class=&DeathRealmBarlSewer);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DC6,#class=&DeathRealmC6);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DD6E6,#class=&DeathRealmD6E6);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DD6E6ULAKE,#class=&DeathRealmLD6E6);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DE5,#class=&DeathRealmE5);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DC7,#class=&DeathRealmC7);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DD7,#class=&DeathRealmD7);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DE7,#class=&DeathRealmE7);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DJASWEST,#class=&DeathRealmJasperWest);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DJASPER,#class=&DeathRealmJasper);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DF8,#class=&DeathRealmF8);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DG8,#class=&DeathRealmG8);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DG6,#class=&DeathRealmG6);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DH7,#class=&DeathRealmH7);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DG5,#class=&DeathRealmG5);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DF7,#class=&DeathRealmF7);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DF6,#class=&DeathRealmF6);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DI6,#class=&DeathRealmI6);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DI7,#class=&DeathRealmI7);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DI8,#class=&DeathRealmI8);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DI9,#class=&DeathRealmI9);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DH9,#class=&DeathRealmH9);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DG9,#class=&DeathRealmG9);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DTEMPLE_KRAANAN,#class=&DeathRealmKraanan);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DCASTLE,#class=&DeathRealmCastle);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DCASTLE1,#class=&DeathRealmCastle1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DCASTLE2,#class=&DeathRealmCastle2);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DCASTLE3,#class=&DeathRealmCastle3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DCASTLE4,#class=&DeathRealmCastle4);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DTHRONE1,#class=&DeathRealmThrone1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DTHRONE2,#class=&DeathRealmThrone2);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DMAZE,#class=&DeathRealmMaze);
+      Send(self,@CreateOneRoomIfNew,#num=RID_NewRoom,#class=&NewRoom);
 
       if poRentableRoomMaintenance <> $  // After a clean build, for example.
       {
@@ -3190,6 +3300,7 @@ messages:
    {
       Send(self,@CreateOneBankIfNew,#num=BID_TOS,#class=&Bank);
       Send(self,@CreateOneBankIfNew,#num=BID_KOCATAN,#class=&Bank);
+      Send(self,@CreateOneBankIfNew,#num=BID_DR,#class=&Bank);
 
       return;
    }
@@ -4301,6 +4412,16 @@ messages:
       Create(&KnightTreasure);
       Create(&OgreTreasure);
       Create(&DarkOgreTreasure);
+
+      //Ores
+      Create(&OreVeinTreasure);
+      Create(&QorciteVeinTreasure);
+      Create(&SapphireVeinTreasure);
+      Create(&EmeraldVeinTreasure);
+      Create(&DiamondVeinTreasure);
+      Create(&RubyVeinTreasure);
+      Create(&UncutVeinTreasure);
+      Create(&NeruditeOreVeinTreasure);
 
       return;
    }
@@ -5630,6 +5751,7 @@ messages:
       plMonsterTemplates = cons(create(&redant),plMonsterTemplates);
       plMonsterTemplates = cons(create(&scorpion),plMonsterTemplates);
       plMonsterTemplates = cons(create(&slime),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&napalmslime),plMonsterTemplates);
       plMonsterTemplates = cons(create(&spider),plMonsterTemplates);
       plMonsterTemplates = cons(create(&spiderbaby),plMonsterTemplates);
       plMonsterTemplates = cons(create(&spiderqueen),plMonsterTemplates);
@@ -5709,6 +5831,7 @@ messages:
       plMonsterTemplates = cons(create(&IceElementalChampion),plMonsterTemplates);
       plMonsterTemplates = cons(create(&NeruElemental),plMonsterTemplates);
       plMonsterTemplates = cons(create(&NeruElementalChampion),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&MountainGolem),plMonsterTemplates);
       plMonsterTemplates = cons(create(&EarthDragon),plMonsterTemplates);
 
       plMonsterTemplates = cons(create(&Mimic),plMonsterTemplates);
@@ -5717,6 +5840,7 @@ messages:
       plMonsterTemplates = cons(create(&CaptainKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&HalfKnight),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Ogre),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Snake),plMonsterTemplates);
       plMonsterTemplates = cons(create(&DarkOgre),plMonsterTemplates);
       
       // Servant
@@ -5724,6 +5848,51 @@ messages:
       
       // Stores (Marketplace)
       plMonsterTemplates = cons(Send(self,@GetMarketplaceObject),plMonsterTemplates);
+
+      //Death Realm
+      plMonsterTemplates = cons(create(&HeadlessSkeleton),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Spirit),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Farnohl),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Revenantb),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Vajra),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Chimera),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Cyclops),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&FollowerOfQor),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&MinotaurBerserker),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Tyrant),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&FallenMonk),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&HellWasp),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Croco),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Vozun),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Dulahan),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&GrandpaTrent),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&SpitterSprout),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&CrusherSprout),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&FrenzySprout),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&BlackHydra),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&RedHydra),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&GoldHydra),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&GreenHydra),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&GreySeeker),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&GreenSeeker),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&BrownSeeker),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DeathMiteSoldier),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DeathMiteScout),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DeathMiteTank),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DeathMiteMage),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&StoneReaver),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&IceReaver),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&ObsidianReaver),plMonsterTemplates);
+
+      //Ore
+      plMonsterTemplates = cons(create(&Ore),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&QorciteVein),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&SapphireVein),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&RubyVein),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DiamondVein),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&EmeraldVein),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&UncutVein),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&NeruditeVein),plMonsterTemplates);
 
       return;
    }
@@ -5753,6 +5922,7 @@ messages:
 
       plItemTemplates = cons(create(&NeruditeOreChunk),plItemTemplates);
       plItemTemplates = cons(create(&OreChunk),plItemTemplates);
+      plItemTemplates = cons(create(&Qorcite),plItemTemplates);
       plItemTemplates = cons(create(&AvarShamanFeather),plItemTemplates);
       plItemTemplates = cons(create(&OrcPitBossHead),plItemTemplates);
       plItemTemplates = cons(create(&FormulaScroll),plItemTemplates);
@@ -5780,6 +5950,13 @@ messages:
       plItemTemplates = cons(create(&RoomKey),plItemTemplates);
       plItemTemplates = cons(create(&SanctuaryKey),plItemTemplates);
       plItemTemplates = cons(create(&Key),plItemTemplates);
+      plItemTemplates = cons(create(&BarloqueKey),plItemTemplates);
+      plItemTemplates = cons(create(&BasementKey),plItemTemplates);
+      plItemTemplates = cons(create(&CastleKey),plItemTemplates);
+      plItemTemplates = cons(create(&CorNothKey),plItemTemplates);
+      plItemTemplates = cons(create(&SewerKey),plItemTemplates);
+      plItemTemplates = cons(create(&Throne2Key),plItemTemplates);
+      plItemTemplates = cons(create(&TosKey),plItemTemplates);
 
       plItemTemplates = cons(create(&SpiderEggShell),plItemTemplates);
       plItemTemplates = cons(create(&SpiderEgg),plItemTemplates);
@@ -5853,6 +6030,8 @@ messages:
 	  // Diggie New Masks
       plItemTemplates = cons(create(&WolfMask),plItemTemplates);
       plItemTemplates = cons(create(&RiceMask),plItemTemplates);
+      plItemTemplates = cons(create(&Shades),plItemTemplates);
+      plItemTemplates = cons(create(&SilverSkullMask),plItemTemplates);
 
       plItemTemplates = cons(create(&SpecialGift),plItemTemplates);
       plItemTemplates = cons(create(&SkullMask),plItemTemplates);
@@ -5869,6 +6048,7 @@ messages:
       plItemTemplates = cons(create(&ShalilleCharm),plItemTemplates);
       plItemTemplates = cons(create(&QorCharm),plItemTemplates);
       plItemTemplates = cons(create(&Gift),plItemTemplates);
+      plItemTemplates = cons(create(&GoldNecklace),plItemTemplates);
 
       // Scrolls
       plItemTemplates = cons(create(&DarknessScroll),plItemTemplates);
@@ -6006,6 +6186,11 @@ messages:
       plItemTemplates = cons(create(&Sapphire),plItemTemplates);
       plItemTemplates = cons(create(&Emerald),plItemTemplates);
       plItemTemplates = cons(create(&BlueDragonScale),plItemTemplates);
+      plItemTemplates = cons(create(&BrownDragonScale),plItemTemplates);
+      plItemTemplates = cons(create(&BlackHydraScale),plItemTemplates);
+      plItemTemplates = cons(create(&GoldenHydraScale),plItemTemplates);
+      plItemTemplates = cons(create(&GreenHydraScale),plItemTemplates);
+      plItemTemplates = cons(create(&RedHydraScale),plItemTemplates);
       plItemTemplates = cons(create(&DarkAngelFeather),plItemTemplates);
       plItemTemplates = cons(create(&Fairywing),plItemTemplates);
       plItemTemplates = cons(create(&OrcTooth),plItemTemplates);
@@ -6020,6 +6205,12 @@ messages:
       plItemTemplates = cons(create(&EntrootBerry),plItemTemplates);
       plItemTemplates = cons(create(&Elderberry),plItemTemplates);
       plItemTemplates = cons(create(&Herbs),plItemTemplates);
+      plItemTemplates = cons(create(&BlackHydraHead),plItemTemplates);
+      plItemTemplates = cons(create(&GreenHydraHead),plItemTemplates);
+      plItemTemplates = cons(create(&GoldHydraHead),plItemTemplates);
+      plItemTemplates = cons(create(&RedHydraHead),plItemTemplates);
+      plItemTemplates = cons(create(&TyrantHorns),plItemTemplates);
+      plItemTemplates = cons(create(&VialOfVenom),plItemTemplates);
 
       // Edibles
       plItemTemplates = cons(create(&KocatanMug),plItemTemplates);
@@ -6028,8 +6219,6 @@ messages:
       plItemTemplates = cons(create(&StoutGoblet),plItemTemplates);
       plItemTemplates = cons(create(&Mug),plItemTemplates);
       plItemTemplates = cons(create(&Waterskin),plItemTemplates);
-      plItemTemplates = cons(create(&TikiTribute),plItemTemplates);
-
       plItemTemplates = cons(create(&Mint),plItemTemplates);
       plItemTemplates = cons(create(&InkyCap),plItemTemplates);
       plItemTemplates = cons(create(&Snack),plItemTemplates);
@@ -6049,21 +6238,25 @@ messages:
       plItemTemplates = cons(create(&Orange),plItemTemplates);
       plItemTemplates = cons(create(&TeloFruit),plItemTemplates);
 
+      // Holidays
       plItemTemplates = cons(create(&EasterEgg),plItemTemplates);
-      plItemTemplates = cons(create(&TikiTribute),plItemTemplates);
+      plItemTemplates = cons(create(&SteakMeal),plItemTemplates);
 
+      // Rememberance
+      plItemTemplates = cons(create(&TikiTribute),plItemTemplates);
+      
       // Head
       plItemTemplates = cons(create(&Helm),plItemTemplates);
       plItemTemplates = cons(create(&SimpleHelm),plItemTemplates);
       plItemTemplates = cons(create(&QormasHelm),plItemTemplates);
-      plItemTemplates = cons(create(&IvyCirclet),plItemTemplates);
-      plItemTemplates = cons(create(&BloodCirclet),plItemTemplates);
-      plItemTemplates = cons(create(&Circlet),plItemTemplates);
 	   plItemTemplates = cons(create(&DaemonHelm),plItemTemplates);
+	   plItemTemplates = cons(create(&SteelHelm),plItemTemplates);
+	   plItemTemplates = cons(create(&WarHelm),plItemTemplates);
+	   plItemTemplates = cons(create(&LegionHelm),plItemTemplates);
+	   plItemTemplates = cons(create(&KnightsHelm),plItemTemplates);
 
       // Shields
       plItemTemplates = cons(create(&GuildShield),plItemTemplates);
-      plItemTemplates = cons(create(&OrcShield),plItemTemplates);
       plItemTemplates = cons(create(&KnightShield),plItemTemplates);
       plItemTemplates = cons(create(&GoldShield),plItemTemplates);
       plItemTemplates = cons(create(&MetalShield),plItemTemplates);
@@ -6078,8 +6271,6 @@ messages:
       plItemTemplates = cons(create(&LeatherArmor),plItemTemplates);      
 
       // Clothing
-      plItemTemplates = cons(create(&LightDiscipleRobe),plItemTemplates);
-      plItemTemplates = cons(create(&DiscipleRobe),plItemTemplates);
       plItemTemplates = cons(create(&LightRobe),plItemTemplates);
       plItemTemplates = cons(create(&Robe),plItemTemplates);
       plItemTemplates = cons(create(&Skirt),plItemTemplates);
@@ -6103,7 +6294,7 @@ messages:
       plItemTemplates = cons(create(&GoldenArrow),plItemTemplates);
       plItemTemplates = cons(create(&PracticeArrow),plItemTemplates);
 
-      // Weapons
+      // Weapons (Bows)
       plItemTemplates = cons(create(&MagicBow),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeBow),plItemTemplates);
       plItemTemplates = cons(create(&HolyBow),plItemTemplates);
@@ -6112,21 +6303,31 @@ messages:
       plItemTemplates = cons(create(&BattleBow),plItemTemplates);
       plItemTemplates = cons(create(&PracticeBow),plItemTemplates);   
 
+      // Weapons (One Handed)
       plItemTemplates = cons(create(&TestSword),plItemTemplates);
       plItemTemplates = cons(create(&HunterSword),plItemTemplates);
       plItemTemplates = cons(create(&GoldSword),plItemTemplates);
       plItemTemplates = cons(create(&RiijaSword),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeSword),plItemTemplates);
+      plItemTemplates = cons(create(&NeruditeAxe),plItemTemplates);
       plItemTemplates = cons(create(&MysticSword),plItemTemplates);
       plItemTemplates = cons(create(&Scimitar),plItemTemplates);
       plItemTemplates = cons(create(&LongSword),plItemTemplates);
+      plItemTemplates = cons(create(&TwinBlade),plItemTemplates);
+      plItemTemplates = cons(create(&LightSword),plItemTemplates);
       plItemTemplates = cons(create(&ShortSword),plItemTemplates);
       plItemTemplates = cons(create(&Axe),plItemTemplates);
+      plItemTemplates = cons(create(&BerserkerAxe),plItemTemplates);
       plItemTemplates = cons(create(&Hammer),plItemTemplates);
+      plItemTemplates = cons(create(&Maul),plItemTemplates);
       plItemTemplates = cons(create(&Mace),plItemTemplates);
+      plItemTemplates = cons(create(&PickAxe),plItemTemplates);
 
+      // Rods
       plItemTemplates = cons(create(&ShieldRod),plItemTemplates);
       plItemTemplates = cons(create(&DamageRod),plItemTemplates);
+
+      // Narcotics
       plItemTemplates = cons(create(&Weed),plItemTemplates);
       plItemTemplates = cons(create(&Weed2),plItemTemplates);
       plItemTemplates = cons(create(&Weed3),plItemTemplates);
@@ -6134,8 +6335,18 @@ messages:
       plItemTemplates = cons(create(&Weed5),plItemTemplates);
       plItemTemplates = cons(create(&Weed6),plItemTemplates);
       plItemTemplates = cons(create(&Weed7),plItemTemplates);
-      plItemTemplates = cons(create(&WeaponWand),plItemTemplates);
+
+      //Wizardry
+      plItemTemplates = cons(create(&BaseWand),plItemTemplates);
+      plItemTemplates = cons(create(&ApprenticeWand),plItemTemplates);
+      plItemTemplates = cons(create(&MasterWand),plItemTemplates);
       plItemTemplates = cons(create(&Wizardhat),plItemTemplates);
+      plItemTemplates = cons(create(&IvyCirclet),plItemTemplates);
+      plItemTemplates = cons(create(&Circlet),plItemTemplates);
+      plItemTemplates = cons(create(&LightDiscipleRobe),plItemTemplates);
+      plItemTemplates = cons(create(&DiscipleRobe),plItemTemplates);
+      plItemTemplates = cons(create(&OrcShield),plItemTemplates);
+      plItemTemplates = cons(create(&BloodCirclet),plItemTemplates);
 
       //Thanksgiving
       plItemTemplates = cons(create(&Corn),plItemTemplates);
@@ -6147,6 +6358,8 @@ messages:
       plItemTemplates = cons(create(&Rouladen),plItemTemplates);
       plItemTemplates = cons(create(&PilgrimHat),plItemTemplates);
       plItemTemplates = cons(create(&IndianHat),plItemTemplates);
+
+      plItemTemplates = cons(create(&Souls),plItemTemplates);
 
       return;
    }
