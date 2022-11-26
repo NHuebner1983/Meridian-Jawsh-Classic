@@ -17,7 +17,7 @@ constants:
 resources:
 
    DiamondVein_name_rsc = "diamond vein"
-   DiamondVein_icon_rsc = Diamondvein.bgf
+   DiamondVein_icon_rsc = diamondvein.bgf
    DiamondVein_desc_rsc = \
       "A giant hunk of rock, possibly containing usefull ore. "
 

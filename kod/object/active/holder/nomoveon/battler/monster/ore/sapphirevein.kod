@@ -17,7 +17,7 @@ constants:
 resources:
 
    SaphireVein_name_rsc = "sapphire vein"
-   SaphireVein_icon_rsc = SapphireVein.bgf
+   SaphireVein_icon_rsc = sapphirevein.bgf
    SaphireVein_desc_rsc = \
       "A giant hunk of rock, possibly containing usefull ore. "
 

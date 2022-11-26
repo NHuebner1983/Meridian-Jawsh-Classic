@@ -17,7 +17,7 @@ constants:
 resources:
 
    NeruditeOreVein_name_rsc = "nerudite vein"
-   NeruditeOreVein_icon_rsc = NeruOrevein.bgf
+   NeruditeOreVein_icon_rsc = neruorevein.bgf
    NeruditeOreVein_desc_rsc = \
       "A giant hunk of rock, possibly containing usefull ore. "
 
