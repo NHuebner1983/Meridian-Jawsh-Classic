@@ -3306,14 +3306,18 @@ messages:
 
       iFlags = MM_NONE;
 
-      iCustomMinimapDotFlag = $;
-
       if IsClass(what, &Battler) OR IsClass(what, &Object)
       {
          iCustomMinimapDotFlag = Send(what,@GetMinimapDotFlags);
+
+         if iCustomMinimapDotFlag <> $
+         {
+            // Use the custom minimap dot flag.
+            return iCustomMinimapDotFlag;
+         }
       }
 
-      if IsClass(what,&User) AND iCustomMinimapDotFlag = $
+      if IsClass(what,&User)
       {
          if Send(what,@IsInCannotInteractMode)
          {
@@ -3393,7 +3397,7 @@ messages:
          }
       }
 
-      if IsClass(what,&Monster) AND iCustomMinimapDotFlag = $
+      if IsClass(what,&Monster)
       {
          if Send(what,@GetMaster) <> $
          {
@@ -3427,8 +3431,11 @@ messages:
          return MM_MONSTER;
       }
 
-      // Use the custom minimap dot flag
-      iFlags |=  iCustomMinimapDotFlag;
+      // Not a monster or a player. Ask the object what flags it has.
+      if iCustomMinimapDotFlag <> $
+      {
+         iFlags |= iCustomMinimapDotFlag;
+      }
 
       return iFlags;
    }
