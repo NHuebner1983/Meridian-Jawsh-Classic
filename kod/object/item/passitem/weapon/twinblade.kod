@@ -21,7 +21,7 @@ resources:
 
    TwinBlade_desc_rsc = \
       "A intimidating blade to all, this sword bears two blades for double the  "
-      "carnage!  "
+      "carnage!"
       
    TwinBlade_window_overlay_rsc = povtwnblad.bgf
    TwinBlade_player_overlay = twnbladov.bgf

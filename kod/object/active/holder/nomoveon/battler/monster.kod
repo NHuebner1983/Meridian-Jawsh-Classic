@@ -7229,9 +7229,7 @@ messages:
          lTreasureItems = Cons(i,lTreasureItems);
       }
 
-      oRoom = poOwner;
-
-      if IsClass(oRoom,&DeathRealm)
+      if IsClass(poOwner, &DeathRealm)
       {
          iRandomSoulAmount = Random(viSoulMin,viSoulMax);
          if iRandomSoulAmount > 0
@@ -7241,11 +7239,11 @@ messages:
                corpse = $;
             }
 
-		    iRandomSoulAmount = iRandomSoulAmount * (Send(SETTINGS_OBJECT, @GetMoneyFactor) / 100);
+            iRandomSoulAmount = iRandomSoulAmount * (Send(SETTINGS_OBJECT, @GetMoneyFactor) / 100);
 
-          oSouls = Create(&Souls,#corpse=corpse,#number=iRandomSoulAmount);
+            oSouls = Create(&Souls,#corpse=corpse,#number=iRandomSoulAmount);
 
-          lTreasureItems = Cons(oSouls,lTreasureItems);
+            lTreasureItems = Cons(oSouls,lTreasureItems);
          }
       }
       else
@@ -7410,7 +7408,7 @@ messages:
             }
             else if iNumberOfItemsLooted = 0
             {
-               if IsClass(oRoom,&DeathRealm)
+               if IsClass(poOwner,&DeathRealm)
                {
                   if iRandomSoulAmount > 0
                   {
@@ -7439,7 +7437,7 @@ messages:
             return;
          }
 
-         if IsClass(oRoom,&DeathRealm)
+         if IsClass(poOwner,&DeathRealm)
          {
             if iNumberOfItemsLooted > 0
             {

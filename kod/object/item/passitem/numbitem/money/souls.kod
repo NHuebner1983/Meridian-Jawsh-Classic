@@ -37,11 +37,12 @@ classvars:
    viWeight = 0
 
    viValue_average = 1
+   viValue_multiplier = 1
 
    viUse_type = ITEM_CANT_USE
    viItem_type = ITEMTYPE_MONEY
 
-   viGround_group = 1
+   viGround_group = 2
    viInventory_group = 1
 
 properties:

@@ -8002,10 +8002,11 @@ messages:
          return;
       }
 
-      if IsClass(what,&Shilling)
+      if NOT IsClass(what, &Souls) 
+         AND (IsClass(what,&Shilling)
          OR (IsClass(what, &Money)
             AND NOT IsClass(what, &Shilling)
-            AND NOT IsClass(what, &Platinum))
+            AND NOT IsClass(what, &Platinum)))
       {
          // Let's make sure we convert shillings to platinum for this user.
          if NOT Send(self,@ConvertInventoryMoney, #what=what)

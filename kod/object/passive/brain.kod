@@ -314,7 +314,7 @@ messages:
          //Debug("BAD: null <what> in SomethingAttacked.");
       }
 
-      if what = victim   // Earthquake style attack spell.
+      if what <> $ AND victim <> $ AND what = victim   // Earthquake style attack spell.
       {
          return;
       }
@@ -354,21 +354,21 @@ messages:
       }
             
       if what <> $ AND mob <> $ 
-         AND (IsClass(what, &Reflection) AND IsClass(mob, &Reflection))
-         OR IsClass(what, &Servant) AND IsClass(mob, &Servant)
+         AND ((IsClass(what, &Reflection) AND IsClass(mob, &Reflection))
+         OR IsClass(what, &Servant) AND IsClass(mob, &Servant))
       {
          // Prevent any kind of target switching if the enemies are servants or reflections.
          return;
       }
 
-	  if IsClass(what, &Monster) AND IsClass(victim, &Player) AND NOT IsClass(what, &Servant) AND NOT IsClass(what, &Reflection)
+	  if what <> $ AND victim <> $ AND IsClass(what, &Monster) AND IsClass(victim, &Player) AND NOT IsClass(what, &Servant) AND NOT IsClass(what, &Reflection)
 	  {
 	     // Monster attacked player
 		 // Make sure the monster is known as an aggressor.
 		 Send(victim,@AddAggro,#what=what);
 	  }
 	  
-	  if IsClass(what, &Player) AND IsClass(victim, &Monster) AND NOT IsClass(victim, &Servant) AND NOT IsClass(victim, &Reflection)
+	  if what <> $ AND victim <> $ AND IsClass(what, &Player) AND IsClass(victim, &Monster) AND NOT IsClass(victim, &Servant) AND NOT IsClass(victim, &Reflection)
 	  {
 	    // Player attacked monster
 		 // Make sure the monster is known as an aggressor.
@@ -379,7 +379,7 @@ messages:
       //Debug(Send(what,@GetName),"attacked",Send(victim,@GetName));
 
       iType = TS_FIGHT;
-      if victim = mob
+      if victim <> $ AND mob <> $ AND victim = mob
       {
          iType = TS_FIGHT_ME_VICTIM;
 
@@ -390,19 +390,19 @@ messages:
       {
          // Always respond to your own attacks.
          // Respond to others half the time.
-         if Random(1,10) < 6
+         if Random(1,10) < 6 AND mob <> $
             OR (Send(mob,@GetBehavior) & AI_FIGHT_MURDERERS)
          {
             return;
          }
       }
 
-      if what = mob
+      if what <> $ AND mob <> $ AND what = mob
       {
          iType = TS_FIGHT_ME_AGGRESSOR;
       }
 
-      if (state & STATE_WAIT) OR (state & STATE_MOVE)
+      if state <> $ AND what <> $ AND mob <> $ AND ((state & STATE_WAIT) OR (state & STATE_MOVE))
       {
          if Send(self,@AttemptTargetSwitch,#what=what,#event=iType,#mob=mob)
          {
@@ -421,7 +421,7 @@ messages:
          }
       }
 
-      if state & STATE_CHASE
+      if state <> $ AND mob <> $ AND victim <> $ AND what <> $ AND state & STATE_CHASE
       {
          bSwitch = FALSE;
          if iType <> TS_FIGHT_ME_VICTIM
@@ -450,11 +450,6 @@ messages:
          // target, XChaseTimer will switch us to chasing the attacker
          // (assuming he is a valid target for us at all times and not
          // only when he attacks)
-         return;
-      }
-
-      if state & STATE_ATTACK
-      {
          return;
       }
 
