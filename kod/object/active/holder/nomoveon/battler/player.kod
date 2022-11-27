@@ -7533,18 +7533,25 @@ messages:
       return GetListElemByClass(plPassive,&Platinum);
    }
 
-   CanAfford(cost_shillings=0, cost_platinum=0, quantity=1)
+   CanAfford(cost_shillings=0, cost_platinum=0, cost_souls=0, quantity=1)
    "Checks shillings and platinum to see if you can cover the cost of the purchase."
    {
-      local oShilling, oPlatinum, iShillings, iPlatinum;
+      local oShilling, oPlatinum, oSouls, iShillings, iPlatinum, iSouls;
 
       iShillings = 0;
       iPlatinum = 0;
+      iSouls = 0;
 
       oShilling = Send(self,@GetShillingObject);
       oPlatinum = Send(self,@GetPlatinumObject);
+      oSouls = Send(self,@GetSoulsObject);
 
       //Debug("Can Afford Check", cost_shillings, cost_platinum, quantity);
+
+      if cost_souls <> $ AND cost_souls > 0
+      {
+         return Send(oSouls,@GetNumber) >= cost_souls;
+      }
 
       if cost_shillings >= SHILLINGS_PER_PLATINUM
       {
@@ -7644,20 +7651,28 @@ messages:
       return oPlatinum;
    }
 
-   Pay(amount_shillings=0, amount_platinum=0, quantity=1)
+   Pay(amount_shillings=0, amount_platinum=0, amount_souls=0, quantity=1)
    "Takes shillings and platinum from a player inventory."
    "And yeh this needs to be refactored probably."
    {
-      local oShilling, oPlatinum, iShillings, iPlatinum, iSetShillings, iSetPlatinum, lBroken;
+      local oShilling, oPlatinum, oSouls, iShillings, iPlatinum, iSouls, iSetShillings, iSetPlatinum, iSetSouls, lBroken;
 
       iShillings = 0;
       iPlatinum = 0;
+      iSouls = 0;
       iSetShillings = 0;
       iSetPlatinum = 0;
+      iSetSouls = 0;
       lBroken = $;
 
       oShilling = Send(self,@GetShillingObject);
       oPlatinum = Send(self,@GetPlatinumObject);
+      oSouls = Send(self,@GetSoulsObject);
+
+      if oSouls <> $
+      {
+         iSetSouls = Send(oSouls, @GetNumber);
+      }
 
       if oShilling <> $
       {
@@ -7686,6 +7701,19 @@ messages:
       if oPlatinum <> $
       {
          iPlatinum = Send(oPlatinum,@GetNumber);
+      }
+
+      if amount_souls <> $ AND amount_souls > 0 AND oSouls <> $
+      {
+         iSetSouls = iSetSouls - (amount_souls * quantity);
+         Send(oSouls,@SetNumber,#number=iSetSouls);
+
+         if iSetSouls <= 0
+         {
+            Send(oSouls, @Delete);
+         }
+
+         return;
       }
 
       if amount_shillings >= SHILLINGS_PER_PLATINUM

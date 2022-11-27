@@ -490,6 +490,13 @@
 #define IDC_COST_SHILL_LIST             3526 // Cost to Player from NPC
 #define IDC_COST_PLAT                   3527 // Label for "Platinum Cost" (totals)
 #define IDC_COST_SHILL                  3528 // Label for "Shilling Cost" (totals)
+#define IDC_PRICE_SOUL_LIST             3529 // Price from Player to NPC (SOULS)
+#define IDC_COST_SOUL_LIST              3530 // Cost to Player from NPC (SOULS)
+#define IDC_COST_SOUL                   3531 // Label for "Souls Cost" (totals)
+#define IDC_STATIC3                     3532
+#define IDC_PRICE_PLAT_LIST_LABEL       3533 // Plat Label (above list)
+#define IDC_PRICE_SHILL_LIST_LABEL      3534 // Shill Label (above list)
+#define IDC_PRICE_SOUL_LIST_LABEL       3535 // Soul Label (above list)
 
 // Next default values for new objects
 // 

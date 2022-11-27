@@ -83,6 +83,7 @@
    OF_NPCHASQUESTS   = 0x00100000
    OF_NPCACTIVEQUEST = 0x00200000
    OF_MOBKILLQUEST   = 0x00400000
+   OF_DEATHREALM     = 0x00800000
 
    // Client preference flags (stored in piPreferences in Player)
    // Default preferences - all on except safety (which is reverse)

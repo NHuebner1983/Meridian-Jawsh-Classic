@@ -7627,7 +7627,7 @@ messages:
 
    UserBuy(what = $)
    {
-      local i,lSaleItems, iShillings, iPlatinum, iRemainingShillings, iConvertedPlatinum;
+      local i,lSaleItems, iShillings, iPlatinum, iSouls, iRemainingShillings, iConvertedPlatinum;
 
       lSaleItems = $;
       lSaleItems = Send(what,@GetForSale,#who=self);
@@ -7656,24 +7656,38 @@ messages:
             iRemainingShillings = Send(SYS,@ShillingsRemaining,#number=iShillings);
             iPlatinum = iPlatinum + iConvertedPlatinum;
             iShillings = iRemainingShillings;
+            iSouls = 0;
             AddPacket(4,iShillings);
             AddPacket(4,iPlatinum);
+            AddPacket(4,iSouls);
          }
       }
       else
       {
          foreach i in lSaleItems
          {
-            Debug(Send(i,@GetName),"is for sale (normal sale)");
             Send(self,@ToCliObject,#what=i);
-            iShillings = Send(what,@GetPrice,#type=&Shilling,#what=i,#who=self);
-            iPlatinum = Send(what,@GetPrice,#type=&Platinum,#what=i,#who=self);
-            iConvertedPlatinum = Send(SYS,@ShillingsToPlatinum,#number=iShillings);
-            iRemainingShillings = Send(SYS,@ShillingsRemaining,#number=iShillings);
-            iPlatinum = iPlatinum + iConvertedPlatinum;
-            iShillings = iRemainingShillings;
+            
+            if IsClass(poOwner, &DeathRealm)
+            {
+               iPlatinum = 0;
+               iShillings = 0;
+               iSouls = Send(what,@GetPrice,#type=&Souls,#what=i,#who=self);
+               Debug(Send(i,@GetName),"is for sale (cost is ",iSouls,"souls)");
+            } else {
+               Debug(Send(i,@GetName),"is for sale (normal sale)");
+               iShillings = Send(what,@GetPrice,#type=&Shilling,#what=i,#who=self);
+               iPlatinum = Send(what,@GetPrice,#type=&Platinum,#what=i,#who=self);
+               iConvertedPlatinum = Send(SYS,@ShillingsToPlatinum,#number=iShillings);
+               iRemainingShillings = Send(SYS,@ShillingsRemaining,#number=iShillings);
+               iPlatinum = iPlatinum + iConvertedPlatinum;
+               iShillings = iRemainingShillings;
+               iSouls = 0;
+            }
+            
             AddPacket(4,iShillings);
             AddPacket(4,iPlatinum);
+            AddPacket(4,iSouls);
          }
       }
 

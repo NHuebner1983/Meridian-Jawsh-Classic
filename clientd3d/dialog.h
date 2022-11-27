@@ -20,6 +20,7 @@
 #define LD_SINGLEAUTO  0x00000004    // True if proc should return immediately if 1 item in list
 #define LD_SORT        0x00000008    // True if items should be sorted alphabetically
 #define LD_MARKETPLACE 0x00000010    // True if marketplace
+#define LD_SOULS       0x00000012    // True if user is in Death Realm using souls
 
 /* Structure passed to LookDialogProc as lParam of WM_INITDIALOG message */
 typedef struct {
@@ -29,7 +30,7 @@ typedef struct {
    int       flags;          // Flags for dialog; behavior; see LD_ above
 
    /* These fields are used internally in the dialog: */
-   HWND hwndListBox, hwndQuanList, hwndShillList, hwndPlatList, hwndFind;  /* Handles of child items */
+   HWND hwndListBox, hwndQuanList, hwndShillList, hwndSoulList, hwndPlatList, hwndFind;  /* Handles of child items */
    WNDPROC lpfnDefLookProc;     /* Default list box window procedure */   
    Bool   *selected;            /* Array of booleans; true if item at index is selected */
 } LookDialogStruct;
@@ -69,7 +70,8 @@ typedef struct {
    list_type items;          /* Items available to buy */
    DWORD shills;             /* Total cost of selected items (in shillings only) */
    DWORD plat;               /* Total cost of selected items (in platinum only) */
-   HWND hwndItemList, hwndCostShillList, hwndCostPlatList, hwndQuanList, hwndShillList, hwndPlatList, hwndCostShills, hwndCostPlat;
+   DWORD souls;              /* Total cost of selected items (in souls only) */
+   HWND hwndItemList, hwndCostShillList, hwndCostSoulList, hwndCostPlatList, hwndQuanList, hwndShillList, hwndPlatList, hwndSoulList, hwndCostShills, hwndCostPlat, hwndCostSouls;
 } BuyDialogStruct;
 
 /* Structure passed to AmountDialogProc as lParam of WM_INITDIALOG message */

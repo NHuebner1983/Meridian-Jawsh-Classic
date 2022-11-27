@@ -101,7 +101,7 @@ void LookListFreeContents(HWND hwndListBox)
  */
 BOOL CALLBACK LookDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 {
-   int index1,index2,index3,index4;
+   int index1,index2,index3,index4,index5;
 
    switch (message)
    {
@@ -131,6 +131,7 @@ BOOL CALLBACK LookDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
       index2 = ListBox_GetTopIndex(info->hwndQuanList);
 	  index3 = ListBox_GetTopIndex(info->hwndShillList);
 	  index4 = ListBox_GetTopIndex(info->hwndPlatList);
+	  index5 = ListBox_GetTopIndex(info->hwndSoulList);
 
 	  if (index1 != index2)
       {
@@ -145,6 +146,11 @@ BOOL CALLBACK LookDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 	  if (index1 != index4)
 	  {
 		  ListBox_SetTopIndex(info->hwndPlatList, index1);
+	  }
+
+	  if (index1 != index5)
+	  {
+		  ListBox_SetTopIndex(info->hwndSoulList, index1);
 	  }
 
 	  return TRUE;
@@ -173,6 +179,7 @@ BOOL LookInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    info->hwndQuanList = GetDlgItem(hDlg, IDC_QUANLIST);
    info->hwndShillList = GetDlgItem(hDlg, IDC_PRICE_SHILL_LIST);
    info->hwndPlatList = GetDlgItem(hDlg, IDC_PRICE_PLAT_LIST);
+   info->hwndSoulList = GetDlgItem(hDlg, IDC_PRICE_SOUL_LIST);
 
    // Make list sorted if desired
    if (info->flags & LD_SORT)
@@ -186,8 +193,17 @@ BOOL LookInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
       ShowWindow(GetDlgItem(hDlg, IDC_STATIC1), SW_HIDE); // Quantity Label
 	  ShowWindow(GetDlgItem(hDlg, IDC_STATIC2), SW_HIDE); // Cost Plat / Shill
 	  ShowWindow(GetDlgItem(hDlg, IDC_QUANLIST), SW_HIDE); // Quantity List
-	  ShowWindow(GetDlgItem(hDlg, IDC_PRICE_SHILL_LIST), SW_HIDE); // Price (Shillings) List
-	  ShowWindow(GetDlgItem(hDlg, IDC_PRICE_PLAT_LIST), SW_HIDE); // Price (Platinum) List
+	  
+	  if (!(info->flags & LD_SOULS))
+	  {
+		  // Hide Souls (no LD_SOULS flag)
+		  ShowWindow(GetDlgItem(hDlg, IDC_PRICE_SOUL_LIST), SW_HIDE); // Price (Souls) List
+	  }
+	  else {
+		  // Hide Plat & Shills (LD_SOULS flag is present)
+		  ShowWindow(GetDlgItem(hDlg, IDC_PRICE_SHILL_LIST), SW_HIDE); // Price (Shillings) List
+		  ShowWindow(GetDlgItem(hDlg, IDC_PRICE_PLAT_LIST), SW_HIDE); // Price (Platinum) List
+	  }
    }
    
    // Draw objects in owner-drawn list box
@@ -210,6 +226,8 @@ BOOL LookInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
 	  ListBox_SetItemData(info->hwndShillList, index, 0); // Sell Price Per Unit List
 	  ListBox_AddString(info->hwndPlatList, " "); // Sell Price Per Unit List
 	  ListBox_SetItemData(info->hwndPlatList, index, 0); // Sell Price Per Unit List
+	  ListBox_AddString(info->hwndSoulList, " "); // Sell Price Per Unit List
+	  ListBox_SetItemData(info->hwndSoulList, index, 0); // Sell Price Per Unit List
    }
       
    Edit_LimitText(info->hwndFind, MAXNAME);
@@ -295,10 +313,10 @@ void LookSelChange(HWND hList)
  */ 
 void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify) 
 {
-   int index, num_entries, i, amount, currentAmount, noamountplat, noamountshill;
+   int index, num_entries, i, amount, currentAmount, noamountplat, noamountshill, noamountsoul;
    list_type selection;
    object_node *obj;
-   char buf[MAXNAME + 1], temp[16], tempplat[16], tempshills[16];
+   char buf[MAXNAME + 1], temp[16], tempplat[16], tempshills[16], tempsouls[16];
 
    switch(ctrl_id)
    {
@@ -351,6 +369,7 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	 {
 		 noamountplat = 1;
 		 noamountshill = 1;
+		 noamountsoul = 1;
 
 		 if (IsNumberObj(obj->id))
 		 {
@@ -363,16 +382,19 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	    sprintf(temp, "%d", amount);
 		sprintf(tempplat, "%d", noamountplat);
 		sprintf(tempshills, "%d", noamountplat);
+		sprintf(tempsouls, "%d", noamountsoul);
 	 }
 	 else
 	 {
 	    amount = 0;
 		noamountplat = 0;
 		noamountshill = 0;
+		noamountsoul = 0;
 
 		strcpy(temp," ");
 		strcpy(tempplat, " ");
 		strcpy(tempshills, " ");
+		strcpy(tempsouls, " ");
 	 }
 	 ListBox_InsertString(info->hwndQuanList,index,temp);
 	 ListBox_SetItemData(info->hwndQuanList,index,amount);
@@ -383,12 +405,16 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	 ListBox_InsertString(info->hwndShillList, index, tempshills);
 	 ListBox_SetItemData(info->hwndShillList, index, noamountshill);
 
+	 ListBox_InsertString(info->hwndSoulList, index, tempsouls);
+	 ListBox_SetItemData(info->hwndSoulList, index, noamountsoul);
+
 	 ListBox_SetSel(info->hwndListBox,amount > 0,index);
 
 	 info->selected[index] = (amount > 0);
 	 obj->temp_amount = amount;
 	 obj->temp_listprice_shills = noamountshill;
 	 obj->temp_listprice_plat = noamountplat;
+	 obj->temp_listprice_souls = noamountsoul;
 
 	 ListBox_SetSel(info->hwndQuanList,FALSE,index);
 	 WindowEndUpdate(info->hwndQuanList);
@@ -398,6 +424,9 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 
 	 ListBox_SetSel(info->hwndPlatList, FALSE, index);
 	 WindowEndUpdate(info->hwndPlatList);
+
+	 ListBox_SetSel(info->hwndSoulList, FALSE, index);
+	 WindowEndUpdate(info->hwndSoulList);
 
 #endif
 	 break;
@@ -483,16 +512,19 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	       ListBox_DeleteString(info->hwndQuanList,index);
 		   ListBox_DeleteString(info->hwndPlatList, index);
 		   ListBox_DeleteString(info->hwndShillList, index);
+		   ListBox_DeleteString(info->hwndSoulList, index);
+
 		   if (currentAmount == 0)
 	       {
-		  amount = 1;
-		  strcpy(temp,"1");
+			  amount = 1;
+			  strcpy(temp,"1");
 	       }
 	       else
 	       {
-		  amount = 0;
-		  strcpy(temp," ");
+			  amount = 0;
+			  strcpy(temp," ");
 	       }
+
 	       ListBox_InsertString(info->hwndQuanList,index,temp);
 	       ListBox_SetItemData(info->hwndQuanList,index,amount);
 
@@ -501,6 +533,9 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 
 		   ListBox_InsertString(info->hwndShillList, index, temp);
 		   ListBox_SetItemData(info->hwndShillList, index, amount);
+
+		   ListBox_InsertString(info->hwndSoulList, index, temp);
+		   ListBox_SetItemData(info->hwndSoulList, index, amount);
 		}
 	 }
 	 ListBox_SetSel(info->hwndListBox,amount > 0,index);
@@ -509,8 +544,84 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	 ListBox_SetCurSel(info->hwndQuanList,-1);
 	 ListBox_SetCurSel(info->hwndPlatList, -1);
 	 ListBox_SetCurSel(info->hwndShillList, -1);
+	 ListBox_SetCurSel(info->hwndSoulList, -1);
 	  }
       break;
+
+   case IDC_PRICE_SOUL_LIST:
+	   if (codeNotify == LBN_SELCHANGE)
+	   {
+		   index = (int)ListBox_GetCurSel(info->hwndListBox);
+
+		   if (!ListBox_GetSel(info->hwndListBox, index))
+		   {
+			   return;
+		   }
+
+		   obj = (object_node*)ListBox_GetItemData(info->hwndListBox, index);
+		   currentAmount = (int)ListBox_GetItemData(info->hwndSoulList, index);
+		   amount = currentAmount;
+
+		   if (ListBox_GetItemData(info->hwndSoulList, index) > 0)
+		   {
+			   MEASUREITEMSTRUCT m;
+			   int startAmount = amount;
+
+			   if (currentAmount == 0)
+				   startAmount = obj->amount;
+			   /* Place amount dialog just beneath selected item */
+			   ItemListMeasureItem(info->hwndSoulList, &m);
+			   // Force highlight on (we are editing it)
+			   ListBox_SetSel(info->hwndListBox, TRUE, index);
+			   if (InputNumber(hDlg, info->hwndSoulList,
+				   0, (index - ListBox_GetTopIndex(info->hwndSoulList) + 1) * (m.itemHeight - 1),
+				   &amount, startAmount, 0, 9999999))
+			   {
+				   ListBox_DeleteString(info->hwndSoulList, index);
+				   if (amount > 0)
+				   {
+					   sprintf(temp, "%d", amount);
+					   ListBox_InsertString(info->hwndSoulList, index, temp);
+				   }
+				   else
+				   {
+					   ListBox_InsertString(info->hwndSoulList, index, "0");
+				   }
+				   ListBox_SetItemData(info->hwndSoulList, index, amount);
+			   }
+			   else
+				   amount = currentAmount;
+		   }
+
+		   info->selected[index] = !(obj->temp_listprice_plat == 0 && obj->temp_listprice_shills == 0 && obj->temp_listprice_souls == 0);
+		   obj->temp_listprice_souls = amount;
+		   ListBox_SetCurSel(info->hwndSoulList, -1);
+
+		   if (obj->temp_listprice_plat == 0 && obj->temp_listprice_shills == 0 && obj->temp_listprice_souls == 0)
+		   {
+			   ListBox_DeleteString(info->hwndQuanList, index);
+			   ListBox_InsertString(info->hwndQuanList, index, " ");
+			   ListBox_SetItemData(info->hwndQuanList, index, 0);
+
+			   ListBox_DeleteString(info->hwndPlatList, index);
+			   ListBox_InsertString(info->hwndPlatList, index, " ");
+			   ListBox_SetItemData(info->hwndPlatList, index, 0);
+
+			   ListBox_DeleteString(info->hwndShillList, index);
+			   ListBox_InsertString(info->hwndShillList, index, " ");
+			   ListBox_SetItemData(info->hwndShillList, index, 0);
+
+			   ListBox_DeleteString(info->hwndSoulList, index);
+			   ListBox_InsertString(info->hwndSoulList, index, " ");
+			   ListBox_SetItemData(info->hwndSoulList, index, 0);
+
+			   ListBox_SetSel(info->hwndListBox, false, index);
+		   }
+		   else {
+			   ListBox_SetSel(info->hwndListBox, true, index);
+		   }
+	   }
+	   break;
 
    case IDC_PRICE_SHILL_LIST:
 	   if (codeNotify == LBN_SELCHANGE)
@@ -557,11 +668,11 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 						amount = currentAmount;
 		   }
 
-		   info->selected[index] = !(obj->temp_listprice_plat == 0 && obj->temp_listprice_shills == 0);
+		   info->selected[index] = !(obj->temp_listprice_plat == 0 && obj->temp_listprice_shills == 0 && obj->temp_listprice_souls == 0);
 		   obj->temp_listprice_shills = amount;
 		   ListBox_SetCurSel(info->hwndShillList, -1);
 
-		   if (obj->temp_listprice_plat == 0 && obj->temp_listprice_shills == 0)
+		   if (obj->temp_listprice_plat == 0 && obj->temp_listprice_shills == 0 && obj->temp_listprice_souls == 0)
 		   {
 			   ListBox_DeleteString(info->hwndQuanList, index);
 			   ListBox_InsertString(info->hwndQuanList, index, " ");
@@ -574,6 +685,10 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 			   ListBox_DeleteString(info->hwndShillList, index);
 			   ListBox_InsertString(info->hwndShillList, index, " ");
 			   ListBox_SetItemData(info->hwndShillList, index, 0);
+
+			   ListBox_DeleteString(info->hwndSoulList, index);
+			   ListBox_InsertString(info->hwndSoulList, index, " ");
+			   ListBox_SetItemData(info->hwndSoulList, index, 0);
 
 			   ListBox_SetSel(info->hwndListBox, false, index);
 		   }
@@ -628,7 +743,7 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 				   amount = currentAmount;
 		   }
 
-		   info->selected[index] = !(obj->temp_listprice_plat == 0 && obj->temp_listprice_shills == 0);
+		   info->selected[index] = !(obj->temp_listprice_plat == 0 && obj->temp_listprice_shills == 0 && obj->temp_listprice_souls == 0);
 		   obj->temp_listprice_plat = amount;
 		   ListBox_SetCurSel(info->hwndPlatList, -1);
 
@@ -637,6 +752,7 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 			   ListBox_DeleteString(info->hwndQuanList, index);
 			   ListBox_DeleteString(info->hwndPlatList, index);
 			   ListBox_DeleteString(info->hwndShillList, index);
+			   ListBox_DeleteString(info->hwndSoulList, index);
 
 			   ListBox_InsertString(info->hwndQuanList, index, " ");
 			   ListBox_SetItemData(info->hwndQuanList, index, 0);
@@ -646,6 +762,9 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 
 			   ListBox_InsertString(info->hwndShillList, index, " ");
 			   ListBox_SetItemData(info->hwndShillList, index, 0);
+
+			   ListBox_InsertString(info->hwndSoulList, index, " ");
+			   ListBox_SetItemData(info->hwndSoulList, index, 0);
 
 			   ListBox_SetSel(info->hwndListBox, false, index);
 		   }
