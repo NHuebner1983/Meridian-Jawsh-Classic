@@ -4428,6 +4428,7 @@ messages:
       Create(&ObsidianReaverTreasure);
       Create(&StoneReaverTreasure);
       Create(&TyrantTreasure);
+      Create(&VajraTreasure);
 
       return;
    }

@@ -16,16 +16,18 @@ constants:
 
 resources:
    
-   Vajra_name_rsc = "Vajra"
+   Vajra_name_rsc = "vajra"
    Vajra_icon_rsc = vajra.bgf
    Vajra_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. Vajras are known to be much more  "
-      "violent then friendly.  "
-
+      "Spiked from head-to-toe, nearly colorless, the vajra is ready"
+      "to impale, crush and then devour your body while you take your last breath. "
+      "Its favorite meal is Dark Angels, but he'll settle for you if its belly "
+      "is growling. This dark creature traveled from a place unlike this, far away, "
+      "and excessively EVIL! Tread carefully, you may suffer a painful death by its "
+      "spiked shield if you aren't paying attention."
 
    Vajra_dead_icon_rsc = vajraX.bgf
-   Vajra_dead_name_rsc = "slain Vajra"
+   Vajra_dead_name_rsc = "slain vajra"
 
    Vajra_sound_hit = Vajra_att.mp3
    Vajra_sound_miss = Vajra_att.mp3
@@ -40,7 +42,9 @@ classvars:
    vrDead_icon = Vajra_dead_icon_rsc
    vrDead_name = Vajra_dead_name_rsc
 
-   viTreasure_type = TID_OGRE
+   viAttack_type = ATCK_WEAP_PIERCE
+
+   viTreasure_type = TID_VAJRA
    viSpeed = SPEED_FAST
    viAttributes = 0
    viLevel = 300
@@ -68,9 +72,8 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_ACID, 80 ],
-                        [ATCK_WEAP_NERUDITE, -10 ],
-                        [ATCK_WEAP_NONMAGIC, 80 ] ];
+      plResistances = [ [-ATCK_SPELL_ACID, -80 ],
+                        [ATCK_WEAP_SLASH, -50 ] ];
 
       propagate;
    }
