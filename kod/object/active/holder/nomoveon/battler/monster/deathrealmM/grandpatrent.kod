@@ -19,13 +19,15 @@ resources:
    grandpatrent_name_rsc = "Grandpa Trent"
    grandpatrent_icon_rsc = grandpatrent.bgf
    grandpatrent_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. Grandpa Trent are known to be much more  "
-      "violent then friendly.  "
-
+      "An evil soul has possessed this elderly tree and taken control of every branch! "
+      "Trent is a master of Riija, so try not to get tricked and end up "
+      "just another victim hanging from his branches. You definitely want to "
+      "avoid eating any fruit growing from his old cracking branches. Rotten "
+      "and tainted with a potent venom, used for paralyzing his prey. The long roots "
+      "will drag your body underground where your blood is drained."
 
    grandpatrent_dead_icon_rsc = grandpatrentX.bgf
-   grandpatrent_dead_name_rsc = "slain Grandpa Trent"
+   grandpatrent_dead_name_rsc = "conquored Grandpa Trent"
 
    grandpatrent_sound_hit = grandpatrent_att.mp3
    grandpatrent_sound_miss = grandpatrent_att.mp3
@@ -40,13 +42,15 @@ classvars:
    vrDead_icon = grandpatrent_dead_icon_rsc
    vrDead_name = grandpatrent_dead_name_rsc
 
-   viTreasure_type = TID_OGRE
-   viSpeed = SPEED_FAST
+   viAttack_type = ATCK_WEAP_SLASH
+
+   viTreasure_type = TID_GRANDPA_TRENT
+
+   viSpeed = SPEED_NONE
    viAttributes = 0
    viLevel = 300
    viDifficulty = 9
    viVisionDistance = 18
-   // Attack range of 192, or 3 row/col.
    viAttackRange = 320
    viKarma = -100
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT | MOB_NOMOVE
@@ -57,8 +61,8 @@ classvars:
    vrSound_aware = grandpatrent_sound_aware
    vrSound_death = grandpatrent_sound_death
 
-   viBonusXP = 900
-   viBonusTP = 3
+   viBonusXP = 1600
+   viBonusTP = 12
 
 properties:
 
@@ -68,9 +72,8 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_ACID, 80 ],
-                        [ATCK_WEAP_NERUDITE, -10 ],
-                        [ATCK_WEAP_NONMAGIC, 80 ] ];
+      plResistances = [ [-ATCK_SPELL_FIRE, -80 ],
+                        [ATCK_WEAP_BLUDGEON, -40 ] ];
 
       propagate;
    }

@@ -4433,6 +4433,8 @@ messages:
       Create(&RedHydraTreasure);
       Create(&GreenHydraTreasure);
       Create(&GoldHydraTreasure);
+      Create(&MinotaurBerserkerTreasure);
+      Create(&GrandpaTrentTreasure);
 
       return;
    }
