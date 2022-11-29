@@ -4425,6 +4425,7 @@ messages:
 
       // Death Realm
       Create(&IceReaverTreasure);
+      Create(&ObsidianReaverTreasure);
 
       return;
    }

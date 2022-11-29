@@ -19,9 +19,9 @@ resources:
    Ice_Reaver_name_rsc = "ice reaver"
    Ice_Reaver_icon_rsc = reaverb.bgf
    Ice_Reaver_desc_rsc = \
-      "The coldest and the purest of the Reavers, the Ice Reaver is so cold, "
+      "The coldest and the purest of the reavers, the ice reaver is so cold, "
       "even being near this nasty creature begins to freeze your fingers "
-      "and toes!  While the most fragile of the Reavers she does massive "
+      "and toes!  While the most fragile of the reavers she does massive "
       "cold damage and if you aren't careful you'll be frozen and then "
       "smashed into bits no one would be able to recognize."
 
