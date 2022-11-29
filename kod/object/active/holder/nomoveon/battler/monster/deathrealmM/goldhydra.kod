@@ -19,10 +19,11 @@ resources:
    goldhydra_name_rsc = "golden hydra"
    goldhydra_icon_rsc = hydray.bgf
    goldhydra_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. Golden hydras are known to be much more  "
-      "violent then friendly.  "
-
+      "Three golden heads extend from this massive monster, each as terrifying "
+      "as the next!  Razor sharp fangs and covered in precious golden hydra "
+      "scales, this hydra is full of rage and ready to unleash it onto "
+      "anyone who dare challenges it! Good luck getting close enough to "
+      "fight this hell monster!"
 
    goldhydra_dead_icon_rsc = hydrayX.bgf
    goldhydra_dead_name_rsc = "slain golden hydra"
@@ -40,7 +41,10 @@ classvars:
    vrDead_icon = goldhydra_dead_icon_rsc
    vrDead_name = goldhydra_dead_name_rsc
 
-   viTreasure_type = TID_OGRE
+   viAttack_type = ATCK_WEAP_SLASH
+
+   viTreasure_type = TID_GOLD_HYDRA
+
    viSpeed = SPEED_FAST
    viAttributes = 0
    viLevel = 300
@@ -68,9 +72,8 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_ACID, 80 ],
-                        [ATCK_WEAP_NERUDITE, -10 ],
-                        [ATCK_WEAP_NONMAGIC, 80 ] ];
+      plResistances = [ [-ATCK_SPELL_COLD, -50 ],
+                        [ATCK_WEAP_PIERCE, -50 ] ];
 
       propagate;
    }

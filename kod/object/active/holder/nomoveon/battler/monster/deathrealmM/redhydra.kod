@@ -19,9 +19,11 @@ resources:
    redhydra_name_rsc = "red hydra"
    redhydra_icon_rsc = hydrar.bgf
    redhydra_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. red hydras are known to be much more  "
-      "violent then friendly.  "
+      "Three heads extend from this massive monster, each as terrifying "
+      "as the next!  Razor sharp fangs and covered in precious red hydra "
+      "scales, this hydra is full of rage and ready to unleash it onto "
+      "anyone who dare challenges it! Good luck getting close enough to "
+      "fight this hell monster!"
 
 
    redhydra_dead_icon_rsc = hydrarX.bgf
@@ -40,7 +42,10 @@ classvars:
    vrDead_icon = redhydra_dead_icon_rsc
    vrDead_name = redhydra_dead_name_rsc
 
-   viTreasure_type = TID_OGRE
+   viAttack_type = ATCK_WEAP_BLUDGEON
+
+   viTreasure_type = TID_RED_HYDRA
+   
    viSpeed = SPEED_FAST
    viAttributes = 0
    viLevel = 300
@@ -68,9 +73,8 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_ACID, 80 ],
-                        [ATCK_WEAP_NERUDITE, -10 ],
-                        [ATCK_WEAP_NONMAGIC, 80 ] ];
+      plResistances = [ [-ATCK_SPELL_COLD, -20 ],
+                        [ATCK_WEAP_PIERCE, -20 ] ];
 
       propagate;
    }

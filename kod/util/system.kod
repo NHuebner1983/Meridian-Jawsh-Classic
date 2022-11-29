@@ -4430,6 +4430,9 @@ messages:
       Create(&TyrantTreasure);
       Create(&VajraTreasure);
       Create(&VozunTreasure);
+      Create(&RedHydraTreasure);
+      Create(&GreenHydraTreasure);
+      Create(&GoldHydraTreasure);
 
       return;
    }
