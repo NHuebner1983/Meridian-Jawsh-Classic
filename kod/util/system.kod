@@ -4427,6 +4427,7 @@ messages:
       Create(&IceReaverTreasure);
       Create(&ObsidianReaverTreasure);
       Create(&StoneReaverTreasure);
+      Create(&TyrantTreasure);
 
       return;
    }
