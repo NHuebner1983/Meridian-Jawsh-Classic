@@ -20,7 +20,7 @@ BOFS = wimptres.bof notres.bof spquent.bof med-tght.bof wmp-medt.bof \
    earthdragt.bof mimict.bof minotaurt.bof knightt.bof ogret.bof qorcitet.bof emeraldt.bof \
    diamondt.bof rubyt.bof sapphiret.bof uncutt.bof oret.bof neruoret.bof corruptedmolluskt.bof \
    darkogret.bof \
-   dricereavert.bof drobsidianreavert.bof drstonereavert.bof drtyrantt.bof drvajrat.bof
-
+   dricereavert.bof drobsidianreavert.bof drstonereavert.bof drtyrantt.bof drvajrat.bof \
+   drvozunt.bof
 
 !include $(KODDIR)\kod.mak

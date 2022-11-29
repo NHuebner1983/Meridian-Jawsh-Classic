@@ -4429,6 +4429,7 @@ messages:
       Create(&StoneReaverTreasure);
       Create(&TyrantTreasure);
       Create(&VajraTreasure);
+      Create(&VozunTreasure);
 
       return;
    }
