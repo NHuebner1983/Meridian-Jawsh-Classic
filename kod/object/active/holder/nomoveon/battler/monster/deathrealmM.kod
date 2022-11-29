@@ -12,6 +12,8 @@ DeathRealmM is Monster
 
 constants:
 
+   include blakston.khd
+
 resources:
 
 classvars:
@@ -19,6 +21,11 @@ classvars:
 properties:
 
 messages:
+
+    IsDeathRealmMonster()
+    {
+        return TRUE;
+    }
 
 end
 ////////////////////////////////////////////////////////////////////////////////

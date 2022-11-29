@@ -4423,6 +4423,9 @@ messages:
       Create(&UncutVeinTreasure);
       Create(&NeruditeOreVeinTreasure);
 
+      // Death Realm
+      Create(&IceReaverTreasure);
+
       return;
    }
 

@@ -225,6 +225,11 @@ messages:
       return FALSE;
    }
 
+    IsDeathRealmMonster()
+    {
+        return FALSE;
+    }
+
    Delete()
    {
       local i;
