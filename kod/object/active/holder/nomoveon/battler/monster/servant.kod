@@ -131,6 +131,7 @@ resources:
       "~r~B''say feed me'' ~r~B~kand I will try to feed you some food I ''may'' have stolen from you. You can't prove anything.~k\n"
       "~r~B''say mystify me'' ~r~B~kand I will give you some of the mana I have been stealing from you.~k\n"
       "~r~B''say go away'' ~r~B~kand I will leave your side until you summon me for more adventures.~k\n"
+      "~r~B''say kraanan outfit'' ~r~B~kand I will dress you appropriately for Kraanan magic.~k\n"
       "~r~B''say save outfit 1'' ~r~B~kand I will remember what you're wearing. I can do 1 and 2.~k\n"
       "~r~B''say use outfit 1'' ~r~B~kand I will try to dress you what you were wearing before. I can do 1 and 2.~k\n"
       "~r~B''say undress me'' ~r~B~kand I will strip you of your equipment so you can relax.~k\n"
@@ -1085,7 +1086,7 @@ messages:
 
                iMinimapFlags = Send(poMaster, @BuildMinimapDotFlag, #what=o, #force=TRUE);
 
-               if iMinimapFlags = MM_PLAYER | MM_PLAYER_IS_ENEMY
+               if iMinimapFlags = 3
                {
                   lEnemies = AppendListElem(o, lEnemies);
                }

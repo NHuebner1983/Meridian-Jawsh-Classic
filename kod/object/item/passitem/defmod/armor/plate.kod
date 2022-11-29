@@ -37,7 +37,7 @@ classvars:
    viHits_init_min = 625
    viHits_init_max = 725
 
-   viValue_average = 2000
+   viValue_average = 7000
    viWeight = 600
    viBulk = 600
 

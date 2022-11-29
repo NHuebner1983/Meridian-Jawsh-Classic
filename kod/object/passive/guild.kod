@@ -15,25 +15,25 @@ constants:
    include blakston.khd
    include protocol.khd
 
-   // Once you leave a guild, you cannot rejoin another one for 4 hours
+   // Once you leave a guild, you cannot rejoin another one for 1 minute
    // You cannot rejoin the same one for 18 times this length.
    // This is measured in minutes.
-   CANNOT_REJOIN_TIME = 4 * 60  
+   CANNOT_REJOIN_TIME = 1
 
    // maximum number of people allowed in a guild.
-   MAX_MEMBERS = 400         
+   MAX_MEMBERS = 400
 
    // How much money do you lose if you pull out of a mutually-declared war?
    WAR_LOSS_PENALTY = 50000
    // What percent of the war penalty do you gain from a vanquished enemy?
    WAR_WINNER_PERCENT = 60
 
-   MATURITY_SECRET = 60
-   MATURITY_NONSECRET = 30
+   MATURITY_SECRET = 20
+   MATURITY_NONSECRET = 15
 
-   THREE_PERSON_LIMIT = 240    
+   THREE_PERSON_LIMIT = 500
 
-   MINIMUM_MEMBERS = 3
+   MINIMUM_MEMBERS = 2
 
    RENT_BASE = 5
    RENT_SECRET = 10
@@ -602,6 +602,14 @@ messages:
    IsSecret()
    {
       return pbSecret;
+   }
+
+   SetMature()
+   "Mainly used for DMs."
+   {
+      piMature = 0;
+
+      return;
    }
 
    IsMature()

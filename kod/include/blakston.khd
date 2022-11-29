@@ -33,6 +33,10 @@
    MAX_KOD_INT = 134217727
    MIN_KOD_INT = -134217728
 
+   // Our way of getting around MAX_KOD_INT
+   SHILLINGS_PER_PLATINUM = 1000
+   MAX_PLATINUM = 134217000
+
    // Time constants of the world
 
    // MS_PER_DAY = 24 * 3600 * 1000
@@ -79,6 +83,7 @@
    OF_NPCHASQUESTS   = 0x00100000
    OF_NPCACTIVEQUEST = 0x00200000
    OF_MOBKILLQUEST   = 0x00400000
+   OF_DEATHREALM     = 0x00800000
 
    // Client preference flags (stored in piPreferences in Player)
    // Default preferences - all on except safety (which is reverse)
@@ -791,6 +796,7 @@
    RID_GUILDH13 = 713
    RID_GUILDH14 = 714
    RID_GUILDH15 = 715
+   RID_GUILDH16 = 716
 
    // Keep these up to date!
    RID_GUILDH_MIN = 701
@@ -949,9 +955,75 @@
    RID_ORC_CAVE_END = 2599
 
    // Marion Crypt Dungeon 2600-2700
-   RID_MAR_CRYPT1 = 2600
-   RID_MAR_CRYPT2 = 2601
+   RID_MAR_CRYPT1  = 2600
+   RID_MAR_CRYPT2  = 2601
    RID_MAR_CRYPT3A = 2602
+   RID_MAR_CRYPT4  = 2603
+
+   //Death Realm
+   RID_DH4             = 3000
+   RID_DH3             = 3001
+   RID_DI3             = 3002
+   RID_DBAR_SOUTH      = 3003
+   RID_DBAR_NORTH      = 3004
+   RID_DBAR_PORT       = 3005
+   RID_DJ3             = 3006
+   RID_DCASTLE2B       = 3007
+   RID_DBADLAND2       = 3008
+   RID_DBADLAND1       = 3009
+   RID_DK5             = 3010
+   RID_DH5             = 3011
+   RID_DH6             = 3012
+   RID_DTOS            = 3013
+   RID_DTOS_EAST       = 3014
+   RID_DTOS_GRAVEYARD  = 3015
+   RID_DTOS_CRYPT      = 3016
+   RID_DDUKE1          = 3017
+   RID_DG4             = 3018
+   RID_DCORNOTH        = 3019
+   RID_DF4             = 3020
+   RID_DF3             = 3021
+   RID_DE4             = 3022
+   RID_DD5             = 3023
+   RID_DD4             = 3024
+   RID_DC5             = 3025
+   RID_DMARION         = 3026
+   RID_DC4             = 3027
+   RID_DTEMPLE         = 3028
+   RID_DE2             = 3029
+   RID_DF2             = 3030
+   RID_DBAR_SEWER      = 3031
+   RID_DC6             = 3032
+   RID_DD6E6           = 3033
+   RID_DD6E6ULAKE      = 3034
+   RID_DE5             = 3035
+   RID_DC7             = 3036
+   RID_DD7             = 3037
+   RID_DE7             = 3038
+   RID_DJASWEST        = 3039
+   RID_DJASPER         = 3040
+   RID_DF8             = 3041
+   RID_DG8             = 3042
+   RID_DG6             = 3043
+   RID_DH7             = 3044
+   RID_DG5             = 3045
+   RID_DF7             = 3046
+   RID_DF6             = 3047
+   RID_DI6             = 3048
+   RID_DI7             = 3049
+   RID_DI8             = 3050
+   RID_DI9             = 3051
+   RID_DH9             = 3052
+   RID_DG9             = 3053
+   RID_DTEMPLE_KRAANAN = 3054
+   RID_DCASTLE         = 3055
+   RID_DCASTLE1        = 3056
+   RID_DCASTLE2        = 3057
+   RID_DCASTLE3        = 3058
+   RID_DCASTLE4        = 3059
+   RID_DTHRONE1        = 3060
+   RID_DTHRONE2        = 3061
+   RID_DMAZE           = 3062
 
    // Latest maps from 420
    RID_OGRE_CAVE1 = 2603
@@ -1140,6 +1212,7 @@
    RID_OMAR = 9001
    RID_OBARLN = 9002
    RID_OBARLS = 9003
+   RID_NewRoom = 9090
 
    // Room flags
 
@@ -1504,6 +1577,7 @@
    // Banks
    BID_TOS        = 1
    BID_KOCATAN    = 2
+   BID_DR         = 3
 
    // Vaults
    VID_BARLOQUE   = 1
@@ -1872,6 +1946,34 @@
    TID_OGRE = 81
    TID_CORRUPTED_MOLLUSK = 82
    TID_DARK_OGRE = 83
+
+   // Diggie's Mining Patch
+
+   TID_QORCITE = 84
+   TID_RUBY = 85
+   TID_SAPPHIRE = 86
+   TID_DIAMOND = 87
+   TID_UNCUT = 88
+   TID_EMERALD = 89
+   TID_ORE = 90
+   TID_NERUORE = 91
+
+   // Death Realm Expansion
+
+   TID_ICE_REAVER = 92
+   TID_OBSIDIAN_REAVER = 93
+   TID_STONE_REAVER = 94
+   TID_TYRANT = 95
+   TID_VAJRA = 96
+   TID_VOZUN = 97
+   TID_RED_HYDRA = 98
+   TID_GREEN_HYDRA = 99
+   TID_GOLD_HYDRA = 100
+   TID_MINOTAUR_BERSERKER = 101
+   TID_GRANDPA_TRENT = 102
+   TID_GREEN_SEEKER = 103
+   TID_GREY_SEEKER = 104
+   TID_SPITTER_SPROUT = 105
    
    // English articles
 

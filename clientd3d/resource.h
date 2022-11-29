@@ -480,10 +480,23 @@
 #define ID_HOMEPAGE                     3516
 #define ID_COLOR_QUESTHEADER            3517
 #define ID_GRAPHICS_MENU                3518
+
 #define IDD_ITEMLISTMARKETPLACE         3520
 #define IDC_STATIC2                     3521
-#define IDC_PRICELIST                   3522
-#define IDS_MARKETITEMS                 3523
+#define IDC_PRICE_PLAT_LIST             3522 // Price from Player to NPC
+#define IDC_PRICE_SHILL_LIST            3523 // Price from Player to NPC
+#define IDS_MARKETITEMS                 3524 
+#define IDC_COST_PLAT_LIST              3525 // Cost to Player from NPC
+#define IDC_COST_SHILL_LIST             3526 // Cost to Player from NPC
+#define IDC_COST_PLAT                   3527 // Label for "Platinum Cost" (totals)
+#define IDC_COST_SHILL                  3528 // Label for "Shilling Cost" (totals)
+#define IDC_PRICE_SOUL_LIST             3529 // Price from Player to NPC (SOULS)
+#define IDC_COST_SOUL_LIST              3530 // Cost to Player from NPC (SOULS)
+#define IDC_COST_SOUL                   3531 // Label for "Souls Cost" (totals)
+#define IDC_STATIC3                     3532
+#define IDC_PRICE_PLAT_LIST_LABEL       3533 // Plat Label (above list)
+#define IDC_PRICE_SHILL_LIST_LABEL      3534 // Shill Label (above list)
+#define IDC_PRICE_SOUL_LIST_LABEL       3535 // Soul Label (above list)
 
 // Next default values for new objects
 // 

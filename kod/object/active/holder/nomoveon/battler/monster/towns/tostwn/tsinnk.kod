@@ -47,14 +47,14 @@ classvars:
    vrDesc = tosinnkeeper_desc_rsc
    viAttributes = \
       MOB_NOFIGHT | MOB_RECEIVE | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE \
-      | MOB_SELLER | MOB_COND_SELLER | MOB_LAWFUL
+      | MOB_SELLER | MOB_COND_SELLER | MOB_LAWFUL | MOB_BUYER
    viOccupation = MOB_ROLE_INNKEEPER
-   viMerchant_markup = MERCHANT_DISCOUNT
+   viMerchant_markup = MERCHANT_FLAT
 
 properties:
 
 messages:
-
+   
    AffectMood(why=$,what=$)
    {
       if why = MOODMOD_FACTION_CHANGE
@@ -102,6 +102,12 @@ messages:
       }
 
       return;
+   }
+
+   ObjectDesired(what=$)
+   "We buy weed."
+   {
+      return IsClass(what, &Weed);
    }
 
    SetForSale()

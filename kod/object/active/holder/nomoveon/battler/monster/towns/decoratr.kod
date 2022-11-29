@@ -894,17 +894,8 @@ messages:
       }
 
       iCredit = Send(poOwner,@GetCreditBalance);
-      oMoney = Send(who,@GetMoneyObject);
-      if oMoney <> $
-      {
-         iMoneyValue = Send(oMoney,@GetNumber);
-      }
-      else
-      {
-         iMoneyValue = 0;
-      }
 
-      if price <= (iCredit + iMoneyValue)
+      if Send(who, @CanAfford, #cost_shillings=(price - iCredit))
       {
          return TRUE;
       }
@@ -938,17 +929,7 @@ messages:
          return;
       }
 
-      oMoney = Send(who,@GetMoneyObject);
-
-      if Send(oMoney,@GetNumber) >= price
-      {
-         Send(oMoney,@SubtractNumber,#number=price);
-      }
-      else
-      {
-         Debug("BillRenter:: can't bill - not enough money ",
-               "- must not have called RenterCanPay");
-      }
+      Send(who,@Pay,#amount_shillings=price);
 
       return;
    }

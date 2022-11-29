@@ -147,7 +147,7 @@ messages:
 		    AND NOT IsClass(i,&HolyBow) 
 			AND NOT IsClass(i,&QorBow) 
 			AND NOT IsClass(i,&PracticeBow)
-			AND NOT IsClass(i,&WeaponWand)
+			AND NOT IsClass(i,&ApprenticeWand)
 			AND NOT IsClass(i,&TestSword)
 			AND NOT IsClass(i,&ShortSword)
 		 {

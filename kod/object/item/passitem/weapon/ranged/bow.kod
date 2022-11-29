@@ -110,7 +110,7 @@ messages:
          AND NOT IsClass(what,&SoldierShield))
          OR IsClass(what,&Book)
       {
-         if Send(poOwner,@TryUnuseItem,#what=self)
+         if IsClass(poOwner, &Player) AND Send(poOwner,@TryUnuseItem,#what=self)
          {
             propagate;
          }

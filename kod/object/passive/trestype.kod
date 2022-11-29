@@ -262,6 +262,12 @@ messages:
       iNumberItems = (Send(SETTINGS_OBJECT,@GetItemFactor) * iNumberItems) / 100;
       iNumberItems = Bound(iNumberItems,1,$);
 
+      if mob <> $ AND IsClass(mob, &Ore)
+      {
+         // Set Mined Treasure to 20 quantity.
+         iNumberItems = 20;
+      }
+
       tokengen = TRUE;
       i = 1;
 
@@ -441,7 +447,7 @@ messages:
 
    GenerateLootTableTreasure(who=$,corpse=$)
    {
-      local iCount, iRnd, lItem_info, oObj, iNumber;
+      local iCount, iRnd, lItem_info, oObj, iNumber, cCreate;
 
       iCount = 0;
       iRnd = Random(0,100);
@@ -458,15 +464,22 @@ messages:
             }
             else
             {
-               oObj = Create(First(lItem_info),#corpse=corpse);
+               cCreate = First(lItem_info);
+
+               if cCreate = &Money AND NOT (cCreate = &Shilling) AND NOT (cCreate = &Platinum)
+               {
+                  // Do not create &Money superclass.
+                  cCreate = &Shilling;
+               }
+
+               oObj = Create(cCreate,#corpse=corpse);
             }
 
             if IsClass(oObj,&Money)
             {
                iNumber = 0;
                Send(oObj,@AddNumber,#number=iNumber);
-               Send(Send(SYS,@GetStatistics),@MoneyCreated,
-                     #amount=Send(oObj,@GetNumber));
+               Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oObj,#amount=Send(oObj,@GetNumber));
             }
 
             return oObj;

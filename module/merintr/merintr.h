@@ -91,7 +91,7 @@
 #define RequestBalance()           ToServer(BP_USERCOMMAND, user_msg_table, UC_BALANCE)
 #define RequestAppeal(s)           ToServer(BP_USERCOMMAND, user_msg_table, UC_APPEAL, s)
 #define RequestPreferences()       ToServer(BP_USERCOMMAND, user_msg_table, UC_REQ_PREFERENCES)
-#define MarketplaceList(obj, quantity, unit)  ToServer(BP_USERCOMMAND, user_msg_table, UC_MARKETPLACE_LIST, obj, quantity, unit)
+#define MarketplaceList(obj, quantity, unit_plat, unit_shills)  ToServer(BP_USERCOMMAND, user_msg_table, UC_MARKETPLACE_LIST, obj, quantity, unit_plat, unit_shills)
 #define MarketplaceUnList(obj, quantity)      ToServer(BP_USERCOMMAND, user_msg_table, UC_MARKETPLACE_UNLIST, obj, quantity)
 
 extern client_message msg_table[];

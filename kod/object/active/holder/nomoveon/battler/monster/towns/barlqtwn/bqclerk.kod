@@ -283,8 +283,8 @@ resources:
    // Bribes
 
    indulgence_not_enough_money = \
-      "You think the law will forgive you for partial measures? Pay the "
-      "full amount or get out of my sight."
+      "You think the law will forgive you for partial measures? Pay 5 million "
+      "or get out of my sight."
    indulgence_success = \
       "Thank you for paying your debt to society. You will no longer be "
       "considered a murderer in the eyes of the law."
@@ -383,7 +383,7 @@ properties:
    // Alternate Justicar system - buying a pardon with an indulgence
    // is now possible for a flat fee (initially 1 million).
    pbIndulgenceActive = TRUE
-   piPardonIndulgenceCost = 1000000
+   piPardonIndulgenceCost = 5000000
 
    // The amount of time murderers must wait after their last kill
    // before they can be pardoned.
@@ -528,7 +528,8 @@ messages:
          return;
       }
 
-      iAmount = Send(SETTINGS_OBJECT,@GetNameChangeCost);
+      // iAmount is in platinum because it's coming from their bank.
+      iAmount = Send(SETTINGS_OBJECT,@GetNameChangeCost) / SHILLINGS_PER_PLATINUM;
 
          // Get player's bank account.
          oBank = Send(SYS,@FindBankByNum,#num=BID_TOS);
@@ -625,7 +626,7 @@ messages:
    {
       local oMoney, oBank, amount;
 
-      if NOT IsClass(obj,&Money)
+      if NOT IsClass(obj,&Platinum)
       {
          return FALSE;
       }
@@ -643,7 +644,7 @@ messages:
       }
 
       // Check for hacked offers
-      oMoney = Send(who,@GetMoneyObject);
+      oMoney = Send(who,@GetPlatinumObject);
       if oMoney = $
       {
          return FALSE;
@@ -662,7 +663,7 @@ messages:
          return TRUE;
       }
 
-      if amount < piPardonIndulgenceCost
+      if amount < (piPardonIndulgenceCost / SHILLINGS_PER_PLATINUM) // Converted to platinum
       {
          Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
                #string=indulgence_not_enough_money);
@@ -670,7 +671,7 @@ messages:
          return TRUE;
       }
 
-      Send(oMoney,@SubtractNumber,#number=piPardonIndulgenceCost);
+      Send(oMoney,@SubtractNumber,#number=(piPardonIndulgenceCost / SHILLINGS_PER_PLATINUM)); // Converted to platinum
       Send(self,@PerformIndulgencePardonMurderer,#who=who);
       Post(poOwner,@SomeoneSaid,#what=self,#string=indulgence_success,
             #type=SAY_RESOURCE);

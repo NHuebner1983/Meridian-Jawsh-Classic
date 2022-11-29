@@ -1,0 +1,48 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+////////////////////////////////////////////////////////////////////////////////
+NewRoom is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_NewRoom = newroom.roo
+   name_NewRoom = "new room for testing your roos"
+   NewRoom_music = walk5.ogg
+
+classvars:
+
+   vrName = name_NewRoom
+
+   viTeleport_row = 51
+   viTeleport_col = 22
+
+   viTerrain_Type = TERRAIN_BADLANDS | TERRAIN_FOREST | TERRAIN_MOUNTAIN
+
+properties:
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_5 
+   prMusic = NewRoom_music
+
+   prRoom = room_NewRoom
+   piRoom_num = RID_NewRoom
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   viWeatherZone = WEATHER_ZONE_BARLOQUE
+
+messages:
+
+end
+////////////////////////////////////////////////////////////////////////////////

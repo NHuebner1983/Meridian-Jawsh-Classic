@@ -39,7 +39,7 @@ messages:
                      [ &YellowMushroom, 1 ],
                      [ &GreenMushroom, 1 ],
 					      [ &Wizardhat, 1 ],
-                     [ &WeaponWand, 1 ],
+                     [ &ApprenticeWand, 1 ],
                      [ &TrueLute, 1 ],
                      [ &KnightShield, 1 ],
                      [ &IvyCirclet, 1 ],

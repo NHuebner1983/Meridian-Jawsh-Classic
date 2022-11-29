@@ -1261,7 +1261,9 @@ Bool HandleBuyList(char *ptr, long len)
       buy_obj = (buy_object *) ZeroSafeMalloc(sizeof(buy_object));
       ExtractObject(&ptr, &buy_obj->obj);
 //     ExtractDLighting(&ptr, &buy_obj->obj.dLighting);
-      Extract(&ptr, &buy_obj->cost, SIZE_COST);
+      Extract(&ptr, &buy_obj->shill, SIZE_COST);
+      Extract(&ptr, &buy_obj->plat, SIZE_COST);
+      Extract(&ptr, &buy_obj->soul, SIZE_COST);
 
       list = list_add_item(list, buy_obj);
    }
@@ -1297,7 +1299,9 @@ Bool HandleWithdrawalList(char *ptr, long len)
    {
       buy_obj = (buy_object *) ZeroSafeMalloc(sizeof(buy_object));
       ExtractObject(&ptr, &buy_obj->obj);
-      Extract(&ptr, &buy_obj->cost, SIZE_COST);
+      Extract(&ptr, &buy_obj->shill, SIZE_COST);
+      Extract(&ptr, &buy_obj->plat, SIZE_COST);
+      Extract(&ptr, &buy_obj->soul, SIZE_COST);
 
       list = list_add_item(list, buy_obj);
    }

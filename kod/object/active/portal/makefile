@@ -5,7 +5,8 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\portal.bof
-BOFS = newbport.bof hellport.bof corpport.bof necport.bof corpnode.bof
+BOFS = newbport.bof hellport.bof corpport.bof necport.bof corpnode.bof \
+	   drentrance.bof drexit.bof
 
 
 !include $(KODDIR)\kod.mak

@@ -29,8 +29,16 @@ resources:
    CnSer_forget_potion_sale = \
       "Good, no self-respecting warrior shares company with those "
       "mana-crazed buffoons.  I will most gladly sell %s%s that strips all "
-      "dependency on the so-called Warrior god from thy memory."
+      "dependency on the so-called Warrior god from thy memory. ~y~BBuyer beware.~B~y"
    
+   CnSer_forget_xp_potion_sale = \
+      "So you think you know everything? "
+      "I will most gladly sell %s%s that strips all "
+      "experience from your being. Be warned though, it is best not to move "
+      "or attack anything 10 to 15 seconds before digesting or you may forget "
+      "more than expected. Although I can sell this potion to anyone, only those "
+      "who have reached their max potential can swallow its contents. ~y~BBuyer beware.~B~y"
+
    CnSer_Alcohol_taken = \
       "Ohhh, thank you! Here, have some of my old training swords! They "
       "won't last much longer, but maybe you can fix them up?"
@@ -121,6 +129,11 @@ messages:
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
             #triggers=[Send(oObj,@GetName)],
             #action=[LIBACT_CONDITIONAL,oObj,2500,CnSer_forget_potion_sale]);
+
+      oObj=Create(&ForgetPotionExperience);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,1000000,CnSer_forget_xp_potion_sale]);
 
       return;
    }

@@ -238,14 +238,7 @@ messages:
          return FALSE;
       }
 
-      oMoney = Send(who,@GetMoneyObject);
-
-      if oMoney = $
-      {
-         return FALSE;
-      }
-
-      if Send(oMoney,@GetValue) < amount
+      if who = $ OR NOT IsClass(who, &Player) OR NOT Send(who,@CanAfford,#cost_shillings=amount)
       {
         return FALSE;
       }
