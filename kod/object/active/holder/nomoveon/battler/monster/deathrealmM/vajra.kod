@@ -19,7 +19,7 @@ resources:
    Vajra_name_rsc = "Vajra"
    Vajra_icon_rsc = vajra.bgf
    Vajra_desc_rsc = \
-      "Spiked from head-to-toe, nearly colorless, Vajra is ready"
+      "Spiked from head-to-toe, nearly colorless, Vajra is ready "
       "to impale, crush and then devour your body while you take your last breath. "
       "Its favorite meal is Dark Angels, but he'll settle for you if its belly "
       "is growling. This dark creature traveled from a place unlike this, far away, "
