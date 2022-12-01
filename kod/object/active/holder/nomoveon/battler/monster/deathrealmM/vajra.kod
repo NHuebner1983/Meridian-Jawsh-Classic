@@ -74,6 +74,10 @@ messages:
       plResistances = [ [-ATCK_SPELL_ACID, -5 ],
                         [ATCK_WEAP_SLASH, -5 ] ];
 
+      plSpellBook = [ [SID_BLIND,5,40] ];
+
+      Send(self,@AddDamageReflection,#spellpower=99,#maxpercent=5);
+      
       propagate;
    }
 

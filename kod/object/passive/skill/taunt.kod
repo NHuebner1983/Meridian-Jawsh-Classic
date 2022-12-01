@@ -31,16 +31,9 @@ resources:
                      
    Taunt_skill_intro = "Weaponcraft Lv. 6: Causes enemies to hate you."
 
-   Taunt_msg_spit = "~kYou spit in %s%s's face, taunting them.~k"
-   Taunt_msg_bash = "~kYou bash %s%s violently, taunting them.~k"
-   Taunt_msg_gesture = "~kYou make a rude gesture at %s%s, taunting them.~k"
-   Taunt_msg_growl = "~kYou growl loudly at %s%s, taunting them.~k"
-   Taunt_msg_cry = "~kYou let out a fearsome battle cry at %s%s, taunting them.~k"
-   Taunt_msg_stomp = "~kYou stomp on %s%s violently, taunting them.~k"
-   Taunt_msg_slap = "~kYou slap %s%s, taunting them.~k"
-   Taunt_msg_bite = "~kYou bite %s%s, taunting them.~k"
-   Taunt_msg_insult = "~kYou make an obscene insult at %s%s, taunting them.~k"
-
+   Taunt_msg_growl = "~b~IYou enrage %s%s with a loud growl.~k"
+   Taunt_msg_cry = "~b~IYou enrage %s%s with a loud battle cry.~k"
+   
 classvars:
 
    vrName = Taunt_name_rsc
@@ -134,16 +127,9 @@ messages:
          Send(oTarget,@TargetSwitch,#what=who,#iHatred=Bound(1, 1000, Random(1, iAbil * 100)));
          
          rTauntMsg = Nth([
-            Taunt_msg_spit,
-            Taunt_msg_bash,
-            Taunt_msg_gesture,
             Taunt_msg_growl,
-            Taunt_msg_cry,
-            Taunt_msg_stomp,
-            Taunt_msg_slap,
-            Taunt_msg_bite,
-            Taunt_msg_insult
-         ], Random(1, 9));
+            Taunt_msg_cry
+         ], Random(1, 2));
 
          Send(who,@MsgSendUser,#message_rsc=rTauntMsg,#parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
       }

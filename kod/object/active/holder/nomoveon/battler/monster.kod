@@ -2779,9 +2779,9 @@ messages:
    // handled with high precision. Eventually, all damage calculations should 
    // be handled in high precision mode.
    AssessDamage(what=$,damage=$,atype=0,aspell=0,bonus=0,scalefactor=1000,
-      absolute=FALSE,precision=FALSE)
+      absolute=FALSE,precision=FALSE,isReflected=FALSE)
    {
-      local iDamage, iResist, iPercentClass, i, each_obj, rPartyKillMessage;
+      local iDamage, iResist, iPercentClass, i, each_obj, rPartyKillMessage, origdamage;
       
       if what = $
       {
@@ -2792,6 +2792,8 @@ messages:
       {
          damage = damage * 100;
       }
+
+      origdamage = damage / 100;
 
       if what <> $ AND (piBehavior & AI_NPC)
       {
@@ -2827,12 +2829,19 @@ messages:
       // I hate my target more if he hits me.
       if what = poTarget
       {
-         // Should scale based on damage?
-         piHatred = piHatred + 1;
+         // Should scale based on damage? (yep, added that)
+         piHatred = piHatred + Random(1, Bound(iDamage, 1, 9999));
+      }
+      
+      if NOT isReflected AND damage <> $ AND damage > 0 AND what <> self AND Send(self, @IsReflectingDamage)
+      {
+         // self was hit and damage must be reflected back onto (what)
+         // Make sure reflected damage doesn't loop onto someone reflecting damage (ie:  what <> self)
+         Send(self, @ReflectDamage, #victim=self, #attacker=what, #damage=iDamage);
       }
 
-      piHit_points = piHit_points - iDamage;
-      
+      Send(self,@LoseHealth,#amount=iDamage,#precision=TRUE);
+
       if poOwner = $
       {
          return 0;
@@ -5705,6 +5714,23 @@ messages:
       piHit_points = Bound(piHit_points+amount,1,piMax_hit_points*100);
 
       return;
+   }
+
+   GainHealth(amount=$,precision=FALSE)
+   {
+      return Send(self,@GainHealthNormal,#amount=amount,#precision=precision);
+   }
+
+   LoseHealth(amount=$,precision=FALSE)
+   {
+      if NOT precision
+      {
+         amount = amount * 100;
+      }
+      
+      piHit_points = piHit_points - amount;
+
+      return piHit_points;
    }
 
    NewMaxMana(amount=0)

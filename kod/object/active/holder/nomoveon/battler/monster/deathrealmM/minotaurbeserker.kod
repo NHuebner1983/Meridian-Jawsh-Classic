@@ -44,7 +44,7 @@ classvars:
 
    viTreasure_type = TID_MINOTAUR_BERSERKER
 
-   viSpeed = SPEED_FAST
+   viSpeed = SPEED_WOLFPACKER
    viAttributes = 0
    viLevel = 300
    viDifficulty = 9

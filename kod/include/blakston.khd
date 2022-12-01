@@ -2244,6 +2244,7 @@
    
    SID_CAMP = 207
    SID_DONATE = 208
+   SID_THORN_COAT = 209
 
    // Maximum number of pets our servant can have
    MAX_SERVANT_MINIONS = 2

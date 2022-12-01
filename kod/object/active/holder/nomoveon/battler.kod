@@ -214,6 +214,12 @@ properties:
    // Hint: Earthquake does not affect them.
    pbIsFlying = FALSE
 
+   // Damage reflection (can be put on monster or player)
+   // Players use the spell Thorn Coat
+   piReflectionDamageMaxPercent = 3
+   piReflectingDamageSpellPower = 0
+   pbIsReflectingDamage = FALSE
+
 messages:
 
    // The first lump of code here deals with resistances and immunities/etc.
@@ -225,10 +231,68 @@ messages:
       return FALSE;
    }
 
-    IsDeathRealmMonster()
-    {
-        return FALSE;
-    }
+   IsDeathRealmMonster()
+   {
+      return FALSE;
+   }
+
+   IsReflectingDamage()
+   {
+      return pbIsReflectingDamage;
+   }
+
+   GetDamageReflectionSpellpower()
+   {
+      return piReflectingDamageSpellPower;
+   }
+
+   GetDamageReflectionMaxPercent()
+   {
+      return piReflectionDamageMaxPercent;
+   }
+
+   GetReflectedDamage(damage=$,spellpower=$,maxpercent=3)
+   {
+      local iMaxPercent, iReflectDamage;
+
+      iMaxPercent = spellpower / (100 / maxpercent); // 3 = spellpower / 33 = 3 (1% - 3%), 10 = spellpower / 10 = 9 (1% - 9%)
+      iReflectDamage = damage - (damage / Random(1, Bound(iMaxPercent, 1, 99)));
+
+      return Bound(iReflectDamage, 1, 15);
+   }
+
+   ReflectDamage(victim=$, attacker=$, damage=$)
+   {
+      local iReflectedDamage;
+
+      iReflectedDamage = Send(self, @GetReflectedDamage, 
+         #damage=damage,
+         #spellpower=piReflectingDamageSpellPower,
+         #maxpercent=piReflectionDamageMaxPercent);
+
+      Send(Send(SYS,@FindSpellByNum,#num=SID_THORN_COAT), @ReportReflectedDamage,
+          #victim=victim,
+          #attacker=attacker,
+          #damage=iReflectedDamage);
+
+      return iReflectedDamage;
+   }
+
+   AddDamageReflection(spellpower=99, maxpercent=3)
+   {
+      pbIsReflectingDamage = TRUE;
+      piReflectingDamageSpellPower = spellpower;
+      piReflectionDamageMaxPercent = maxpercent;
+
+      return;
+   }
+
+   RemoveDamageReflection()
+   {
+      pbIsReflectingDamage = FALSE;
+
+      return;
+   }
 
    Delete()
    {

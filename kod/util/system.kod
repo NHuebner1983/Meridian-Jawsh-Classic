@@ -3594,6 +3594,7 @@ messages:
                   AND num <> SID_QOR_SERVANT
                   AND num <> SID_JALA_SERVANT
                   AND num <> SID_CAMP
+                  AND num <> SID_DONATE
                {
                   plNewCharSpells = Cons(oSpell,plNewCharSpells);
                }
@@ -3628,6 +3629,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_CURSE_WEAPON,#class=&CurseWeapon);
       Send(self,@CreateOneSpellIfNew,#num=SID_PARDON,#class=&Pardon);
       Send(self,@CreateOneSpellIfNew,#num=SID_BLESS,#class=&Bless);
+      Send(self,@CreateOneSpellIfNew,#num=SID_THORN_COAT,#class=&ThornCoat);
       Send(self,@CreateOneSpellIfNew,#num=SID_MAGIC_SHIELD,#class=&MagicShield);
       Send(self,@CreateOneSpellIfNew,#num=SID_MEND,#class=&Mend);
       Send(self,@CreateOneSpellIfNew,#num=SID_EARTHQUAKE,#class=&Earthquake);
@@ -3844,7 +3846,6 @@ messages:
 
       // Donate
       Send(self,@CreateOneSpellIfNew,#num=SID_DONATE,#class=&Donate);
-
 
       // Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);

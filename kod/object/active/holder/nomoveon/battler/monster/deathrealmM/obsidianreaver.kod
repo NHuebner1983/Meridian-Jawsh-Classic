@@ -78,6 +78,8 @@ messages:
                         [ATCK_WEAP_BLUDGEON, -80]
                      ];
 
+      plSpellBook = [ [SID_SPLASH_OF_ACID,5,40], [SID_POISON_FOG,5,40] ];
+
       propagate;
    }
 

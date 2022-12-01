@@ -6456,10 +6456,10 @@ messages:
    // be handled in high precision mode.
    AssessDamage(what=$,damage=$,atype=0,aspell=0,stroke_obj=$,bonus=0,
       scalefactor=1000,report=TRUE,report_resistance=TRUE,absolute=FALSE,
-      precision=FALSE)
+      precision=FALSE,isReflected=FALSE)
    {
       local i, j, iResistance, oSoldierShield, gainchance, color_rsc,
-            iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken;
+            iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken, iReflectedDamage;
 
       if what <> $ AND IsClass(what, &Monster)
       {
@@ -6471,7 +6471,7 @@ messages:
          damage = damage * 100;
       }
 
-      origdamage = damage/100;
+      origdamage = damage / 100;
       color_rsc = player_hit_color_none;
 
       // Attacks against a minion master will cause minions to defend the master.
@@ -6617,6 +6617,13 @@ messages:
                Send(what,@GetTrueName),aspell,atype,damage/100,origdamage,
                player_no_weapon_string);
          }
+      }
+
+      if NOT isReflected AND damage <> $ AND damage > 0 AND what <> self AND Send(self, @IsReflectingDamage)
+      {
+         // self was hit and damage must be reflected back onto (what)
+         // Make sure reflected damage doesn't loop onto someone reflecting damage (ie:  what <> self)
+         Send(self, @ReflectDamage, #victim=self, #attacker=what, #damage=origdamage);
       }
 
       Send(self,@LoseHealth,#amount=damage,#precision=TRUE);
