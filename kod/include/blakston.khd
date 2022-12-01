@@ -954,12 +954,21 @@
 
    RID_ORC_CAVE_END = 2599
 
-   // Marion Crypt Dungeon 2600-2700
+   // Marion Crypt Dungeon 2600-2699
    RID_MAR_CRYPT1  = 2600
    RID_MAR_CRYPT2  = 2601
    RID_MAR_CRYPT3A = 2602
    RID_MAR_CRYPT4  = 2603
 
+   // Ogre Caves (2700 - 2799)
+   RID_OGRE_CAVE1 = 2700
+   RID_OGRE_CAVE2 = 2701
+   
+   // Additional Random Maps (2800-2899)
+   RID_MALEVAL = 2800
+   RID_TOS_TRAINING = 2801
+   RID_D6E7ULAKE = 2802
+   
    //Death Realm
    RID_DH4             = 3000
    RID_DH3             = 3001
@@ -1024,13 +1033,6 @@
    RID_DTHRONE1        = 3060
    RID_DTHRONE2        = 3061
    RID_DMAZE           = 3062
-
-   // Latest maps from 420
-   RID_OGRE_CAVE1 = 2603
-   RID_MALEVAL = 2604
-   RID_TOS_TRAINING = 2605
-   RID_D6E7ULAKE = 2606
-   RID_OGRE_CAVE2 = 2607
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia
