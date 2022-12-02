@@ -46,7 +46,7 @@ classvars:
    viLevel = 300
    viDifficulty = 9
    viVisionDistance = 15
-   // Attack range of 192, or 3 row/col.
+   
    viAttackRange = 192
    viKarma = 100
    viDefault_behavior = AI_FIGHT_SWITCHALOT | AI_FIGHT_NEWBIESAFE
