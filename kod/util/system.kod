@@ -4432,6 +4432,7 @@ messages:
       Create(&VajraTreasure);
       Create(&VozunTreasure);
       Create(&RedHydraTreasure);
+      Create(&BlackHydraTreasure);
       Create(&GreenHydraTreasure);
       Create(&GoldHydraTreasure);
       Create(&MinotaurBerserkerTreasure);

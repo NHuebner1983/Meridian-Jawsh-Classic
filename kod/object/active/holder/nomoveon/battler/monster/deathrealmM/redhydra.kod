@@ -76,6 +76,8 @@ messages:
    {
       plResistances = [ [-ATCK_SPELL_COLD, -20 ],
                         [ATCK_WEAP_PIERCE, -20 ] ];
+      
+      plSpellBook = [ [SID_FIREBALL,5,40] ];
 
       propagate;
    }

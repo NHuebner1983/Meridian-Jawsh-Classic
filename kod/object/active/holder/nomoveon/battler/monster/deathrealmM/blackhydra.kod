@@ -44,6 +44,7 @@ classvars:
    viTreasure_type = TID_BLACK_HYDRA
 
    viSpeed = SPEED_FAST
+
    viAttributes = 0
    viLevel = 300
    viDifficulty = 9
@@ -70,9 +71,9 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_ACID, 80 ],
-                        [ATCK_WEAP_NERUDITE, -10 ],
-                        [ATCK_WEAP_NONMAGIC, 80 ] ];
+      plResistances = [ [-ATCK_SPELL_HOLY, -20 ],
+                        [-ATCK_SPELL_UNHOLY, 80 ],
+                        [ATCK_WEAP_PIERCE, -20 ] ];
 
       propagate;
    }

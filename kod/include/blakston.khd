@@ -1976,6 +1976,7 @@
    TID_GREEN_SEEKER = 103
    TID_GREY_SEEKER = 104
    TID_SPITTER_SPROUT = 105
+   TID_BLACK_HYDRA = 106
    
    // English articles
 
