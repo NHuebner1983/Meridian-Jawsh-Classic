@@ -44,13 +44,14 @@ classvars:
    viAttack_type = ATCK_WEAP_NERUDITE
 
    viTreasure_type = TID_OBSIDIAN_REAVER
+   
    viSpeed = SPEED_FAST
    viAttributes = 0
    viLevel = 300
    viDifficulty = 9
    viVisionDistance = 18
    viAttackRange = 192
-   viKarma = -100
+   viKarma = 0
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
    viCashmin = 5000
    viCashmax = 10000
@@ -70,12 +71,12 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_HOLY, -90],
-                        [-ATCK_SPELL_FIRE, -50],
-                        [-ATCK_SPELL_UNHOLY, 90],
-                        [-ATCK_SPELL_COLD, 50],
-                        [ATCK_WEAP_ALL, 40],
-                        [ATCK_WEAP_BLUDGEON, -80]
+      plResistances = [ [-ATCK_SPELL_HOLY, -20],
+                        [-ATCK_SPELL_FIRE, -20],
+                        [-ATCK_SPELL_UNHOLY, 80],
+                        [-ATCK_SPELL_COLD, 80],
+                        [ATCK_WEAP_ALL, 80],
+                        [ATCK_WEAP_BLUDGEON, -20]
                      ];
 
       plSpellBook = [ [SID_SPLASH_OF_ACID,5,40], [SID_POISON_FOG,5,40] ];

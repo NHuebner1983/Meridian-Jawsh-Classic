@@ -41,7 +41,8 @@ classvars:
    vrDead_icon = blackhydra_dead_icon_rsc
    vrDead_name = blackhydra_dead_name_rsc
 
-   viTreasure_type = TID_OGRE
+   viTreasure_type = TID_BLACK_HYDRA
+
    viSpeed = SPEED_FAST
    viAttributes = 0
    viLevel = 300
@@ -49,7 +50,7 @@ classvars:
    viVisionDistance = 18
    // Attack range of 192, or 3 row/col.
    viAttackRange = 256
-   viKarma = -100
+   viKarma = 0
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
    viCashmin = 5000
    viCashmax = 10000

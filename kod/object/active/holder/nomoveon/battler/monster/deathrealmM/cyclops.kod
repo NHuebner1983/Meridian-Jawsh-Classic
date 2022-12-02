@@ -45,14 +45,16 @@ classvars:
    vrDead_name = cyclops_dead_name_rsc
 
    viTreasure_type = TID_OGRE
-   viSpeed = SPEED_FAST
+   
+   viSpeed = SPEED_SLOW
+
    viAttributes = 0
    viLevel = 300
    viDifficulty = 9
    viVisionDistance = 18
    // Attack range of 192, or 3 row/col.
    viAttackRange = 192
-   viKarma = -100
+   viKarma = 0
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
    viCashmin = 5000
    viCashmax = 10000

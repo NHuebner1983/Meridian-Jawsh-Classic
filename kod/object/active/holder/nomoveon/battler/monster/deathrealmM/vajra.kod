@@ -51,7 +51,7 @@ classvars:
    viDifficulty = 9
    viVisionDistance = 18
    viAttackRange = 192
-   viKarma = -100
+   viKarma = 0
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
    viCashmin = 5000
    viCashmax = 10000

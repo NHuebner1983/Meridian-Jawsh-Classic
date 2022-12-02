@@ -21,7 +21,7 @@ resources:
    Chimera_desc_rsc = \
       "This is a dark magic cross-breed of a hell hound and miniature black dragon. "
       "It can trek long distances in a short amount of time, hide in "
-      "brush and bushes and deliver a potent venomous bite to subdue its prey. "
+      "brush, bushes, foliage and deliver a potent venomous bite to subdue its prey. "
       "Its versatility allows it to travel by land, in water and by air. Escaping "
       "this creature is a challenging effort."
 
@@ -41,15 +41,17 @@ classvars:
    vrDead_icon = Chimera_dead_icon_rsc
    vrDead_name = Chimera_dead_name_rsc
 
-   viTreasure_type = TID_OGRE
-   viSpeed = SPEED_VERY_FAST
+   viTreasure_type = TID_GREY_SEEKER
+
+   viSpeed = SPEED_WOLFPACKER
+
    viAttributes = 0
    viLevel = 300
    viDifficulty = 9
    viVisionDistance = 18
    // Attack range of 192, or 3 row/col.
    viAttackRange = 192
-   viKarma = -100
+   viKarma = 0
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
    viCashmin = 5000
    viCashmax = 10000
