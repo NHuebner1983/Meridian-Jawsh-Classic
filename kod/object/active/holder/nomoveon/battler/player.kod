@@ -1405,7 +1405,7 @@ messages:
 
       if bWillLearnSpell
       {
-         // Skill learned!
+         // Spell learned!
          Send(self,@MsgSendUser,#message_rsc=player_learned_new,#parm1=Send(oLearn, @GetName));
          Send(self,@AddSpell,#num=spell_num,#iability=Bound(iStat, 1, 25));
 
@@ -6522,7 +6522,7 @@ messages:
    {
       local oMonster;
 
-      if IsClass(Send(self,@GetWeapon), &PickAxe)
+      if what <> $ AND IsClass(Send(self,@GetWeapon), &PickAxe) AND IsClass(what, &Ore)
       {
          Send(self, @TryLearn, #skill_num=SKID_MINING);
       }
