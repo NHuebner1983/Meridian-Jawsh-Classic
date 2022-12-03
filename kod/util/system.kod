@@ -2519,7 +2519,7 @@ messages:
          // Cost of spell
          if Send(i,@GetLevel) = 2
          {
-            AddPacket(4,25);
+            AddPacket(4,Send(i,@GetLevel) * 10);
          }
          else
          {
@@ -2532,7 +2532,7 @@ messages:
       iCount = 0;
       foreach i in plSkills
       {
-         if Send(i,@GetLevel) <= 2
+         if Send(i,@GetLevel) <= 2 AND Send(i, @GetIntro) <> $
          {
             iCount = iCount + 1;
          }
@@ -2543,7 +2543,7 @@ messages:
 
       foreach i in plSkills
       {
-         if Send(i,@GetLevel) > 2
+         if Send(i,@GetLevel) > 2 OR Send(i, @GetIntro) = $
          {
             continue;
          }
@@ -2552,9 +2552,9 @@ messages:
          AddPacket(4,Send(i,@GetName));
          AddPacket(4,Send(i,@GetIntro));
 
-         if Send(i,@GetLevel) = 2
+         if Send(i,@GetLevel) >= 2
          {
-            AddPacket(4,25);
+            AddPacket(4,Send(i,@GetLevel) * 10);
          }
          else
          {

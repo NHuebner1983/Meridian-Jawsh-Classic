@@ -232,7 +232,7 @@ messages:
                      boostedlevel = 0, difficulty = 0)
    {
       local i, iNumberItems, tokengen, iSurvivalLoot, oTreasure, iSafetyCntr,
-            lTreasureItems;
+            lTreasureItems, iMiningPercent;
 
       // MOB_ONE_TREASURE guarantees one and only one item from loot table.
       // Also has a chance to drop special items, provided the trestype
@@ -264,8 +264,19 @@ messages:
 
       if mob <> $ AND IsClass(mob, &Ore)
       {
-         // Set Mined Treasure to 20 quantity.
-         iNumberItems = 20;
+         iMiningPercent = Send(self,@GetSkillAbility,#spell_num=SKID_MINING);
+
+         if iMiningPercent <> $ AND iMiningPercent > 0
+         {
+            if IsClass(mob, &NeruditeVein)
+            {
+               // Maximum Nerudite Ore: 5, Minimum 1.
+               iNumberItems = Random(1, Bound(iMiningPercent / 3, 1, 5));
+            } else {
+               // Maximum Minerals: 50, Minimum 15.
+               iNumberItems = Bound(Bound(iMiningPercent / 3, 1, 50), 1, Random(Bound(iMiningPercent / 8, 1, 15), 15));
+            }
+         }
       }
 
       tokengen = TRUE;

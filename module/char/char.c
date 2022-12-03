@@ -216,7 +216,7 @@ Bool HandleCharInfo(char *ptr, long len)
       // Create the string displayed to user in
       // character creation spell selection.
       list_str.assign(GetSchoolString(s->spell_school));
-      if (s->cost < 25)
+      if (s->cost == 10)
          list_str.append(" 1: ");
       else
          list_str.append(" 2: ");

@@ -39,7 +39,7 @@ classvars:
    vrPlayer_was_killed = punch_player_was_killed
    vrPlayer_killed_something = punch_player_killed_something
 
-   vrSkill_intro = punch_skill_intro
+   vrSkill_intro = $
 
    viIndefinite = ARTICLE_NONE
    viDefinite = ARTICLE_NONE

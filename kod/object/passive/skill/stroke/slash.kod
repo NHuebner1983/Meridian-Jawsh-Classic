@@ -29,7 +29,7 @@ classvars:
    vrIcon = slash_icon_rsc
    vrDesc = slash_desc_rsc
 
-   vrSkill_intro = slash_skill_intro
+   vrSkill_intro = $
 
    viIndefinite = ARTICLE_NONE
    viDefinite = ARTICLE_NONE

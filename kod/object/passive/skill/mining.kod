@@ -31,13 +31,15 @@ classvars:
    vrIcon = Mining_icon_rsc
    vrDesc = Mining_desc_rsc
 
+   vrSkill_intro = $
+
    viIndefinite = ARTICLE_NONE
    viDefinite = ARTICLE_NONE
 
    viSkill_num = SKID_MINING
    viSchool = SKS_FENCING
    viSkill_Level = 1
-   viChance_to_Increase = 40
+   viChance_to_Increase = 80
    viMeditate_ratio = 200
 
    viSkillExertion = 10

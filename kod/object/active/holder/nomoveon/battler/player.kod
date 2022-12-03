@@ -846,6 +846,7 @@ resources:
       "a new one."
 
    player_learned_new = "~B~yCongratulations! You have learned %s.~B"
+   player_trying_to_learn = "~B~yYou concentrate on trying to learn %s.~B"
 
    pvp_notify_wav = gong.ogg
 
@@ -1394,6 +1395,8 @@ messages:
          }
       }
 
+      //Debug(Send(self,@GetName),"TryLearn",iRandom,iStat,bWillLearnSkill,bWillLearnSpell);
+
       if bWillLearnSkill 
       {
          // Skill learned!
@@ -1412,6 +1415,8 @@ messages:
          return TRUE;
       }
 
+      Send(self,@MsgSendUser,#message_rsc=player_trying_to_learn,#parm1=Send(oLearn, @GetName));
+      
       return FALSE;
    }
 
@@ -3476,32 +3481,16 @@ messages:
       foreach i in lSpells
       {
          iLevel = Send(Send(SYS,@FindSpellByNum,#num=i),@GetLevel);
-
-         if iLevel >= 2
-         {
-            iPoints += 25;
-         }
-         else
-         {
-            iPoints += 10;
-         }
+         iPoints += (iLevel * 10);
       }
 
       foreach i in lSkills
       {
          iLevel = Send(Send(SYS,@FindSkillByNum,#num=i),@GetLevel);
-
-         if iLevel >= 2
-         {
-            iPoints += 25;
-         }
-         else
-         {
-            iPoints += 10;
-         }
+         iPoints += (iLevel * 10);
       }
 
-      if iPoints > 45
+      if iPoints > 50
       {
          // they hacked their char.dll
       }
@@ -3597,7 +3586,7 @@ messages:
 	  {
 	     // Prepare DM
          piVigor = 200;
-		 piStamina = 50;
+		   piStamina = 50;
          Send(self,@GainBaseMaxHealth,#amount=150-piBase_max_health);
          Send(self,@ResetXPToLevel);
          Send(self,@NewMaxMana,#amount=200-piMax_mana);
@@ -6520,11 +6509,28 @@ messages:
 
    AssessHit(what = $, stroke_obj = $, damage = $, use_weapon = $)
    {
-      local oMonster;
+      local oMonster, oWeapon;
 
-      if what <> $ AND IsClass(Send(self,@GetWeapon), &PickAxe) AND IsClass(what, &Ore)
+      oWeapon = Send(self,@GetWeapon);
+
+      if what <> $ AND oWeapon <> $ AND IsClass(oWeapon, &PickAxe) AND IsClass(what, &Ore)
       {
          Send(self, @TryLearn, #skill_num=SKID_MINING);
+      }
+
+      if what <> $ AND oWeapon = $ AND IsClass(what, &Monster)
+      {
+         Send(self, @TryLearn, #skill_num=SKID_PUNCH);
+      }
+
+      if what <> $ AND oWeapon <> $ AND IsClass(oWeapon, &Mace) AND IsClass(what, &Monster)
+      {
+         Send(self, @TryLearn, #skill_num=SKID_PROFICIENCY_MACE);
+      }
+
+      if what <> $ AND oWeapon <> $ AND IsClass(oWeapon, &Weapon) AND IsClass(what, &Monster)
+      {
+         Send(self, @TryLearn, #skill_num=SKID_SLASH);
       }
 
       if stroke_obj <> $

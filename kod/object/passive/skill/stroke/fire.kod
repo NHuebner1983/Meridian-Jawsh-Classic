@@ -38,8 +38,6 @@ classvars:
    vrIcon = fire_icon_rsc
    vrDesc = fire_desc_rsc
 
-   vrSkill_intro = fire_skill_intro
-
    viIndefinite = ARTICLE_NONE
    viDefinite = ARTICLE_NONE
 
