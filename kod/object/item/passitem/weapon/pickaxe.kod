@@ -33,7 +33,7 @@ classvars:
    viWeaponType = WEAPON_TYPE_SLASH
    viWeaponQuality = WEAPON_QUALITY_LOW
 
-   viProficiency_Needed = SKID_PROFICIENCY_HAMMER
+   viProficiency_Needed = SKID_MINING
 
    viValue_average = 100
    viWeight = 60

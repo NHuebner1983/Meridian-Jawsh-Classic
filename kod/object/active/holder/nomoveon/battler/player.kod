@@ -845,6 +845,8 @@ resources:
       "let them know that you need to ~Ipart ways~I, before you can start "
       "a new one."
 
+   player_learned_new = "~B~yCongratulations! You have learned %s.~B"
+
    pvp_notify_wav = gong.ogg
 
 classvars:
@@ -1314,6 +1316,104 @@ messages:
       return;
    }
 
+   TryLearn(skill_num=$, spell_num=$)
+   "Lets the player learn a skill or spell using RNG."
+   {
+      local bIsSkill, bIsSpell, bWillLearnSkill, bWillLearnSpell, iRandom, iStat, oLearn, iAbility, iStatPenalty;
+
+      bWillLearnSkill = FALSE;
+      bWillLearnSpell = FALSE;
+      iRandom = 0;
+      iStat = $;
+      iAbility = 0;
+      iStatPenalty = 0;
+      oLearn = $;
+
+      if skill_num = $ AND spell_num = $
+      {
+         return FALSE;
+      }
+
+      if skill_num <> $ AND skill_num <> 0
+      {
+         oLearn = Send(SYS,@FindSkillByNum,#num=skill_num);
+
+         if oLearn <> $
+         {
+            iAbility = Send(self,@GetSkillAbility,#skill_num=skill_num);
+
+            if iAbility <> $ AND iAbility > 0
+            {
+               // We already know this skill
+               return FALSE;
+            }
+
+            bIsSkill = TRUE;
+         }
+      }
+
+      if spell_num <> $ AND spell_num <> 0
+      {
+         oLearn = Send(SYS,@FindSpellByNum,#num=spell_num);
+
+         if oLearn <> $
+         {
+            iAbility = Send(self,@GetSpellAbility,#spell_num=spell_num);
+
+            if iAbility <> $ AND iAbility > 0
+            {
+               // We already know this spell
+               return FALSE;
+            }
+         }
+
+         bIsSpell = TRUE;
+      }
+
+      iStat = Send(oLearn,@GetRequisiteStat,#who=self);
+
+      if iStat <> $ AND iStat > 0
+      {
+         if iStat < 50
+         {
+            // Makes it much harder to learn at 1 than 50.
+            iStatPenalty = (50 - iStat) + iStat;
+         } else {
+            iStat = 20; // 50 in the requisite, learn quickly.
+         }
+
+         iRandom = Random(1, (iStat + iStatPenalty));
+
+         if bIsSkill
+         {
+            bWillLearnSkill = (iRandom = iStat);
+         }
+         if bIsSpell
+         {
+            bWillLearnSpell = (iRandom = iStat);
+         }
+      }
+
+      if bWillLearnSkill 
+      {
+         // Skill learned!
+         Send(self,@MsgSendUser,#message_rsc=player_learned_new,#parm1=Send(oLearn, @GetName));
+         Send(self,@AddSkill,#num=skill_num,#iability=Bound(iStat, 1, 25));
+
+         return TRUE;
+      }
+
+      if bWillLearnSpell
+      {
+         // Skill learned!
+         Send(self,@MsgSendUser,#message_rsc=player_learned_new,#parm1=Send(oLearn, @GetName));
+         Send(self,@AddSpell,#num=spell_num,#iability=Bound(iStat, 1, 25));
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
 
    KillPlayer(real_death=TRUE, wait_time=0, rscMistakeMessage=$, oRoomOrPlayerWhoKilledMe=$)
    "This will kill the player (#real_death=TRUE default), but can be delayed for dramatic effect."
@@ -6421,6 +6521,11 @@ messages:
    AssessHit(what = $, stroke_obj = $, damage = $, use_weapon = $)
    {
       local oMonster;
+
+      if IsClass(Send(self,@GetWeapon), &PickAxe)
+      {
+         Send(self, @TryLearn, #skill_num=SKID_MINING);
+      }
 
       if stroke_obj <> $
          AND Send(self,@GetWeaponSwingBonus) > 0
