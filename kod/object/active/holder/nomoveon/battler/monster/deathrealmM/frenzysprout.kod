@@ -42,7 +42,7 @@ classvars:
    vrDead_icon = frenzysprout_dead_icon_rsc
    vrDead_name = frenzysprout_dead_name_rsc
 
-   viTreasure_type = TID_GREEN_SEEKER
+   viTreasure_type = TID_FRENZY_SPROUT
 
    viSpeed = SPEED_FAST
    

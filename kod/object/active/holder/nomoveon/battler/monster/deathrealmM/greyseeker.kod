@@ -42,7 +42,7 @@ classvars:
 
    viAttack_type = ATCK_WEAP_PIERCE
 
-   viTreasure_type = TID_GREEN_SEEKER
+   viTreasure_type = TID_GREY_SEEKER
    
    viSpeed = SPEED_FAST
    viAttributes = 0

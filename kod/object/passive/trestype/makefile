@@ -22,6 +22,9 @@ BOFS = wimptres.bof notres.bof spquent.bof med-tght.bof wmp-medt.bof \
    darkogret.bof \
    dricereavert.bof drobsidianreavert.bof drstonereavert.bof drtyrantt.bof drvajrat.bof \
    drvozunt.bof drredhydrat.bof drgreenhydrat.bof drgoldhydrat.bof drminotaurberserkert.bof \
-   drgrandpatrentt.bof drgreenseekert.bof drgreyseekert.bof drblackhydrat.bof
+   drgrandpatrentt.bof drgreenseekert.bof drgreyseekert.bof drblackhydrat.bof \
+   drbrownseekert.bof drchimerat.bof drcrocot.bof drcrushersproutt.bof drcyclopst.bof drdeathmitemaget.bof \
+   drdeathmitescoutt.bof drdeathmitesoldiert.bof drdeathmitetankt.bof drdulahant.bof drfallenmonkt.bof \
+   drfollowerofqort.bof drfrenzysproutt.bof drhellwaspt.bof drrevenantbt.bof drspittersproutt.bof 
 
 !include $(KODDIR)\kod.mak

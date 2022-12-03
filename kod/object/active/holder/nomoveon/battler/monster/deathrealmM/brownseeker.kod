@@ -42,7 +42,7 @@ classvars:
    vrDead_icon = BrownSeeker_dead_icon_rsc
    vrDead_name = BrownSeeker_dead_name_rsc
 
-   viTreasure_type = TID_GREEN_SEEKER
+   viTreasure_type = TID_BROWN_SEEKER
    viSpeed = SPEED_FAST
 
    viAttributes = 0

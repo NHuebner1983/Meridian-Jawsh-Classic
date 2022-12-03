@@ -40,7 +40,7 @@ classvars:
    vrDead_icon = spittersprout_dead_icon_rsc
    vrDead_name = spittersprout_dead_name_rsc
 
-   viTreasure_type = TID_GREEN_SEEKER
+   viTreasure_type = TID_SPITTER_SPROUT
 
    viSpeed = SPEED_NONE
 

@@ -42,7 +42,7 @@ classvars:
    vrDead_icon = Death_Mite_Soldier_dead_icon_rsc
    vrDead_name = Death_Mite_Soldier_dead_name_rsc
 
-   viTreasure_type = TID_STONE_REAVER
+   viTreasure_type = TID_DEATH_MITE_SOLDIER
 
    viSpeed = SPEED_FAST
 

@@ -38,7 +38,7 @@ classvars:
    vrDead_icon = croco_dead_icon_rsc
    vrDead_name = croco_dead_name_rsc
 
-   viTreasure_type = TID_RED_HYDRA
+   viTreasure_type = TID_CROCO
    
    viSpeed = SPEED_FAST
 

@@ -42,7 +42,7 @@ classvars:
    vrDead_icon = followerofqor_dead_icon_rsc
    vrDead_name = followerofqor_dead_name_rsc
 
-   viTreasure_type = TID_GREEN_SEEKER
+   viTreasure_type = TID_FOLLOWER_OF_QOR
    
    viSpeed = SPEED_FAST
 

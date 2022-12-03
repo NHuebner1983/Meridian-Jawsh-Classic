@@ -48,7 +48,10 @@ classvars:
    vrIcon = revenantb_icon_rsc
    vrDesc = revenantb_desc_rsc
 
+   viTreasure_type = TID_REVENANT_B
+
    viAttack_type = ATCK_WEAP_SLASH
+   
    viDefault_behavior = \
       AI_FIGHT_AGGRESSIVE | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_THROUGH_WALLS
 

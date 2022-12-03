@@ -43,7 +43,7 @@ classvars:
    vrDead_icon = Death_Mite_Tank_dead_icon_rsc
    vrDead_name = Death_Mite_Tank_dead_name_rsc
 
-   viTreasure_type = TID_OBSIDIAN_REAVER
+   viTreasure_type = TID_DEATH_MITE_TANK
 
    viSpeed = SPEED_FAST
    

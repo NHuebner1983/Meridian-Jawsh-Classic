@@ -41,7 +41,7 @@ classvars:
    vrDead_icon = dulahan_dead_icon_rsc
    vrDead_name = dulahan_dead_name_rsc
 
-   viTreasure_type = TID_STONE_REAVER
+   viTreasure_type = TID_DULAHAN
    
    viSpeed = SPEED_FAST
 

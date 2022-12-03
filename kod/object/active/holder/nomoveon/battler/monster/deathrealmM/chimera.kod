@@ -41,7 +41,7 @@ classvars:
    vrDead_icon = Chimera_dead_icon_rsc
    vrDead_name = Chimera_dead_name_rsc
 
-   viTreasure_type = TID_GREY_SEEKER
+   viTreasure_type = TID_CHIMERA
 
    viSpeed = SPEED_WOLFPACKER
 

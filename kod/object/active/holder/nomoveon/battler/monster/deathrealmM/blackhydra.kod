@@ -74,6 +74,8 @@ messages:
       plResistances = [ [-ATCK_SPELL_HOLY, -20 ],
                         [-ATCK_SPELL_UNHOLY, 80 ],
                         [ATCK_WEAP_PIERCE, -20 ] ];
+      
+      plSpellBook = [ [SID_BLIND,5,40], [SID_SPLASH_OF_ACID,5,40] ];
 
       propagate;
    }
