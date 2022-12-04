@@ -244,7 +244,7 @@ Bool HandleCharInfo(char *ptr, long len)
       // alternatives are available, due to incompatibility
       // with existing protocol (school not sent for skills).
       list_str.assign(GetSchoolString(SKS_FENCING));
-      if (s->cost < 25)
+      if (s->cost == 10)
          list_str.append(" 1: ");
       else
          list_str.append(" 2: ");
