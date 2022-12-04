@@ -170,6 +170,8 @@ classvars:
 
    viBattler_level = 50
 
+   viCanEarnHP = TRUE
+
 properties:
 
    // Evil twin object
@@ -229,6 +231,11 @@ messages:
    TryDeflect()
    {
       return FALSE;
+   }
+
+   CanEarnHP()
+   {
+      return viCanEarnHP;
    }
 
    IsDeathRealmMonster()
@@ -802,7 +809,8 @@ messages:
          + Send(SETTINGS_OBJECT,@GetBaseRating);
       iChanceToHit = iOffense * Send(SETTINGS_OBJECT,@GetEqualChanceToHit) / iDefense;
       iChanceToHit = bound(iChanceToHit,125,2000);
-      if iChanceToHit >= random(1,1000)
+
+      if iChanceToHit >= random(1,1000) OR ISClass(what,&Ore)
       {
          // We hit!
 		 if isClass(what, &Servant)

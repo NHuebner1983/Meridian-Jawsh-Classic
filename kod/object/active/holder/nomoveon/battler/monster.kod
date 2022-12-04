@@ -6087,7 +6087,7 @@ messages:
 
       if iHit_Percent > 80
       {
-         if piBehavior & AI_NPC
+         if (piBehavior & AI_NPC) OR NOT Send(self,@CanEarnHP)
          {
             AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,monster_nothing);
          }
@@ -6116,7 +6116,7 @@ messages:
          rMonster_condition = vrCondition_bad;
       }
 
-      if piBehavior & AI_NPC
+      if piBehavior & AI_NPC OR NOT Send(self,@CanEarnHP)
       {
          AddPacket(4,rMonster_Condition, 4,vrDesc, 4,monster_nothing,
                      4,Send(self,@GetCapDef), 4,Send(self,@GetName));

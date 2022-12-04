@@ -846,7 +846,7 @@ resources:
       "a new one."
 
    player_learned_new = "~B~yCongratulations! You have learned %s.~B"
-   player_trying_to_learn = "~B~yYou concentrate on trying to learn %s.~B"
+   player_trying_to_learn = "~r~IYou concentrate on trying to learn %s.~k~I"
 
    pvp_notify_wav = gong.ogg
 
@@ -6215,7 +6215,7 @@ messages:
          if oWeapon <> $
          {
             iOffense = Send(oWeapon,@ModifyHitRoll,#target=what,
-                  #hit_roll=iOffense);
+                  #hit_roll=iOffense,#who=self,#what=what);
          }
       }
 
@@ -6384,6 +6384,7 @@ messages:
 
       // Morphed?
       oMonster = Send(self,@GetIllusionForm);
+      oWeapon = Send(self,@GetWeapon);
       if (oMonster <> $)
          AND (piFlags & PFLAG_MORPHED)
       {
@@ -6394,7 +6395,6 @@ messages:
          oStroke = stroke_obj;
          if stroke_obj = $
          {
-            oWeapon = Send(self,@GetWeapon);
             if oWeapon = $
             {
                oStroke=Send(SYS,@FindSkillByNum,#num=SKID_PUNCH);
@@ -6416,9 +6416,10 @@ messages:
          iDamage = Send(oStroke,@FindDamage,#weapon_used=Send(self,@GetWeapon),
                         #who=self,#victim=what); 
       }
-
+      
       // Spells and attmods that modify damage
       iDamageBonus = 0;
+      iModBonus = 0;
       foreach i in plAttack_modifiers
       {
          // Attack modifiers return the total damage, subtract out the original
@@ -6429,6 +6430,10 @@ messages:
 
          Send(i,@WeaponHitTarget);
       }
+
+      iModBonus = Send(oWeapon,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
+                        #stroke_obj=oStroke);
+      iDamageBonus += iModBonus;
 
       foreach i in plRadiusEnchantments
       {
@@ -10363,6 +10368,7 @@ messages:
       if NOT Send(what,@CanPlayerAdvanceOnMe)
          OR Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
          OR (Send(poOwner,@IsArena))
+         OR NOT Send(what,@CanEarnHP)
       {
          return FALSE;
       }

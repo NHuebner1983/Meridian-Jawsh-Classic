@@ -264,7 +264,7 @@ messages:
 
       if mob <> $ AND IsClass(mob, &Ore)
       {
-         iMiningPercent = Send(self,@GetSkillAbility,#spell_num=SKID_MINING);
+         iMiningPercent = Send(who,@GetSkillAbility,#Skill_num=SKID_MINING);
 
          if iMiningPercent <> $ AND iMiningPercent > 0
          {
@@ -274,7 +274,7 @@ messages:
                iNumberItems = Random(1, Bound(iMiningPercent / 3, 1, 5));
             } else {
                // Maximum Minerals: 50, Minimum 15.
-               iNumberItems = Bound(Bound(iMiningPercent / 3, 1, 50), 1, Random(Bound(iMiningPercent / 8, 1, 15), 15));
+               iNumberItems = Bound(Bound(iMiningPercent, 1, 50), 1, Random(Bound(iMiningPercent / 3, 1, 33), 35));
             }
          }
       }

@@ -37,12 +37,14 @@ classvars:
 
    viTreasure_type = TID_ORE
    viAttributes = 0
-   viLevel = 40
+   viLevel = 1000
    viDifficulty = 10
    viKarma = 0
    viDefault_behavior = MOB_NOMOVE
    viCashmin = 0
    viCashmax = 0
+
+   viCanEarnHP = FALSE
 
 properties:
 

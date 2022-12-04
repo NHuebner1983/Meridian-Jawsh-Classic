@@ -3934,9 +3934,14 @@ messages:
          {
             oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,
                                                         #compound=i));
-            Send(self,@ToCliObject,#what=oSpell);
-            AddPacket(1,Send(oSpell,@GetNumSpellTargets),
-                      1,Send(oSpell,@GetSchool));
+            if oSpell <> $
+            {
+               Send(self,@ToCliObject,#what=oSpell);
+               AddPacket(1,Send(oSpell,@GetNumSpellTargets),
+                        1,Send(oSpell,@GetSchool));
+            } else {
+               Debug("Bad spell",Send(self,@DecodeSpellNum,#compound=i));
+            }
          }
 
          SendPacket(poSession);
@@ -3957,7 +3962,12 @@ messages:
          {
             oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,
                                                         #compound=i));
-            Send(self,@ToCliObject,#what=oSkill);
+            if oSkill <> $
+            {
+               Send(self,@ToCliObject,#what=oSkill);
+            } else {
+               Debug("Bad skill",Send(self,@DecodeSkillNum,#compound=i));
+            }
          }
 
          SendPacket(poSession);
