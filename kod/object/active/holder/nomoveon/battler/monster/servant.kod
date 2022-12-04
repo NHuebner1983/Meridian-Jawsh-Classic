@@ -564,7 +564,7 @@ properties:
    piTauntIntervalNormal = 1000
    piTauntIntervalPvp = 6000
    
-   pbIsNearMaster = FALSE
+   pbIsNearMaster = TRUE
 
 messages:
    
@@ -790,13 +790,16 @@ messages:
          return FALSE;
       }
 
-      iMasterDistance = Send(self,@SquaredDistanceTo,#what=poMaster);
-
-      if iMasterDistance <> $ AND iMasterDistance > 0 AND iMasterDistance < 100
+      if Send(poMaster, @GetOwner) = Send(self, @GetOwner)
       {
-         pbIsNearMaster = TRUE;
-      } else {
-         pbIsNearMaster = FALSE;
+         iMasterDistance = Send(self,@SquaredDistanceTo,#what=poMaster);
+
+         if iMasterDistance <> $ AND iMasterDistance > -1 AND iMasterDistance < 50
+         {
+            pbIsNearMaster = TRUE;
+         } else {
+            pbIsNearMaster = FALSE;
+         }
       }
 
       return TRUE;
@@ -1141,6 +1144,8 @@ messages:
    {
       local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions, iChance, iHealth, iHealAmount, iMaxHealth, iMissing, iAverageKarmaInRoom, bQuietSpellCast;
 	  
+      Send(self,@StartBuffTimer);
+
       if NOT Send(self,@MasterCheck) OR NOT pbIsNearMaster
       {
          return;
@@ -1148,8 +1153,6 @@ messages:
       
       plRemoveEnchants = $;
       bQuietSpellCast = FALSE;
-
-      Send(self,@StartBuffTimer);
       
       iHealth = Send(self,@GetHealth);
       iMaxHealth = Send(self,@GetMaxHealth);
@@ -1405,7 +1408,7 @@ messages:
    {
       local iSpellNum, oSpell, lPlayers, lPlayer;
       
-      if NOT Send(self,@MasterCheck) OR NOT pbIsNearMaster
+      if NOT Send(self,@MasterCheck)
       {
          return;
       }
@@ -1505,12 +1508,12 @@ messages:
 
       iRandomCap = 500;
 
+      Send(self,@StartImpTimer);
+
       if NOT Send(self,@MasterCheck) OR NOT pbIsNearMaster
       {
          return;
       }
-
-      Send(self,@StartImpTimer);
 	   
       iLastAttack = Send(poMaster, @SinceLastAttack);
 
@@ -2405,14 +2408,12 @@ messages:
 
    TauntEnemies()
    {
-      ptTaunt = $;
+      ptTaunt = CreateTimer(self,@TauntEnemies,piTauntInterval);
 
       if NOT Send(self,@MasterCheck) OR NOT pbIsNearMaster
       {
          return;
       }
-
-      ptTaunt = CreateTimer(self,@TauntEnemies,piTauntInterval);
 
       if NOT pbAllowTaunt
       {
