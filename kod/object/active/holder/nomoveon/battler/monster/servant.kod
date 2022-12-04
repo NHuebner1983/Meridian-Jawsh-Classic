@@ -564,6 +564,8 @@ properties:
    piTauntIntervalNormal = 1000
    piTauntIntervalPvp = 6000
    
+   pbIsNearMaster = FALSE
+
 messages:
    
    // Send these values when you use the Create(&Servant, #...) function.
@@ -779,13 +781,24 @@ messages:
 
    MasterCheck()
    {
+      local iMasterDistance;
+      
       if poMaster = $
       {
          Send(self,@Delete);
          
          return FALSE;
       }
-      
+
+      iMasterDistance = Send(self,@SquaredDistanceTo,#what=poMaster);
+
+      if iMasterDistance <> $ AND iMasterDistance > 0 AND iMasterDistance < 100
+      {
+         pbIsNearMaster = TRUE;
+      } else {
+         pbIsNearMaster = FALSE;
+      }
+
       return TRUE;
    }
 
@@ -1128,7 +1141,7 @@ messages:
    {
       local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions, iChance, iHealth, iHealAmount, iMaxHealth, iMissing, iAverageKarmaInRoom, bQuietSpellCast;
 	  
-      if NOT Send(self,@MasterCheck)
+      if NOT Send(self,@MasterCheck) OR NOT pbIsNearMaster
       {
          return;
       }
@@ -1392,7 +1405,7 @@ messages:
    {
       local iSpellNum, oSpell, lPlayers, lPlayer;
       
-      if NOT Send(self,@MasterCheck)
+      if NOT Send(self,@MasterCheck) OR NOT pbIsNearMaster
       {
          return;
       }
@@ -1492,7 +1505,7 @@ messages:
 
       iRandomCap = 500;
 
-      if NOT Send(self,@MasterCheck)
+      if NOT Send(self,@MasterCheck) OR NOT pbIsNearMaster
       {
          return;
       }
@@ -1925,7 +1938,7 @@ messages:
    {
       local oRoom;
 
-      if NOT Send(self,@MasterCheck)
+      if NOT Send(self,@MasterCheck) OR NOT pbIsNearMaster
       {
          return;
       }
@@ -2394,7 +2407,7 @@ messages:
    {
       ptTaunt = $;
 
-      if NOT Send(self,@MasterCheck)
+      if NOT Send(self,@MasterCheck) OR NOT pbIsNearMaster
       {
          return;
       }
