@@ -6424,21 +6424,32 @@ messages:
       {
          // Attack modifiers return the total damage, subtract out the original
          //  damage to get the damage bonus.
-         iModBonus = Send(i,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
-                          #stroke_obj=oStroke);
-         iDamageBonus += (iModBonus - iDamage);
+         iModBonus = 0;
 
-         Send(i,@WeaponHitTarget);
+         if i <> $
+         {
+            iModBonus = Send(i,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
+                           #stroke_obj=oStroke);
+            iDamageBonus += (iModBonus - iDamage);
+
+            Send(i,@WeaponHitTarget);
+         }
       }
 
-      iModBonus = Send(oWeapon,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
-                        #stroke_obj=oStroke);
-      iDamageBonus += iModBonus;
+      if oWeapon <> $ 
+      {
+         iModBonus = Send(oWeapon,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
+                           #stroke_obj=oStroke);
+         iDamageBonus += iModBonus;
+      }
 
       foreach i in plRadiusEnchantments
       {
-         iDamageBonus = Send(Nth(i,2),@ModifyDamage,#who=self,#what=what,
-                              #state=Nth(i,3),#damage=iDamageBonus);
+         if i <> $
+         {
+            iDamageBonus = Send(Nth(i,2),@ModifyDamage,#who=self,#what=what,
+                                 #state=Nth(i,3),#damage=iDamageBonus);
+         }
       }
 
       // Convert to high precision. Super dirty, will be cleaned up shortly.
