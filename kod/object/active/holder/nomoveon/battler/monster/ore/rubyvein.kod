@@ -29,6 +29,8 @@ classvars:
 
    viTreasure_type = TID_RUBY
    viDifficulty = 30
+   
+   viOre = &Ruby
 
 properties:
 
