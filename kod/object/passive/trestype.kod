@@ -229,7 +229,7 @@ messages:
    }
 
    CreateMobTreasure(mob = $, who = $, level = 1, corpse = $, attributes = 0,
-                     boostedlevel = 0, difficulty = 0)
+                     boostedlevel = 0, difficulty = 0, loot = 0)
    {
       local i, iNumberItems, tokengen, iSurvivalLoot, oTreasure, iSafetyCntr,
             lTreasureItems;
@@ -257,16 +257,10 @@ messages:
       iSurvivalLoot = boostedlevel
         / Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalLoot);
 
-      iNumberItems = 1 + (level / 55) + Random(0,difficulty/3) + iSurvivalLoot;
-      iNumberItems = Bound(iNumberItems,$,6 + iSurvivalLoot);
+      iNumberItems = Random(1,loot) + iSurvivalLoot;
+      iNumberItems = Bound(iNumberItems,$,loot + iSurvivalLoot);
       iNumberItems = (Send(SETTINGS_OBJECT,@GetItemFactor) * iNumberItems) / 100;
       iNumberItems = Bound(iNumberItems,1,$);
-
-      if mob <> $ AND IsClass(mob, &Ore)
-      {
-         // Set Mined Treasure to 20 quantity.
-         iNumberItems = 20;
-      }
 
       tokengen = TRUE;
       i = 1;

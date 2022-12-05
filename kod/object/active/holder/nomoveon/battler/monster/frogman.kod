@@ -53,6 +53,7 @@ classvars:
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE
    viLevel = 85
    viDifficulty = 5
+   viAmountofLoot = 4
    viVisionDistance = 20
    viKarma = 70
    viCashmin = 200

@@ -80,6 +80,7 @@ classvars:
    viAttack_type = ATCK_WEAP_CLAW
    viLevel = 150
    viDifficulty = 9
+   viAmountofLoot = 6
    viVisionDistance = 40
    // Attack range of 256, or 4 row/col.
    viAttackRange = 256

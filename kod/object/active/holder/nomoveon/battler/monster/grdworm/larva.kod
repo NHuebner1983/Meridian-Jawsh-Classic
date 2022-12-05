@@ -56,6 +56,7 @@ classvars:
    viAttack_spell = ATCK_SPELL_ACID
    viLevel = 35
    viDifficulty = 3
+   viAmountofLoot = 2
    viVisionDistance = 8
    viKarma = -10
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE

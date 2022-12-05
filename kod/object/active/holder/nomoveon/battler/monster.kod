@@ -350,6 +350,8 @@ classvars:
    // be used but is far too difficult for general use.
    viDifficulty = 0
 
+   viAmountofLoot = 0
+
    // viVisionDistance is the radius (in row/col units) that the monster
    // can see within. Default 10.
    viVisionDistance = 10
@@ -7216,7 +7218,7 @@ messages:
       lTreasureItems = Send(oTreasure_Type,@CreateMobTreasure,#mob=self,
                               #who=who,#level=viLevel,#difficulty=viDifficulty,
                               #corpse=corpse,#attributes=piAttributes,
-                              #boostedlevel=piBoostedLevel);
+                              #boostedlevel=piBoostedLevel,#loot=viAmountofLoot);
 
       // Add in our inventory
       foreach i in plActive

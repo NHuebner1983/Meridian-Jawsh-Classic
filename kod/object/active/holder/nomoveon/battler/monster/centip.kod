@@ -49,6 +49,7 @@ classvars:
 
    viLevel = 30
    viDifficulty = 5
+   viAmountofLoot = 3
    viVisionDistance = 8
    viKarma = 25
    viCashmin = 150

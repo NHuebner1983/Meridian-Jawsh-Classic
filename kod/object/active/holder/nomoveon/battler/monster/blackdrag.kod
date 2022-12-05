@@ -47,6 +47,7 @@ classvars:
    viAttributes = 0
    viLevel = 300
    viDifficulty = 10
+   viAmountofLoot = 9
    viVisionDistance = 50
    viKarma = 0
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT

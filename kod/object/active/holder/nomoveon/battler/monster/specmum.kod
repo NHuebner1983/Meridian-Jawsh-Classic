@@ -52,6 +52,7 @@ classvars:
    viSpeed = SPEED_SLOW
    viLevel = 40
    viDifficulty = 5
+   viAmountofLoot = 3
    viVisionDistance = 8
    viKarma = 0
    vbIsUndead = TRUE

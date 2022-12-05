@@ -49,6 +49,7 @@ classvars:
    viAttributes = MOB_SPASM
    viLevel = 25
    viDifficulty = 4
+   viAmountofLoot = 2
    viVisionDistance = 6
    viKarma = -10
    viCashmin = 25

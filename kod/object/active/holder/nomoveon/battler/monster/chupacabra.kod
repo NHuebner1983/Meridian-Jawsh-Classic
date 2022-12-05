@@ -51,6 +51,7 @@ classvars:
 
    viLevel = 100
    viDifficulty = 6
+   viAmountofLoot = 4
    viKarma = -75
    
    viCashmin = 250

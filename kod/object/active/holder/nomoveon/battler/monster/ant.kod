@@ -50,6 +50,7 @@ classvars:
    viAttack_type = ATCK_WEAP_BITE
    viLevel = 40
    viDifficulty = 4
+   viAmountofLoot = 3
    viVisionDistance = 14
    viKarma = -10
    viCashmin = 100

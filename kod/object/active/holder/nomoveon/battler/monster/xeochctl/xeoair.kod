@@ -43,6 +43,7 @@ resources:
    viAttack_type = ATCK_WEAP_MAGIC
    viLevel = 150
    viDifficulty = 7
+   viAmountofLoot = 6
    viSpeed = SPEED_VERY_FAST
    vrSound_aware = XeoAir_sound_aware
 

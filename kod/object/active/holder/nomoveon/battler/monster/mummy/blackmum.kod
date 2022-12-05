@@ -40,6 +40,7 @@ classvars:
 
    viDifficulty = 4
    viVisionDistance = 8
+   viAmountofLoot = 2
 
 properties:
 

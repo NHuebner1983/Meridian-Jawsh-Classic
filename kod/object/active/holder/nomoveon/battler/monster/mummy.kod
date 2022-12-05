@@ -49,6 +49,7 @@ classvars:
    viAttributes = 0
    viLevel = 30
    viDifficulty = 1
+   viAmountofLoot = 1
 
    // Larger distance since we want them to seek out the newbies.
    viVisionDistance = 16

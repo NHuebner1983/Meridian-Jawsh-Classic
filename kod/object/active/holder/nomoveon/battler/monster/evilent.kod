@@ -52,10 +52,11 @@ classvars:
    viSpeed = SPEED_NONE
    viAttributes = MOB_NOMOVE
    viDefault_behavior = AI_NOMOVE | AI_FIGHT_KARMA_AGGRESSIVE
-   viDifficulty = 4
    viVisionDistance = 14
    
    viLevel = 60
+   viDifficulty = 4
+   viAmountofLoot = 3
    viKarma = -50
    viCashmin = 200
    viCashmax = 600

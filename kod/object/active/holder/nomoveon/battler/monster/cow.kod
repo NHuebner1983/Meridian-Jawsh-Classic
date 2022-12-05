@@ -50,6 +50,7 @@ classvars:
    viAttributes = MOB_NOFIGHT
    viSpeed = 8
    viLevel = 200
+   viAmountofLoot = 4
    viCashmin = 0
    viCashmax = 0
 

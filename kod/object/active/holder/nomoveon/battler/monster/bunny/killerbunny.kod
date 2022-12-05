@@ -43,6 +43,7 @@ classvars:
       | AI_FIGHT_HYPERAGGRESSIVE
 
    viDifficulty = 6
+   viAmountofLoot = 4
    viVisionDistance = 20
    viLevel = 80
    viKarma = 0

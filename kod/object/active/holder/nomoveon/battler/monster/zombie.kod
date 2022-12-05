@@ -51,6 +51,7 @@ classvars:
    vbDementChance = 10 // 1 in x
    vbIsUndead = TRUE
    viDifficulty = 4
+   viAmountofLoot = 3
    viVisionDistance = 10
    viKarma = -45
    viCashmin = 175
@@ -65,6 +66,7 @@ properties:
    // our private data
 
    viTreasure_type = TID_ZOMBIE
+   
    viLevel = 55
 
    piAnimation = ANIM_NONE

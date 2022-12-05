@@ -37,6 +37,8 @@ classvars:
    viTreasure_type = TID_MINOTAUR
    
    viLevel = 150
+   viDifficulty = 10
+   viAmountofLoot = 7
 
    vrKocName = minotaur_koc_name_rsc
    vrName = minotaur_name_rsc
@@ -49,7 +51,6 @@ classvars:
    viAttack_type = ATCK_WEAP_SLASH
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_FLEE_FRIGHTENERS
 
-   viDifficulty = 10
 
    viKarma = -100
 

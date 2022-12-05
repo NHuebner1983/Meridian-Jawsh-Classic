@@ -37,6 +37,7 @@ classvars:
    viAttributes = 0
    viLevel = 125
    viDifficulty = 9
+   viAmountofLoot = 6
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
    viCashmin = 500
    viCashmax = 1200
