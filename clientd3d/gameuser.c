@@ -476,7 +476,13 @@ void UserMakeOffer(void)
 	   isMarketplace = true;
 	   items = DisplayLookList(hMain, GetString(hInst, IDS_MARKETITEMS), player.inventory,
 		   LD_MULTIPLESEL | LD_AMOUNTS | LD_MARKETPLACE);
-   } else {
+   }
+   else if (((object_node*)(sel_list->data))->flags & OF_DEATHREALM) {
+	   items = DisplayLookList(hMain, GetString(hInst, IDS_OFFERITEMS), player.inventory,
+		   LD_MULTIPLESEL | LD_AMOUNTS | LD_SOULS);
+   }
+   else 
+   {
 	   items = DisplayLookList(hMain, GetString(hInst, IDS_OFFERITEMS), player.inventory,
 		   LD_MULTIPLESEL | LD_AMOUNTS);
    }

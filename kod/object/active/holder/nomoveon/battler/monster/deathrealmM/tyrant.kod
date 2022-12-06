@@ -19,10 +19,12 @@ resources:
    tyrant_name_rsc = "tyrant"
    tyrant_icon_rsc = tyrant.bgf
    tyrant_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. tyrants are known to be much more  "
-      "violent then friendly.  "
-
+      "This horned beast is from a time long-long passed. "
+      "The evolution of this T-Rex is ancient and horrifying. "
+      "Not only does the tyrant take large strides, but its wings "
+      "increase its momentum faster than a wolf while slightly airborne. "
+      "Do not engage this foe unless you intend to finish the fight. "
+      "Running will surely get you killed."
 
    tyrant_dead_icon_rsc = tyrantX.bgf
    tyrant_dead_name_rsc = "slain tyrant"
@@ -40,16 +42,17 @@ classvars:
    vrDead_icon = tyrant_dead_icon_rsc
    vrDead_name = tyrant_dead_name_rsc
 
-   viTreasure_type = TID_OGRE
-   viSpeed = SPEED_FAST
+   viAttack_type = ATCK_WEAP_SLASH
+
+   viTreasure_type = TID_TYRANT
+   viSpeed = SPEED_WOLFPACKER
    viAttributes = 0
    viLevel = 300
    viDifficulty = 9
    viAmountofLoot = 9
    viVisionDistance = 18
-   // Attack range of 192, or 3 row/col.
    viAttackRange = 256
-   viKarma = -100
+   viKarma = 0
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
    viCashmin = 5000
    viCashmax = 10000
@@ -69,9 +72,10 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_ACID, 80 ],
-                        [ATCK_WEAP_NERUDITE, -10 ],
-                        [ATCK_WEAP_NONMAGIC, 80 ] ];
+      plResistances = [ [-ATCK_SPELL_ALL, -10 ],
+                        [ATCK_WEAP_BLUDGEON, -40 ],
+                        [ATCK_WEAP_PIERCE, -40 ],
+                        [ATCK_WEAP_SLASH, -70 ] ];
 
       propagate;
    }

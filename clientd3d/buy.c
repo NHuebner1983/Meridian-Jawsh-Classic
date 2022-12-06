@@ -57,7 +57,8 @@ static void DoAlignLists(void)
    int index2 = ListBox_GetTopIndex(info->hwndQuanList);
    int index3 = ListBox_GetTopIndex(info->hwndShillList);
    int index4 = ListBox_GetTopIndex(info->hwndPlatList);
-   
+   int index5 = ListBox_GetTopIndex(info->hwndSoulList);
+
    if (index1 != index2)
    {
        ListBox_SetTopIndex(info->hwndQuanList, index1);
@@ -69,6 +70,10 @@ static void DoAlignLists(void)
    if (index1 != index4)
    {
        ListBox_SetTopIndex(info->hwndPlatList, index1);
+   }
+   if (index1 != index5)
+   {
+       ListBox_SetTopIndex(info->hwndSoulList, index1);
    }
 }
 
@@ -150,7 +155,9 @@ BOOL CALLBACK WithdrawalDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lP
 BOOL BuyInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam) 
 {
    list_type l;
-   int index;
+   int index, souls;
+
+   souls = 0;
 
    info = (BuyDialogStruct *) lParam;
 
@@ -158,36 +165,46 @@ BOOL BuyInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    info->hwndItemList = GetDlgItem(hDlg, IDC_ITEMLIST);
    info->hwndShillList = GetDlgItem(hDlg, IDC_COST_SHILL_LIST);
    info->hwndPlatList = GetDlgItem(hDlg, IDC_COST_PLAT_LIST);
+   info->hwndSoulList = GetDlgItem(hDlg, IDC_COST_SOUL_LIST);
    info->hwndQuanList = GetDlgItem(hDlg, IDC_QUANLIST);
    info->hwndCostShills = GetDlgItem(hDlg, IDC_COST_SHILL);
    info->hwndCostPlat = GetDlgItem(hDlg, IDC_COST_PLAT);
+   info->hwndCostSouls = GetDlgItem(hDlg, IDC_COST_SOUL);
 
    // Draw objects in owner-drawn list box
    SetWindowLong(info->hwndItemList, GWL_USERDATA, OD_DRAWOBJ);
    SetWindowLong(info->hwndQuanList, GWL_USERDATA, OD_DRAWOBJ);
    SetWindowLong(info->hwndShillList, GWL_USERDATA, OD_DRAWOBJ);
    SetWindowLong(info->hwndPlatList, GWL_USERDATA, OD_DRAWOBJ);
+   SetWindowLong(info->hwndSoulList, GWL_USERDATA, OD_DRAWOBJ);
 
    /* Add items & costs to list boxes */
    WindowBeginUpdate(info->hwndItemList);
    WindowBeginUpdate(info->hwndQuanList);
    WindowBeginUpdate(info->hwndShillList);
    WindowBeginUpdate(info->hwndPlatList);
+   WindowBeginUpdate(info->hwndSoulList);
+
    for (l = info->items; l != NULL; l = l->next)
    {
       DWORD amount = 1;
       DWORD plat;
       DWORD shill;
+      DWORD soul;
+
       buy_object *buy_obj = (buy_object *) l->data;
       index = ItemListAddItem(info->hwndItemList, &buy_obj->obj, -1, False);
       
       if (IsNumberObj(buy_obj->obj.id))
-	 amount = buy_obj->obj.amount;
+	    amount = buy_obj->obj.amount;
       else
-	 amount = 1;
+	    amount = 1;
 
       plat = buy_obj->plat;
       shill = buy_obj->shill;
+      soul = buy_obj->soul;
+
+      souls = souls + soul;
 
       ListBox_InsertString(info->hwndQuanList, index, " ");
       ListBox_SetItemData(info->hwndQuanList, index, 0);
@@ -199,11 +216,37 @@ BOOL BuyInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
       sprintf(temp, "%d", plat);
       ListBox_InsertString(info->hwndPlatList, index, temp);
       ListBox_SetItemData(info->hwndPlatList, index, plat);
+
+      sprintf(temp, "%d", soul);
+      ListBox_InsertString(info->hwndSoulList, index, temp);
+      ListBox_SetItemData(info->hwndSoulList, index, soul);
    }
+
+   if (souls <= 0)
+   {
+       // Hide Souls (SHOW PLAT+SHILLS)
+       ShowWindow(GetDlgItem(hDlg, IDC_COST_SOUL), SW_HIDE);
+       ShowWindow(GetDlgItem(hDlg, IDC_COST_SOUL_LIST), SW_HIDE);
+       ShowWindow(GetDlgItem(hDlg, IDC_PRICE_SOUL_LIST), SW_HIDE);
+       ShowWindow(GetDlgItem(hDlg, IDC_PRICE_SOUL_LIST_LABEL), SW_HIDE);
+   }
+   else {
+       // Hide Plat & Shills (SHOW SOULS)
+       ShowWindow(GetDlgItem(hDlg, IDC_COST_SHILL), SW_HIDE);
+       ShowWindow(GetDlgItem(hDlg, IDC_PRICE_SHILL_LIST), SW_HIDE);
+       ShowWindow(GetDlgItem(hDlg, IDC_COST_SHILL_LIST), SW_HIDE);
+       ShowWindow(GetDlgItem(hDlg, IDC_PRICE_SHILL_LIST_LABEL), SW_HIDE);
+       ShowWindow(GetDlgItem(hDlg, IDC_COST_PLAT), SW_HIDE);
+       ShowWindow(GetDlgItem(hDlg, IDC_PRICE_PLAT_LIST), SW_HIDE);
+       ShowWindow(GetDlgItem(hDlg, IDC_COST_PLAT_LIST), SW_HIDE);
+       ShowWindow(GetDlgItem(hDlg, IDC_PRICE_PLAT_LIST_LABEL), SW_HIDE);
+   }
+
    WindowEndUpdate(info->hwndItemList);
    WindowEndUpdate(info->hwndQuanList);
    WindowEndUpdate(info->hwndShillList);
    WindowEndUpdate(info->hwndPlatList);
+   WindowEndUpdate(info->hwndSoulList);
 
    /* Set seller's name */
    Edit_SetText(GetDlgItem(hDlg, IDC_SELLER), 
@@ -295,6 +338,7 @@ static void HandleSelectionChange(void)
    WindowBeginUpdate(info->hwndQuanList);
    WindowBeginUpdate(info->hwndShillList);
    WindowBeginUpdate(info->hwndPlatList);
+   WindowBeginUpdate(info->hwndSoulList);
    ListBox_DeleteString(info->hwndQuanList,index);
    if (ListBox_GetSel(info->hwndItemList,index))
    {
@@ -315,6 +359,7 @@ static void HandleSelectionChange(void)
    WindowEndUpdate(info->hwndQuanList);
    WindowEndUpdate(info->hwndShillList);
    WindowEndUpdate(info->hwndPlatList);
+   WindowEndUpdate(info->hwndSoulList);
    UpdateCost();
 }
 
@@ -428,6 +473,7 @@ void UpdateCost(void)
 
    info->shills = 0;
    info->plat = 0;
+   info->souls = 0;
    num = ListBox_GetCount(info->hwndItemList);
    for (i=0; i < num; i++)
    {
@@ -436,12 +482,16 @@ void UpdateCost(void)
           info->shills += ListBox_GetItemData(info->hwndShillList, i);
       if (ListBox_GetSel(info->hwndItemList, i) > 0)
           info->plat += ListBox_GetItemData(info->hwndPlatList, i);
+      if (ListBox_GetSel(info->hwndItemList, i) > 0)
+          info->souls += ListBox_GetItemData(info->hwndSoulList, i);
 #else
       int quantity = (int)ListBox_GetItemData(info->hwndQuanList,i);
       int shills = (int)ListBox_GetItemData(info->hwndShillList,i);
       int plat = (int)ListBox_GetItemData(info->hwndPlatList, i);
+      int souls = (int)ListBox_GetItemData(info->hwndSoulList, i);
       info->shills += quantity * shills;
       info->plat += quantity * plat;
+      info->souls += quantity * souls;
 #endif
    }
 
@@ -459,6 +509,8 @@ void UpdateCost(void)
    SetWindowText(info->hwndCostShills, temp);
    sprintf(temp, "%d Plat", info->plat);
    SetWindowText(info->hwndCostPlat, temp);
+   sprintf(temp, "%d Souls", info->souls);
+   SetWindowText(info->hwndCostSouls, temp);
 }
 /************************************************************************/
 /*
@@ -520,6 +572,7 @@ void BuyList(object_node seller, list_type items)
    dlg_info.seller_name = seller.name_res;
    dlg_info.shills = 0;
    dlg_info.plat = 0;
+   dlg_info.souls = 0;
 
    if (hwndBuyDialog == NULL)
       /* Give user list of things to select from */
@@ -543,6 +596,7 @@ void WithdrawalList(object_node seller, list_type items)
    dlg_info.seller_name = seller.name_res;
    dlg_info.shills = 0;
    dlg_info.plat = 0;
+   dlg_info.souls = 0;
 
    if (hwndBuyDialog == NULL)
       /* Give user list of things to select from */

@@ -1892,7 +1892,12 @@ messages:
       {
          if StringEqual(string,dm_get_money_command)
          {
-            Send(self,@NewHold,#what=Create(&Shilling,#number=10000000));
+            if poOwner <> $ AND IsClass(poOwner, &DeathRealm)
+            {
+               Send(self,@NewHold,#what=Create(&Souls,#number=1000000));
+            }else{
+               Send(self,@NewHold,#what=Create(&Shilling,#number=10000000));
+            }
 
             return;
          }

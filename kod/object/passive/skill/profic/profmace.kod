@@ -30,7 +30,8 @@ classvars:
    vrIcon = Maceproficiency_icon_rsc
    vrDesc = Maceproficiency_desc_rsc
 
-   vrSkill_intro = Maceprof_skill_intro
+   vrSkill_intro = $
+   
    viSchool = SKS_FENCING
    viSkill_num = SKID_PROFICIENCY_MACE
    viSkill_Level = 1

@@ -19,10 +19,11 @@ resources:
    Ice_Reaver_name_rsc = "ice reaver"
    Ice_Reaver_icon_rsc = reaverb.bgf
    Ice_Reaver_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. Ice reaver are known to be much more  "
-      "violent then friendly.  "
-
+      "The coldest and the purest of the reavers, the ice reaver is so cold, "
+      "even being near this nasty creature begins to freeze your fingers "
+      "and toes!  While the most fragile of the reavers she does massive "
+      "cold damage and if you aren't careful you'll be frozen and then "
+      "smashed into bits no one would be able to recognize."
 
    Ice_Reaver_dead_icon_rsc = reaverbX.bgf
    Ice_Reaver_dead_name_rsc = "slain ice reaver"
@@ -40,16 +41,17 @@ classvars:
    vrDead_icon = Ice_Reaver_dead_icon_rsc
    vrDead_name = Ice_Reaver_dead_name_rsc
 
-   viTreasure_type = TID_OGRE
+   viAttack_type = ATCK_SPELL_COLD
+  
+   viTreasure_type = TID_ICE_REAVER
    viSpeed = SPEED_FAST
    viAttributes = 0
    viLevel = 300
    viDifficulty = 9
    viAmountofLoot = 9
    viVisionDistance = 18
-   // Attack range of 192, or 3 row/col.
    viAttackRange = 192
-   viKarma = -100
+   viKarma = 0
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
    viCashmin = 5000
    viCashmax = 10000
@@ -69,10 +71,12 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_ACID, 80 ],
-                        [ATCK_WEAP_NERUDITE, -10 ],
-                        [ATCK_WEAP_NONMAGIC, 80 ] ];
+      plResistances = [ [-ATCK_SPELL_FIRE, -80 ],
+                        [-ATCK_SPELL_COLD, 100 ],
+                        [ATCK_WEAP_NONMAGIC, 30 ] ];
 
+      plSpellBook = [ [SID_ICE_NOVA,5,40] ];
+      
       propagate;
    }
 

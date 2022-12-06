@@ -1,0 +1,165 @@
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// All rights reserved.
+//
+// This software is distributed under a license that is described in
+// the LICENSE file that accompanies it.
+//
+// Meridian is a registered trademark.
+
+
+//////////////////////////S///////////////////////////////////////////////////////
+ThornCoat is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   //include thorncoat.lkod
+
+   thorncoat_name_rsc = "thorn coat"
+   thorncoat_icon_rsc = ithorncoat.bgf
+   thorncoat_desc_rsc = \
+      "Melting red & green hydra scales creates a chain reaction "
+      "that opens the door to many possibilities in the magic realm. "
+      "This powerful mixture forms a supernatural health "
+      "transfer when pain is inflicted onto you. You will reflect "
+      "up to 3% of your attacker's damage back to them and you will "
+      "be healed for the same amount. Creates a protective coat of thorns "
+      "around you to protect against close-range attacks. "
+      "Requires one red hydra scale and one green hydra scale."
+
+   thorncoat_already_enchanted_rsc = "You are already coated in thorns."
+   thorncoat_on_rsc = "Kraanan coats you in protective thorns."
+   thorncoat_off_rsc = "Your thorn coat has vanished."
+   thorncoat_success_rsc = "Kraanan coats %s%s with protective thorns."
+
+   thorncoat_reflected = "Your thorn coat inflicts ~B%i~B damage to %s%s."
+   thorncoat_inflicted = "Ouch! %s%s's thorn coat inflicts ~B%i~B damage to you."
+
+classvars:
+
+   viPersonal_ench = True
+
+   vrName = thorncoat_name_rsc
+   vrIcon = thorncoat_icon_rsc
+   vrDesc = thorncoat_desc_rsc
+
+   vrAlreadyEnchanted = thorncoat_already_enchanted_rsc
+   vrEnchantment_On = thorncoat_On_rsc
+   vrEnchantment_Off = thorncoat_Off_rsc
+   vrSuccess = thorncoat_Success_rsc
+
+   viSpell_num = SID_THORN_COAT
+
+   viMana = 6
+
+   viSpell_level = 6
+   viSchool = SS_KRAANAN
+
+   viChance_To_Increase = 5
+   viMeditate_ratio = 300
+
+   viFlash = FLASH_GOOD_SELF
+
+   viOffensive = TRUE
+
+   vbCanCastOnOthers = FALSE
+
+   viDistanceForInfliction = 5
+
+properties:
+
+   // The effectiveness of purge on the target spell as a percentage.
+   // 100 will cause purge to remove its entire spellpower, 0 will
+   // prevent purge from removing this spell.
+   viPurgeFactor = 30
+
+   // Max % damage this spell can reflect.
+   viMaxReflectionPercent = 3
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&RedHydraScale,1],plReagents);
+      plReagents = Cons([&GreenHydraScale,1],plReagents);
+
+      return;
+   }
+
+   GetStateValue(iSpellpower=$,who=$,target=$)
+   {
+      Send(target,@AddDamageReflection,#spellpower=iSpellPower,#maxpercent=viMaxReflectionPercent);
+
+      return iSpellpower;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      // Since the regs are so hard to get, this spell lasts a very long time.
+      iDuration = ((20 * 60) + (iSpellPower*25)) * 1000;
+
+      return iDuration;
+   }
+
+   EndEnchantment(who=$,report=TRUE,state=0)
+   {
+      Send(who,@RemoveDamageReflection);
+
+      propagate;
+   }
+
+   ReportReflectedDamage(victim=$,attacker=$,damage=$)
+   "Victim is reflecting damage onto attacker."
+   {
+      local iDistance;
+
+      iDistance = Send(victim,@SquaredDistanceTo, #what=attacker);
+
+      if iDistance = $ OR iDistance > viDistanceForInfliction
+      {
+         // Too far away to be hit by thorns (or not in the same room).
+         return;
+      }
+
+      Send(attacker,@LoseHealth,#amount=(damage*100),#precision=TRUE);
+      Send(victim,@GainHealth,#amount=(damage*100),#precision=TRUE);
+
+      if attacker <> $ AND IsClass(attacker, &Monster)
+      {
+         Send(attacker,@AssessDamage,
+            #what=victim,
+            #damage=damage,
+            #atype=ATCK_WEAP_PIERCE,
+            #isReflected=TRUE);
+      }
+
+      if victim <> $ AND IsClass(victim, &Player)
+      {
+         // Victim reflects damage
+         Send(victim,@MsgSendUser,#message_rsc=thorncoat_reflected,#parm1=damage,#parm2=Send(attacker,@GetInDef),#parm3=Send(attacker,@GetName));
+      }
+
+      if attacker <> $ AND IsClass(attacker, &Player)
+      {
+         // Attacker receives damage
+         Send(attacker,@MsgSendUser,#message_rsc=thorncoat_inflicted,#parm1=Send(victim,@GetInDef),#parm2=Send(victim,@GetName),#parm3=damage);
+         Send(attacker,@AssessDamage,
+            #what=victim,
+            #damage=damage,
+            #atype=ATCK_WEAP_PIERCE,
+            #report=TRUE,
+            #report_resistance=TRUE,
+            #isReflected=TRUE);
+      }
+
+      return;
+   }
+
+end
+////////////////////////////////////////////////////////////////////////////////

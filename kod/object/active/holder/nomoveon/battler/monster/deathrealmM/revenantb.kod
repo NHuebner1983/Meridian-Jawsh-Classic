@@ -38,9 +38,7 @@ resources:
    revenantb_name_rsc = "revenant"
    revenantb_icon_rsc = zombie.bgf
    revenantb_desc_rsc = \
-      "The reward for someone's misdeeds: a battle to the death with a lost "
-      "soul.  Although it is harmless to all but the murderer it haunts, "
-      "anyone foolish enough to interfere will suffer the same fate."
+      "Where did you think revenants came from?"
 
    Revb_draining_effect = \
       "The revenant makes a mystical motion... you feel drained."
@@ -50,18 +48,23 @@ classvars:
    vrIcon = revenantb_icon_rsc
    vrDesc = revenantb_desc_rsc
 
+   viTreasure_type = TID_REVENANT_B
+
    viAttack_type = ATCK_WEAP_SLASH
+   
    viDefault_behavior = \
       AI_FIGHT_AGGRESSIVE | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_THROUGH_WALLS
 
 properties:
 
-   viSpeed = SPEED_FASTER
+   viTreasure_type = TID_GREEN_SEEKER
+
+   viSpeed = SPEED_HACKER
    viLevel = 300               /// These are reset in constructor
    viDifficulty = 7
    viAmountofLoot = 8
    viVisionDistance = 100
-   // Attack range of 192, or 3 row/col.
+   
    viAttackRange = 192
    viKarma = 0
    viCashmin = 5000

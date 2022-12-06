@@ -845,6 +845,9 @@ resources:
       "let them know that you need to ~Ipart ways~I, before you can start "
       "a new one."
 
+   player_learned_new = "~B~yCongratulations! You have learned %s.~B"
+   player_trying_to_learn = "~r~IYou concentrate on trying to learn %s.~k~I"
+
    pvp_notify_wav = gong.ogg
 
 classvars:
@@ -1314,6 +1317,108 @@ messages:
       return;
    }
 
+   TryLearn(skill_num=$, spell_num=$)
+   "Lets the player learn a skill or spell using RNG."
+   {
+      local bIsSkill, bIsSpell, bWillLearnSkill, bWillLearnSpell, iRandom, iStat, oLearn, iAbility, iStatPenalty;
+
+      bWillLearnSkill = FALSE;
+      bWillLearnSpell = FALSE;
+      iRandom = 0;
+      iStat = $;
+      iAbility = 0;
+      iStatPenalty = 0;
+      oLearn = $;
+
+      if skill_num = $ AND spell_num = $
+      {
+         return FALSE;
+      }
+
+      if skill_num <> $ AND skill_num <> 0
+      {
+         oLearn = Send(SYS,@FindSkillByNum,#num=skill_num);
+
+         if oLearn <> $
+         {
+            iAbility = Send(self,@GetSkillAbility,#skill_num=skill_num);
+
+            if iAbility <> $ AND iAbility > 0
+            {
+               // We already know this skill
+               return FALSE;
+            }
+
+            bIsSkill = TRUE;
+         }
+      }
+
+      if spell_num <> $ AND spell_num <> 0
+      {
+         oLearn = Send(SYS,@FindSpellByNum,#num=spell_num);
+
+         if oLearn <> $
+         {
+            iAbility = Send(self,@GetSpellAbility,#spell_num=spell_num);
+
+            if iAbility <> $ AND iAbility > 0
+            {
+               // We already know this spell
+               return FALSE;
+            }
+         }
+
+         bIsSpell = TRUE;
+      }
+
+      iStat = Send(oLearn,@GetRequisiteStat,#who=self);
+
+      if iStat <> $ AND iStat > 0
+      {
+         if iStat < 50
+         {
+            // Makes it much harder to learn at 1 than 50.
+            iStatPenalty = (50 - iStat) + iStat;
+         } else {
+            iStat = 20; // 50 in the requisite, learn quickly.
+         }
+
+         iRandom = Random(1, (iStat + iStatPenalty));
+
+         if bIsSkill
+         {
+            bWillLearnSkill = (iRandom = iStat);
+         }
+         if bIsSpell
+         {
+            bWillLearnSpell = (iRandom = iStat);
+         }
+      }
+
+      //Debug(Send(self,@GetName),"TryLearn",iRandom,iStat,bWillLearnSkill,bWillLearnSpell);
+
+      if bWillLearnSkill 
+      {
+         // Skill learned!
+         Send(self,@MsgSendUser,#message_rsc=player_learned_new,#parm1=Send(oLearn, @GetName));
+         Send(self,@AddSkill,#num=skill_num,#iability=Bound(iStat, 1, 25));
+
+         return TRUE;
+      }
+
+      if bWillLearnSpell
+      {
+         // Spell learned!
+         Send(self,@MsgSendUser,#message_rsc=player_learned_new,#parm1=Send(oLearn, @GetName));
+         Send(self,@AddSpell,#num=spell_num,#iability=Bound(iStat, 1, 25));
+
+         return TRUE;
+      }
+
+      Send(self,@MsgSendUser,#message_rsc=player_trying_to_learn,#parm1=Send(oLearn, @GetName));
+      
+      return FALSE;
+   }
 
    KillPlayer(real_death=TRUE, wait_time=0, rscMistakeMessage=$, oRoomOrPlayerWhoKilledMe=$)
    "This will kill the player (#real_death=TRUE default), but can be delayed for dramatic effect."
@@ -3376,32 +3481,16 @@ messages:
       foreach i in lSpells
       {
          iLevel = Send(Send(SYS,@FindSpellByNum,#num=i),@GetLevel);
-
-         if iLevel >= 2
-         {
-            iPoints += 25;
-         }
-         else
-         {
-            iPoints += 10;
-         }
+         iPoints += (iLevel * 10);
       }
 
       foreach i in lSkills
       {
          iLevel = Send(Send(SYS,@FindSkillByNum,#num=i),@GetLevel);
-
-         if iLevel >= 2
-         {
-            iPoints += 25;
-         }
-         else
-         {
-            iPoints += 10;
-         }
+         iPoints += (iLevel * 10);
       }
 
-      if iPoints > 45
+      if iPoints > 50
       {
          // they hacked their char.dll
       }
@@ -3497,7 +3586,7 @@ messages:
 	  {
 	     // Prepare DM
          piVigor = 200;
-		 piStamina = 50;
+		   piStamina = 50;
          Send(self,@GainBaseMaxHealth,#amount=150-piBase_max_health);
          Send(self,@ResetXPToLevel);
          Send(self,@NewMaxMana,#amount=200-piMax_mana);
@@ -6126,7 +6215,7 @@ messages:
          if oWeapon <> $
          {
             iOffense = Send(oWeapon,@ModifyHitRoll,#target=what,
-                  #hit_roll=iOffense);
+                  #hit_roll=iOffense,#who=self,#what=what);
          }
       }
 
@@ -6295,6 +6384,7 @@ messages:
 
       // Morphed?
       oMonster = Send(self,@GetIllusionForm);
+      oWeapon = Send(self,@GetWeapon);
       if (oMonster <> $)
          AND (piFlags & PFLAG_MORPHED)
       {
@@ -6305,7 +6395,6 @@ messages:
          oStroke = stroke_obj;
          if stroke_obj = $
          {
-            oWeapon = Send(self,@GetWeapon);
             if oWeapon = $
             {
                oStroke=Send(SYS,@FindSkillByNum,#num=SKID_PUNCH);
@@ -6327,24 +6416,40 @@ messages:
          iDamage = Send(oStroke,@FindDamage,#weapon_used=Send(self,@GetWeapon),
                         #who=self,#victim=what); 
       }
-
+      
       // Spells and attmods that modify damage
       iDamageBonus = 0;
+      iModBonus = 0;
       foreach i in plAttack_modifiers
       {
          // Attack modifiers return the total damage, subtract out the original
          //  damage to get the damage bonus.
-         iModBonus = Send(i,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
-                          #stroke_obj=oStroke);
-         iDamageBonus += (iModBonus - iDamage);
+         iModBonus = 0;
 
-         Send(i,@WeaponHitTarget);
+         if i <> $
+         {
+            iModBonus = Send(i,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
+                           #stroke_obj=oStroke);
+            iDamageBonus += (iModBonus - iDamage);
+
+            Send(i,@WeaponHitTarget);
+         }
+      }
+
+      if oWeapon <> $ 
+      {
+         iModBonus = Send(oWeapon,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
+                           #stroke_obj=oStroke);
+         iDamageBonus += iModBonus;
       }
 
       foreach i in plRadiusEnchantments
       {
-         iDamageBonus = Send(Nth(i,2),@ModifyDamage,#who=self,#what=what,
-                              #state=Nth(i,3),#damage=iDamageBonus);
+         if i <> $
+         {
+            iDamageBonus = Send(Nth(i,2),@ModifyDamage,#who=self,#what=what,
+                                 #state=Nth(i,3),#damage=iDamageBonus);
+         }
       }
 
       // Convert to high precision. Super dirty, will be cleaned up shortly.
@@ -6420,7 +6525,29 @@ messages:
 
    AssessHit(what = $, stroke_obj = $, damage = $, use_weapon = $)
    {
-      local oMonster;
+      local oMonster, oWeapon;
+
+      oWeapon = Send(self,@GetWeapon);
+
+      if what <> $ AND oWeapon <> $ AND IsClass(oWeapon, &PickAxe) AND IsClass(what, &Ore)
+      {
+         Send(self, @TryLearn, #skill_num=SKID_MINING);
+      }
+
+      if what <> $ AND oWeapon = $ AND IsClass(what, &Monster)
+      {
+         Send(self, @TryLearn, #skill_num=SKID_PUNCH);
+      }
+
+      if what <> $ AND oWeapon <> $ AND IsClass(oWeapon, &Mace) AND IsClass(what, &Monster)
+      {
+         Send(self, @TryLearn, #skill_num=SKID_PROFICIENCY_MACE);
+      }
+
+      if what <> $ AND oWeapon <> $ AND IsClass(oWeapon, &Weapon) AND IsClass(what, &Monster)
+      {
+         Send(self, @TryLearn, #skill_num=SKID_SLASH);
+      }
 
       if stroke_obj <> $
          AND Send(self,@GetWeaponSwingBonus) > 0
@@ -6456,10 +6583,10 @@ messages:
    // be handled in high precision mode.
    AssessDamage(what=$,damage=$,atype=0,aspell=0,stroke_obj=$,bonus=0,
       scalefactor=1000,report=TRUE,report_resistance=TRUE,absolute=FALSE,
-      precision=FALSE)
+      precision=FALSE,isReflected=FALSE)
    {
       local i, j, iResistance, oSoldierShield, gainchance, color_rsc,
-            iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken;
+            iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken, iReflectedDamage;
 
       if what <> $ AND IsClass(what, &Monster)
       {
@@ -6471,7 +6598,7 @@ messages:
          damage = damage * 100;
       }
 
-      origdamage = damage/100;
+      origdamage = damage / 100;
       color_rsc = player_hit_color_none;
 
       // Attacks against a minion master will cause minions to defend the master.
@@ -6617,6 +6744,13 @@ messages:
                Send(what,@GetTrueName),aspell,atype,damage/100,origdamage,
                player_no_weapon_string);
          }
+      }
+
+      if NOT isReflected AND damage <> $ AND damage > 0 AND what <> self AND Send(self, @IsReflectingDamage)
+      {
+         // self was hit and damage must be reflected back onto (what)
+         // Make sure reflected damage doesn't loop onto someone reflecting damage (ie:  what <> self)
+         Send(self, @ReflectDamage, #victim=self, #attacker=what, #damage=origdamage);
       }
 
       Send(self,@LoseHealth,#amount=damage,#precision=TRUE);
@@ -7533,18 +7667,25 @@ messages:
       return GetListElemByClass(plPassive,&Platinum);
    }
 
-   CanAfford(cost_shillings=0, cost_platinum=0, quantity=1)
+   CanAfford(cost_shillings=0, cost_platinum=0, cost_souls=0, quantity=1)
    "Checks shillings and platinum to see if you can cover the cost of the purchase."
    {
-      local oShilling, oPlatinum, iShillings, iPlatinum;
+      local oShilling, oPlatinum, oSouls, iShillings, iPlatinum, iSouls;
 
       iShillings = 0;
       iPlatinum = 0;
+      iSouls = 0;
 
       oShilling = Send(self,@GetShillingObject);
       oPlatinum = Send(self,@GetPlatinumObject);
+      oSouls = Send(self,@GetSoulsObject);
 
       //Debug("Can Afford Check", cost_shillings, cost_platinum, quantity);
+
+      if cost_souls <> $ AND cost_souls > 0
+      {
+         return Send(oSouls,@GetNumber) >= cost_souls;
+      }
 
       if cost_shillings >= SHILLINGS_PER_PLATINUM
       {
@@ -7644,20 +7785,28 @@ messages:
       return oPlatinum;
    }
 
-   Pay(amount_shillings=0, amount_platinum=0, quantity=1)
+   Pay(amount_shillings=0, amount_platinum=0, amount_souls=0, quantity=1)
    "Takes shillings and platinum from a player inventory."
    "And yeh this needs to be refactored probably."
    {
-      local oShilling, oPlatinum, iShillings, iPlatinum, iSetShillings, iSetPlatinum, lBroken;
+      local oShilling, oPlatinum, oSouls, iShillings, iPlatinum, iSouls, iSetShillings, iSetPlatinum, iSetSouls, lBroken;
 
       iShillings = 0;
       iPlatinum = 0;
+      iSouls = 0;
       iSetShillings = 0;
       iSetPlatinum = 0;
+      iSetSouls = 0;
       lBroken = $;
 
       oShilling = Send(self,@GetShillingObject);
       oPlatinum = Send(self,@GetPlatinumObject);
+      oSouls = Send(self,@GetSoulsObject);
+
+      if oSouls <> $
+      {
+         iSetSouls = Send(oSouls, @GetNumber);
+      }
 
       if oShilling <> $
       {
@@ -7686,6 +7835,19 @@ messages:
       if oPlatinum <> $
       {
          iPlatinum = Send(oPlatinum,@GetNumber);
+      }
+
+      if amount_souls <> $ AND amount_souls > 0 AND oSouls <> $
+      {
+         iSetSouls = iSetSouls - (amount_souls * quantity);
+         Send(oSouls,@SetNumber,#number=iSetSouls);
+
+         if iSetSouls <= 0
+         {
+            Send(oSouls, @Delete);
+         }
+
+         return;
       }
 
       if amount_shillings >= SHILLINGS_PER_PLATINUM
@@ -10217,6 +10379,7 @@ messages:
       if NOT Send(what,@CanPlayerAdvanceOnMe)
          OR Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
          OR (Send(poOwner,@IsArena))
+         OR NOT Send(what,@CanEarnHP)
       {
          return FALSE;
       }
@@ -13552,6 +13715,12 @@ messages:
          {
             bSkill = TRUE;
             obj = Send(SYS,@FindSkillByNum,#num=skill_num);
+
+            if Send(self,@GetSkillAbility,#skill_num=skill_num) > 0
+            {
+               Debug("Already learned",Send(obj,@GetName));
+               return PLAYER_LEARN_ALREADY;
+            }
          }
       }
       else
@@ -13565,6 +13734,12 @@ messages:
          {
             bSkill = FALSE;
             obj = Send(SYS,@FindSpellByNum,#num=spell_num);
+
+            if Send(self,@GetSpellAbility,#spell_num=skill_num) > 0
+            {
+               Debug("Already learned",Send(obj,@GetName));
+               return PLAYER_LEARN_ALREADY;
+            }
          }
       }
       if obj = $
@@ -13656,7 +13831,7 @@ messages:
             return PLAYER_LEARN_ERROR;
          }
 
-         if nobj = obj
+         if Send(nobj,@GetSkillNum) = Send(obj,@GetSkillNum)
          {
             return PLAYER_LEARN_ALREADY;
          }
@@ -13708,7 +13883,7 @@ messages:
          nSchool = Send(nobj,@GetSchool);
          nLevel = Send(nobj,@GetLevel);
 
-         if (NOT IsClass(nobj,&Spell)) OR (nLevel> 10)
+         if (NOT IsClass(nobj,&Spell)) OR (nLevel> 10) OR (nLevel <= 1)
          {
             continue;
          }
@@ -13724,7 +13899,7 @@ messages:
          }
 
          // Is this in the same school at level N-1?
-         if school = nSchool AND (level-1) = (nlevel)
+         if nLevel > 1 AND school = nSchool AND (level-1) = (nlevel)
          {
             index = Send(self,@DecodeSpellAbility,#compound=i);
 
@@ -13744,14 +13919,15 @@ messages:
             }
          }
 
-         if NOT IsClass(nobj,&Blink)  // DON'T COUNT BLINK!
+         if nLevel > 1 AND 
+            NOT IsClass(nobj,&Blink)
             AND NOT IsClass(nObj,&RiijaServant)
             AND NOT IsClass(nObj,&KranServant)
             AND NOT IsClass(nObj,&ShalServant)
             AND NOT IsClass(nObj,&FarenServant)
             AND NOT IsClass(nObj,&QorServant)
             AND NOT IsClass(nObj,&JalaServant)
-            AND NOT IsClass(nobj,&UtilitySpell) // Don't count utility spells
+            AND NOT IsClass(nobj,&UtilitySpell)
          {
             switch (nSchool)
             {
@@ -13793,6 +13969,13 @@ messages:
                break;
             }
          }
+      }
+
+      if level = 1
+      {
+         // Always allow level 1 to be bought.
+         Debug("Player can always learn lvl 1");
+         return PLAYER_LEARN_SUCCESS;
       }
 
       if level > 1
@@ -13948,6 +14131,7 @@ messages:
       // mean that the need is greater than 99// in three of the previous
       // level's spells, or 297 (most of the time).  Levels with fewer than
       // three spells are a special instance.
+      Debug("Skill",iNeed,"needed",(99*(bound(prev_level,1,3))),"total used",iHave,"iHave");
       if iNeed > (99*(bound(prev_level,1,3)))
       {
          if scryer <> $
@@ -13986,14 +14170,15 @@ messages:
          iSchool = Send(oSpellObj,@GetSchool);
          iLevel = Send(oSpellObj,@GetLevel);
 
-         if NOT IsClass(oSpellObj,&Blink)  // DON'T COUNT BLINK!
+         if iLevel > 1 
+            AND NOT IsClass(oSpellObj,&Blink)
             AND NOT IsClass(oSpellObj,&RiijaServant)
             AND NOT IsClass(oSpellObj,&KranServant)
             AND NOT IsClass(oSpellObj,&ShalServant)
             AND NOT IsClass(oSpellObj,&FarenServant)
             AND NOT IsClass(oSpellObj,&QorServant)
             AND NOT IsClass(oSpellObj,&JalaServant)            		 
-            AND NOT IsClass(oSpellObj,&UtilitySpell) // Don't count utility spells
+            AND NOT IsClass(oSpellObj,&UtilitySpell)
             AND iSchool <> SS_DM_COMMAND
             AND except <> iSchool
          {

@@ -60,7 +60,7 @@ classvars:
    viDifficulty = 9
    viAmountofLoot = 6
    viVisionDistance = 60
-   // Attack range of 192, or 3 row/col.
+   
    viAttackRange = 192
    viKarma = -100
    vbIsUndead = TRUE

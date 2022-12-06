@@ -181,6 +181,12 @@ messages:
       propagate;
    }
 
+   ModifyDamage()
+   "Placeholder"
+   {
+      return 0;
+   }
+
    //// Hard Stats Functions
    //// (Range, hit chance, damage, etc)
 
@@ -447,6 +453,7 @@ messages:
 
       return iDamage;
    }
+   
 
    GetDamage(target=$)
    {

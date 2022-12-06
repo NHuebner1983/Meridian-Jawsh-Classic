@@ -33,7 +33,7 @@ classvars:
    viWeaponType = WEAPON_TYPE_SLASH
    viWeaponQuality = WEAPON_QUALITY_LOW
 
-   viProficiency_Needed = SKID_PROFICIENCY_HAMMER
+   viProficiency_Needed = SKID_MINING
 
    viValue_average = 100
    viWeight = 60
@@ -56,7 +56,35 @@ properties:
 
    piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_PIERCE
 
+   piMiningPercent = $
+
 messages:
+
+   GetMiningPercent(who=$)
+   {
+      piMiningPercent = Send(who,@GetSkillAbility,#Skill_num=SKID_MINING);
+
+      return piMiningPercent;
+   }
+
+   ModifyDamage(who=$,what=$,damage=$)
+   {
+      local iDamage;
+
+      iDamage = 0;
+
+      if who <> $ AND what <> $ AND IsClass(what,&Ore) AND Send(self,@GetMiningPercent,#who=who) <> $
+      {
+         iDamage += Send(self,@GetMiningPercent,#who=who);
+      } else {
+         if who <> $ AND what <> $ AND (IsClass(what,&Orc) OR IsClass(what,&OrcWizard) OR IsClass(what,&CaveOrc) OR IsClass(what,&OrcPitBoss))
+         {
+            iDamage += Send(self,@GetMiningPercent,#who=who) / 7;
+         }
+      }
+
+      return iDamage;
+   }
 
 end
 ////////////////////////////////////////////////////////////////////////////////

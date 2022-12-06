@@ -30,6 +30,8 @@ classvars:
    viTreasure_type = TID_DIAMOND
    viDifficulty = 30
 
+   viOre = &Diamond
+
 properties:
 
 messages:

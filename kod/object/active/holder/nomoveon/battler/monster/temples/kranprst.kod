@@ -102,7 +102,8 @@ messages:
             SID_RESIST_MAGIC,
             SID_ARMOR_OF_GORT,
             SID_EAGLE_EYES,
-            SID_RELAY 
+            SID_RELAY,
+            SID_THORN_COAT
          ],
       $];
 

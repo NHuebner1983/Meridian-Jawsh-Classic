@@ -83,6 +83,7 @@
    OF_NPCHASQUESTS   = 0x00100000
    OF_NPCACTIVEQUEST = 0x00200000
    OF_MOBKILLQUEST   = 0x00400000
+   OF_DEATHREALM     = 0x00800000
 
    // Client preference flags (stored in piPreferences in Player)
    // Default preferences - all on except safety (which is reverse)
@@ -953,12 +954,21 @@
 
    RID_ORC_CAVE_END = 2599
 
-   // Marion Crypt Dungeon 2600-2700
+   // Marion Crypt Dungeon 2600-2699
    RID_MAR_CRYPT1  = 2600
    RID_MAR_CRYPT2  = 2601
    RID_MAR_CRYPT3A = 2602
    RID_MAR_CRYPT4  = 2603
 
+   // Ogre Caves (2700 - 2799)
+   RID_OGRE_CAVE1 = 2700
+   RID_OGRE_CAVE2 = 2701
+   
+   // Additional Random Maps (2800-2899)
+   RID_MALEVAL = 2800
+   RID_TOS_TRAINING = 2801
+   RID_D6E7ULAKE = 2802
+   
    //Death Realm
    RID_DH4             = 3000
    RID_DH3             = 3001
@@ -1023,13 +1033,6 @@
    RID_DTHRONE1        = 3060
    RID_DTHRONE2        = 3061
    RID_DMAZE           = 3062
-
-   // Latest maps from 420
-   RID_OGRE_CAVE1 = 2603
-   RID_MALEVAL = 2604
-   RID_TOS_TRAINING = 2605
-   RID_D6E7ULAKE = 2606
-   RID_OGRE_CAVE2 = 2607
 
    // "Historical" rooms 9000-10000
    // These are older rooms that we're throwing in for historical/nostalgia
@@ -1946,6 +1949,8 @@
    TID_CORRUPTED_MOLLUSK = 82
    TID_DARK_OGRE = 83
 
+   // Diggie's Mining Patch
+
    TID_QORCITE = 84
    TID_RUBY = 85
    TID_SAPPHIRE = 86
@@ -1954,6 +1959,39 @@
    TID_EMERALD = 89
    TID_ORE = 90
    TID_NERUORE = 91
+
+   // Death Realm Monsters
+
+   TID_ICE_REAVER = 92
+   TID_OBSIDIAN_REAVER = 93
+   TID_STONE_REAVER = 94
+   TID_TYRANT = 95
+   TID_VAJRA = 96
+   TID_VOZUN = 97
+   TID_RED_HYDRA = 98
+   TID_GREEN_HYDRA = 99
+   TID_GOLD_HYDRA = 100
+   TID_MINOTAUR_BERSERKER = 101
+   TID_GRANDPA_TRENT = 102
+   TID_GREEN_SEEKER = 103
+   TID_GREY_SEEKER = 104
+   TID_SPITTER_SPROUT = 105
+   TID_BLACK_HYDRA = 106
+   TID_BROWN_SEEKER = 107
+   TID_CHIMERA = 108
+   TID_CROCO = 109
+   TID_CRUSHER_SPROUT = 110
+   TID_CYCLOPS = 111
+   TID_DEATH_MITE_MAGE = 112
+   TID_DEATH_MITE_SCOUT = 113
+   TID_DEATH_MITE_SOLDIER = 114
+   TID_DEATH_MITE_TANK = 115
+   TID_DULAHAN = 116
+   TID_FALLEN_MONK = 117
+   TID_FOLLOWER_OF_QOR = 118
+   TID_FRENZY_SPROUT = 119
+   TID_HELL_WASP = 120
+   TID_REVENANT_B = 121
    
    // English articles
 
@@ -2185,7 +2223,8 @@
    SKID_SECOND_WIND = 405
    SKID_DISARM = 406
    SKID_TAUNT = 407
-   
+   SKID_MINING = 408
+
    // Melee weapon strokes start here.
    SKID_DEFAULT = 420
    SKID_SLASH = 421
@@ -2224,6 +2263,7 @@
    
    SID_CAMP = 207
    SID_DONATE = 208
+   SID_THORN_COAT = 209
 
    // Maximum number of pets our servant can have
    MAX_SERVANT_MINIONS = 2

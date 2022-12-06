@@ -417,7 +417,7 @@ classvars:
    viLevel = 250
    viDifficulty = 12
    
-   // Attack range of 192, or 3 row/col.
+   
    viAttackRange = 220
    viVisionDistance = 15
    viCashmin = 1
@@ -564,6 +564,8 @@ properties:
    piTauntIntervalNormal = 1000
    piTauntIntervalPvp = 6000
    
+   pbIsNearMaster = TRUE
+
 messages:
    
    // Send these values when you use the Create(&Servant, #...) function.
@@ -779,13 +781,27 @@ messages:
 
    MasterCheck()
    {
+      local iMasterDistance;
+      
       if poMaster = $
       {
          Send(self,@Delete);
          
          return FALSE;
       }
-      
+
+      if Send(poMaster, @GetOwner) = Send(self, @GetOwner)
+      {
+         iMasterDistance = Send(self,@SquaredDistanceTo,#what=poMaster);
+
+         if iMasterDistance <> $ AND iMasterDistance > -1 AND iMasterDistance < 50
+         {
+            pbIsNearMaster = TRUE;
+         } else {
+            pbIsNearMaster = FALSE;
+         }
+      }
+
       return TRUE;
    }
 
@@ -1128,15 +1144,15 @@ messages:
    {
       local iRandom, iSpellGroup, iSpellLevel, iSpellNum, iSpellRandom, iBuffPower, oSpell, iSpellRemove, lMinions, iChance, iHealth, iHealAmount, iMaxHealth, iMissing, iAverageKarmaInRoom, bQuietSpellCast;
 	  
-      if NOT Send(self,@MasterCheck)
+      Send(self,@StartBuffTimer);
+
+      if NOT Send(self,@MasterCheck) OR NOT pbIsNearMaster
       {
          return;
       }
       
       plRemoveEnchants = $;
       bQuietSpellCast = FALSE;
-
-      Send(self,@StartBuffTimer);
       
       iHealth = Send(self,@GetHealth);
       iMaxHealth = Send(self,@GetMaxHealth);
@@ -1492,12 +1508,12 @@ messages:
 
       iRandomCap = 500;
 
-      if NOT Send(self,@MasterCheck)
+      Send(self,@StartImpTimer);
+
+      if NOT Send(self,@MasterCheck) OR NOT pbIsNearMaster
       {
          return;
       }
-
-      Send(self,@StartImpTimer);
 	   
       iLastAttack = Send(poMaster, @SinceLastAttack);
 
@@ -1629,7 +1645,8 @@ messages:
          [4, SID_EAGLE_EYES, 70, $],
          [5, SID_KILLING_FIELDS, 100, $],
          [5, SID_ARMOR_OF_GORT, 60, $],
-         [5, SID_RESIST_MAGIC, 30, $]
+         [5, SID_RESIST_MAGIC, 30, $],
+         [6, SID_THORN_COAT, 10, $]
       ];
 	  
       return;
@@ -1924,7 +1941,7 @@ messages:
    {
       local oRoom;
 
-      if NOT Send(self,@MasterCheck)
+      if NOT Send(self,@MasterCheck) OR NOT pbIsNearMaster
       {
          return;
       }
@@ -2391,14 +2408,12 @@ messages:
 
    TauntEnemies()
    {
-      ptTaunt = $;
+      ptTaunt = CreateTimer(self,@TauntEnemies,piTauntInterval);
 
-      if NOT Send(self,@MasterCheck)
+      if NOT Send(self,@MasterCheck) OR NOT pbIsNearMaster
       {
          return;
       }
-
-      ptTaunt = CreateTimer(self,@TauntEnemies,piTauntInterval);
 
       if NOT pbAllowTaunt
       {

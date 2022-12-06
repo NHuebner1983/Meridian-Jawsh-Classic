@@ -2519,7 +2519,7 @@ messages:
          // Cost of spell
          if Send(i,@GetLevel) = 2
          {
-            AddPacket(4,25);
+            AddPacket(4,Send(i,@GetLevel) * 10);
          }
          else
          {
@@ -2532,7 +2532,7 @@ messages:
       iCount = 0;
       foreach i in plSkills
       {
-         if Send(i,@GetLevel) <= 2
+         if Send(i,@GetLevel) <= 2 AND Send(i, @GetIntro) <> $
          {
             iCount = iCount + 1;
          }
@@ -2543,7 +2543,7 @@ messages:
 
       foreach i in plSkills
       {
-         if Send(i,@GetLevel) > 2
+         if Send(i,@GetLevel) > 2 OR Send(i, @GetIntro) = $
          {
             continue;
          }
@@ -2552,9 +2552,9 @@ messages:
          AddPacket(4,Send(i,@GetName));
          AddPacket(4,Send(i,@GetIntro));
 
-         if Send(i,@GetLevel) = 2
+         if Send(i,@GetLevel) >= 2
          {
-            AddPacket(4,25);
+            AddPacket(4,Send(i,@GetLevel) * 10);
          }
          else
          {
@@ -3594,6 +3594,7 @@ messages:
                   AND num <> SID_QOR_SERVANT
                   AND num <> SID_JALA_SERVANT
                   AND num <> SID_CAMP
+                  AND num <> SID_DONATE
                {
                   plNewCharSpells = Cons(oSpell,plNewCharSpells);
                }
@@ -3628,6 +3629,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_CURSE_WEAPON,#class=&CurseWeapon);
       Send(self,@CreateOneSpellIfNew,#num=SID_PARDON,#class=&Pardon);
       Send(self,@CreateOneSpellIfNew,#num=SID_BLESS,#class=&Bless);
+      Send(self,@CreateOneSpellIfNew,#num=SID_THORN_COAT,#class=&ThornCoat);
       Send(self,@CreateOneSpellIfNew,#num=SID_MAGIC_SHIELD,#class=&MagicShield);
       Send(self,@CreateOneSpellIfNew,#num=SID_MEND,#class=&Mend);
       Send(self,@CreateOneSpellIfNew,#num=SID_EARTHQUAKE,#class=&Earthquake);
@@ -3844,7 +3846,6 @@ messages:
 
       // Donate
       Send(self,@CreateOneSpellIfNew,#num=SID_DONATE,#class=&Donate);
-
 
       // Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
@@ -4071,6 +4072,7 @@ messages:
        Send(self,@CreateOneSKillIfNew,#num=SKID_SECOND_WIND,#class=&SecondWind);
        Send(self,@CreateOneSKillIfNew,#num=SKID_DISARM,#class=&Disarm);
        Send(self,@CreateOneSKillIfNew,#num=SKID_TAUNT,#class=&Taunt);
+       Send(self,@CreateOneSKillIfNew,#num=SKID_MINING,#class=&Mining);
 
        return;
    }
@@ -4422,6 +4424,39 @@ messages:
       Create(&RubyVeinTreasure);
       Create(&UncutVeinTreasure);
       Create(&NeruditeOreVeinTreasure);
+
+      // Death Realm
+      Create(&IceReaverTreasure);
+      Create(&ObsidianReaverTreasure);
+      Create(&StoneReaverTreasure);
+      Create(&TyrantTreasure);
+      Create(&VajraTreasure);
+      Create(&VozunTreasure);
+      Create(&RedHydraTreasure);
+      Create(&BlackHydraTreasure);
+      Create(&GreenHydraTreasure);
+      Create(&GoldHydraTreasure);
+      Create(&MinotaurBerserkerTreasure);
+      Create(&GrandpaTrentTreasure);
+      Create(&GreenSeekerTreasure);
+      Create(&GreySeekerTreasure);
+
+      Create(&BrownSeekerTreasure);
+      Create(&ChimeraTreasure);
+      Create(&CrocoTreasure);
+      Create(&CrusherSproutTreasure);
+      Create(&CyclopsTreasure);
+      Create(&DeathMiteMageTreasure);
+      Create(&DeathMiteScoutTreasure);
+      Create(&DeathMiteSoldierTreasure);
+      Create(&DeathMiteTankTreasure);
+      Create(&DulahanTreasure);
+      Create(&FallenMonkTreasure);
+      Create(&FollowerOfQorTreasure);
+      Create(&FrenzySproutTreasure);
+      Create(&HellWaspTreasure);
+      Create(&RevenantBTreasure);
+      Create(&SpitterSproutTreasure);
 
       return;
    }
@@ -7881,6 +7916,13 @@ messages:
       {
          return 0;
       }
+
+      if level = 1
+      {
+         return -10;
+      }
+
+      Debug("GetLevelLearnPoints", level, Nth(vlLevelPoints,level));
 
       return Nth(vlLevelPoints,level);
    }

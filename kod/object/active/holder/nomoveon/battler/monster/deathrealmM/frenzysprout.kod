@@ -42,16 +42,18 @@ classvars:
    vrDead_icon = frenzysprout_dead_icon_rsc
    vrDead_name = frenzysprout_dead_name_rsc
 
-   viTreasure_type = TID_OGRE
+   viTreasure_type = TID_FRENZY_SPROUT
+
    viSpeed = SPEED_FAST
+   
    viAttributes = 0
    viLevel = 300
    viDifficulty = 9
    viAmountofLoot = 9
    viVisionDistance = 18
-   // Attack range of 192, or 3 row/col.
+   
    viAttackRange = 192
-   viKarma = -100
+   viKarma = 0
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT | MOB_NOMOVE
    viCashmin = 5000
    viCashmax = 10000

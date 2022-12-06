@@ -46,7 +46,6 @@ classvars:
    viLevel = 75
    viDifficulty = 8
    viAmountofLoot = 5
-   // Attack range of 192, or 3 row/col.
    viAttackRange = 192
    viKarma = 90
    viCashmin = 300

@@ -19,10 +19,11 @@ resources:
    Obsidian_Reaver_name_rsc = "obsidian reaver"
    Obsidian_Reaver_icon_rsc = reaverc.bgf
    Obsidian_Reaver_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. Obsidian reaver are known to be much more  "
-      "violent then friendly.  "
-
+      "The most fragile but also the most EVIL of the reavers, "
+      "this creature, ''from hell's veins'', runs thick with acid and "
+      "will dissolve you into a puddle of muck before you even "
+      "realize it!  While he isn't as armored as the stone reaver, "
+      "he still has quite the set of armor being completely covered in obsidian."
 
    Obsidian_Reaver_dead_icon_rsc = reavercX.bgf
    Obsidian_Reaver_dead_name_rsc = "slain obsidian reaver"
@@ -40,16 +41,18 @@ classvars:
    vrDead_icon = Obsidian_Reaver_dead_icon_rsc
    vrDead_name = Obsidian_Reaver_dead_name_rsc
 
-   viTreasure_type = TID_OGRE
+   viAttack_type = ATCK_WEAP_NERUDITE
+
+   viTreasure_type = TID_OBSIDIAN_REAVER
+   
    viSpeed = SPEED_FAST
    viAttributes = 0
    viLevel = 300
    viDifficulty = 9
    viAmountofLoot = 9
    viVisionDistance = 18
-   // Attack range of 192, or 3 row/col.
    viAttackRange = 192
-   viKarma = -100
+   viKarma = 0
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
    viCashmin = 5000
    viCashmax = 10000
@@ -69,9 +72,15 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_ACID, 80 ],
-                        [ATCK_WEAP_NERUDITE, -10 ],
-                        [ATCK_WEAP_NONMAGIC, 80 ] ];
+      plResistances = [ [-ATCK_SPELL_HOLY, -20],
+                        [-ATCK_SPELL_FIRE, -20],
+                        [-ATCK_SPELL_UNHOLY, 80],
+                        [-ATCK_SPELL_COLD, 80],
+                        [ATCK_WEAP_ALL, 80],
+                        [ATCK_WEAP_BLUDGEON, -20]
+                     ];
+
+      plSpellBook = [ [SID_SPLASH_OF_ACID,5,40], [SID_POISON_FOG,5,40] ];
 
       propagate;
    }

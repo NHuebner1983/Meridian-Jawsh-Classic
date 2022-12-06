@@ -1292,6 +1292,11 @@ messages:
          type = &Shilling;
       }
 
+      if type = &Souls
+      {
+         return viValue_average;
+      }
+
       if pbMarketplaceListed
       {
          // Marketplace items do not have a degredation value calculation.

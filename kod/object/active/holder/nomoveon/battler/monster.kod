@@ -2781,16 +2781,23 @@ messages:
    // handled with high precision. Eventually, all damage calculations should 
    // be handled in high precision mode.
    AssessDamage(what=$,damage=$,atype=0,aspell=0,bonus=0,scalefactor=1000,
-      absolute=FALSE,precision=FALSE)
+      absolute=FALSE,precision=FALSE,isReflected=FALSE)
    {
-      local iDamage, iResist, iPercentClass, i, each_obj, rPartyKillMessage;
+      local iDamage, iResist, iPercentClass, i, each_obj, rPartyKillMessage, origdamage;
       
+      if what = $
+      {
+         return 0;
+      }
+
       if NOT precision
       {
          damage = damage * 100;
       }
 
-      if (piBehavior & AI_NPC)
+      origdamage = damage / 100;
+
+      if what <> $ AND (piBehavior & AI_NPC)
       {
          Send(what,@MsgSendUser,#message_rsc=LS_nofight_attacked);
 
@@ -2824,12 +2831,19 @@ messages:
       // I hate my target more if he hits me.
       if what = poTarget
       {
-         // Should scale based on damage?
-         piHatred = piHatred + 1;
+         // Should scale based on damage? (yep, added that)
+         piHatred = piHatred + Random(1, Bound(iDamage, 1, 9999));
+      }
+      
+      if NOT isReflected AND damage <> $ AND damage > 0 AND what <> self AND Send(self, @IsReflectingDamage)
+      {
+         // self was hit and damage must be reflected back onto (what)
+         // Make sure reflected damage doesn't loop onto someone reflecting damage (ie:  what <> self)
+         Send(self, @ReflectDamage, #victim=self, #attacker=what, #damage=iDamage);
       }
 
-      piHit_points = piHit_points - iDamage;
-      
+      Send(self,@LoseHealth,#amount=iDamage,#precision=TRUE);
+
       if poOwner = $
       {
          return 0;
@@ -5262,14 +5276,16 @@ messages:
    "This is used for both teachers and sellers"
    {
       local i, j, bFound, oBuy, lNumbers, iAmount, oItemAtt, iCan_hold, oSplit, index, iDepositPlatinum, iDepositShillings,
-            bFree, iPriceShillings, iPricePlatinum, bCanAfford, iCostShillings, iCostPlatinum, bIsMarketplace, oStoreOwner;
+            bFree, iPriceShillings, iPricePlatinum, iPriceSouls, bCanAfford, iCostShillings, iCostPlatinum, iCostSouls, 
+            bIsMarketplace, oStoreOwner;
 
-      //Debug("Buy()",Send(what,@GetName),"from",Send(self,@GetName));
+      Debug("Buy()",Send(what,@GetName),"from",Send(self,@GetName));
 
       bIsMarketplace = (viAttributes & MOB_MARKETPLACE);
 
       iPriceShillings = 0;
       iPricePlatinum = 0;
+      iPriceSouls = 0;
 
       // Ensure that buyer and seller are in the same room
       if Send(what,@GetOwner) <> poOwner
@@ -5310,6 +5326,8 @@ messages:
 
          bFree = FALSE;
 
+         iPriceSouls = 0;
+
          if IsClass(i, &Item) AND Send(i, @IsListedOnMarketplace)
          {
             // Marketplace
@@ -5321,6 +5339,7 @@ messages:
                // Item is free, let's zero out the cost.
                iPriceShillings = 0;
                iPricePlatinum = 0;
+               iPriceSouls = 0;
 
                //Debug("Item is free, marketplace owner");
             }
@@ -5329,6 +5348,11 @@ messages:
          if NOT bFree
          {
             // Item Cost (1 unit)
+            if poOwner <> $ AND IsClass(poOwner, &DeathRealm)
+            {
+               iPriceSouls = Send(self,@GetPrice,#type=&Souls,#what=i,#who=what);
+            }
+
             iPriceShillings = Send(self,@GetPrice,#type=&Shilling,#what=i,#who=what);
             iPricePlatinum = Send(self,@GetPrice,#type=&Platinum,#what=i,#who=what);
             iPricePlatinum = iPricePlatinum + Send(SYS, @ShillingsToPlatinum, #number=iPriceShillings);
@@ -5400,7 +5424,7 @@ messages:
          }
 
          // Can we afford this single item (or X quantity)?
-         bCanAfford = (bFree OR Send(what,@CanAfford,#cost_shillings=iPriceShillings,#cost_platinum=iPricePlatinum,#quantity=iAmount));
+         bCanAfford = (bFree OR Send(what,@CanAfford,#cost_souls=iPriceSouls,#cost_shillings=iPriceShillings,#cost_platinum=iPricePlatinum,#quantity=iAmount));
 
          //Debug("Can afford?",Send(i,@GetName),i,iPriceShillings,"shil",iPricePlatinum,"plat",iAmount,"amount",bCanAfford,"afford?");
 
@@ -5499,7 +5523,7 @@ messages:
                if NOT bFree
                {
                   // Make them pay for the item.
-                  Send(what,@Pay,#amount_shillings=iPriceShillings,#amount_platinum=iPricePlatinum,#quantity=iAmount);
+                  Send(what,@Pay,#amount_souls=iPriceSouls,#amount_shillings=iPriceShillings,#amount_platinum=iPricePlatinum,#quantity=iAmount);
                }
 
                Send(self,@RemoveFromConditionalList,
@@ -5568,7 +5592,7 @@ messages:
 
                         if NOT bFree
                         {
-                           Send(what,@Pay,#amount_shillings=iPriceShillings,#amount_platinum=iPricePlatinum,#quantity=iAmount);
+                           Send(what,@Pay,#amount_souls=iPriceSouls,#amount_shillings=iPriceShillings,#amount_platinum=iPricePlatinum,#quantity=iAmount);
                         }
 
                         Send(i,@SubtractNumber,#Number=iAmount);
@@ -5649,7 +5673,7 @@ messages:
             }
             
             // Pay for the spell or skill
-            Send(what,@Pay,#amount_shillings=iPriceShillings,#amount_platinum=iPricePlatinum,#quantity=1);
+            Send(what,@Pay,#amount_souls=iPriceSouls,#amount_shillings=iPriceShillings,#amount_platinum=iPricePlatinum,#quantity=1);
          }
       }
 
@@ -5692,6 +5716,23 @@ messages:
       piHit_points = Bound(piHit_points+amount,1,piMax_hit_points*100);
 
       return;
+   }
+
+   GainHealth(amount=$,precision=FALSE)
+   {
+      return Send(self,@GainHealthNormal,#amount=amount,#precision=precision);
+   }
+
+   LoseHealth(amount=$,precision=FALSE)
+   {
+      if NOT precision
+      {
+         amount = amount * 100;
+      }
+      
+      piHit_points = piHit_points - amount;
+
+      return piHit_points;
    }
 
    NewMaxMana(amount=0)
@@ -6048,7 +6089,7 @@ messages:
 
       if iHit_Percent > 80
       {
-         if piBehavior & AI_NPC
+         if (piBehavior & AI_NPC) OR NOT Send(self,@CanEarnHP)
          {
             AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,monster_nothing);
          }
@@ -6077,7 +6118,7 @@ messages:
          rMonster_condition = vrCondition_bad;
       }
 
-      if piBehavior & AI_NPC
+      if piBehavior & AI_NPC OR NOT Send(self,@CanEarnHP)
       {
          AddPacket(4,rMonster_Condition, 4,vrDesc, 4,monster_nothing,
                      4,Send(self,@GetCapDef), 4,Send(self,@GetName));
@@ -7075,6 +7116,12 @@ messages:
    {
       local i, x, y, iShillings, iPlatinum;
 
+      if who <> $ AND IsClass(Send(who, @GetOwner), &DeathRealm)
+      {
+         // Price of the item uses Souls.
+         return Send(what, @GetInitValue);
+      }
+
       if type = $
       {
          type = &Shilling;
@@ -7649,8 +7696,12 @@ messages:
 
       if piAttributes & MOB_MARKETPLACE
       {
-         //Debug(Send(self,@GetName),"is Marketplace");
          iFlags = iFlags | OF_MARKETPLACE;
+      }
+
+      if what <> $ AND IsClass(what, &DeathRealm)
+      {
+         iFlags = iFlags | OF_DEATHREALM;
       }
 
       return iFlags;

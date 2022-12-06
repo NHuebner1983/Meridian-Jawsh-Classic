@@ -77,6 +77,7 @@ typedef struct {
    DWORD        temp_amount;            /* Scratch field used when user is selecting amount of object */
    DWORD        temp_listprice_plat;    /* platinum listing price 0 - 999999 */
    DWORD        temp_listprice_shills;  /* shillings list price 0 - 999 */
+   DWORD        temp_listprice_souls;   /* souls list price 0 - 999999 */
    int          flags;                  // Boolean object flags.
    BYTE         drawingtype;            // Object flags for drawing effects (invisibility, lighting type etc.)
    int          minimapflags;           // Flags used to draw the right color/icon on the minimap.

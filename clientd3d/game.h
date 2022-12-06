@@ -58,6 +58,7 @@ typedef struct {
    object_node obj;
    DWORD       shill;
    DWORD       plat;
+   DWORD       soul;
 } buy_object;    /* Object to display in list of things to buy */
 
 void InitializeGame(void);

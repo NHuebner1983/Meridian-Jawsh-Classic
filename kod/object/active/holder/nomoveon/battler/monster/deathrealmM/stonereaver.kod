@@ -19,9 +19,11 @@ resources:
    Stone_Reaver_name_rsc = "stone reaver"
    Stone_Reaver_icon_rsc = reavera.bgf
    Stone_Reaver_desc_rsc = \
-      "This huge creature drives fear into the heart of anyone  "
-      "who comes across it. Stone reaver are known to be much more  "
-      "violent then friendly.  "
+      "The toughest of the reavers and the leader of them all, "
+      "the stone reaver has heavy rock armor that makes attacking "
+      "with weapons nearly useless. Although slow, this abomination "
+      "packs one hell of a punch! The only reaver even capable of  "
+      "damaging it is the stone-shattering ice reaver."
 
 
    Stone_Reaver_dead_icon_rsc = reaveraX.bgf
@@ -40,16 +42,18 @@ classvars:
    vrDead_icon = Stone_Reaver_dead_icon_rsc
    vrDead_name = Stone_Reaver_dead_name_rsc
 
-   viTreasure_type = TID_OGRE
+   viAttack_type = ATCK_WEAP_BLUDGEON
+
+   viTreasure_type = TID_STONE_REAVER
+   
    viSpeed = SPEED_FAST
    viAttributes = 0
    viLevel = 300
    viDifficulty = 9
    viAmountofLoot = 9
    viVisionDistance = 18
-   // Attack range of 192, or 3 row/col.
    viAttackRange = 192
-   viKarma = -100
+   viKarma = 0
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
    viCashmin = 5000
    viCashmax = 10000
@@ -69,9 +73,13 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_ACID, 80 ],
-                        [ATCK_WEAP_NERUDITE, -10 ],
-                        [ATCK_WEAP_NONMAGIC, 80 ] ];
+      plResistances = [ [-ATCK_SPELL_COLD, -90],
+                        [-ATCK_SPELL_FIRE, 90],
+                        [ATCK_WEAP_ALL, 80],
+                        [ATCK_WEAP_BLUDGEON, -10]
+                     ];
+
+      plSpellBook = [ [SID_EARTHQUAKE,5,40] ];
 
       propagate;
    }
