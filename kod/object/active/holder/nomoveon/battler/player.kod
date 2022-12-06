@@ -13876,7 +13876,7 @@ messages:
          nSchool = Send(nobj,@GetSchool);
          nLevel = Send(nobj,@GetLevel);
 
-         if (NOT IsClass(nobj,&Spell)) OR (nLevel> 10) OR (nLevel <= 1)
+         if (NOT IsClass(nobj,&Spell)) OR (nLevel> 10)
          {
             continue;
          }
@@ -13892,7 +13892,7 @@ messages:
          }
 
          // Is this in the same school at level N-1?
-         if nLevel > 1 AND school = nSchool AND (level-1) = (nlevel)
+         if school = nSchool AND (level-1) = (nlevel)
          {
             index = Send(self,@DecodeSpellAbility,#compound=i);
 
@@ -13912,8 +13912,7 @@ messages:
             }
          }
 
-         if nLevel > 1 AND 
-            NOT IsClass(nobj,&Blink)
+         if NOT IsClass(nobj,&Blink)
             AND NOT IsClass(nObj,&RiijaServant)
             AND NOT IsClass(nObj,&KranServant)
             AND NOT IsClass(nObj,&ShalServant)
