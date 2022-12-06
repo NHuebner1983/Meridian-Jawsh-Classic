@@ -104,7 +104,8 @@ messages:
             Create(&GoldShield),
             Create(&NeruditeSword),
             Create(&Axe),
-            Create(&Hammer)
+            Create(&Hammer),
+            Create(&PickAxe)
          ],
       $,$,$];
 

@@ -120,7 +120,6 @@ messages:
             Send(what,@NewHold,#what=oOre);
             Send(what,@MsgSendUser,#message_rsc=mined_rsc,#parm1=iAmount,#parm2=Send(oOre,@GetName));
          }
-         Debug(iBonus);
       }
 
       propagate;
