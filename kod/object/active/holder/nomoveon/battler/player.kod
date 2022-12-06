@@ -13715,6 +13715,12 @@ messages:
          {
             bSkill = TRUE;
             obj = Send(SYS,@FindSkillByNum,#num=skill_num);
+
+            if Send(self,@GetSkillAbility,#skill_num=skill_num) > 0
+            {
+               Debug("Already learned",Send(obj,@GetName));
+               return PLAYER_LEARN_ALREADY;
+            }
          }
       }
       else
@@ -13728,6 +13734,12 @@ messages:
          {
             bSkill = FALSE;
             obj = Send(SYS,@FindSpellByNum,#num=spell_num);
+
+            if Send(self,@GetSpellAbility,#spell_num=skill_num) > 0
+            {
+               Debug("Already learned",Send(obj,@GetName));
+               return PLAYER_LEARN_ALREADY;
+            }
          }
       }
       if obj = $
@@ -13819,7 +13831,7 @@ messages:
             return PLAYER_LEARN_ERROR;
          }
 
-         if nobj = obj
+         if Send(nobj,@GetSkillNum) = Send(obj,@GetSkillNum)
          {
             return PLAYER_LEARN_ALREADY;
          }
@@ -13871,7 +13883,7 @@ messages:
          nSchool = Send(nobj,@GetSchool);
          nLevel = Send(nobj,@GetLevel);
 
-         if (NOT IsClass(nobj,&Spell)) OR (nLevel> 10)
+         if (NOT IsClass(nobj,&Spell)) OR (nLevel> 10) OR (nLevel <= 1)
          {
             continue;
          }
@@ -13887,7 +13899,7 @@ messages:
          }
 
          // Is this in the same school at level N-1?
-         if school = nSchool AND (level-1) = (nlevel)
+         if nLevel > 1 AND school = nSchool AND (level-1) = (nlevel)
          {
             index = Send(self,@DecodeSpellAbility,#compound=i);
 
@@ -13907,14 +13919,15 @@ messages:
             }
          }
 
-         if NOT IsClass(nobj,&Blink)  // DON'T COUNT BLINK!
+         if nLevel > 1 AND 
+            NOT IsClass(nobj,&Blink)
             AND NOT IsClass(nObj,&RiijaServant)
             AND NOT IsClass(nObj,&KranServant)
             AND NOT IsClass(nObj,&ShalServant)
             AND NOT IsClass(nObj,&FarenServant)
             AND NOT IsClass(nObj,&QorServant)
             AND NOT IsClass(nObj,&JalaServant)
-            AND NOT IsClass(nobj,&UtilitySpell) // Don't count utility spells
+            AND NOT IsClass(nobj,&UtilitySpell)
          {
             switch (nSchool)
             {
@@ -13956,6 +13969,13 @@ messages:
                break;
             }
          }
+      }
+
+      if level = 1
+      {
+         // Always allow level 1 to be bought.
+         Debug("Player can always learn lvl 1");
+         return PLAYER_LEARN_SUCCESS;
       }
 
       if level > 1
@@ -14111,6 +14131,7 @@ messages:
       // mean that the need is greater than 99// in three of the previous
       // level's spells, or 297 (most of the time).  Levels with fewer than
       // three spells are a special instance.
+      Debug("Skill",iNeed,"needed",(99*(bound(prev_level,1,3))),"total used",iHave,"iHave");
       if iNeed > (99*(bound(prev_level,1,3)))
       {
          if scryer <> $
@@ -14149,14 +14170,15 @@ messages:
          iSchool = Send(oSpellObj,@GetSchool);
          iLevel = Send(oSpellObj,@GetLevel);
 
-         if NOT IsClass(oSpellObj,&Blink)  // DON'T COUNT BLINK!
+         if iLevel > 1 
+            AND NOT IsClass(oSpellObj,&Blink)
             AND NOT IsClass(oSpellObj,&RiijaServant)
             AND NOT IsClass(oSpellObj,&KranServant)
             AND NOT IsClass(oSpellObj,&ShalServant)
             AND NOT IsClass(oSpellObj,&FarenServant)
             AND NOT IsClass(oSpellObj,&QorServant)
             AND NOT IsClass(oSpellObj,&JalaServant)            		 
-            AND NOT IsClass(oSpellObj,&UtilitySpell) // Don't count utility spells
+            AND NOT IsClass(oSpellObj,&UtilitySpell)
             AND iSchool <> SS_DM_COMMAND
             AND except <> iSchool
          {
