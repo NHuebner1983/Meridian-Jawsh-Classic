@@ -93,7 +93,7 @@ messages:
       plMonsters = [ [&Ore, 20],
                      [&DiamondVein, 15],
                      [&EmeraldVein, 15],
-                     [&NeruditeVein, 10],
+                     //[&NeruditeVein, 10],
                      [&RubyVein, 15],
                      [&SapphireVein, 15],
                      [&UncutVein, 10] ];

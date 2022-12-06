@@ -59,7 +59,7 @@ messages:
                      [&Ore, 3],
                      [&DiamondVein, 3],
                      [&EmeraldVein, 3],
-                     [&NeruditeVein, 3],
+                     //[&NeruditeVein, 3],
                      [&RubyVein, 3],
                      [&SapphireVein, 3],
                      [&UncutVein, 3] ];
