@@ -27,6 +27,8 @@ resources:
    Ore_cannot_hit = \
       "Your weapon is not suitable for mining. "
 
+   mined_rsc = "You mine a few %s."
+
 classvars:
 
    vrName = Ore_name_rsc
@@ -43,6 +45,8 @@ classvars:
    viDefault_behavior = MOB_NOMOVE
    viCashmin = 0
    viCashmax = 0
+
+   viOre = &OreChunk
 
    viCanEarnHP = FALSE
 
@@ -80,6 +84,26 @@ messages:
       }
 
       return TRUE;
+   }
+
+   AssessDamage(what=$)
+   "This is called when something causes damage to us."
+   {
+      local oOre, oAmount, oAmountMin, oAmountMax;
+
+      oAmountMin = Send(what,@GetSkillAbility,#skill_num=SKID_MINING)/10;
+      oAmountMax = Send(what,@GetSkillAbility,#skill_num=SKID_MINING)/5;
+      oAmount = Random(oAmountMin,oAmountMax);
+      oAmount = Bound(oAmount,1,$);
+      oOre = Create(viOre,#number=oAmount);
+
+      if what <> $ AND IsClass(what,&player)
+      {
+	      Send(what,@NewHold,#what=oOre);
+	      Send(what,@MsgSendUser,#message_rsc=mined_rsc,#parm1=send(oOre,@GetName));
+      }
+
+      propagate;
    }
 
    CanMorphTo()
