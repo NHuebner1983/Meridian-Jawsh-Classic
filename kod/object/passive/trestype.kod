@@ -234,6 +234,12 @@ messages:
       local i, iNumberItems, tokengen, iSurvivalLoot, oTreasure, iSafetyCntr,
             lTreasureItems, iMiningPercent;
 
+      if loot <=0
+      {
+         Debug("trestype", Send(mob,@GetName),"has zero loot: setting to 4.");
+         loot = 4;
+      }
+
       // MOB_ONE_TREASURE guarantees one and only one item from loot table.
       // Also has a chance to drop special items, provided the trestype
       // allows it.

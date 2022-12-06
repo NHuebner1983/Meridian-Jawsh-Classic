@@ -71,15 +71,15 @@ messages:
    {
       local iDamage;
 
-      iDamage = 0;
+      iDamage = damage;
 
       if who <> $ AND what <> $ AND IsClass(what,&Ore) AND Send(self,@GetMiningPercent,#who=who) <> $
       {
-         iDamage += Send(self,@GetMiningPercent,#who=who);
+         iDamage += Bound(Send(self,@GetMiningPercent,#who=who), 1, 75);
       } else {
          if who <> $ AND what <> $ AND (IsClass(what,&Orc) OR IsClass(what,&OrcWizard) OR IsClass(what,&CaveOrc) OR IsClass(what,&OrcPitBoss))
          {
-            iDamage += Send(self,@GetMiningPercent,#who=who) / 7;
+            iDamage += Bound(Send(self,@GetMiningPercent,#who=who), 1, 60);
          }
       }
 
