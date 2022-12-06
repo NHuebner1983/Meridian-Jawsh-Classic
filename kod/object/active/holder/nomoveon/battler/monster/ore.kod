@@ -98,11 +98,7 @@ messages:
 
       foreach i in Send(what,@GetPlayerUsing)
       {
-         /// checking item to see if it's a riija sword.
-         if isClass(i,&RingMining)
-         {
-            iBonus = Send(i,@GetMiningBonus);
-         }
+            iBonus = iBonus + Send(i,@GetMiningBonus);
       } 
 
       if cSkillAbility <> $

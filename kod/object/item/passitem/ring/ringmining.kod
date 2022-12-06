@@ -73,11 +73,6 @@ messages:
       return;
    }
 
-   GetMiningBonus()
-   {
-      return viMiningBonus;
-   }
-
 end
 ////////////////////////////////////////////////////////////////////////////////
 

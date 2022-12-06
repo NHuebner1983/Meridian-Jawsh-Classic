@@ -160,6 +160,8 @@ properties:
    piMarketplaceUnitPricePlatinum = 0
    poMarketplacePurchasedFrom = $
    
+   viMiningBonus = 0
+
 messages:
 
    Constructor(corpse=$, oDMCreator=$)
@@ -3093,6 +3095,11 @@ messages:
    IsColored()
    {
 	   return pbColored;
+   }
+      
+   GetMiningBonus()
+   {
+      return viMiningBonus;
    }
 
 end
