@@ -30,7 +30,7 @@ classvars:
    viTreasure_type = TID_QORCITE
    viDifficulty = 25
    
-   viOre = &Qorcite
+   vcOre = &Qorcite
 
 properties:
 
