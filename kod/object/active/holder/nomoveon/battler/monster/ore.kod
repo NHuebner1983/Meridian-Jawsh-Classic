@@ -27,7 +27,7 @@ resources:
    Ore_cannot_hit = \
       "Your weapon is not suitable for mining. "
 
-   mined_rsc = "You mine %i %s."
+   mined_rsc = "~B~gYou mine %i %s."
 
 classvars:
 
@@ -47,7 +47,7 @@ classvars:
    viCashmin = 0
    viCashmax = 0
 
-   viOre = &OreChunk
+   vcOre = &OreChunk
 
    viCanEarnHP = FALSE
 
@@ -90,19 +90,25 @@ messages:
    AssessDamage(what=$)
    "This is called when something causes damage to us."
    {
-      local oOre, oAmount, oAmountMin, oAmountMax, iSkillAbility, iAmount;
+      local i, oOre, iAmount, cSkillAbility, iBonus;
 
-      iSkillAbility = Send(what,@GetSkillAbility,#skill_num=SKID_MINING);
+      cSkillAbility = Send(what,@GetSkillAbility,#skill_num=SKID_MINING);
 
-      if iSkillAbility <> $
+      iBonus = 0;
+
+      foreach i in Send(what,@GetPlayerUsing)
       {
-         oAmountMin = iSkillAbility / 10;
-         oAmountMax = iSkillAbility / 5;
-         oAmount = Random(oAmountMin,oAmountMax);
-         oAmount = Bound(oAmount,1,$);
-         oOre = Create(viOre,#number=oAmount);
+            iBonus = iBonus + Send(i,@GetMiningBonus);
+      } 
 
-         if what <> $ AND IsClass(what,&player) AND Random(1, (150 - iSkillAbility)) <= iSkillAbility
+      if cSkillAbility <> $
+      {
+         iAmount = Random(cSkillAbility / 10,cSkillAbility / 5);
+         iAmount = Bound(iAmount,1,$);
+         iAmount = iAmount+iBonus;
+         oOre = Create(vcOre,#number=iAmount);
+
+         if what <> $ AND IsClass(what,&player) AND Random(1, (150 - cSkillAbility)) <= cSkillAbility
          {
             iAmount = 1;
 

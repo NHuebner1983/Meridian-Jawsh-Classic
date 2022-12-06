@@ -30,7 +30,7 @@ classvars:
    viTreasure_type = TID_EMERALD
    viDifficulty = 30
 
-   viOre = &Emerald
+   vcOre = &Emerald
 
 properties:
 

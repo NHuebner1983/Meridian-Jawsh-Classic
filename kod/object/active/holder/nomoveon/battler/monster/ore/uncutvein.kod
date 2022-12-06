@@ -30,7 +30,7 @@ classvars:
    viTreasure_type = TID_UNCUT
    viDifficulty = 30
    
-   viOre = &UncutSeraphym
+   vcOre = &UncutSeraphym
 
 properties:
 
