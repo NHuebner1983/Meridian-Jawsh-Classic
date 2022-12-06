@@ -6385,6 +6385,7 @@ messages:
       // Morphed?
       oMonster = Send(self,@GetIllusionForm);
       oWeapon = Send(self,@GetWeapon);
+
       if (oMonster <> $)
          AND (piFlags & PFLAG_MORPHED)
       {
@@ -6395,6 +6396,7 @@ messages:
          oStroke = stroke_obj;
          if stroke_obj = $
          {
+            oWeapon = Send(self,@GetWeapon);
             if oWeapon = $
             {
                oStroke=Send(SYS,@FindSkillByNum,#num=SKID_PUNCH);
@@ -6416,10 +6418,9 @@ messages:
          iDamage = Send(oStroke,@FindDamage,#weapon_used=Send(self,@GetWeapon),
                         #who=self,#victim=what); 
       }
-      
+
       // Spells and attmods that modify damage
       iDamageBonus = 0;
-      iModBonus = 0;
       foreach i in plAttack_modifiers
       {
          // Attack modifiers return the total damage, subtract out the original
@@ -6431,17 +6432,17 @@ messages:
          Send(i,@WeaponHitTarget);
       }
 
-      if oWeapon <> $
-      {
-         iModBonus = Send(oWeapon,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
-                           #stroke_obj=oStroke);
-         iDamageBonus += (iModBonus - iDamage);
-      }
-
       foreach i in plRadiusEnchantments
       {
          iDamageBonus = Send(Nth(i,2),@ModifyDamage,#who=self,#what=what,
                               #state=Nth(i,3),#damage=iDamageBonus);
+      }
+
+      if oWeapon <> $ AND NOT(oWeapon = oStroke)
+      {
+         iModBonus = Send(oWeapon,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
+                           #stroke_obj=oStroke);
+         iDamageBonus += (iModBonus - iDamage);
       }
 
       // Convert to high precision. Super dirty, will be cleaned up shortly.

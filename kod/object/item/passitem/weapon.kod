@@ -181,10 +181,10 @@ messages:
       propagate;
    }
 
-   ModifyDamage()
-   "Placeholder"
+   ModifyDamage(damage=0)
+   "Placeholder - should just return original damage unmodified"
    {
-      return 0;
+      return damage;
    }
 
    //// Hard Stats Functions
