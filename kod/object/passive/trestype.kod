@@ -229,7 +229,7 @@ messages:
    }
 
    CreateMobTreasure(mob = $, who = $, level = 1, corpse = $, attributes = 0,
-                     boostedlevel = 0, difficulty = 0)
+                     boostedlevel = 0, difficulty = 0, loot = 0)
    {
       local i, iNumberItems, tokengen, iSurvivalLoot, oTreasure, iSafetyCntr,
             lTreasureItems, iMiningPercent;
@@ -257,27 +257,10 @@ messages:
       iSurvivalLoot = boostedlevel
         / Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalLoot);
 
-      iNumberItems = 1 + (level / 55) + Random(0,difficulty/3) + iSurvivalLoot;
-      iNumberItems = Bound(iNumberItems,$,6 + iSurvivalLoot);
+      iNumberItems = Random(1,loot) + iSurvivalLoot;
+      iNumberItems = Bound(iNumberItems,$,loot + iSurvivalLoot);
       iNumberItems = (Send(SETTINGS_OBJECT,@GetItemFactor) * iNumberItems) / 100;
       iNumberItems = Bound(iNumberItems,1,$);
-
-      if mob <> $ AND IsClass(mob, &Ore)
-      {
-         iMiningPercent = Send(who,@GetSkillAbility,#Skill_num=SKID_MINING);
-
-         if iMiningPercent <> $ AND iMiningPercent > 0
-         {
-            if IsClass(mob, &NeruditeVein)
-            {
-               // Maximum Nerudite Ore: 5, Minimum 1.
-               iNumberItems = Random(1, Bound(iMiningPercent / 3, 1, 5));
-            } else {
-               // Maximum Minerals: 50, Minimum 15.
-               iNumberItems = Bound(Bound(iMiningPercent, 1, 50), 1, Random(Bound(iMiningPercent / 3, 1, 33), 35));
-            }
-         }
-      }
 
       tokengen = TRUE;
       i = 1;

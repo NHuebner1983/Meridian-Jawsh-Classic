@@ -51,6 +51,7 @@ classvars:
    viAttributes = 0
    viLevel = 75
    viDifficulty = 5
+   viAmountofLoot = 4
    viVisionDistance = 10
    viKarma = -50
    vbIsUndead = TRUE

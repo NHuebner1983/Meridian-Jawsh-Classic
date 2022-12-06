@@ -62,6 +62,7 @@ properties:
    viSpeed = SPEED_HACKER
    viLevel = 300               /// These are reset in constructor
    viDifficulty = 7
+   viAmountofLoot = 8
    viVisionDistance = 100
    
    viAttackRange = 192

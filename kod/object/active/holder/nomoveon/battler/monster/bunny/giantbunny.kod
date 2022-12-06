@@ -49,6 +49,7 @@ classvars:
       | AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
 
    viDifficulty = 8
+   viAmountofLoot = 8
    viVisionDistance = 20
    viLevel = 250
    viKarma = 0

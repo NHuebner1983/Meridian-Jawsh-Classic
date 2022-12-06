@@ -56,6 +56,7 @@ classvars:
    viAttributes = MOB_NOMOVE
    viLevel = 165
    viDifficulty = 9
+   viAmountofLoot = 7
 
    // Low vision since we want her to switch targets if possible.
    viVisionDistance = 6

@@ -82,6 +82,7 @@ classvars:
       AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_MONSTERS
    viLevel = 120
    viDifficulty = 8
+   viAmountofLoot = 5
    viVisionDistance = 22
 
    // Attack range of 320, or 5 row/col.

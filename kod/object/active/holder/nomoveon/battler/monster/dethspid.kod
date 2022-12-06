@@ -58,6 +58,7 @@ classvars:
    viAttributes = MOB_SPASM
    viLevel = 75
    viDifficulty = 5
+   viAmountofLoot = 4
    viVisionDistance = 12
    viKarma = -30
    viDefault_behavior = AI_MOVE_REGROUP | AI_FIGHT_AGGRESSIVE

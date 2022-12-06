@@ -46,7 +46,7 @@ classvars:
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
 
    viDifficulty = 8
-   
+   viAmountofLoot = 4
    viAttackRange = 192
    viKarma = -45
    viCashmin = 175
@@ -59,6 +59,7 @@ classvars:
 properties:
 
    viTreasure_type = TID_ZOMBIE
+   
    viLevel = 55
 
    piAnimation = ANIM_NONE
@@ -105,8 +106,8 @@ messages:
    {
       if piAnimation = ANIM_ATTACK
       {
-	 AddPacket(1,ANIMATE_ONCE,4,28,2,13,2,18,2,1);
-	 return;
+	      AddPacket(1,ANIMATE_ONCE,4,28,2,13,2,18,2,1);
+	      return;
       }
 
       // if no body animation

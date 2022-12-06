@@ -58,6 +58,7 @@ classvars:
    viSpeed = SPEED_FAST
    viLevel = 150
    viDifficulty = 9
+   viAmountofLoot = 6
    viVisionDistance = 60
    
    viAttackRange = 192

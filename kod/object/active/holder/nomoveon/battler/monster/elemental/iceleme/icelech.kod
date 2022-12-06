@@ -39,6 +39,7 @@ classvars:
 
    viLevel = 250
    viDifficulty = 9
+   viAmountofLoot = 8
 
    viCashmin = 3000
    viCashmax = 12000

@@ -79,6 +79,7 @@ classvars:
    vrSound_death = thrasher_sound_death
 
    viBonusXP = 700
+   viAmountofLoot = 6
 
 properties:
 

@@ -53,6 +53,7 @@ classvars:
    viAttributes = 0
    viLevel = 200
    viDifficulty = 8
+   viAmountofLoot = 7
    viVisionDistance = 28
 
    

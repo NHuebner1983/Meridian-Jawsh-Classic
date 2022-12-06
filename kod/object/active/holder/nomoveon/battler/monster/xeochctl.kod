@@ -72,6 +72,7 @@ classvars:
    viAttack_type = ATCK_WEAP_MAGIC
    viLevel = 150
    viDifficulty = 8
+   viAmountofLoot = 6
    viVisionDistance = 60
    
    viAttackRange = 3 * FINENESS

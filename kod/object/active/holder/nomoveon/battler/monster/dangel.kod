@@ -69,6 +69,7 @@ classvars:
    viAttack_spell = ATCK_SPELL_FIRE
    viLevel = 150
    viDifficulty = 7
+   viAmountofLoot = 6
    viVisionDistance = 28
 
    // Attack range of 448, or 7 row/col.

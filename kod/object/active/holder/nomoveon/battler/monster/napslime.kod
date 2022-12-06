@@ -44,6 +44,7 @@ classvars:
    viAttributes = 0
    viLevel = 35
    viDifficulty = 4
+   viAmountofLoot = 2
    viVisionDistance = 10
    viKarma = 0
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SINGLEMINDED

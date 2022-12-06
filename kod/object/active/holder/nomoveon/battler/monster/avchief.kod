@@ -85,6 +85,7 @@ classvars:
       | AI_FIGHT_WIZARD_KILLER | AI_FIGHT_MONSTERS
    viLevel = 150
    viDifficulty = 9
+   viAmountofLoot = 6
    viVisionDistance = 28
 
    

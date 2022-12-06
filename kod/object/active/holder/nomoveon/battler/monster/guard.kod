@@ -42,6 +42,7 @@ classvars:
 
    viLevel = 100
    viDifficulty = 5
+   viAmountofLoot = 4
    viVisionDistance = 14
    viKarma = 100
    viDefault_behavior = AI_FIGHT_MURDERERS

@@ -43,9 +43,9 @@ classvars:
    viSpeed = SPEED_AVERAGE
    viAttack_type = ATCK_WEAP_SLASH
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
-
-   viDifficulty = 4
    viLevel = 30
+   viDifficulty = 4
+   viAmountofLoot = 2
    viKarma = 30
    viCashmin = 150
    viCashmax = 300

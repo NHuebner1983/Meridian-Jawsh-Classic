@@ -48,6 +48,7 @@ classvars:
    viAttack_spell = ATCK_SPELL_ACID
    viLevel = 130
    viDifficulty = 7
+   viAmountofLoot = 5
    viVisionDistance = 22
    
    viAttackRange = 192

@@ -81,7 +81,7 @@ classvars:
    viAttack_type = ATCK_WEAP_PIERCE
    viLevel = 145
    viDifficulty = 6
-   
+   viAmountofLoot = 5
    viAttackRange = 192
    viVisionDistance = 18
    viKarma = 40
