@@ -196,6 +196,20 @@ messages:
       propagate;
    }
 
+   ReEquip(who=$)
+   {
+      if who <> $ AND IsClass(who, &Player)
+      {
+         Send(who,@TryUnuseItem,#what=self);
+         Send(who,@TryUseItem,#what=self);
+         Post(who,@RefreshPlayerVisualGear);
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
    IsListedOnMarketplace()
    "Is this a marketplaced item"
    {

@@ -90,6 +90,7 @@ resources:
    
    // Item color commands for targetted item   
    dm_color_command="color"
+   dm_color_clone_command="colorclone"
    
    dm_get_spells_command = "get spells"
    dm_get_skills_command = "get skills"
@@ -421,6 +422,12 @@ properties:
 
    ptGenerateMonstersAndDieTimer = $
    pbStopGenerateMonstersAndDie = FALSE
+
+   // In case we equip an item that crashes us, this timer will automatically check if we're logged in
+   // If we're not logged in, it will unequip all of our items so we can login without crashing.
+   ptUnequipTimer = $
+   piLastGoodColor = 16
+   piColorUsed = 16
 
 messages:
 
@@ -851,13 +858,115 @@ messages:
 
    SetActiveInventoryObjectsColor(color=$)
    {
-	   local i;
+	   local i, bStartUnequipTimer;
 
+      bStartUnequipTimer = FALSE;
+
+      foreach i in plActive
+      {
+         if Send(i,@InUse)
+         {
+            Send(i,@SetItemColor,#flags=color);
+            Send(i,@ReEquip,#who=self);
+            bStartUnequipTimer = TRUE;
+         }
+      }
+
+      foreach i in plPassive
+      {
+         if Send(i,@InUse)
+         {
+            Send(i,@SetItemColor,#flags=color);
+            Send(i,@ReEquip,#who=self);
+            bStartUnequipTimer = TRUE;
+         }
+      }
+
+      if bStartUnequipTimer
+      {
+         ptUnequipTimer = CreateTimer(self, @UnequipCrashedColor, 2000);
+      }
+
+      piColorUsed = color;
+
+		return;
+   }
+
+   ColorCloneFirstEquippedItem(color_start_at=$, color_stop_at=$)
+   {
+	   local i, oFirstEquipped, iColor, oNew;
+
+      if color_start_at = $ OR color_stop_at = $ OR color_start_at < 0 OR color_stop_at < 1
+      {
+         Debug("Could not start clone",color_start_at,"to",color_stop_at);
+         return FALSE;
+      }
+
+      foreach i in plActive
+      {
+         if Send(i,@InUse)
+         {
+            oFirstEquipped = i;
+
+            break;
+         }
+      }
+
+      if oFirstEquipped = $
+      {
+         foreach i in plPassive
+         {
+            if Send(i,@InUse)
+            {
+               oFirstEquipped = i;
+
+               break;
+            }
+         }
+      }
+
+      if oFirstEquipped <> $
+      {
+         iColor = color_start_at;
+
+         Debug("Starting color clone",color_start_at,color_stop_at);
+
+         Send(self,@TryUnuseItem,#what=oFirstEquipped);
+         
+         while iColor <= color_stop_at
+         {
+            oNew = Create(GetClass(oFirstEquipped));
+            Send(oNew,@SetItemColor,#flags=iColor);
+            Send(self,@NewHold,#what=oNew);
+            Debug("Cloning",Send(oFirstEquipped,@GetName),"with color",iColor);
+            iColor++;
+            piColorUsed = iColor;
+         }
+
+         ptUnequipTimer = CreateTimer(self, @UnequipCrashedColor, 8000);
+      }
+
+      Debug("Done - or nothing was equipped", oFirstEquipped);
+
+      return;
+   }
+
+   UnequipCrashedColor()
+   {
+	   local i, bStartUnequipTimer;
+
+      ptUnequipTimer = $;
+
+      if NOT Send(self,@IsLoggedOn)
+      {
+         // Looks like we crashed.
+         Debug(Send(self,@GetName),"crashed trying to color something");
          foreach i in plActive
          {
             if Send(i,@InUse)
             {
-               Send(i,@SetItemColor,#flags=color);
+               Send(i,@SetItemColor,#flags=piLastGoodColor);
+               Send(self,@TryUnuseItem,#what=i);
             }
          }
 
@@ -865,11 +974,16 @@ messages:
          {
             if Send(i,@InUse)
             {
-               Send(i,@SetItemColor,#flags=color);
+               Send(i,@SetItemColor,#flags=piLastGoodColor);
+               Send(self,@TryUnuseItem,#what=i);
             }
          }
+      } else {
+         // This color did not crash us.
+         piLastGoodColor = piColorUsed;
+      }
 
-		 return;
+      return;
    }
 
    GenerateMonstersAndDie()
@@ -1332,11 +1446,20 @@ messages:
          return;
       }
 
+      if StringContain(string,dm_color_clone_command)
+      {
+         StringSubstitute(string,"colorclone ","");
+         ParseString(string,",",@DMParseDiceRoll);
+         Send(self,@ColorCloneFirstEquippedItem,#color_start_at=piLowRoll,#color_stop_at=piHighRoll);
+
+         return;
+      }
+
       if StringContain(string,dm_color_command)
       {
-	     StringSubstitute(string,"color ","");
-		 Send(self,@SetActiveInventoryObjectsColor,#color=StringToNumber(string));
-		 
+         StringSubstitute(string,"color ","");
+         Send(self,@SetActiveInventoryObjectsColor,#color=StringToNumber(string));
+
          return;
       }
 
