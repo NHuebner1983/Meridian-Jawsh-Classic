@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-Weed2 is Weed
+FarenCStrain is Weed
 
 constants:
 
@@ -7,11 +7,11 @@ constants:
 
 resources:
 
-   Weed2_name_one_rsc = "Faren C-Strain"
-   Weed2_name_many_rsc = "A few ounces of Faren C-Strain"
+   FarenCStrain_name_one_rsc = "Faren C-Strain"
+   FarenCStrain_name_many_rsc = "A few ounces of Faren C-Strain"
    
-   Weed2_icon_rsc = weed2.bgf
-   Weed2_desc_rsc = \
+   FarenCStrain_icon_rsc = weed2.bgf
+   FarenCStrain_desc_rsc = \
       "This is a special strain of cannabis home grown by Cyrus  "
       "in a open field blessed by Faren.  With the elements free  "
       "effect the plants as nature intended this strain has a   "
@@ -19,6 +19,12 @@ resources:
       "trade you items for good weed.  "
 
 classvars:
+
+   vrName = FarenCStrain_name_one_rsc
+   vrIcon = FarenCStrain_icon_rsc
+   vrDesc = FarenCStrain_desc_rsc
+
+   vrName_plural = FarenCStrain_name_many_rsc
 
 properties:
 

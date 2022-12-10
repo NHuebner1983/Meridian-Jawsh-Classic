@@ -16,25 +16,7 @@ constants:
 
 resources:
 
-   Weed_name_one_rsc = "Riija C-Strain"
-   Weed_name_many_rsc = "A few ounces of Riija C-Strain"
-   
-   Weed_icon_rsc = weed.bgf
-   Weed_desc_rsc = \
-      "This is a special strain of cannabis home grown by Cyrus  "
-      "in a grow room hidden under the temple of Riija.  With "
-      "Riija's magic combined with herbs, I assure you stoned "
-      "isn't all you'll be. Better save these up, the resident "
-      "pothead of Tos, Paddock, will trade you money for them. "
-      "\n\n- Paddock buys each of these for 5,000 platinum"
-
 classvars:
-
-   vrName = Weed_name_one_rsc
-   vrIcon = Weed_icon_rsc
-   vrDesc = Weed_desc_rsc
-
-   vrName_plural = Weed_name_many_rsc
 
    viBulk = 0
    viWeight = 0

@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-Weed4 is Weed
+ShalCStrain is Weed
 
 constants:
 
@@ -7,11 +7,11 @@ constants:
 
 resources:
 
-   Weed4_name_one_rsc = "Shal'ille C-Strain"
-   Weed4_name_many_rsc = "A few ounces of Shal'ille C-Strain"
-   
-   Weed4_icon_rsc = weed4.bgf
-   Weed4_desc_rsc = \
+   ShalCStrain_name_one_rsc = "Shal'ille C-Strain"
+   ShalCStrain_name_many_rsc = "A few ounces of Shal'ille C-Strain"
+
+   ShalCStrain_icon_rsc = weed4.bgf
+   ShalCStrain_desc_rsc = \
       "This is a special strain of cannabis home grown by Cyrus  "
       "in a grow room in the temple of Shal'ille.  They are watered  "
       "only with the holy water from the temple.  Some say this strain  "
@@ -19,6 +19,12 @@ resources:
       "trade you items for good weed.  "
 
 classvars:
+
+   vrName = ShalCStrain_name_one_rsc
+   vrIcon = ShalCStrain_icon_rsc
+   vrDesc = ShalCStrain_desc_rsc
+
+   vrName_plural = ShalCStrain_name_many_rsc
 
 properties:
 

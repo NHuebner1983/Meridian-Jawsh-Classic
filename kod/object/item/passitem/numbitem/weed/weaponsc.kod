@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-Weed7 is Weed
+WeaponCStrain is Weed
 
 constants:
 
@@ -7,11 +7,11 @@ constants:
 
 resources:
 
-   Weed7_name_one_rsc = "Weapons grade C-Strain"
-   Weed7_name_many_rsc = "A few ounces of Weaapons grade"
-   
-   Weed7_icon_rsc = weed7.bgf
-   Weed7_desc_rsc = \
+   WeaponCStrain_name_one_rsc = "Weapons grade C-Strain"
+   WeaponCStrain_name_many_rsc = "A few ounces of Weaapons grade"
+
+   WeaponCStrain_icon_rsc = weed7.bgf
+   WeaponCStrain_desc_rsc = \
       "This is a special strain of cannabis home grown by Cyrus  "
       "in a grow room hidden in the back of Rooks.  This herd is  "
       "lectured by Rook daily on the art of battle daily. The herb  "
@@ -19,6 +19,12 @@ resources:
       "up, Cyrus will trade you items for good weed.  "
 
 classvars:
+
+   vrName = WeaponCStrain_name_one_rsc
+   vrIcon = WeaponCStrain_icon_rsc
+   vrDesc = WeaponCStrain_desc_rsc
+
+   vrName_plural = WeaponCStrain_name_many_rsc
 
 properties:
 

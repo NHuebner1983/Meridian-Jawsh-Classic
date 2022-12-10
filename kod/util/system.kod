@@ -6364,18 +6364,19 @@ messages:
       plItemTemplates = cons(create(&DamageRod),plItemTemplates);
 
       // Narcotics
-      plItemTemplates = cons(create(&Weed),plItemTemplates);
-      plItemTemplates = cons(create(&Weed2),plItemTemplates);
-      plItemTemplates = cons(create(&Weed3),plItemTemplates);
-      plItemTemplates = cons(create(&Weed4),plItemTemplates);
-      plItemTemplates = cons(create(&Weed5),plItemTemplates);
-      plItemTemplates = cons(create(&Weed6),plItemTemplates);
-      plItemTemplates = cons(create(&Weed7),plItemTemplates);
+      plItemTemplates = cons(create(&RiijaCStrain),plItemTemplates);
+      plItemTemplates = cons(create(&FarenCStrain),plItemTemplates);
+      plItemTemplates = cons(create(&QorCStrain),plItemTemplates);
+      plItemTemplates = cons(create(&ShalCStrain),plItemTemplates);
+      plItemTemplates = cons(create(&JalaCStrain),plItemTemplates);
+      plItemTemplates = cons(create(&KraananCStrain),plItemTemplates);
+      plItemTemplates = cons(create(&WeaponCStrain),plItemTemplates);
 
       //Wizardry
       plItemTemplates = cons(create(&BaseWand),plItemTemplates);
       plItemTemplates = cons(create(&ApprenticeWand),plItemTemplates);
       plItemTemplates = cons(create(&MasterWand),plItemTemplates);
+
       plItemTemplates = cons(create(&Wizardhat),plItemTemplates);
       plItemTemplates = cons(create(&IvyCirclet),plItemTemplates);
       plItemTemplates = cons(create(&Circlet),plItemTemplates);

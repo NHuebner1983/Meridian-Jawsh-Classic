@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-Weed5 is Weed
+JalaCStrain is Weed
 
 constants:
 
@@ -7,11 +7,11 @@ constants:
 
 resources:
 
-   Weed5_name_one_rsc = "Jala C-Strain"
-   Weed5_name_many_rsc = "A few ounces of Jala C-Strain"
-   
-   Weed5_icon_rsc = weed5.bgf
-   Weed5_desc_rsc = \
+   JalaCStrain_name_one_rsc = "Jala C-Strain"
+   JalaCStrain_name_many_rsc = "A few ounces of Jala C-Strain"
+
+   JalaCStrain_icon_rsc = weed5.bgf
+   JalaCStrain_desc_rsc = \
       "This is a special strain of cannabis home grown by Cyrus in "
       "a hidden grow room. Rumors say only Parrin can find it.  This   "
       "strain is played music its entier growth cycle. The genre  "
@@ -19,6 +19,12 @@ resources:
       "trade you items for good weed.  "
 
 classvars:
+
+   vrName = JalaCStrain_name_one_rsc
+   vrIcon = JalaCStrain_icon_rsc
+   vrDesc = JalaCStrain_desc_rsc
+
+   vrName_plural = JalaCStrain_name_many_rsc
 
 properties:
 

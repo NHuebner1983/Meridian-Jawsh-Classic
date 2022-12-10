@@ -1,0 +1,34 @@
+////////////////////////////////////////////////////////////////////////////////
+RiijaCStrain is Weed
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RiijaCStrain_name_one_rsc = "Riija C-Strain"
+   RiijaCStrain_name_many_rsc = "A few ounces of Riija C-Strain"
+   
+   RiijaCStrain_icon_rsc = weed.bgf
+   RiijaCStrain_desc_rsc = \
+      "This is a special strain of cannabis home grown by Cyrus  "
+      "in a grow room hidden under the temple of Riija.  With  "
+      "Riijas magic combining with the herbs I assure you stoned  "
+      "isn't all you'll be.  \nBetter save these up, Cyrus will  "
+      "trade you items for good weed.  "
+
+classvars:
+
+   vrName = RiijaCStrain_name_one_rsc
+   vrIcon = RiijaCStrain_icon_rsc
+   vrDesc = RiijaCStrain_desc_rsc
+
+   vrName_plural = RiijaCStrain_name_many_rsc
+
+properties:
+
+messages:
+
+end
+////////////////////////////////////////////////////////////////////////////////
