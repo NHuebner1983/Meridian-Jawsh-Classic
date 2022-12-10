@@ -94,10 +94,10 @@ messages:
    CreateStandardExits()
    {
       plExits = $;
-      plExits = Cons([ 56, 75, RID_OGRE_CAVE1, 24, 37, ROTATE_NONE ],plExits);
-      plExits = Cons([ 56, 76, RID_OGRE_CAVE1, 24, 37, ROTATE_NONE ],plExits);
-      plExits = Cons([ 57, 75, RID_OGRE_CAVE1, 24, 37, ROTATE_NONE ],plExits);
-      plExits = Cons([ 57, 76, RID_OGRE_CAVE1, 24, 37, ROTATE_NONE ],plExits);
+      plExits = Cons([ 56, 75, RID_OGRE_CAVE1, 75, 34, ROTATE_NONE ],plExits);
+      plExits = Cons([ 56, 76, RID_OGRE_CAVE1, 75, 34, ROTATE_NONE ],plExits);
+      plExits = Cons([ 57, 75, RID_OGRE_CAVE1, 75, 34, ROTATE_NONE ],plExits);
+      plExits = Cons([ 57, 76, RID_OGRE_CAVE1, 75, 34, ROTATE_NONE ],plExits);
 
       propagate;
    }
