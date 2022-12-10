@@ -441,6 +441,11 @@ messages:
             return $;
          }
       }
+            
+      if IsClass(oObj,&GuildShield)
+      {
+         Send(oObj,@Randomize);
+      }
 
       return oObj;
    }
