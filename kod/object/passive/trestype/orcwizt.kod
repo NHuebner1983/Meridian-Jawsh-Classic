@@ -27,23 +27,24 @@ messages:
 
    Constructed()
    {
-      plTreasure = [ [ &OrcTooth, 33 ],
+      plTreasure = [ [ &OrcTooth, 32 ],
                      [ &UncutSeraphym, 5],
                      [ &SlitherWand, 1],
                      [ &DragonflyEye, 6 ],
-                     [ &Solagh, 6 ],
+                     [ &Solagh, 11 ],
                      [ &PurpleMushroom, 1 ],
                      [ &Torch, 5 ],
-                     [ &DiscipleRobe, 25 ],
-                     [ &LightDiscipleRobe, 15 ],
+                     [ &DiscipleRobe, 10 ],
+                     [ &LightDiscipleRobe, 10 ],
                      [ &Gauntlet, 2 ],
                      [ &Flask, 1 ],
                      [ &Lute, 3 ],
-                     [ &PolishedSeraphym, 2 ],
+                     [ &PolishedSeraphym, 5 ],
                      [ &StaffOfJolting, 2 ],
                      [ &DispellIllusionScroll, 2 ],
                      [ &Key, 4 ],
-                     [ &ApprenticeWand, 1]
+                     [ &ApprenticeWand, 2],
+                     [ &Wizardhat, 2]
                   ];
 
       propagate;

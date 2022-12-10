@@ -36,7 +36,7 @@ constants:
 
    DOOR_UP = 1
    DOOR_DOWN = 0
-   DOOR_UP_SPEED = 8
+   DOOR_UP_SPEED = 30
    DOOR_DOWN_SPEED = 150
 
 resources:
@@ -49,6 +49,8 @@ resources:
 
    Orcpit1_door_sound = doorrsup.ogg
    Orcpit1_door_down_sound = arr_metl.ogg
+
+   pitboss_angry = "~B~rOrc wizards arrive to avenge the death of their pit boss.~y~I Now would be a good time to run!"
 
 classvars:
 
@@ -78,13 +80,19 @@ properties:
    piInit_count_min = 7
    piInit_count_max = 10
 
-   piMonster_count_max = 15
+   piMonster_count_max = 50
 
    piDoor1Position = DOOR_DOWN
    ptDoor1ResetTimer = $
    piDoor2Position = DOOR_DOWN
    ptDoor2ResetTimer = $
    piDoor3Position = DOOR_DOWN
+
+   plWaterGenerators = $
+
+   ptAggroTimer = $
+
+   poLastTarget = $
 
 messages:
 
@@ -101,6 +109,10 @@ messages:
       plGenerators = [ [52,19], [50,23], [57,18], [59,22], [58,28], [59,46],
                        [63,46], [65,49], [63,52], [59,54]
                      ];
+
+      plWaterGenerators = [
+         [42,44], [43,42], [43,41], [43,39], [43,38], [43,37]
+      ];
 
       propagate;
    }
@@ -155,7 +167,10 @@ messages:
 
    BossKilledTrigger()
    {
-      local i;
+      local i, oMonster, lGenerator, iRandom;
+
+      poLastTarget = $;
+      oMonster = $;
 
       // Just killed the orc pit boss (opening door, creating treasure...)
 
@@ -169,7 +184,61 @@ messages:
             #height=H_DOOR3b_UP,#speed=DOOR_UP_SPEED);
       piDoor3Position = DOOR_UP;
 
+      // Send in the army of orc wizards to avenge his death!
+      i = 0;
+      foreach i in plActive
+      {
+         if IsClass(First(i),&Player)
+         {
+            Send(First(i),@MsgSendUser,#message_rsc=pitboss_angry);
+            
+            if poLastTarget = $
+            {
+               // You're toast!
+               poLastTarget = First(i);
+            }
+         }
+      }
+
+      i = 0;
+      while (i < 25)
+      {
+         oMonster = Create(&OrcWizard);
+
+         iRandom = Random(1, Length(plWaterGenerators));
+         lGenerator = Nth(plWaterGenerators, iRandom);
+
+         Send(self,@GenerateMonster,#oMonster=oMonster,
+            #piSurvivalLevel=1,#bStack=TRUE,#iRow=Nth(lGenerator, 1),#iCol=Nth(lGenerator, 2));
+
+         i++;
+      }
+
+      ptAggroTimer = CreateTimer(self, @AggroOrcWizards, 1000);
+
       propagate;
+   }
+
+   AggroOrcWizards()
+   {
+      local i;
+
+      if poLastTarget <> $
+      {
+         i = 0;
+
+         foreach i in plActive
+         {
+            if IsClass(First(i),&OrcWizard)
+            {
+               Post(First(i),@TargetSwitch,#what=poLastTarget,#iHatred=9999);
+               Post(First(i),@EnterStateChase,#target=poLastTarget,#actnow=TRUE);
+               Post(First(i),@EnterStateAttack,#target=poLastTarget,#actnow=TRUE);
+            }
+         }
+      }
+
+      return;
    }
 
 //
@@ -186,6 +255,22 @@ messages:
    {
       local i;
 
+      foreach i in plActive
+      {
+         if IsClass(First(i),&NumberItem) OR IsClass(First(i),&Item)
+         {
+            Send(First(i),@Delete);
+         }
+      }
+
+      foreach i in plPassive
+      {
+         if IsClass(First(i),&NumberItem) OR IsClass(First(i),&Item)
+         {
+            Send(First(i),@Delete);
+         }
+      }
+
       // Close the boss door instantaneously.
       Send(self,@SetSector,#sector=SECTOR_DOOR3a,
             #animation=ANIMATE_CEILING_LIFT,#height=H_DOOR3a_DOWN,#speed=0);
@@ -193,10 +278,10 @@ messages:
             #animation=ANIMATE_CEILING_LIFT,#height=H_DOOR3b_DOWN,#speed=0);
       piDoor3Position = DOOR_DOWN;
 
-      // Delete any boss bodies that may be lying around...
+      // Boss is dead, wipe the room clean.
       foreach i in plActive
       {
-         if isClass(First(i),&OrcPitBossBody)
+         if IsClass(First(i),&OrcPitBossBody) OR IsClass(First(i),&OrcWizard) OR IsClass(First(i),&Ore)
          {
             Send(First(i),@Delete);
          }
@@ -302,6 +387,15 @@ messages:
       {
          Post(self,@Teleport,#what=what);
       }
+
+      propagate;
+   }
+
+   LastUserLeft()
+   {
+      local i;
+
+      Send(self,@ResetBoss);
 
       propagate;
    }
