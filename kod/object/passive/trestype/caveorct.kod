@@ -38,7 +38,7 @@ messages:
                      [ &Ruby, 5 ],
                      [ &NeruditeOreChunk, 1 ],
                      [ &KnightShield, 1 ],
-                     [ &FlashScroll, 1 ]
+                     [ &RingMining, 1]
                    ];
 
       propagate;

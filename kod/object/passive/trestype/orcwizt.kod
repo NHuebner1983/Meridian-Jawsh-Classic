@@ -42,9 +42,10 @@ messages:
                      [ &PolishedSeraphym, 5 ],
                      [ &StaffOfJolting, 2 ],
                      [ &DispellIllusionScroll, 2 ],
-                     [ &Key, 4 ],
+                     [ &Key, 3 ],
                      [ &ApprenticeWand, 2],
-                     [ &Wizardhat, 2]
+                     [ &Wizardhat, 2],
+                     [ &RingMining, 1]
                   ];
 
       propagate;
