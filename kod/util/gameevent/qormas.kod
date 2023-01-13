@@ -1046,7 +1046,7 @@ messages:
    {
       local i, j, lIP, count;
 
-      if who = $
+      if who = $ OR NOT IsClass(who, &Player) OR (IsClass(who, &Player) AND Send(who, @IsRoamingNPCPlayer))
       {
          return;
       }
