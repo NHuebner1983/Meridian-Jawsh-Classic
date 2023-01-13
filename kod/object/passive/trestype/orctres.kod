@@ -34,8 +34,9 @@ messages:
                      [ &MetalShield, 10 ],
                      [ &LeatherArmor, 5],
                      [ &ShadowAmulet, 3],
-                     [ &RingofLethargy, 3], 
-                     [ &DarknessScroll,1]
+                     [ &RingofLethargy, 2], 
+                     [ &DarknessScroll,1],
+                     [ &RingMining, 1]
                    ];
       propagate;
    }
