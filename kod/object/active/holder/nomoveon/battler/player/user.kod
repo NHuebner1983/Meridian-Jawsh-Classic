@@ -71,7 +71,12 @@ resources:
    user_name_rsc = "user name"
 
    user_garbage_collecting = "System is saving; please wait."
-   user_garbage_collecting_done = "System save completed; resume play."
+   user_garbage_collecting_done_A = "~I~yQor has imprinted your progress into a dark stone for safe keeping."
+   user_garbage_collecting_done_B = "~I~yShal'ille has stored your progress in her pool of holy tears."
+   user_garbage_collecting_done_C = "~I~yKraanan has carved your progress onto a magnificent sculpture for safe keeping."
+   user_garbage_collecting_done_D = "~I~yFaren has etched your progress in lightning, fire and ice for safe keeping."
+   user_garbage_collecting_done_E = "~I~yJala sings a song so glorious that your story will never be forgotten."
+   user_garbage_collecting_done_F = "~I~yRiija has created a reflection of your progress for safe keeping."
    user_saving_wav_rsc = system_save.ogg
 
    user_err_get_unk = "You can't pick up %s%s; it is no longer accessible."
@@ -2998,8 +3003,8 @@ messages:
    {
       Send(self,@CancelIfOffer);
 
-      Send(self,@SysMsgSendUser,#message_rsc=user_garbage_collecting);
-      Send(self,@WaveSendUser,#what=self,#wave_rsc=user_saving_wav_rsc);
+      //Send(self,@SysMsgSendUser,#message_rsc=user_garbage_collecting);
+      //Send(self,@WaveSendUser,#what=self,#wave_rsc=user_saving_wav_rsc);
 
       AddPacket(1,BP_WAIT);
       SendPacket(poSession);
@@ -3023,18 +3028,42 @@ messages:
 
    GarbageCollectingDone()
    {
+      local iRandom;
+
       Send(self,@InvalidateData);
 
-      Send(self,@SysMsgSendUser,#message_rsc=user_garbage_collecting_done);
+      iRandom = Random(1, 6);
 
+      switch (iRandom)
+      {
+         case 1:
+            Send(self,@SysMsgSendUser,#message_rsc=user_garbage_collecting_done_A);
+         break;
+         case 2:
+            Send(self,@SysMsgSendUser,#message_rsc=user_garbage_collecting_done_B);
+         break;
+         case 3:
+            Send(self,@SysMsgSendUser,#message_rsc=user_garbage_collecting_done_C);
+         break;
+         case 4:
+            Send(self,@SysMsgSendUser,#message_rsc=user_garbage_collecting_done_D);
+         break;
+         case 5:
+            Send(self,@SysMsgSendUser,#message_rsc=user_garbage_collecting_done_E);
+         break;
+         case 6:
+            Send(self,@SysMsgSendUser,#message_rsc=user_garbage_collecting_done_F);
+         break;
+      }
+      
       // Let the user know whether safety is on or off.
       if piPreferences & CF_SAFETY_OFF
       {
-         Send(self,@MsgSendUser,#message_rsc=user_safety_off);
+         //Send(self,@MsgSendUser,#message_rsc=user_safety_off);
       }
       else
       {
-         Send(self,@MsgSendUser,#message_rsc=user_safety_on);
+         //Send(self,@MsgSendUser,#message_rsc=user_safety_on);
       }
 
       AddPacket(1,BP_UNWAIT);
