@@ -46,6 +46,7 @@
 #include <DxErr.h>
 
 typedef unsigned char Bool;
+typedef INT64 int64;
 enum {False = 0, True = 1};
 
 #define MAJOR_REV 51   /* Major version of client program */
