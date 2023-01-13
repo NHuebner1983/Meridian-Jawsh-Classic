@@ -38,6 +38,10 @@ resources:
    itematt_journeyman_rsc = "Journeyman"
    itematt_master_rsc = "Master"
 
+   player_astonished_by_loot = "~B~yAs you look around in the piles of loot, "
+                               "you are astonished to see the gods have given you a "
+                               "colorized item! Get it before someone else does!"
+
 classvars:
 
    viIndefinite = ARTICLE_NONE
@@ -116,6 +120,7 @@ messages:
                [ &Circlet, 5],
                [ &DaemonHelm, 5],
                [ &JewelOfFroz, 5],
+               [ &GuildShield, 10],
 
                [ &LeatherArmor, 10],
                [ &ChainArmor, 5],
@@ -134,7 +139,7 @@ messages:
 
    GenerateItemWithAttribute(who=$,diff_seed=1)
    {
-      local i, index, jindex, random_x, oItem;
+      local i, index, jindex, random_x, oItem, iRandomColor, lColors;
 
       index = 0;
 
@@ -165,6 +170,40 @@ messages:
                   #diff_seed=diff_seed);
 
             break;
+         }
+      }
+
+      if IsClass(oItem,&GuildShield)
+      {
+         Send(oItem,@Randomize);
+      }
+
+      // Items that can hold colors - You have to be extremely lucky to get one.
+      if IsClass(oItem, &Scimitar) 
+         OR IsClass(oItem, &MysticSword) 
+         OR IsClass(oItem, &Hammer) 
+         OR IsClass(oItem, &Axe) 
+         OR IsClass(oItem, &LongSword)
+         OR IsClass(oItem, &Mace)
+         OR IsClass(oItem, &ShortSword)
+         OR IsClass(oItem, &OrcShield)
+         OR IsClass(oItem, &DaemonHelm)
+         OR IsClass(oItem, &SimpleHelm)
+         OR IsClass(oItem, &JewelOfFroz)
+         OR IsClass(oItem, &PlateArmor)
+      {
+         // Are you lucky enough to get a colored item?
+         if Random(1, 50) = 25
+         {
+            lColors = [11, 22, 33, 44, 55, 66, 77, 88];
+            iRandomColor = Nth(lColors, Random(1, Length(lColors)));
+
+            Send(oItem, @SetItemColor, #flags=iRandomColor);
+
+            if IsClass(who, &Player)
+            {
+               Send(who,@MsgSendUser,#message_rsc=player_astonished_by_loot);
+            }
          }
       }
 

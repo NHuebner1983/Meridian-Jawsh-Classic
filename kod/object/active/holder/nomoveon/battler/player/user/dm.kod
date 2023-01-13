@@ -990,7 +990,7 @@ messages:
    {
       local oMonster;
 
-      if pbStopGenerateMonstersAndDie
+      if pbStopGenerateMonstersAndDie OR NOT Send(self,@IsLoggedOn)
       {
          // DM says stop.
          ptGenerateMonstersAndDieTimer = $;
