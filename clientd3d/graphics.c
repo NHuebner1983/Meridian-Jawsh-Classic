@@ -404,8 +404,6 @@ void RedrawForce(void)
       GdiFlush();
    }
    ReleaseDC(hMain, hdc);
-
-   GameWindowSetCursor();   // We may have moved; reset cursor
 }
 /************************************************************************/
 void RedrawAll(void)
