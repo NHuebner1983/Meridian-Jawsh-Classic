@@ -13202,7 +13202,7 @@ messages:
    {
       local iTime;
 
-      iTime = 1000 + (30* (51-(Send(self,@GetStamina)*2)));
+      iTime = Bound(1000 + (30* (51-(Send(self,@GetStamina)*2))), 500, 2000);
 
       return iTime;
    }
