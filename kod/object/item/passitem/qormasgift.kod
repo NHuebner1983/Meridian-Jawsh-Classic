@@ -31,13 +31,13 @@ resources:
    
    Qormas_gift_msg = "You tear away the wrapping paper to reveal %s"
    Qormas_gift1_msg = "a Rose!"
-   Qormas_gift2_msg = "twenty Inky-Cap Mushrooms!"
-   Qormas_gift3_msg = "three Scrolls of Dispelling!"
-   Qormas_gift4_msg = "three Brown Potions!"
-   Qormas_gift5_msg = "three Potions of Deliverance!"
+   Qormas_gift2_msg = "300 Inky-Cap Mushrooms!"
+   Qormas_gift3_msg = "25 Scrolls of Dispelling!"
+   Qormas_gift4_msg = "25 Brown Potions!"
+   Qormas_gift5_msg = "25 Potions of Deliverance!"
    Qormas_gift6_msg = "a Bonk Stick!"
-   Qormas_gift7_msg = "three Wands of Charming!"
-   Qormas_gift8_msg = "twenty Orc Teeth!"
+   Qormas_gift7_msg = "25 Wands of Charming!"
+   Qormas_gift8_msg = "300 Orc Teeth!"
    Qormas_gift9_msg = "a Shrunken Head!"
    
    Qormas_gift10_msg = "a Cow Mask!"
@@ -51,6 +51,8 @@ resources:
    Qormas_gift18_msg = "an Ant Mask!"
    Qormas_gift19_msg = "a Troll Mask!"
    Qormas_gift20_msg = "a Kriipa Mask!"
+
+   Qormas_gift_colored_msg = "a very rare colored item."
 
 classvars:
    
@@ -87,6 +89,7 @@ properties:
    pbAntMask = TRUE
    pbTrollMask = TRUE
    pbKriipaMask = TRUE
+   pbColoredItem = TRUE
 
    // Set this in qormas kod, leave this one alone
    pbMaskPossible = FALSE
@@ -168,17 +171,23 @@ messages:
 
    NewApplied(what = $)
    {
-      local iCount, rand, bSet, oPayload, rMsg;
+      local iCount, rand, bSet, oPayload, rMsg, i, lColoredItems, lColors, oEngrave, sEngraveMessage;
 
       bSet = FALSE;
       iCount = 0;
       rMsg = $;
 
+      // You get a chalice of rain with 10 casts. Lucky you!
+      oPayload = Create(&Chalice);
+      Send(oPayload,@SetMaxHits,#number=10);
+      Send(oPayload,@SetHits,#number=10);
+      Send(poOwner,@NewHold,#what=oPayload);
+
       while (NOT bSet AND iCount++ < 30)
       {
          if (pbMaskPossible)
          {
-            rand = Random(1,60);
+            rand = Random(1,61);
          }
          else
          {
@@ -196,43 +205,50 @@ messages:
          }
          else if rand >= 2 AND rand <= 12
          {
-            Send(poOwner,@NewHold,#what=Create(&InkyCap,#number=20));
+            Send(poOwner,@NewHold,#what=Create(&InkyCap,#number=300));
             rMsg = Qormas_gift2_msg;
             bSet = TRUE;
          }
          else if rand >= 13 AND rand <= 18
          {
-            oPayload = Create(&DispellIllusionScroll);
-            Send(oPayload,@RevealHiddenAttributes);
-            Send(poOwner,@NewHold,#what=oPayload);
-            oPayload = Create(&DispellIllusionScroll);
-            Send(oPayload,@RevealHiddenAttributes);
-            Send(poOwner,@NewHold,#what=oPayload);
-            oPayload = Create(&DispellIllusionScroll);
-            Send(oPayload,@RevealHiddenAttributes);
-            Send(poOwner,@NewHold,#what=oPayload);
+            i = 0;
+            
+            while i < 25
+            {
+               i++;
+               oPayload = Create(&DispellIllusionScroll);
+               Send(oPayload,@RevealHiddenAttributes);
+               Send(poOwner,@NewHold,#what=oPayload);
+            }
+
             rMsg = Qormas_gift3_msg;
             bSet = TRUE;
          }
          else if rand >= 19 AND rand <= 24
          {
-            Send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
-            Send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
-            Send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
+            i = 0;
+            
+            while i < 25
+            {
+               i++;
+               Send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
+            }
+
             rMsg = Qormas_gift4_msg;
             bSet = TRUE;
          }
          else if rand >= 25 AND rand <= 30
          {
-            oPayload = Create(&RescuePotion);
-            Send(oPayload,@RevealHiddenAttributes);
-            Send(poOwner,@NewHold,#what=oPayload);
-            oPayload = Create(&RescuePotion);
-            Send(oPayload,@RevealHiddenAttributes);
-            Send(poOwner,@NewHold,#what=oPayload);
-            oPayload = Create(&RescuePotion);
-            Send(oPayload,@RevealHiddenAttributes);
-            Send(poOwner,@NewHold,#what=oPayload);
+            i = 0;
+            
+            while i < 25
+            {
+               i++;
+               oPayload = Create(&RescuePotion);
+               Send(oPayload,@RevealHiddenAttributes);
+               Send(poOwner,@NewHold,#what=oPayload);
+            }
+
             rMsg = Qormas_gift5_msg;
             bSet = TRUE;
          }
@@ -249,22 +265,23 @@ messages:
          {
             if (pbSeduceWand)
             {
-               oPayload=Create(&SeduceWand);
-               Send(oPayload,@RevealHiddenAttributes);
-               Send(poOwner,@NewHold,#what=oPayload);
-               oPayload=Create(&SeduceWand);
-               Send(oPayload,@RevealHiddenAttributes);
-               Send(poOwner,@NewHold,#what=oPayload);
-               oPayload=Create(&SeduceWand);
-               Send(oPayload,@RevealHiddenAttributes);
-               Send(poOwner,@NewHold,#what=oPayload);
+               i = 0;
+               
+               while i < 25
+               {
+                  i++;
+                  oPayload=Create(&SeduceWand);
+                  Send(oPayload,@RevealHiddenAttributes);
+                  Send(poOwner,@NewHold,#what=oPayload);
+               }
+
                rMsg = Qormas_gift7_msg;
                bSet = TRUE;
             }
          }
          else if rand >= 43 AND rand <= 48
          {
-            Send(poOwner,@NewHold,#what=Create(&OrcTooth,#number=20));
+            Send(poOwner,@NewHold,#what=Create(&OrcTooth,#number=300));
             rMsg = Qormas_gift8_msg;
             bSet = TRUE;
          }
@@ -373,6 +390,43 @@ messages:
             {
                Send(poOwner,@NewHold,#what=Create(&KriipaMask));
                rMsg = Qormas_gift20_msg;
+               bSet = TRUE;
+            }
+         }
+         else if rand = 61
+         {
+            if (pbColoredItem)
+            {
+               lColors = [11,22,33,44,55,66,77];
+               lColoredItems = [&Mace, &ShortSword, &Scimitar, &LongSword, &MysticSword, &Hammer, &Axe, &OrcShield, &JewelOfFroz];
+
+               oPayload=Create(Nth(lColoredItems, Random(1,Length(lColoredItems))));
+               if IsClass(oPayload, &JewelOfFroz)
+               {
+                  i = 78; // Blue JOF - other colors don't work well.
+               } else {
+                  i = Nth(lColors, Random(1, Length(lColors)));
+               }
+            
+               Send(oPayload, @SetItemColor, #flags=i);
+               
+               oEngrave = Send(SYS,@FindSpellByNum,#num=SID_ENGRAVE);
+
+               if Send(oEngrave, @CanPayCosts, #who=poOwner, #lTargets=[oPayload], #Report=FALSE)
+               {
+                  // Engrave this colored item
+                  ClearTempString();
+                  AppendTempString("To my next victim, ");
+                  AppendTempString(Send(poOwner,@GetTrueName));
+                  AppendTempString(", from Qor the Vile. Merry Qormas, my lovely prey.");
+
+                  sEngraveMessage = SetString($,GetTempString());
+                  Send(oEngrave, @PerformEngrave, #caster=poOwner, #oTarget=oPayload, #sMessage=sEngraveMessage, #Report=FALSE);
+               }
+
+               Send(poOwner,@NewHold,#what=oPayload);
+               
+               rMsg = Qormas_gift_colored_msg;
                bSet = TRUE;
             }
          }
