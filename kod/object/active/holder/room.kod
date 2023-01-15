@@ -457,6 +457,12 @@ messages:
       return;
    }
    
+   GetPuzzles()
+   "Some rooms contain puzzles that need to be solved."
+   {
+      return $;
+   }
+
    GetPlayers()
    {
       local i, lPlayers;
@@ -5236,6 +5242,11 @@ messages:
       }
 
       return;
+   }
+
+   IsPuzzleSolved()
+   {
+      return FALSE;
    }
 
    WandererEntered(mob = $)

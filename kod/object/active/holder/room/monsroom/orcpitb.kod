@@ -67,6 +67,7 @@ properties:
 
    ptDoor = $
    ptPuzzle = $
+   pbPuzzleSolved = FALSE
 
    prMusic = OrcPitB_music
 
@@ -218,6 +219,12 @@ messages:
 //
 //
 
+   GetPuzzles()
+   "Some rooms contain puzzles that need to be solved."
+   {
+      return [PUZZLE_ORC_PIT_BOSS_LEVER];
+   }
+
    SomethingChanged(what=$)
    {
       if what = poSwitch
@@ -273,6 +280,7 @@ messages:
    ResetPuzzle()
    {
       ptPuzzle = $;
+      pbPuzzleSolved = FALSE;
       Send(Send(SYS,@FindRoomByNum,#num=RID_ORC_PIT_A),@DoSolution,#Height=REGULARHEIGHTA,#Speed=50);
       Send(Self,@DoSolution,#Height=REGULARHEIGHTB,#Speed=50);
       if Send(poSwitch,@GetState) = LEVER_UP
@@ -281,9 +289,24 @@ messages:
       return;
    }
 
+   IsPuzzleSolved()
+   {
+      return pbPuzzleSolved;
+   }
 
    DoSolution(height=500,speed=50)
    {
+      if height = $ OR speed = $
+      {
+         height = 500;
+         speed = 50;
+      }
+
+      pbPuzzleSolved = TRUE;
+
+      if Send(poSwitch,@GetState) = LEVER_DOWN
+         { Send(poSwitch,@SwitchLever); }
+
       send(self,@setsector,#sector=SOLUTIONSECTOR,#animation=ANIMATE_FLOOR_LIFT,
          #height = height,#speed=speed);
       return;
@@ -303,6 +326,14 @@ messages:
             { count = count + 1; }	 
       }
       return count;
+   }
+
+   LastUserLeft(what = $)
+   "Reset the puzzle"
+   {
+      pbPuzzleSolved = FALSE;
+      
+      return;
    }
 
    AllAUsed()

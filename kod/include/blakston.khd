@@ -455,6 +455,11 @@
    // And a side note from another developer, who cares if the constants get messy as long as they work :)
    ROOM_LOCKED_DOOR = -1
 
+   // Puzzles that can be solved (constants do not have any meaning).
+   PUZZLE_RAZA_CRYPT_LEVER = 1
+   PUZZLE_MARION_CRYPT_LEVER = 2
+   PUZZLE_ORC_PIT_BOSS_LEVER = 3
+
    // NPC Rooms
    RID_PRINCESS = 852
    RID_DUKE = 952

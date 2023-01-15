@@ -19,7 +19,7 @@ constants:
    RETREAT_DISTANCE = 100
    
    // Distance from master if we're just sitting there
-   IDLE_DISTANCE    = 20
+   IDLE_DISTANCE = 20
 
 resources:
 
@@ -391,7 +391,16 @@ resources:
    servant_pvp_cant_help_started = "~kYour servant shrugs, ''You've engaged in PVP combat! I can't help you!''~k"
    servant_pvp_can_help_again = "~kYour servant smiles, ''I can help you again, is there anything you need?''~k"
 
-   servant_greeting = "~kYour servant waves, ''Hello, I am %s, your %s servant.''~k"
+   servant_greeting = "~kA master of magic appears, ''I am %s, master of %s. You will find I am very powerful if you summon me with high spell power. You can gain higher spellpower by saying ~I%s outfit~I''~k"
+
+   servant_prepare_to_solve_puzzle = "~B~y~II will combine all of my ancestry knowledge to show you the way..."
+   servant_puzzle_solve_1 = "~b~BI summon Kraanan! ~I~y    <you hear a strong impact onto the ground>"
+   servant_puzzle_solve_2 = "~r~BI summon Faren! ~I~y    <you feel a strong circulating wind>"
+   servant_puzzle_solve_3 = "~p~BI summon Riija! ~I~y    <purple sparks begin cracking the ground beneath you>"
+   servant_puzzle_solve_4 = "~w~BI summon Shal'ille! ~I~y    <a bright light begins to shine through the cracks below you>"
+   servant_puzzle_solve_5 = "~k~BI summon Qor the Vile! ~I~y    <you slowly fade away as the secret passage is revealed>"
+   servant_puzzle_solve_6 = "~w~B~IYou hear a faint song in the distance that can only be described as a masterpiece of Jala."
+   servant_puzzle_solve_7 = "~B~kWe have shown you the way. It is up to you to continue this journey. ~I~y    <the hidden passage appears>"
 
 classvars:
    
@@ -566,6 +575,11 @@ properties:
    
    pbIsNearMaster = TRUE
 
+   pbIsSolvingPuzzle = FALSE
+
+   piPuzzleState = $
+   ptPuzzle = $
+
 messages:
    
    // Send these values when you use the Create(&Servant, #...) function.
@@ -680,7 +694,7 @@ messages:
          return;
       }
 
-      Post(poMaster,@MsgSendUser,#message_rsc=servant_greeting,#parm1=Send(self,@GetName),#parm2=Send(poSpell,@GetSchoolStr));
+      Post(poMaster,@MsgSendUser,#message_rsc=servant_greeting,#parm1=Send(self,@GetName),#parm2=Send(poSpell,@GetSchoolStr),#parm3=Send(poSpell,@GetSchoolStr));
 
       return;
    }
@@ -2007,6 +2021,8 @@ messages:
 
       if Send(self,@MasterCheck) AND what = poMaster
       {
+         Send(self, @HandleSolvingPuzzles);
+         
          iMasterDistance = Send(self,@SquaredDistanceTo,#what=poMaster);
          iServantState = Send(self,@GetState);
 
@@ -2029,7 +2045,7 @@ messages:
             break;
          }
 
-         if iMasterDistance > iActionDistance
+         if iMasterDistance > iActionDistance AND NOT pbIsSolvingPuzzle
          {
             Send(self,@EnterStateLimbo);
             Send(self,@GotoMaster);
@@ -2038,8 +2054,103 @@ messages:
 	  
       propagate;
    }
+
+   HandleSolvingPuzzles()
+   "When master moves around in certain rooms in certain coordinates, we may need to help solve a puzzle."
+   {
+      if Send(self, @GetMasterPuzzleZone) = $
+      {
+         pbIsSolvingPuzzle = FALSE;
+      }
+
+      return;
+   }
+
+   GetMasterPuzzleZone()
+   "Checks if master is in a zone where puzzles can be solved. Need to add Raza & Marion lever support."
+   {
+      local iRow, iCol, bIsAlreadySolved;
+
+      if poOwner <> $ AND Send(poOwner,@GetRoomNum) = RID_ORC_PIT_B
+      {
+         iRow = Send(poMaster, @GetRow);
+         iCol = Send(poMaster, @GetCol);
+
+         if (iRow >= 44 AND iRow <= 51) 
+            AND (iCol >= 25 AND iCol <= 33)
+         {
+            if NOT Send(poOwner, @IsPuzzleSolved) AND piPuzzleState = $
+            {
+               piPuzzleState = 1;
+
+               Send(self, @HelpSolvePuzzle_ORC_PIT_BOSS); // Help master solve this puzzle.
+
+               return PUZZLE_ORC_PIT_BOSS_LEVER;
+            }
+         }
+      } else {
+         piPuzzleState = $;
+      }
+
+      return $;
+   }
    
-   
+   HelpSolvePuzzle_ORC_PIT_BOSS()
+   "We will help master solve the Orc Pit Boss Puzzle"
+   {
+      if piPuzzleState = $ OR poOwner = $ OR NOT Send(self,@MasterCheck)
+      {
+         return;
+      }
+
+      switch(piPuzzleState) 
+      {
+         case 1:
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_prepare_to_solve_puzzle);
+            Send(poOwner, @Rumble);
+         break;
+         case 2:
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_puzzle_solve_1);
+            Send(poOwner, @Rumble);
+         break;
+         case 3:
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_puzzle_solve_2);
+            Send(poOwner, @Rumble);
+         break;
+         case 4:
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_puzzle_solve_3);
+            Send(poOwner, @Rumble);
+         break;
+         case 5:
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_puzzle_solve_4);
+            Send(poOwner, @Rumble);
+         break;
+         case 6:
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_puzzle_solve_5);
+            Send(poOwner, @Rumble);
+         break;
+         case 7:
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_puzzle_solve_6);
+            Send(poOwner, @Rumble);
+            Send(Send(SYS,@FindRoombynum,#num=RID_ORC_PIT_A),@DoSolution,#height=750);
+            Send(poOwner,@DoSolution,#height=100);
+            Send(poOwner, @DoSolution);
+         break;
+         case 8:
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_puzzle_solve_7);
+
+            return; // Stops the timer from happening.
+
+         break;
+      }
+
+      piPuzzleState++;
+
+      ptPuzzle = CreateTimer(self, @HelpSolvePuzzle_ORC_PIT_BOSS, 8000);
+
+      return;
+   }
+
    // Whenever someone says something, our servant is listening in case it's something we can help with.
    // We need to perform several checks on what the user said.
    // They might be asking for things like:
