@@ -314,6 +314,16 @@ messages:
       return;
    }
 
+   GetLeftLever()
+   {
+      return poLever1;
+   }
+
+   GetRightLever()
+   {
+      return poLever2;
+   }
+
    ReqNewHold(what = $, new_row = $, new_col = $)
    // Only allow a certain # of monsters in the pit
    {

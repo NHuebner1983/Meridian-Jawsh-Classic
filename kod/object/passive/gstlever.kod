@@ -51,28 +51,41 @@ messages:
    TryActivate(who=$)
    "Return False only if you want user.kod to send its own error message to user."
    {
-      if abs(send(who,@getrow)-send(self,@getrow)) > GUESTLEVER_RANGE or
-         abs(send(who,@getcol)-send(self,@getcol)) > GUESTLEVER_RANGE
+      if NOT IsClass(who, &Monster) AND (abs(send(who,@getrow)-send(self,@getrow)) > GUESTLEVER_RANGE or
+         abs(send(who,@getcol)-send(self,@getcol)) > GUESTLEVER_RANGE)
       {
-	 Send(who,@MsgSendUser,#message_rsc=guestlever_not_in_range);          
-	 return True;
+         Send(who,@MsgSendUser,#message_rsc=guestlever_not_in_range);         
+
+         return True;
       }
 
       if piState = GUESTLEVER_UP
       {
-	 piState = GUESTLEVER_DOWN;
+	      piState = GUESTLEVER_DOWN;
       }
-      else
+      else if NOT IsClass(who, &Monster)
       {
-	 Send(who,@MsgSendUser,#message_rsc=guestlever_stuck);
-	 return True;
+         Send(who,@MsgSendUser,#message_rsc=guestlever_stuck);
+
+         return True;
       }
       
-      Send(who,@MsgSendUser,#message_rsc=guestlever_changed);          
+      if NOT IsClass(who, &Monster)
+      {
+         Send(who,@MsgSendUser,#message_rsc=guestlever_changed);          
+      }
+
       Send(poOwner,@SomethingChanged,#what=self);
      
       Send(poOwner,@LeverChanged,#what=self);
- 
+
+      if IsClass(who, &Player) AND Send(who, @GetServant) <> $
+      {
+         // Players is pulling the lever and a servant is helping.
+         // Let's tell the servant to activate the lever.
+         Send(Send(who, @GetServant), @TryActivateClosestLever);
+      }
+
       return True;
    }
 
@@ -86,16 +99,19 @@ messages:
       local iNew_state;
 
       if switched
-      {  iNew_state = GUESTLEVER_DOWN; }
+      {  
+         iNew_state = GUESTLEVER_DOWN; 
+      }
       else
-      {  iNew_state = GUESTLEVER_UP; }
+      {  
+         iNew_state = GUESTLEVER_UP; 
+      }
 
       if iNew_state <> piState
       {
-	 piState = iNew_state;
-	 Send(poOwner,@SomethingChanged,#what=self);
+         piState = iNew_state;
+         Send(poOwner,@SomethingChanged,#what=self);
       }
-
 
       return;
    }
@@ -108,6 +124,7 @@ messages:
    SendAnimation()
    {
       AddPacket(1,ANIMATE_NONE,2,piState);
+
       return;
    }
 

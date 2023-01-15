@@ -181,6 +181,16 @@ messages:
       propagate;
    }
 
+   GetLeftLever()
+   {
+      return poLever1;
+   }
+
+   GetRightLever()
+   {
+      return poLever2;
+   }
+
    CreateLevers()
    {
       if poLever1 = $

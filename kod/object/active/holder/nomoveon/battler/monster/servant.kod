@@ -394,6 +394,7 @@ resources:
    servant_greeting = "~kA master of magic appears, ''I am %s, master of %s. You will find I am very powerful if you summon me with high spell power. You can gain higher spellpower by saying ~I%s outfit~I''~k"
 
    servant_prepare_to_solve_puzzle = "~B~y~II will combine all of my ancestry knowledge to show you the way..."
+   servant_puzzle_solve_lever = "~kYour servant confidently nods, ''~BI can help you get in! Pull your lever, and I will use my magic on the other one.~B''~k"
    servant_puzzle_solve_1 = "~b~BI summon Kraanan! ~I~y    <you hear a strong impact onto the ground>"
    servant_puzzle_solve_2 = "~r~BI summon Faren! ~I~y    <you feel a strong circulating wind>"
    servant_puzzle_solve_3 = "~p~BI summon Riija! ~I~y    <purple sparks begin cracking the ground beneath you>"
@@ -2067,7 +2068,7 @@ messages:
    }
 
    GetMasterPuzzleZone()
-   "Checks if master is in a zone where puzzles can be solved. Need to add Raza & Marion lever support."
+   "Checks if master is in a zone where puzzles can be solved."
    {
       local iRow, iCol, bIsAlreadySolved;
 
@@ -2083,9 +2084,41 @@ messages:
             {
                piPuzzleState = 1;
 
-               Send(self, @HelpSolvePuzzle_ORC_PIT_BOSS); // Help master solve this puzzle.
+               Send(self, @HelpSolvePuzzle_ORC_PIT_BOSS); // Help Solve Pitboss Puzzle
 
                return PUZZLE_ORC_PIT_BOSS_LEVER;
+            }
+         }
+      } else if poOwner <> $ AND Send(poOwner,@GetRoomNum) = RID_MAR_CRYPT1 {
+         iRow = Send(poMaster, @GetRow);
+         iCol = Send(poMaster, @GetCol);
+
+         if (iRow = 26 AND iCol = 9) 
+            OR (iRow = 26 AND iCol = 4)
+         {
+            if NOT Send(poOwner, @IsPuzzleSolved) AND piPuzzleState = $
+            {
+               piPuzzleState = 1;
+
+               Send(self, @HelpSolvePuzzle_MARION_CRYPT_LEVER); // Help open Marion Crypt Doors
+
+               return PUZZLE_MARION_CRYPT_LEVER;
+            }
+         }
+      } else if poOwner <> $ AND Send(poOwner,@GetRoomNum) = RID_RAZA_CRYPT {
+         iRow = Send(poMaster, @GetRow);
+         iCol = Send(poMaster, @GetCol);
+
+         if (iRow = 25 AND iCol = 9) 
+            OR (iRow = 25 AND iCol = 4)
+         {
+            if NOT Send(poOwner, @IsPuzzleSolved) AND piPuzzleState = $
+            {
+               piPuzzleState = 1;
+
+               Send(self, @HelpSolvePuzzle_RAZA_CRYPT_LEVER); // Help open Raza Crypt Doors
+
+               return PUZZLE_RAZA_CRYPT_LEVER;
             }
          }
       } else {
@@ -2139,6 +2172,10 @@ messages:
          case 8:
             Post(poMaster,@MsgSendUser,#message_rsc=servant_puzzle_solve_7);
 
+            pbIsSolvingPuzzle = FALSE;
+
+            ptPuzzle = $;
+
             return; // Stops the timer from happening.
 
          break;
@@ -2148,6 +2185,147 @@ messages:
 
       ptPuzzle = CreateTimer(self, @HelpSolvePuzzle_ORC_PIT_BOSS, 8000);
 
+      return;
+   }
+
+   HelpSolvePuzzle_MARION_CRYPT_LEVER()
+   "We will help master solve the Marion Crypt Levers"
+   {
+      if piPuzzleState = $ OR poOwner = $ OR NOT Send(self,@MasterCheck)
+      {
+         return;
+      }
+
+      if Send(Send(poOwner, @GetLeftLever), @IsSwitched) OR Send(Send(poOwner, @GetRightLever), @IsSwitched)
+      {
+         // We already helped solve the puzzle, let's reset it.
+         pbIsSolvingPuzzle = FALSE;
+         ptPuzzle = $;
+         piPuzzleState = $;
+
+         return;
+      }
+
+      switch(piPuzzleState) 
+      {
+         case 1:
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_puzzle_solve_lever);
+            pbIsSolvingPuzzle = FALSE;
+            ptPuzzle = $;
+            piPuzzleState = $;
+            return;
+         break;
+      }
+
+      piPuzzleState++;
+
+      if ptPuzzle = $ OR NOT IsTimer(ptPuzzle) OR (IsTimer(ptPuzzle) AND GetTimeRemaining(ptPuzzle) <= 0)
+      {
+         // Only restart a new puzzle timer if none are pending.
+         ptPuzzle = CreateTimer(self, @HelpSolvePuzzle_MARION_CRYPT_LEVER, 5000);
+      }
+
+      return;
+   }
+
+   HelpSolvePuzzle_RAZA_CRYPT_LEVER()
+   "We will help master solve the Raza Crypt Levers"
+   {
+      if piPuzzleState = $ OR poOwner = $ OR NOT Send(self,@MasterCheck)
+      {
+         return;
+      }
+
+      if Send(Send(poOwner, @GetLeftLever), @IsSwitched) OR Send(Send(poOwner, @GetRightLever), @IsSwitched)
+      {
+         // We already helped solve the puzzle, let's reset it.
+         pbIsSolvingPuzzle = FALSE;
+         ptPuzzle = $;
+         piPuzzleState = $;
+
+         return;
+      }
+
+      switch(piPuzzleState) 
+      {
+         case 1:
+            Post(poMaster,@MsgSendUser,#message_rsc=servant_puzzle_solve_lever);
+            pbIsSolvingPuzzle = FALSE;
+            ptPuzzle = $;
+            piPuzzleState = $;
+            return;
+         break;
+      }
+
+      piPuzzleState++;
+
+      if ptPuzzle = $ OR NOT IsTimer(ptPuzzle) OR (IsTimer(ptPuzzle) AND GetTimeRemaining(ptPuzzle) <= 0)
+      {
+         // Only restart a new puzzle timer if none are pending.
+         ptPuzzle = CreateTimer(self, @HelpSolvePuzzle_RAZA_CRYPT_LEVER, 5000);
+      }
+
+      return;
+   }
+
+   TryActivateClosestLever()
+   {
+      local lPuzzles, i, iOtherLeverCol, oLever, iRow;
+
+      if poOwner <> $ AND Send(poOwner, @GetRoomNum) = RID_MAR_CRYPT1
+      {
+         // We are in Marion Crypt.
+
+         iRow = 26;
+         
+         if Send(poMaster, @GetCol) = 4
+         {
+            iOtherLeverCol = 9;
+            oLever = Send(poOwner, @GetRightLever);
+         }
+
+         if Send(poMaster, @GetCol) = 9
+         {
+            iOtherLeverCol = 4;
+            oLever = Send(poOwner, @GetLeftLever);
+         }
+      }
+
+      if poOwner <> $ AND Send(poOwner, @GetRoomNum) = RID_RAZA_CRYPT
+      {
+         // We are in Raza Crypt.
+
+         iRow = 25;
+         
+         if Send(poMaster, @GetCol) = 4
+         {
+            iOtherLeverCol = 9;
+            oLever = Send(poOwner, @GetRightLever);
+         }
+
+         if Send(poMaster, @GetCol) = 9
+         {
+            iOtherLeverCol = 4;
+            oLever = Send(poOwner, @GetLeftLever);
+         }
+      }
+
+      if iOtherLeverCol = $ OR iRow = $
+      {
+         // Master is not at a lever position, let's not continue;
+         return;
+      }
+
+      Send(self,@EnterStateWait);
+      Send(self,@TweakBehavior);
+
+      Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
+            #new_row=iRow,
+            #new_col=iOtherLeverCol);
+
+      // Our master is at the other lever, let's pull oLever!
+      Send(oLever, @TryActivate, #who=self);
+   
       return;
    }
 
