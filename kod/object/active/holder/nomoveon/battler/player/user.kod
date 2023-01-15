@@ -212,39 +212,39 @@ resources:
    user_completed_quests_header = "Completed Quests: "
    user_no_completed_quests_header = "No Completed Quests"
 
-   user_got_offer = "You have a trade offer from %s%s."
+   user_got_offer = "~B~yYou have a trade offer from %s%s."
    user_cant_offer = "You can't offer to %s%s."
    user_cant_offer_arena = \
       "Trading is not permitted in gaming areas such as this."
    user_offer_busy = "%s%s can't deal with you now."
    user_cant_cancel_offer = "You can't cancel a nonexistent offer."
-   user_canceled_offer = "%s%s canceled the offer."
-   user_cant_counteroffer = "You can't counter a nonexistent offer."
-   user_cant_acceptoffer = "You can't accept a nonexistent offer."
+   user_canceled_offer = "~B~y%s%s canceled the offer."
+   user_cant_counteroffer = "~B~yYou can't counter a nonexistent offer."
+   user_cant_acceptoffer = "~B~yYou can't accept a nonexistent offer."
    user_dont_have_offer = \
-      "Offer invalid, you don't have everything you offered."
+      "~B~yOffer invalid, you don't have everything you offered."
    user_dont_have_number_offer = \
-      "Offer invalid, you don't have enough of everything you offered."
+      "~B~yOffer invalid, you don't have enough of everything you offered."
    user_offer_too_many = "You can't offer that many %s!"
    user_cant_drop_offer = \
-      "Realizing %s%s will not be given away, you cancel the offer."
+      "~B~yRealizing %s%s will not be given away, you cancel the offer."
    user_didnt_have_offer = \
-      "Offer invalid, %s%s didn't have everything offered."
+      "~B~yOffer invalid, %s%s didn't have everything offered."
    user_didnt_drop_offer = \
-      "%s%s tries to give you %s%s, but it doesn't seem to want to be given!"
+      "~B~y%s%s tries to give you %s%s, but it doesn't seem to want to be given!"
    user_cant_offer_get = \
-      "You can't take %s%s from the trade -- it is on the ground."
-   user_offer_not_online = "%s%s is not online to accept your offer."
+      "~B~yYou can't take %s%s from the trade -- it is on the ground."
+   user_offer_not_online = "~B~y%s%s is not online to accept your offer."
    user_offer_not_here = \
-      "You try to offer your goods to %s%s, but %s is no longer here."
+      "~B~yYou try to offer your goods to %s%s, but %s is no longer here."
    user_couldnt_carry_offer = \
-      "%s%s can't carry all the items you have offered."
+      "~B~y%s%s can't carry all the items you have offered."
    user_cant_carry_offer = \
-      "You can't carry all the items that %s%s has offered you."
-   user_not_item = "You cannot pick that up."
+      "~B~yYou can't carry all the items that %s%s has offered you."
+   user_not_item = "~B~yYou cannot pick that up."
 
-   user_not_have_number = "You don't have that amount of %s to drop."
-   user_cant_deal_number = "You can't do anything with %i items."
+   user_not_have_number = "~B~yYou don't have that amount of %s to drop."
+   user_cant_deal_number = "~B~yYou can't do anything with %i items."
    user_cant_attack_non_battler = "You can't attack %s%s."
    user_no_say_guild = \
       "You cannot Send a message to your guild, as you do not belong to a "
