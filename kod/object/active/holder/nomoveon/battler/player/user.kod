@@ -71,6 +71,7 @@ resources:
    user_name_rsc = "user name"
 
    user_garbage_collecting = "System is saving; please wait."
+   user_garbage_collecting_done = "System has finished saving."
    user_garbage_collecting_done_A = "~I~yQor has imprinted your progress into a dark stone for safe keeping."
    user_garbage_collecting_done_B = "~I~yShal'ille has stored your progress in her pool of holy tears."
    user_garbage_collecting_done_C = "~I~yKraanan has carved your progress onto a magnificent sculpture for safe keeping."

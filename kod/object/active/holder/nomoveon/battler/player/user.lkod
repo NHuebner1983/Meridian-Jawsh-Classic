@@ -2,6 +2,19 @@ user_name_rsc = de "Benutzername"
 user_garbage_collecting = de "System-Sicherung läuft - bitte warten."
 user_garbage_collecting_done = de \
    "System-Sicherung beendet; Spiel bitte fortführen."
+user_garbage_collecting_done_A = de \
+   "~I~yQor has imprinted your progress into a dark stone for safe keeping."
+user_garbage_collecting_done_B = de \
+   "~I~yShal'ille has stored your progress in her pool of holy tears."
+user_garbage_collecting_done_C = de \
+   "~I~yKraanan has carved your progress onto a magnificent sculpture for safe keeping."
+user_garbage_collecting_done_D = de \
+   "~I~yFaren has etched your progress in lightning, fire and ice for safe keeping."
+user_garbage_collecting_done_E = de \
+   "~I~yJala sings a song so glorious that your story will never be forgotten."
+user_garbage_collecting_done_F = de \
+   "~I~yRiija has created a reflection of your progress for safe keeping."
+
 user_err_get_unk = de "%s%s? Das hat schon jemand aufgehoben."
 user_err_get_dist = de "%s%s? Das geht nicht, Du bist zu weit entfernt."
 user_disallow_get = de \
