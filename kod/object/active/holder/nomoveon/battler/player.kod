@@ -3741,12 +3741,19 @@ messages:
    AddDefaultObjects()
    "Add the objects a player is given when creating a character in newbie zone"
    {
-      local iInfo, oSpell, lReagents, lItems, cReagent, iNumber, oMoney;
+      local iInfo, oSpell, lReagents, lItems, cReagent, iNumber, oMoney, iPantsColor;
 
-      // Give the poor newbie an weapon and a bit of cash.
+      if Send(self, @GetGender) = GENDER_MALE
+      {
+         iPantsColor = PT_GRAY_TO_BLACK;
+      } else {
+         iPantsColor = PT_GRAY_TO_LRED;
+      }
+
+      // Give the newbie some gear!
       Send(self,@NewHold,#what=Create(&Mace));
       Send(self,@NewHold,#what=Create(&Shirt));
-      Send(self,@NewHold,#what=Create(&PantsC,#translation=PT_GRAY_TO_BLACK));
+      Send(self,@NewHold,#what=Create(&PantsC,#translation=iPantsColor));
       Send(self,@NewHold,#what=Create(&Gauntlet));
       Send(self,@NewHold,#what=Create(&LeatherArmor));
       Send(self,@NewHold,#what=Create(&MetalShield));
@@ -3755,7 +3762,7 @@ messages:
       Send(Send(SYS,@GetStatistics),@MoneyCreated,#what=oMoney,#amount=500);
       Send(self,@AddReagentsForSpells,#iNumCasts=5);
 
-      // If player hasn't suicided in last 5 hours, give them cash and prizes!
+      // Brand new players will get some walkin' around money.
       if (GetTime() - piLast_restart_time) > (5*60*60)
       {
          oMoney = Create(&Shilling,#number=50000);
@@ -8027,6 +8034,26 @@ messages:
    GetEquippedItems()
    {
       return Send(self,@GetPlayerUsing);
+   }
+
+   IsEquipped(oObj=$)
+   {
+      local i;
+
+      if oObj = $
+      {
+         return FALSE;
+      }
+
+      foreach i in plUsing 
+      {
+         if i <> $ AND i = oObj
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
    }
 
    IsUsingA(class=$)

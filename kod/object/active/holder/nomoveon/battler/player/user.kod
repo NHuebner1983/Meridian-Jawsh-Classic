@@ -363,7 +363,7 @@ resources:
 
    user_appeal = "%s appeals, \"%q~n\""
    user_first_time_appeal = \
-      "~B~U~k[###]~n ~B~v%s has just logged on for the first time."
+      "~B~U~k[###]~n ~B~v%s has entered the land of Meridian 59."
    user_did_appeal = "You appeal, \"%q~n\""
    user_appeal_squelched = "Your appeal privileges have been revoked."
    user_kill_zone = \
@@ -384,7 +384,7 @@ resources:
 
    user_guildofficer_rsc = "guildofficer"
 
-   user_default_url = "http://meridian59.us/"
+   user_default_url = "https://meridian59.us/blog"
 
    user_safety_on_wav_rsc = safety_on.ogg
    user_safety_off_wav_rsc = safety_off.ogg
@@ -472,17 +472,15 @@ resources:
    "The time in Meridian is %i:00.  It is the %q day of the year %i."
 
    user_self_phase_out = \
-      "You phase out of existence, confident that you can hold onto "
-      "reality for another %i seconds."
+      "~B~yYou phase out of existence. You will lose your grip on reality in %i seconds."
    user_phase_out_high = "%s phases out while completely unharmed."
    user_phase_out_med = \
       "Sensing the battle turning unfavorably, %s phases out."
    user_phase_out_low = "Moments before death, %s phases out!"
-   user_phase_out_onehp = "%s phases out a split second before death!"
+   user_phase_out_onehp = "~B~y%s phases out a split second before death!"
    user_self_phase_in = \
-      "Only %i seconds away from losing your grip on reality, you phase "
-      "back into existence."
-   user_phase_in = "%s phases back into existence!"
+      "~B~wYou phase back into existence with only %i seconds left before you lose your grip on reality."
+   user_phase_in = "~B~y%s phases back into existence!"
    user_spectate_on = \
       "%s has lost physical touch with this reality."
    user_self_spectate_on = \

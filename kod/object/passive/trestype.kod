@@ -442,7 +442,7 @@ messages:
          }
       }
 
-      if IsClass(oObj,&GuildShield)
+      if oObj <> $ AND IsClass(oObj,&GuildShield)
       {
          Send(oObj,@Randomize);
       }

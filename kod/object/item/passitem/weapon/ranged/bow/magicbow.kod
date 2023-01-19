@@ -20,7 +20,7 @@ resources:
 
    MagicBow_name_rsc = "magic bow"
    MagicBow_desc_rsc = \
-      "Crafted by the gods, this bow hums with magical power."
+      "Crafted by the gods, this bow hums with magical power. Usually such a weapon would reduce your spell power, but this magical bow will help you thrive."
 
 classvars:
 
@@ -31,28 +31,139 @@ classvars:
    viBulk = 70
    viWeight = 70
 
-   viSpell_modifier = -5 
+   viSpell_modifier = 10
    
    viHits_init_min = 470
    viHits_init_max = 750
 
 properties:
 
-   viWeaponDamage = 2
-   viRange = 75 * FINENESS
-   viHit_roll_modifier = 100
+   viWeaponDamage = 4
+   viRange = 85 * FINENESS
+   viHit_roll_modifier = 125
 
    // What's the basic color of the wood?
-   viBaseXLAT = XLAT_TO_SKIN4
+   viBaseXLAT = XLAT_TO_SKY
 
    piAttack_Type = ATCK_WEAP_MAGIC + ATCK_WEAP_PIERCE
 
+   ptColorChange = $
+   piColorChangeInterval = 3000
+   piColorChangeIdleInterval = 15000
+
 messages:
 
-   SetColor(iColor=XLAT_TO_SKIN4)
+   Constructed()
    {
+      Send(self,@StartColorShift);
+
+      propagate;
+   }
+
+   StartColorShift()
+   {
+      if ptColorChange <> $ AND IsTimer(ptColorChange)
+      {
+         return;
+      }
+
+      ptColorChange = CreateTimer(self, @SetColor, piColorChangeInterval);
+
+      return;
+   }
+
+   SetColor(iColor=XLAT_TO_SKY)
+   {
+      local iRandom, lColors, oRoom, oPlayer;
+
+      oRoom = $;
+      oPlayer = $;
+
+      if poOwner <> $ AND IsClass(poOwner, &Player)
+      {
+         oPlayer = poOwner;
+         oRoom = Send(oPlayer, @GetOwner);
+      }
+
+      if oRoom = $ AND poOwner <> $ AND IsClass(poOwner, &Room)
+      {
+         oRoom = poOwner;
+      }
+
+      if oRoom = $ OR (oPlayer <> $ AND NOT Send(oPlayer,@IsEquipped,#oObj=self))
+      {
+         // Do not perform color changes until the item is in use - it might create a lot of lag.
+         // We'll definitely still show the color changes if the bow is on the ground, that's should be a fun effect.
+         ptColorChange = CreateTimer(self, @SetColor, piColorChangeIdleInterval);
+
+         return;
+      }
+
+      ptColorChange = CreateTimer(self, @SetColor, piColorChangeInterval);
+
+      lColors = [
+         XLAT_TO_ORANGE,
+         XLAT_TO_BLUE,
+         XLAT_TO_SKY,
+         XLAT_TO_YELLOW
+      ];
+
+      if iColor = XLAT_TO_SKY
+      {
+         iColor = Nth(lColors, Random(1, Length(lColors)));
+      }
+
       viBaseXLAT = iColor;
+
       Send(self,@UpdateColor);
+
+      if poOwner <> $ AND IsClass(poOwner, &Room)
+      {
+         oRoom = poOwner;
+      }
+
+      if poOwner <> $ AND IsClass(poOwner, &Player)
+      {
+         oRoom = Send(poOwner, @GetOwner);
+      }
+
+      if oRoom <> $ AND IsClass(oRoom, &Room)
+      {
+         Send(oRoom,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   NewUsed()
+   {
+      Send(self, @StartColorShift);
+
+      propagate;
+   }
+
+   NewOwner()
+   {
+      Send(self, @StartColorShift);
+
+      propagate;
+   }
+
+   Delete()
+   {
+      Send(self, @StopTimer);
+
+      propagate;
+   }
+
+   StopTimer()
+   {
+      if ptColorChange <> $ AND IsTimer(ptColorChange)
+      {
+         DeleteTimer(ptColorChange);
+      }
+
+      ptColorChange = $;
 
       return;
    }
