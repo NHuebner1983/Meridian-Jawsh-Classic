@@ -160,6 +160,7 @@ resources:
    user_stat_armor = "Armor"
    user_stat_training = "Training Pts"
    user_stat_unbound_energy = "Unbound Energy"
+   user_stat_power = "Power"
 
    user_resist_magic = "Magic Resist"
    user_resist_fire = "Fire Resist"
@@ -3700,8 +3701,9 @@ messages:
 
       if group = 2
       {
-         AddPacket(1,BP_STAT_GROUP, 1,group, 1,27);
+         AddPacket(1,BP_STAT_GROUP, 1,group, 1,28);
 
+         Send(self,@SendStatPower);
          Send(self,@SendStatUnboundEnergy);
          Send(self,@SendStatTraining);
          Send(self,@SendStatMight);
@@ -9657,6 +9659,18 @@ messages:
       return;
    }
 
+   DrawPower()
+   {
+      if pbLogged_on
+      {
+         AddPacket(1,BP_STAT,1,2);
+         Send(self,@SendStatPower);
+         SendPacket(poSession);
+      }
+
+      return;
+   }
+
    SendStatUnboundEnergy()
    {
       local iPoints;
@@ -9665,6 +9679,18 @@ messages:
 
       AddPacket(1,27, 4,user_stat_unbound_energy, 1,STAT_VALUE, 1,STAT_INTEGER,
                 4,iPoints, 4,0, 4,Send(SETTINGS_OBJECT,@GetUnboundMax), 4,iPoints);
+
+      return;
+   }
+
+   SendStatPower()
+   {
+      local iPoints;
+
+      iPoints = Send(self,@GetPower);
+
+      AddPacket(1,28, 4,user_stat_power, 1,STAT_VALUE, 1,STAT_INTEGER,
+                4,iPoints, 4,0, 4,Send(SETTINGS_OBJECT,@GetPowerMax), 4,iPoints);
 
       return;
    }

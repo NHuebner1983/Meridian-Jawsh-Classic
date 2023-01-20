@@ -61,12 +61,22 @@ messages:
       return 0;
    }
 
-   GetTargets(who=$,lTargets=$)
+   GetTargets(who=$,lTargets=$,iRange=$,LOS=$)
    "This returns a list of valid targets in range."
    {
       local lFinalTargets, i, each_obj, iRange_squared, oRoom;
 
-      iRange_squared = piRange * piRange;
+      if LOS = $
+      {
+         LOS = vbSkipLoSCheck;
+      }
+
+      if iRange = $
+      {
+         iRange = piRange;
+      }
+
+      iRange_squared = iRange * iRange;
 
       oRoom = Send(who,@GetOwner);
 
@@ -76,9 +86,10 @@ messages:
 
          // Valid targets are battlers, in range, in direct LoS and attackable.
          if each_obj <> who
+            AND NOT IsClass(each_obj, &Servant)
             AND IsClass(each_obj,&Battler)
             AND (Send(who,@SquaredFineDistanceTo3D,#what=each_obj) <= iRange_squared)
-            AND (vbSkipLoSCheck OR Send(oRoom,@LineOfSight,#obj1=who,#obj2=each_obj))
+            AND (NOT LOS OR (LOS AND Send(oRoom,@LineOfSight,#obj1=who,#obj2=each_obj)))
             AND Send(who,@AllowBattlerAttack,#victim=each_obj,
                      #stroke_obj=self,#report=FALSE)
          {

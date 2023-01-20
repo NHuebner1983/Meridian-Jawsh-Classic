@@ -889,6 +889,9 @@ properties:
    piUnbound_energy = 0
    pbFree_cast = FALSE
 
+   // This keeps track of Power which is used for accumulation of a strong AOE attack.
+   piPower = 0
+
    // This keeps track of when we've last received our daily training points.
    piReward_timestamp = 0
 
@@ -1003,6 +1006,7 @@ properties:
    ptAdvancement = $
    ptRest = $
    ptUnboundEnergy = $
+   ptPower = $
 
    // Poison info
    ptPoison = $
@@ -4063,6 +4067,15 @@ messages:
       return;
    }
 
+   PowerTimer()
+   {
+      ptPower = $;
+
+      Send(self,@LosePower);
+
+      return;
+   }
+
    HealthTimer()
    {
       local iDifference;
@@ -5860,20 +5873,23 @@ messages:
       return TRUE;
    }
 
-   TryAttack(what = $,use_weapon = $,stroke_obj=$)
+   TryAttack(what = $,use_weapon = $,stroke_obj=$,aoe_burst=FALSE)
    {
       local i, iRange, oSpell, state;
 
       // Can't target self.
       if what = self
       {
-         Send(self,@MsgSendUser,#message_rsc=player_no_target_self);
+         if NOT aoe_burst
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_no_target_self);
+         }
          
          return FALSE;
       }
 
       // Check attack time.
-      if NOT Send(self,@IsOkayAttackTime)
+      if NOT Send(self,@IsOkayAttackTime) AND NOT aoe_burst
       {
          return $;
       }
@@ -5894,7 +5910,9 @@ messages:
       Send(self,@CommandMinionAttack,#oTarget=what);
 
       // Can pay costs?  Only check for skills, spells have already been cast.
-      if IsClass(stroke_obj,&Skill)
+      if what <> $ 
+         AND stroke_obj <> $ 
+         AND IsClass(stroke_obj,&Skill)
          AND NOT Send(stroke_obj,@CanPayCosts,#who=self,#oTarget=what)
          AND NOT Send(self, @HasBecomeMonster)
       {
@@ -5911,17 +5929,25 @@ messages:
       }
 
       // Send to the STROKE to get the range; unarmed attacks have ranges too
-      iRange = Send(stroke_obj,@GetRange,#weapon_used=use_weapon);
+      if stroke_obj <> $
+      {
+         iRange = Send(stroke_obj,@GetRange,#weapon_used=use_weapon);
+      } else {
+         iRange = 192;
+      }
 
       // A little fudge factor to account for lag drift, etc.
       //  Don't fudge for ranged weapons.
-      if IsClass(what,&User) AND Send(what,@HasMovedRecently)
-         AND (use_weapon <> $ AND NOT IsClass(use_weapon,&RangedWeapon))
+      if what <> $ 
+         AND use_weapon <> $ 
+         AND IsClass(what,&User) 
+         AND Send(what,@HasMovedRecently)
+         AND NOT IsClass(use_weapon,&RangedWeapon)
       {
          iRange = iRange + RANGE_MOVEMENT_BONUS;
       }
 
-      if NOT Send(self,@TargetWithinSightAndRange,#oTarget=what,#iRange=iRange,
+      if NOT aoe_burst AND NOT Send(self,@TargetWithinSightAndRange,#oTarget=what,#iRange=iRange,
                   #use_weapon=use_weapon,#stroke_obj=stroke_obj)
          AND NOT Send(self,@HasBecomeMonster)
       {
@@ -5987,8 +6013,9 @@ messages:
       }
 
       // Okay, checking is done, attack is okay.  Do the animation thing.
-      if NOT Send(stroke_obj,@CheckWeaponAndDoAnimation,#who=self,
-                  #weapon_used=use_weapon,#victim=what)
+      if stroke_obj <> $ AND NOT Send(stroke_obj,@CheckWeaponAndDoAnimation,#who=self,
+                                    #weapon_used=use_weapon,#victim=what) 
+         AND NOT aoe_burst
       {
          return FALSE;
       }
@@ -6006,7 +6033,7 @@ messages:
       }
 
       // Pay costs here. Only check skills, because spells are already cast.
-      if IsClass(stroke_obj,&Skill)
+      if stroke_obj <> $ AND IsClass(stroke_obj,&Skill)
       {
          Send(stroke_obj,@PayCosts,#who=self);
       }
@@ -6033,7 +6060,7 @@ messages:
       }
 
       Send(poOwner,@SomethingAttacked,#what=self,#victim=what,
-            #use_weapon=use_weapon,#stroke_obj=stroke_obj);
+            #use_weapon=use_weapon,#stroke_obj=stroke_obj,#aoe_burst=aoe_burst);
 
       // Record the swing for potential advancement.
       if Send(what,@CanPlayerAdvanceOnMe)         
@@ -6106,7 +6133,7 @@ messages:
 
    // Determines if target is within attacking range, and within sight.
    // iRange=$ means there's no range check.
-   TargetWithinSightAndRange(oTarget=$,iRange=$,use_weapon=$,stroke_obj=$)
+   TargetWithinSightAndRange(oTarget=$,iRange=$,use_weapon=$,stroke_obj=$,aoe_burst=FALSE)
    {
       local iDist, oTargetOwner, oFinalTarget, iAngle, iRow, iCol,
             iTargetRow, iTargetCol;
@@ -6142,7 +6169,7 @@ messages:
 
       // See if target is within range, if we provided a range.
       if iRange <> $
-         AND iDist > iRange * iRange
+         AND iDist > iRange * iRange AND NOT aoe_burst
       {
          Send(self,@SendAttackOutOfRangeMessage,#what=oFinalTarget,
               #use_weapon=use_weapon,#stroke_obj=stroke_obj);
@@ -6166,6 +6193,7 @@ messages:
             if iDist > 2
                AND IsClass(oFinalTarget,&Player)
                AND Send(self,@CheckLog)
+               AND NOT aoe_burst
             {
                Debug("ALERT! ",Send(self,@GetTrueName),self," at "
                      "[",piRow,piCol,"] and angle ",Send(self,@GetAngle),
@@ -6523,11 +6551,39 @@ messages:
       return Send(oWeapon,@GetAttackSpell);
    }
 
-   AssessHit(what = $, stroke_obj = $, damage = $, use_weapon = $)
+   AssessHit(what = $, stroke_obj = $, damage = $, use_weapon = $, aoe_burst = FALSE)
    {
-      local oMonster, oWeapon;
+      local i, oMonster, oWeapon, oSpell, iPowerDamage, lTargetsInRadius, lTargetsHit, oRadiusProjectile, bCanGainPower, bAoeHit, bAoeSomethingHit;
 
-      oWeapon = Send(self,@GetWeapon);
+      bCanGainPower = TRUE;
+      bAoeHit = FALSE;
+
+      if (stroke_obj <> $ AND IsClass(stroke_obj, &RadiusProjectile))
+         OR (use_weapon <> $ AND IsClass(use_weapon, &RadiusProjectile))
+         OR (use_weapon <> $ AND IsClass(use_weapon, &AttackSpell) AND Send(use_weapon, @IsAreaEffect))
+         OR (use_weapon <> $ AND IsClass(use_weapon, &RoomEnchantment))
+      {
+         // Existing AOE Spells / Skills should not gain power. This is a bypass to what a burst does.
+         bCanGainPower = FALSE;
+         aoe_burst = FALSE;
+      }
+
+      if stroke_obj <> $
+      {
+         // ATTACK SPELL
+         oSpell = stroke_obj;
+      } 
+      else if stroke_obj <> $ AND IsClass(stroke_obj, &Weapon) 
+      {
+         // WEAPON
+         oWeapon = stroke_obj;
+      }
+
+      if oWeapon = $ AND use_weapon <> $ AND oSpell = $
+      {
+         // WEAPON
+         oWeapon = use_weapon;
+      }
 
       if what <> $ AND oWeapon <> $ AND IsClass(oWeapon, &PickAxe) AND IsClass(what, &Ore)
       {
@@ -6549,11 +6605,87 @@ messages:
          Send(self, @TryLearn, #skill_num=SKID_SLASH);
       }
 
+      iPowerDamage = $;
+
+      // POWER UPDATE
+      if piPower >= 100 AND NOT aoe_burst AND bCanGainPower
+      {
+         // AOE BURST!
+         // Let's use the Radius Projectile spell to gather up our targets.
+         oRadiusProjectile = Create(&RadiusProjectile);
+         lTargetsInRadius = Send(oRadiusProjectile, @GetTargets, #LOS=FALSE, #who=self, #iRange=392);
+
+         if IsList(lTargetsInRadius) AND Length(lTargetsInRadius)
+         {
+            // We have targets to hit!
+            // Let's blastem'!
+            foreach i in lTargetsInRadius
+            {
+               if IsClass(i, &Servant) OR IsClass(i, &Reflection)
+               {
+                  continue;
+               }
+
+               // Let's hit this guy.
+               bAoeHit = Send(self, @TryAttack, #What=i, #use_weapon=use_weapon, #stroke_obj=stroke_obj, #aoe_burst=TRUE);
+
+               if bAoeHit
+               {
+                  bAoeSomethingHit = TRUE;
+               }
+            }
+
+            if bAoeSomethingHit
+            {
+               // Wipe their power, our AOE hit landed on something.
+               Send(self, @WipePower);
+            }
+         }
+      } else {
+         // Give the player power on each hit they make so they can use a powerful AOE attack.
+         // Since we did not perform an AOE burst, we gain power for hitting or killing something.
+         if damage = $
+         {
+            // Killing blow will always give 25% power.
+            iPowerDamage = 25;
+         } else {
+            // Landing a hit, let's use the damage to add to our power.
+            iPowerDamage = damage / 100;
+         }
+      }
+
+      if iPowerDamage <> $ AND bCanGainPower
+      {
+         // Add Power.
+         if what <> $ AND IsClass(what,&Monster)
+         {
+            // Get more power from monsters
+            iPowerDamage = Bound(iPowerDamage, 1, Random(80, 100));
+         } else {
+            // Get less power from players
+            iPowerDamage = Bound(iPowerDamage, 1, Random(1,10));
+         }
+
+         Send(self, @AddPower, #iAmount=iPowerDamage, #report=TRUE);
+      }
+
+      if lTargetsHit = $
+      {
+         // In case we didn't perform an AOE attack, let's just play 1 sound for the 1 target we hit.
+         lTargetsHit = [
+            what
+         ];
+      }
+
       if stroke_obj <> $
          AND Send(self,@GetWeaponSwingBonus) > 0
       {
-         Send(stroke_obj,@ImproveStroke,#who=self,#target=what,
-               #use_weapon=Send(self,@GetWeapon));
+         foreach i in lTargetsHit
+         {
+            // For every target we hit, let's improve our stroke.
+            Send(stroke_obj,@ImproveStroke,#who=self,#target=what,
+                  #use_weapon=Send(self,@GetWeapon));
+         }
       }
 
       // Morphed? As a bonus, people in illusionary form
@@ -6564,9 +6696,12 @@ messages:
          Send(oMonster,@HitSideEffect,#what=what,#who=self);
       }
 
-      
-      Send(self,@DoHitMessageSound,#what=what,#damage=damage,
-            #stroke_obj=stroke_obj,#use_weapon=use_weapon);
+      foreach i in lTargetsHit
+      {
+         // We may have hit multiple targets with AOE, let's spam the damage sound wooo!
+         Send(self,@DoHitMessageSound,#what=what,#damage=damage,
+               #stroke_obj=stroke_obj,#use_weapon=use_weapon);
+      }
 
       propagate;
    }
@@ -8249,6 +8384,23 @@ messages:
       return;
    }
 
+   LosePower()
+   "Decays your power."
+   {
+      local iReduction;
+
+      if NOT Send(self,@IsInCannotInteractMode)
+      {
+         iReduction = Bound(piPower * Send(SETTINGS_OBJECT,@GetPowerDecay)
+                           / 1000,1,$);
+         piPower -= iReduction;
+      }
+
+      Send(self,@NewPower);
+
+      return;
+   }
+
    LoseHealth(amount = $, decay = FALSE, precision = FALSE)
    "decay = TRUE if you lose a HP over time because you are boosted over max "
    "by some sort of vamp effect. If this is true, you shouldn't break a trance."
@@ -8421,6 +8573,45 @@ messages:
       }
 
       Send(self,@DrawUnboundEnergy);
+
+      return;
+   }
+
+   NewPower(bDelay = FALSE)
+   {
+      if piPower < 0
+      {
+         piPower = 0;
+      }
+
+      if ptPower = $
+      {
+         if piPower > 0
+         {
+            if bDelay
+            {
+               ptPower = CreateTimer(self,@PowerTimer,
+                                       Send(SETTINGS_OBJECT,@GetPowerDelay));
+            }
+            else
+            {
+               ptPower = CreateTimer(self,@PowerTimer,1000);
+            }
+         }
+      }
+      else if piPower = 0
+      {
+         DeleteTimer(ptPower);
+         ptPower = $;
+      }
+      else if bDelay
+      {
+         DeleteTimer(ptPower);
+         ptPower = CreateTimer(self,@PowerTimer,
+                                 Send(SETTINGS_OBJECT,@GetPowerDelay));
+      }
+
+      Send(self,@DrawPower);
 
       return;
    }
@@ -10806,6 +10997,41 @@ messages:
       return;
    }
 
+   AddPower(iAmount=0,report=TRUE)
+   {
+      // Add to total. Check reasonable limits first. You can't lose
+      // more points than you have and you can't get more points than
+      // you need to reach the cap.
+      iAmount = Bound(iAmount,-piPower,Send(SETTINGS_OBJECT,@GetPowerMax) - piPower);
+      piPower += iAmount;
+
+      if (pbLogged_on AND report)
+      {
+         if iAmount > 0
+         {
+            //Send(self,@MsgSendUser,#message_rsc=player_power_gained,
+            //      #parm1=iAmount);
+         }
+         else if iAmount < 0
+         {
+            //Send(self,@MsgSendUser,#message_rsc=player_power_lost,
+            //      #parm1=-iAmount);
+         }
+      }
+
+      // Only delay decay if we gain points.
+      if iAmount > 0
+      {
+         Send(self,@NewPower,#bDelay=TRUE);
+      }
+      else
+      {
+         Send(self,@NewPower,#bDelay=FALSE);
+      }
+
+      return;
+   }
+
    AddUnboundEnergy(iAmount=0,report=TRUE)
    {
       // Add to total. Check reasonable limits first. You can't lose
@@ -10854,6 +11080,19 @@ messages:
       return;
    }
 
+   WipePower(report=TRUE)
+   {
+      if (pbLogged_on AND report AND piPower > 0)
+      {
+         //Send(self,@MsgSendUser,#message_rsc=player_unbound_energy_wiped);
+      }
+
+      // Remove all power.
+      send(self,@AddPower,#iAmount=-piPower,#report=FALSE);
+
+      return;
+   }
+
    GetXPRemainingForNextLevel()
    {
       // Use raw base max health here, can go higher than 150.
@@ -10896,6 +11135,11 @@ messages:
    GetFreeCast()
    {
       return pbFree_cast;
+   }
+
+   GetPower()
+   {
+      return piPower;
    }
 
    AddTrainingPoints(points=0,report=TRUE,bCap=TRUE)

@@ -94,6 +94,15 @@ properties:
    // a short while thereafter. Default of 4 minutes.
    piUnboundEnergyAttackDelaySec = 240
 
+   // The maximum amount of Power we can absorb
+   piPowerMax = 100
+
+   // The permillage of Power that is lost every second. 50 means 5 percent.
+   piPowerDecay = 10
+
+   // Delay between receiving Power and decay setting in in ms.
+   piPowerDelay = 10000
+
    // XP percent awarded, can be raised to give a bonus.
    piXPPercent = 100
    
@@ -453,6 +462,21 @@ messages:
    GetUnboundDelay()
    {
       return piUnboundDelay;
+   }
+
+   GetPowerMax()
+   {
+      return piPowerMax;
+   }
+
+   GetPowerDecay()
+   {
+      return piPowerDecay;
+   }
+
+   GetPowerDelay()
+   {
+      return piPowerDelay;
    }
 
    GetXPPercent()

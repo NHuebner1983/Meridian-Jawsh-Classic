@@ -797,7 +797,7 @@ messages:
    // run into this cap as piBaseRating is increased though.
    //
    // NOTE: For a monster, the stroke_obj is the monster itself for now.
-   TryAttack(what = $,stroke_obj=$)
+   TryAttack(what=$, stroke_obj=$, aoe_burst=FALSE)
    {
       local iOffense, iDefense, iChanceToHit, iDamage, iScalefactor, oWeapon;
 
@@ -848,7 +848,7 @@ messages:
             #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType),
             #scalefactor=iScalefactor,#precision=TRUE);
 
-         Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,#damage=iDamage);
+         Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,#damage=iDamage,#aoe_burst=aoe_burst);
 
          if iDamage = $
          {
@@ -1617,7 +1617,7 @@ messages:
       local rColor;
 
       // This is kinda kludgy, should call messages in subclasses instead.
-      if IsClass(self,&User)
+      if stroke_obj <> $ AND what <> $ AND IsClass(self,&User)
       {
          if IsClass(what,&User)
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
@@ -1648,7 +1648,7 @@ messages:
                #bText=FALSE);
       }
 
-      if IsClass(what,&User)
+      if what <> $ AND stroke_obj <> $ AND IsClass(what,&User)
       {
          if IsClass(self,&User)
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)

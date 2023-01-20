@@ -171,7 +171,7 @@ messages:
    {
       if weapon_used = $
       {
-         Send(who,@msgsenduser,#message_rsc=stroke_need_weapon_rsc);
+         //Send(who,@msgsenduser,#message_rsc=stroke_need_weapon_rsc);
 
          return FALSE;
       }
@@ -191,7 +191,18 @@ messages:
    GetRange(weapon_used = $)
    "May be tuned later on if we expand on the stroke system."
    {
-      return Send(weapon_used,@getrange);
+      local iRange;
+
+      if weapon_used <> $ {
+         iRange = Send(weapon_used, @getrange);
+      }
+      
+      if iRange = $
+      {
+         return 392;
+      }
+
+      return iRange;
    }
 
    FindDamage(weapon_used=$, who=$, victim=$)

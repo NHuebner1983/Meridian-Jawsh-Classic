@@ -59,6 +59,7 @@ classvars:
    viSchool = SS_FAREN
    viAttack_spell = 0
    viAttack_type = ATCK_WEAP_SLASH
+   vbIsAreaEffect = TRUE
    viSpell_level = 5
    viMana = 14
    viChance_To_Increase = 35

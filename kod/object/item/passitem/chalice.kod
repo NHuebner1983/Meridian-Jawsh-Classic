@@ -99,7 +99,13 @@ messages:
             AND NOT (IsClass(what,&DM) AND Send(what,@PlayerIsImmortal))
          {
             Send(what,@MsgSendUser,#message_rsc=chalice_combine);
-            Send(oOtherChalice,@SetHits,#number=Send(oOtherChalice,@GetHits) + piHits);
+
+            if Send(oOtherChalice,@GetMaxHits) < Send(self,@GetHits)
+            {
+               Send(oOtherChalice,@SetHits,#number=Send(oOtherChalice,@GetHits) + piHits);
+               Send(oOtherChalice,@SetMaxHits,#number=Send(oOtherChalice,@GetMaxHits) + piHits);
+            }
+
             Post(self,@Delete);
          }
       }

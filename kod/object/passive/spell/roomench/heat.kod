@@ -64,6 +64,7 @@ classvars:
 
    viHarmful = TRUE
    viNoNewbieOffense = TRUE
+   vbIsAreaEffect = TRUE
 
    vrSucceed_wav = heat_sound
    viChance_To_Increase = 35
