@@ -356,6 +356,7 @@ resources:
    school_faren_rsc = "Faren"
    school_riija_rsc = "Riija"
    school_jala_rsc = "Jala"
+   school_crafting_rsc = "Crafting"
    school_wc_rsc = "Weapons Craft"
 
    system_message_sound = system.ogg
@@ -3850,6 +3851,8 @@ messages:
       // Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
 
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTING,#class=&Crafting);
+
       return;
    }
 
@@ -3903,6 +3906,7 @@ messages:
       Send(self,@CreateOneItemAttIfNew,#num=IA_BONDED,#class=&ItemAttBonded);
       Send(self,@CreateOneItemAttIfNew,#num=WA_GLOWING,#class=&WeapAttGlowing);
       Send(self,@CreateOneItemAttIfNew,#num=IA_MADE,#class=&ItemAttMade);
+      Send(self,@CreateOneItemAttIfNew,#num=IA_CRAFTED,#class=&ItemAttCrafted);
 
       // Keep these last, it's called the most often
       Send(self,@CreateOneItemAttIfNew,#num=IA_PKPOINTER,#class=&ItemAttPKPointer);
@@ -8089,7 +8093,7 @@ messages:
 
          iCount++;
 
-         temp = [ SS_QOR,SS_RIIJA,SS_KRAANAN,SS_SHALILLE,SS_FAREN,SS_JALA,SKS_FENCING ];
+         temp = [ SS_QOR,SS_RIIJA,SS_KRAANAN,SS_SHALILLE,SS_FAREN,SS_JALA,SKS_FENCING,SS_CRAFTING ];
 
          if iHP = 0
          {
@@ -8494,6 +8498,9 @@ messages:
 	     case SS_JALA:
 		    sSchoolName = SetString($, "Jala");
 	     break;
+	     case SS_CRAFTING:
+		    sSchoolName = SetString($, "Crafting");
+	     break;
 	  }
 	  
 	  return sSchoolName;
@@ -8521,6 +8528,9 @@ messages:
          case SS_JALA:
             return school_jala_rsc;
          break;
+         case SS_CRAFTING:
+            return school_crafting_rsc;
+         break;
       }
 
      return $;
@@ -8544,6 +8554,8 @@ messages:
       Send(self,@PrintSpells,#iSchool=SS_RIIJA);
       GodLog("Jala");
       Send(self,@PrintSpells,#iSchool=SS_JALA);
+      GodLog("Crafting");
+      Send(self,@PrintSpells,#iSchool=SS_CRAFTING);
 
       return;
    }

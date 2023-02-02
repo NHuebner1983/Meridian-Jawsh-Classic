@@ -2078,6 +2078,7 @@
    IA_MADE_TRANSCENDANT    = 20
    IA_DM_CREATED           = 21
    IA_XP_KILL_BONUS        = 22
+   IA_CRAFTED              = 23
 
    // Weapon Attributes.  These are attributes only applied to weapons.
    WA_TRAINING             = 51
@@ -2460,6 +2461,7 @@
    SID_MEDITATE = 187
    SID_UNHOLY_TOUCH = 188
    SID_TRANSFERENCE = 189
+   SID_CRAFTING = 210
    
    SID_VAULT_LOADOUT = 200
    
@@ -2501,7 +2503,7 @@
    STAT_ID_INTELLECT = 2
    STAT_ID_STAMINA   = 3
    STAT_ID_AGILITY   = 4
-   STAT_ID_MYSTICISM  = 5
+   STAT_ID_MYSTICISM = 5
    STAT_ID_AIM       = 6
    
    // Spells and Skills
@@ -2521,30 +2523,31 @@
    SS_INACCESSIBLE = -1
 
    // Normal spell schools
-   SS_SHALILLE = 1
-   SS_QOR = 2
-   SS_KRAANAN = 3
-   SS_FAREN = 4
-   SS_RIIJA = 5
-   SS_JALA = 6
-   SS_DM_COMMAND = 7
+   SS_SHALILLE    = 1
+   SS_QOR         = 2
+   SS_KRAANAN     = 3
+   SS_FAREN       = 4
+   SS_RIIJA       = 5
+   SS_JALA        = 6
+   SS_DM_COMMAND  = 7
+   SS_CRAFTING    = 8
 
    // We may use skill an spell schools in the same routines, thus no overlap.
-   SKS_FENCING = 10
-   SKS_BRAWLING = 11
-   SKS_THIEVERY = 12
+   SKS_FENCING    = 10
+   SKS_BRAWLING   = 11
+   SKS_THIEVERY   = 12
 
    // Enchantment icon showing
-   ENCHANTMENT_SHOW_NONE = 0
-   ENCHANTMENT_SHOW_ROOM = 1
+   ENCHANTMENT_SHOW_NONE   = 0
+   ENCHANTMENT_SHOW_ROOM   = 1
    ENCHANTMENT_SHOW_PLAYER = 2
-   ENCHANTMENT_SHOW_ALL = 3
+   ENCHANTMENT_SHOW_ALL    = 3
 
    // Enchantment list lengths for PEs.
    // Enchantments are stored as a list, and there are two types of enchantment:
    // [oTimer, what, iSpellPower] and [oTimer, what, state, iSpellPower]
    ENCHANTMENT_LIST_NO_STATE = 3
-   ENCHANTMENT_LIST_STATE = 4
+   ENCHANTMENT_LIST_STATE    = 4
 
    // Learning constants
    LEARN_FAILED_ALREADY_HAS = -4
@@ -2563,26 +2566,26 @@
    // Anyone can get this spell.
    LEARN_PASSED_FIRSTLEVEL = 2
 
-   LEARN_DIVISION_COMBAT = 1
-   LEARN_DIVISION_MAGIC = 2
-   LEARN_DIVISION_LORE = 3
-
-   PLAYER_LEARN_SUCCESS = 0
-   PLAYER_LEARN_ERROR = 1
-   PLAYER_LEARN_ALREADY = 2
-   PLAYER_LEARN_KARMA = 3
-   PLAYER_LEARN_PREREQ = 4
-   PLAYER_LEARN_BASE = 5
-   PLAYER_LEARN_SAMEDIV = 6
-   PLAYER_LEARN_OTHERDIV = 7
+   LEARN_DIVISION_COMBAT   = 1
+   LEARN_DIVISION_MAGIC    = 2
+   LEARN_DIVISION_LORE     = 3
+  
+   PLAYER_LEARN_SUCCESS    = 0
+   PLAYER_LEARN_ERROR      = 1
+   PLAYER_LEARN_ALREADY    = 2
+   PLAYER_LEARN_KARMA      = 3
+   PLAYER_LEARN_PREREQ     = 4
+   PLAYER_LEARN_BASE       = 5
+   PLAYER_LEARN_SAMEDIV    = 6
+   PLAYER_LEARN_OTHERDIV   = 7
    PLAYER_LEARN_IMPOSSIBLE = 8
-   PLAYER_LEARN_NOBASE = 9
+   PLAYER_LEARN_NOBASE     = 9
 
    // Spell environment restrictions/bonuses
    SC_REQUISITE = 1
-   SC_NEGATE = 2
-   SC_MAGNIFY = 3
-   SC_DAMP = 4
+   SC_NEGATE    = 2
+   SC_MAGNIFY   = 3
+   SC_DAMP      = 4
 
    // Constants for spellpower
    SPELLPOWER_MINIMUM = 1
@@ -2590,11 +2593,11 @@
 
    // Player flags
 
-   PKILL_ENABLE_HP = 50
-   MIN_HP = 20
-   MAX_HP = 150
+   PKILL_ENABLE_HP   = 50
+   MIN_HP            = 20
+   MAX_HP            = 150
    MAX_CALCULATED_HP = 392
-   MAX_XP = 20000000
+   MAX_XP            = 20000000
    MAX_XP_DEATH_LOSS = 10000
 
    // First set of flags (in piFlags)
