@@ -3851,7 +3851,32 @@ messages:
       // Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
 
-      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTING,#class=&Crafting);
+      //Crafting skills
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTMACE,#class=&CraftMace);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTAXE,#class=&CraftAxe);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTHAMMER,#class=&CraftHammer);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTCHAINARMOR,#class=&CraftChainArmor);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTIVYCIRCLET,#class=&CraftIvyCirclet);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTLEATHERARMOR,#class=&CraftLeatherArmor);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTNERUDITESWORD,#class=&CraftNeruditeSword);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSHORTSWORD,#class=&CraftShortSword);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSMALLSHIELD,#class=&CraftSmallShield);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTBATTLEBOW,#class=&CraftBattleBow);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTNERUDITESHIELD,#class=&CraftNeruditeShield);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTGOLDSHIELD,#class=&CraftGoldShield);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTGAUNTLETS,#class=&CraftGauntlets);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTHELMET,#class=&CraftHelmet);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTCIRCLET,#class=&CraftCirclet);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSCALEARMOR,#class=&CraftScaleArmor);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTLONGBOW,#class=&CraftLongBow);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTNERUDITEARMOR,#class=&CraftNeruditeArmor);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTKNIGHTSHIELD,#class=&CraftKnightShield);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTMYSTICSWORD,#class=&CraftMysticSword);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTPLATEARMOR,#class=&CraftPlateArmor);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTDAEMONHELM,#class=&CraftDeamonHelm);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTGUILDSHIELD,#class=&CraftGuildShield);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSCIMITAR,#class=&CraftScimitar);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTLONGSWORD,#class=&CraftLongSword);
 
       return;
    }

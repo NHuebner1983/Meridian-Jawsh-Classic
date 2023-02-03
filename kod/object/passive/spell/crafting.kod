@@ -32,11 +32,10 @@ classvars:
    vrIcon = Crafting_icon_rsc
    vrDesc = Crafting_desc_rsc
 
-   viSpell_num = SID_CRAFTING
    viSchool = SS_CRAFTING
    viSpell_level = 1
-   viMana = 15
-   viSpellExertion = 1
+   viMana = 0
+   viSpellExertion = 15
    viCast_time = 500
    viMeditate_ratio = 0
    
@@ -88,6 +87,11 @@ messages:
 
       oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_CRAFTED);
       Send(oItemAtt,@AddtoItem,#oItem=oGear);
+
+      if IsClass(oGear,&GuildShield)
+      {
+         Send(oGear,@Randomize);
+      }
 
       propagate;
    }
