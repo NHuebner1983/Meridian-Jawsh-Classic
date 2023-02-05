@@ -3877,6 +3877,8 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTGUILDSHIELD,#class=&CraftGuildShield);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSCIMITAR,#class=&CraftScimitar);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTLONGSWORD,#class=&CraftLongSword);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTAPPAREL,#class=&CraftApparel);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTMAGICROBES,#class=&CraftMagicRobes);
 
       return;
    }
