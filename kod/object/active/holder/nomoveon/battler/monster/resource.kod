@@ -37,6 +37,7 @@ classvars:
    vcResource = $
    viSkill    = $
    viByHand   = FALSE
+   viTool     = $
 
 properties:
 
@@ -67,7 +68,7 @@ messages:
       }
 
       if use_weapon = $
-         OR NOT (IsClass(use_weapon,&PickAxe) OR IsClass(who, &DM))
+         OR NOT (IsClass(use_weapon,viTool))
       {
          Send(who,@MsgSendUser,#message_rsc=Resource_cannot_hit);
 

@@ -4,7 +4,7 @@
 
 !include $(TOPDIR)\common.mak
 
-DEPEND = ..\resource.bof
-BOFS  = ore.bof restree.bof resplant.bof \
+DEPEND = ..\restree.bof
+BOFS  = densetree.bof
 
 !include $(KODDIR)\kod.mak

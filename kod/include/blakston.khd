@@ -1998,6 +1998,10 @@
    TID_HELL_WASP = 120
    TID_REVENANT_B = 121
    
+   TID_RESTREE = 122
+   TID_DENSETREE = 123
+   TID_RESPLANT = 124
+   
    // English articles
 
    ARTICLE_NONE = 0

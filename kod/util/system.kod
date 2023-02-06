@@ -4458,6 +4458,13 @@ messages:
       Create(&UncutVeinTreasure);
       Create(&NeruditeOreVeinTreasure);
 
+      //Trees
+      Create(&ResTreeTreasure);
+      Create(&DenseTreeTreasure);
+
+      //Plants
+      Create(&ResPlantTreasure);
+
       // Death Realm
       Create(&IceReaverTreasure);
       Create(&ObsidianReaverTreasure);
@@ -5961,6 +5968,13 @@ messages:
       plMonsterTemplates = cons(create(&EmeraldVein),plMonsterTemplates);
       plMonsterTemplates = cons(create(&UncutVein),plMonsterTemplates);
       plMonsterTemplates = cons(create(&NeruditeVein),plMonsterTemplates);
+
+      //Tree
+      plMonsterTemplates = cons(create(&ResTree),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DenseTree),plMonsterTemplates);
+
+      //Plants
+      plMonsterTemplates = cons(create(&ResPlant),plMonsterTemplates);
 
       return;
    }

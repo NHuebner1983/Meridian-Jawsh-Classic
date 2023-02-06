@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-Ore is Resource
+ResPlant is Resource
 
 constants:
 
@@ -16,26 +16,22 @@ constants:
 
 resources:
 
-   Ore_name_rsc = "ore vein"
-   Ore_icon_rsc = orevein.bgf
-   Ore_desc_rsc = \
-      "A giant hunk of rock, possibly containing usefull ore. "
-
-   ore_dead_icon_rsc = dirtpile.bgf
-   ore_dead_name_rsc = "empty vein"
+   ResPlant_name_rsc = "silk worm infested plant"
+   ResPlant_icon_rsc = ResPlant.bgf
+   ResPlant_desc_rsc = \
+      "This plant is completly taken over by silk worms! I'm "
+      "sure I can gather raw silk from it.  "
 
 classvars:
 
-   vrName = Ore_name_rsc
-   vrIcon = Ore_icon_rsc
-   vrDesc = Ore_desc_rsc
-   vrDead_icon = ore_dead_icon_rsc
-   vrDead_name = ore_dead_name_rsc
+   vrName = ResPlant_name_rsc
+   vrIcon = ResPlant_icon_rsc
+   vrDesc = ResPlant_desc_rsc
 
-   viTreasure_type = TID_ORE
-   vcResource = &OreChunk
-   viSkill    = SKID_MINING
-   viTool     = &PickAxe
+   viTreasure_type = TID_RESPLANT
+   vcResource = &RawSilk
+   viSkill    = SKID_GATHERING
+   viByHand   = TRUE
 
 properties:
 
