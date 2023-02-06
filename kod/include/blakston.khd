@@ -2230,6 +2230,8 @@
    SKID_DISARM = 406
    SKID_TAUNT = 407
    SKID_MINING = 408
+   SKID_LOGGING = 409
+   SKID_GATHERING = 410
 
    // Melee weapon strokes start here.
    SKID_DEFAULT = 420

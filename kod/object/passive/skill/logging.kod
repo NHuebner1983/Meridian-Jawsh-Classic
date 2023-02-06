@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-Mining is Skill
+Logging is Skill
 
 constants:
 
@@ -16,27 +16,25 @@ constants:
 
 resources:
 
-   //include mining.lkod
+   //include Logging.lkod
 
-   Mining_name_rsc = "mining"
-   Mining_icon_rsc = imining.bgf
-   Mining_desc_rsc = "This skill allows you to break down heavy rocks and "
-                     "recover precious minerals. Higher proficiency in this "
-                     "skill will prevent damaging those precious minerals. "
-                     "Requires a pickaxe and sense of adventure."
+   Logging_name_rsc = "logging"
+   Logging_icon_rsc = iLogging.bgf
+   Logging_desc_rsc = "This skill allows you to chop down mature trees and "
+                     "recover precious minerals. Requires a axe."
                         
 classvars:
 
-   vrName = Mining_name_rsc
-   vrIcon = Mining_icon_rsc
-   vrDesc = Mining_desc_rsc
+   vrName = Logging_name_rsc
+   vrIcon = Logging_icon_rsc
+   vrDesc = Logging_desc_rsc
 
    vrSkill_intro = $
 
    viIndefinite = ARTICLE_NONE
    viDefinite = ARTICLE_NONE
 
-   viSkill_num = SKID_MINING
+   viSkill_num = SKID_LOGGING
    viSchool = SS_CRAFTING
    viSkill_Level = 1
    viChance_to_Increase = 15
@@ -47,7 +45,7 @@ classvars:
 
    vbAutomatic = FALSE
 
-   viAttack_Type = ATCK_WEAP_CLAW
+   viAttack_Type = ATCK_WEAP_SLASH
 
 properties:
 
@@ -93,9 +91,8 @@ messages:
 
    DoSkill(who=$,oTarget=$,oWeapon=$)
    {
-      if oTarget <> $ AND NOT IsClass(oTarget, &Ore)
+      if oTarget <> $ AND NOT IsClass(oTarget, &ResTree)
       {
-         // We can only use this skill on Ore (veins).
          return FALSE;
       }
 

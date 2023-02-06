@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-EmeraldVein is Ore
+Ore is Resource
 
 constants:
 
@@ -16,21 +16,25 @@ constants:
 
 resources:
 
-   EmeraldVein_name_rsc = "emerald vein"
-   EmeraldVein_icon_rsc = emeraldvein.bgf
-   EmeraldVein_desc_rsc = \
+   Ore_name_rsc = "ore vein"
+   Ore_icon_rsc = orevein.bgf
+   Ore_desc_rsc = \
       "A giant hunk of rock, possibly containing usefull ore. "
+
+   ore_dead_icon_rsc = dirtpile.bgf
+   ore_dead_name_rsc = "empty vein"
 
 classvars:
 
-   vrName = EmeraldVein_name_rsc
-   vrIcon = EmeraldVein_icon_rsc
-   vrDesc = EmeraldVein_desc_rsc
+   vrName = Ore_name_rsc
+   vrIcon = Ore_icon_rsc
+   vrDesc = Ore_desc_rsc
+   vrDead_icon = ore_dead_icon_rsc
+   vrDead_name = ore_dead_name_rsc
 
-   viTreasure_type = TID_EMERALD
-   viDifficulty = 30
-
-   vcOre = &Emerald
+   viTreasure_type = TID_ORE
+   vcResource = &OreChunk
+   viSkill    = SKID_MINING
 
 properties:
 

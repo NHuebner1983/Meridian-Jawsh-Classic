@@ -166,7 +166,9 @@ properties:
    piMarketplaceUnitPricePlatinum = 0
    poMarketplacePurchasedFrom = $
    
-   viMiningBonus = 0
+   viMiningBonus     = 0
+   viGatheringBonus  = 0
+   viLoggingBonus    = 0
 
 messages:
 
@@ -3122,6 +3124,16 @@ messages:
       return viMiningBonus;
    }
 
+   GetLoggingBonus()
+   {
+      return viLoggingBonus;
+   }
+
+   GetGatheringBonus()
+   {
+      return viGatheringBonus;
+   }
+   
    SetDefense(number = $)
    {
       if number = $

@@ -6,6 +6,6 @@
 
 DEPEND = ..\skill.bof
 BOFS = profic.bof stroke.bof dodge.bof parry.bof assess.bof block.bof \
-	   secwind.bof disarm.bof taunt.bof mining.bof
+	   secwind.bof disarm.bof taunt.bof mining.bof logging.bof gathering.bof \
 
 !include $(KODDIR)\kod.mak

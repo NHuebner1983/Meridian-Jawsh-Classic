@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-Wood is Reagent
+UncutVein is Ore
 
 constants:
 
@@ -16,30 +16,23 @@ constants:
 
 resources:
 
-   Wood_name_rsc = "wood"
-   Wood_icon_rsc = Wood.bgf
-   Wood_desc_rsc = \
-      "Wooden log, can be split into lumber at a splitting stump. "
-   Wood_name_plural_rsc = "wood"
+   UncutVein_name_rsc = "uncut vein"
+   UncutVein_icon_rsc = uncutvein.bgf
+   UncutVein_desc_rsc = \
+      "A giant hunk of rock, possibly containing usefull ore. "
 
 classvars:
 
-   vrName = Wood_name_rsc
-   vrName_plural = Wood_name_plural_rsc
-   vrIcon = Wood_icon_rsc
-   vrDesc = Wood_desc_rsc
+   vrName = UncutVein_name_rsc
+   vrIcon = UncutVein_icon_rsc
+   vrDesc = UncutVein_desc_rsc
 
-   viBulk = 1
-   viWeight = 1
-   viValue_average = 100
-
-   viItem_type = ITEMTYPE_REAGENT
-
-   viGround_group = 2
+   viTreasure_type = TID_UNCUT
+   viDifficulty = 30
+   
+   vcResource = &UncutSeraphym
 
 properties:
-
-   piNumber = 5
 
 messages:
 

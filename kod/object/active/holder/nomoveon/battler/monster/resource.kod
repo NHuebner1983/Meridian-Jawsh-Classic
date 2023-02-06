@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-Ore is Monster
+Resource is Monster
 
 constants:
 
@@ -16,28 +16,13 @@ constants:
 
 resources:
 
-   Ore_name_rsc = "ore vein"
-   Ore_icon_rsc = orevein.bgf
-   Ore_desc_rsc = \
-      "A giant hunk of rock, possibly containing usefull ore. "
+   Resource_cannot_hit = \
+      "Your weapon is not suitable for harvesting this. "
 
-   ore_dead_icon_rsc = dirtpile.bgf
-   ore_dead_name_rsc = "empty vein"
-
-   Ore_cannot_hit = \
-      "Your weapon is not suitable for mining. "
-
-   mined_rsc = "~B~gYou mine %i %s."
+   Gathered_rsc = "~B~gYou gather %i %s."
 
 classvars:
 
-   vrName = Ore_name_rsc
-   vrIcon = Ore_icon_rsc
-   vrDesc = Ore_desc_rsc
-   vrDead_icon = ore_dead_icon_rsc
-   vrDead_name = ore_dead_name_rsc
-
-   viTreasure_type = TID_ORE
    viAttributes = 0
    viLevel = 1000
    viDifficulty = 10
@@ -47,9 +32,11 @@ classvars:
    viCashmin = 0
    viCashmax = 0
 
-   vcOre = &OreChunk
-
    viCanEarnHP = FALSE
+
+   vcResource = $
+   viSkill    = $
+   viByHand   = FALSE
 
 properties:
 
@@ -73,16 +60,20 @@ messages:
          return TRUE;
       }
 
-      if use_weapon = $
-         OR NOT (
-               IsClass(use_weapon,&PickAxe)
-               OR IsClass(who, &DM)
-            )
+      if (oStroke <> $)
+         AND (IsClass(oStroke,&Unarmed) AND viByHand = TRUE)
       {
-         Send(who,@MsgSendUser,#message_rsc=Ore_cannot_hit);
+         return TRUE;
+      }
+
+      if use_weapon = $
+         OR NOT (IsClass(use_weapon,&PickAxe) OR IsClass(who, &DM))
+      {
+         Send(who,@MsgSendUser,#message_rsc=Resource_cannot_hit);
 
          return FALSE;
       }
+
 
       return TRUE;
    }
@@ -90,15 +81,28 @@ messages:
    AssessDamage(what=$)
    "This is called when something causes damage to us."
    {
-      local i, oOre, iAmount, cSkillAbility, iBonus;
+      local i, oResource, iAmount, cSkillAbility, iBonus;
 
-      cSkillAbility = Send(what,@GetSkillAbility,#skill_num=SKID_MINING);
+      cSkillAbility = Send(what,@GetSkillAbility,#skill_num=viSkill);
 
       iBonus = 0;
 
       foreach i in Send(what,@GetPlayerUsing)
       {
+         if viSkill = SKID_MINING
+         {
             iBonus = iBonus + Send(i,@GetMiningBonus);
+         }
+
+         if viSkill = SKID_LOGGING
+         {
+            iBonus = iBonus + Send(i,@GetLoggingBonus);
+         }
+
+         if viSkill = SKID_GATHERING
+         {
+            iBonus = iBonus + Send(i,@GetGatheringBonus);
+         }
       } 
 
       if cSkillAbility <> $
@@ -106,19 +110,19 @@ messages:
          iAmount = Random(cSkillAbility / 10,cSkillAbility / 5);
          iAmount = Bound(iAmount,1,$);
          iAmount = iAmount+iBonus;
-         oOre = Create(vcOre,#number=iAmount);
+         oResource = Create(vcResource,#number=iAmount);
 
          if what <> $ AND IsClass(what,&player) AND Random(1, (150 - cSkillAbility)) <= cSkillAbility
          {
             iAmount = 1;
 
-            if IsClass(oOre, &NumberItem)
+            if IsClass(oResource, &NumberItem)
             {
-               iAmount = Send(oOre,@GetNumber);
+               iAmount = Send(oResource,@GetNumber);
             }
             
-            Send(what,@NewHold,#what=oOre);
-            Send(what,@MsgSendUser,#message_rsc=mined_rsc,#parm1=iAmount,#parm2=Send(oOre,@GetName));
+            Send(what,@NewHold,#what=oResource);
+            Send(what,@MsgSendUser,#message_rsc=Gathered_rsc,#parm1=iAmount,#parm2=Send(oResource,@GetName));
          }
       }
 

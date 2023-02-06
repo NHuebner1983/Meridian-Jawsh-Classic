@@ -6590,6 +6590,16 @@ messages:
          Send(self, @TryLearn, #skill_num=SKID_MINING);
       }
 
+      if what <> $ AND oWeapon <> $ AND IsClass(oWeapon, &Axe) AND IsClass(what, &ResTree)
+      {
+         Send(self, @TryLearn, #skill_num=SKID_LOGGING);
+      }
+
+      if what <> $ AND oWeapon = $ AND IsClass(what, &ResPlant)
+      {
+         Send(self, @TryLearn, #skill_num=SKID_GATHERING);
+      }
+
       if what <> $ AND oWeapon = $ AND IsClass(what, &Monster)
       {
          Send(self, @TryLearn, #skill_num=SKID_PUNCH);

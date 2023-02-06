@@ -4104,6 +4104,8 @@ messages:
        Send(self,@CreateOneSKillIfNew,#num=SKID_DISARM,#class=&Disarm);
        Send(self,@CreateOneSKillIfNew,#num=SKID_TAUNT,#class=&Taunt);
        Send(self,@CreateOneSKillIfNew,#num=SKID_MINING,#class=&Mining);
+       Send(self,@CreateOneSKillIfNew,#num=SKID_LOGGING,#class=&Logging);
+       Send(self,@CreateOneSKillIfNew,#num=SKID_GATHERING,#class=&Gathering);
 
        return;
    }
