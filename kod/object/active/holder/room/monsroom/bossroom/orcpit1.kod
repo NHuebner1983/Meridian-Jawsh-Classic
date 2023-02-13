@@ -101,7 +101,7 @@ messages:
       plMonsters = [ [&Ore, 20],
                      [&DiamondVein, 15],
                      [&EmeraldVein, 15],
-                     //[&NeruditeVein, 10],
+                     [&NeruditeVein, 10],
                      [&RubyVein, 15],
                      [&SapphireVein, 15],
                      [&UncutVein, 10] ];
@@ -281,7 +281,7 @@ messages:
       // Boss is dead, wipe the room clean.
       foreach i in plActive
       {
-         if IsClass(First(i),&OrcPitBossBody) OR IsClass(First(i),&OrcWizard) OR IsClass(First(i),&Ore)
+         if IsClass(First(i),&OrcPitBossBody) OR IsClass(First(i),&OrcWizard) OR IsClass(First(i),&Resource)
          {
             Send(First(i),@Delete);
          }

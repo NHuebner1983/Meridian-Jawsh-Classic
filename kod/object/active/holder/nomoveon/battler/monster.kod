@@ -2464,7 +2464,7 @@ messages:
          return FALSE;
       }
 
-      if IsClass(self,&Ore)
+      if IsClass(self,&Resource)
       {
          return FALSE;
       }
