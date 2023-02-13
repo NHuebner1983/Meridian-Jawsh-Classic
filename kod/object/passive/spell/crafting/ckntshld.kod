@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftKnightShield_name_rsc = "craft knight's shield"
-   CraftKnightShield_icon_rsc = icremace.bgf
+   CraftKnightShield_icon_rsc = icraftknightshld.bgf
    CraftKnightShield_desc_rsc = \
       "Craft a knight's shield from wood, leather, and iron ingots. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &KnightShield
+   voTool = &BlackSmithsHammer
+   viBench  = &CraftingAnvil
 
 properties:
 
@@ -42,6 +44,9 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,20],plReagents);
+      plReagents = Cons([&Lumber,5],plReagents);
+      plReagents = Cons([&Leather,5],plReagents);
 
       return;
    }

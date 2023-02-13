@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftGauntlets_name_rsc = "craft gauntlets"
-   CraftGauntlets_icon_rsc = icremace.bgf
+   CraftGauntlets_icon_rsc = icraftgaunt.bgf
    CraftGauntlets_desc_rsc = \
       "Craft a gauntlets from leather and iron ingots. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &Gauntlet
+   voTool = &BlackSmithsHammer
+   viBench  = &CraftingAnvil
 
 properties:
 
@@ -42,6 +44,9 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,10],plReagents);
+      plReagents = Cons([&Leather,5],plReagents);
+      plReagents = Cons([&SilkThread,5],plReagents);
 
       return;
    }

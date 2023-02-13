@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftGoldShield_name_rsc = "craft gold shield"
-   CraftGoldShield_icon_rsc = icremace.bgf
+   CraftGoldShield_icon_rsc = icraftgoldshld.bgf
    CraftGoldShield_desc_rsc = \
       "Craft a gold shield from wood, leather, and iron ingots. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &GoldShield
+   voTool = &BlackSmithsHammer
+   viBench  = &CraftingAnvil
 
 properties:
 
@@ -42,6 +44,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,10],plReagents);
+      plReagents = Cons([&Lumber,5],plReagents);
 
       return;
    }

@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftSmallShield_name_rsc = "craft small round shield"
-   CraftSmallShield_icon_rsc = icremace.bgf
+   CraftSmallShield_icon_rsc = icraftsmallshld.bgf
    CraftSmallShield_desc_rsc = \
       "Craft a small round shield from wood, leather, and iron ingots. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &MetalShield
+   voTool = &BlackSmithsHammer
+   viBench  = &CraftingAnvil
 
 properties:
 
@@ -42,6 +44,9 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,5],plReagents);
+      plReagents = Cons([&Lumber,10],plReagents);
+      plReagents = Cons([&Leather,5],plReagents);
 
       return;
    }

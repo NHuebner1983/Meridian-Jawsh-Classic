@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-CraftLeatherArmor is Crafting
+CraftLeather is Crafting
 
 constants:
 
@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftLeatherArmor_name_rsc = "craft leather armor"
-   CraftLeatherArmor_icon_rsc = icremace.bgf
+   CraftLeatherArmor_icon_rsc = icraftleatha.bgf
    CraftLeatherArmor_desc_rsc = \
       "Craft a leather armor from leather and silk thread. "
 
@@ -42,6 +42,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&Leather,20],plReagents);
+      plReagents = Cons([&SilkThread,5],plReagents);
 
       return;
    }

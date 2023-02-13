@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftMysticSword_name_rsc = "craft mystic sword"
-   CraftMysticSword_icon_rsc = icremace.bgf
+   CraftMysticSword_icon_rsc = icraftmyssword.bgf
    CraftMysticSword_desc_rsc = \
       "Craft a mystic sword from wood and iron ingots. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &MysticSword
+   voTool = &BlackSmithsHammer
+   viBench  = &CraftingAnvil
 
 properties:
 
@@ -42,6 +44,9 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,25],plReagents);
+      plReagents = Cons([&Lumber,5],plReagents);
+      plReagents = Cons([&Leather,5],plReagents);
 
       return;
    }

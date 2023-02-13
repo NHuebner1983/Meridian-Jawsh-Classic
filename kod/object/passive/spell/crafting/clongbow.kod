@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftLongBow_name_rsc = "craft long bow"
-   CraftLongBow_icon_rsc = icremace.bgf
+   CraftLongBow_icon_rsc = icraftlbow.bgf
    CraftLongBow_desc_rsc = \
       "Craft a long bow from dense wood and silk thread. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &Longbow
+   voTool = &DrawKnife
+   viBench  = &ShaveHorse
 
 properties:
 
@@ -42,6 +44,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&DenseLumber,30],plReagents);
+      plReagents = Cons([&SilkThread,15],plReagents);
 
       return;
    }

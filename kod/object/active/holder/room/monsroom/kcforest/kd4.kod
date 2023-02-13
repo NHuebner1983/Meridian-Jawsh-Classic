@@ -110,5 +110,14 @@ messages:
       propagate;
    }
 
+   CreateStandardObjects()
+   {
+      
+      Send(self,@NewHold,#what=Create(&KocatanSplittingStump),
+            #new_row=26,#new_col=46,#fine_row=18,#fine_col=28);
+
+      propagate;
+   }
+
 end
 ////////////////////////////////////////////////////////////////////////////////

@@ -33,7 +33,9 @@ classvars:
    viWeight = 1
    viValue_average = 100
 
-   viItem_type = ITEMTYPE_REAGENT
+   viItem_type    = ITEMTYPE_REAGENT
+   viRefined      = &KriipaLeather
+   viRefinedAt    = &KocatanTanningRack
 
 properties:
 

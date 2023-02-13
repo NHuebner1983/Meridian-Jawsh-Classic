@@ -19,7 +19,7 @@ resources:
    //include Logging.lkod
 
    Logging_name_rsc = "logging"
-   Logging_icon_rsc = iLogging.bgf
+   Logging_icon_rsc = ilogging.bgf
    Logging_desc_rsc = "This skill allows you to chop down mature trees and "
                      "recover precious minerals. Requires a axe."
                         

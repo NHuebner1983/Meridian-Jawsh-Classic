@@ -3855,9 +3855,9 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTMACE,#class=&CraftMace);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTAXE,#class=&CraftAxe);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTHAMMER,#class=&CraftHammer);
-      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTCHAINARMOR,#class=&CraftChainArmor);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTCHAINARMOR,#class=&CraftChain);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTIVYCIRCLET,#class=&CraftIvyCirclet);
-      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTLEATHERARMOR,#class=&CraftLeatherArmor);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTLEATHERARMOR,#class=&CraftLeather);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTNERUDITESWORD,#class=&CraftNeruditeSword);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSHORTSWORD,#class=&CraftShortSword);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSMALLSHIELD,#class=&CraftSmallShield);
@@ -3867,18 +3867,22 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTGAUNTLETS,#class=&CraftGauntlets);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTHELMET,#class=&CraftHelmet);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTCIRCLET,#class=&CraftCirclet);
-      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSCALEARMOR,#class=&CraftScaleArmor);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSCALEARMOR,#class=&CraftScale);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTLONGBOW,#class=&CraftLongBow);
-      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTNERUDITEARMOR,#class=&CraftNeruditeArmor);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTNERUDITEARMOR,#class=&CraftNerudite);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTKNIGHTSHIELD,#class=&CraftKnightShield);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTMYSTICSWORD,#class=&CraftMysticSword);
-      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTPLATEARMOR,#class=&CraftPlateArmor);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTPLATEARMOR,#class=&CraftPlate);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTDAEMONHELM,#class=&CraftDeamonHelm);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTGUILDSHIELD,#class=&CraftGuildShield);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSCIMITAR,#class=&CraftScimitar);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTLONGSWORD,#class=&CraftLongSword);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTAPPAREL,#class=&CraftApparel);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTMAGICROBES,#class=&CraftMagicRobes);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SMELTING,#class=&Smelting);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SPINNING,#class=&Spinning);
+      Send(self,@CreateOneSpellIfNew,#num=SID_HEWING,#class=&Hewing);
+      Send(self,@CreateOneSpellIfNew,#num=SID_TANNING,#class=&Tanning);
 
       return;
    }
@@ -6457,6 +6461,10 @@ messages:
       plItemTemplates = cons(create(&SilkThread),plItemTemplates);
       plItemTemplates = cons(create(&KriipaHide),plItemTemplates);
       plItemTemplates = cons(create(&KriipaLeather),plItemTemplates);
+
+      //Crafting tools
+      plItemTemplates = cons(create(&DrawKnife),plItemTemplates);
+      plItemTemplates = cons(create(&BlacksmithsHammer),plItemTemplates);
 
       return;
    }

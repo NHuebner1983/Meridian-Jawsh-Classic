@@ -77,7 +77,10 @@ messages:
          ],
          $,
          [
-            SID_MAGICSHIELD
+            SID_MAGICSHIELD,
+            SID_SMELTING,
+            SID_CRAFTPLATEARMOR,
+            SID_CRAFTGUILDSHIELD
          ],
       $];
 

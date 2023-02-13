@@ -127,6 +127,8 @@ classvars:
 
    viDefense_base = 0 
    viAttack_base  = 0
+   viRefined      = $
+   viRefinedAt    = $
 
 properties:
 
@@ -3154,6 +3156,16 @@ messages:
 
       piHitBonus = piHitBonus + number;
       return piHitBonus;
+   }
+
+   GetRefinedVersion()
+   {
+      return viRefined;
+   }
+   
+   GetRefinedAt()
+   {
+      return viRefinedAt;
    }
 
 end

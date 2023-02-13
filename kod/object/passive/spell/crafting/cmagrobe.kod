@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftMagicRobes_name_rsc = "craft magic robes"
-   CraftMagicRobes_icon_rsc = icremace.bgf
+   CraftMagicRobes_icon_rsc = icraftmagicrobe.bgf
    CraftMagicRobes_desc_rsc = \
       "Craft robes of disciple of a chosen school from a lot of silk thread. "
       "When crafting say the name of the school you want to empower to the robe.  "
@@ -36,6 +36,7 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &DiscipleRobe
+   viBench  = &Loom
 
 properties:
 
@@ -46,6 +47,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&SilkThread,250],plReagents);
 
       return;
    }

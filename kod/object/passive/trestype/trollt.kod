@@ -16,7 +16,7 @@ constants:
 
 classvars:
 
-   viTreasure_num = TID_HIGH_HUMAN
+   viTreasure_num = TID_TROLL
 
 properties:
 
@@ -31,17 +31,13 @@ messages:
                      [ &GoldShield, 8 ],
                      [ &Gauntlet, 8 ],
                      [ &Longsword, 1],
-                     [ &Sapphire, 5],
-                     [ &Diamond, 5],
                      [ &BlueMushroom, 15 ],
                      [ &RingofLethargy, 5],
                      [ &AcidRing, 5],
-                     [ &FireRing, 4],
-                     [ &ColdRing, 4],
                      [ &ShockRing, 4],
                      [ &ScaleArmor, 8 ],
                      [ &HealWand, 1 ],
-                     [ &VampireWand, 3 ],
+                     [ &TrollHide, 21 ],
                      [ &Scepter, 4 ],
                      [ &DarkAngelFeather, 5 ],
                      [ &BlueDragonScale, 10 ],

@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftHelmet_name_rsc = "craft helmet"
-   CraftHelmet_icon_rsc = icremace.bgf
+   CraftHelmet_icon_rsc = icrafthelm.bgf
    CraftHelmet_desc_rsc = \
       "Craft a helmet from leather and iron ingots. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &SimpleHelm
+   voTool = &BlackSmithsHammer
+   viBench  = &CraftingAnvil
 
 properties:
 
@@ -42,6 +44,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,15],plReagents);
+      plReagents = Cons([&Leather,10],plReagents);
 
       return;
    }

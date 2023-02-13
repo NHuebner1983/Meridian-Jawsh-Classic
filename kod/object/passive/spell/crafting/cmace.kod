@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftMace_name_rsc = "craft mace"
-   CraftMace_icon_rsc = icremace.bgf
+   CraftMace_icon_rsc = icraftmace.bgf
    CraftMace_desc_rsc = \
       "Craft a mace from wood and iron ingots. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &Mace
+   voTool = &BlackSmithsHammer
+   viBench  = &CraftingAnvil
 
 properties:
 
@@ -42,6 +44,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,10],plReagents);
+      plReagents = Cons([&Lumber,2],plReagents);
 
       return;
    }

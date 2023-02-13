@@ -23,6 +23,8 @@ resources:
    Crafting_icon_rsc = icremace.bgf
    Crafting_desc_rsc = \
       "The study of crafting gear from various materials"
+   Need_Tool = "You dont have the required tool to craft this."
+   No_Work_Bench ="You need the appropriate work bench!"
 
    Crafting_sound = kraanan.ogg
 
@@ -41,7 +43,9 @@ classvars:
    
    vrSucceed_wav = Crafting_sound
 
-   vrGear = &Mace
+   vrGear   = &Mace
+   voTool   = $
+   viBench  = $
 
 properties:
 
@@ -57,6 +61,64 @@ messages:
    GetNumSpellTargets()
    {
       return 0;
+   }
+
+   CanPayCosts(who=$,lTargets=$,iSpellPower=0)
+   {
+      local oTool;
+
+      oTool = Send(who,@FindHolding,#class=voTool);
+
+      if voTool <> $
+      {
+         if oTool = $ OR NOT IsClass(oTool,voTool)
+         {
+            Send(who,@MsgSendUser,#message_rsc=Need_Tool);
+            return FALSE;
+         }
+      }
+      
+      if viBench <> $
+      {
+         if viBench <> Send(Self,@FindBench,#who=who)
+         {
+            Send(who,@MsgSendUser,#message_rsc=No_Work_Bench);
+            return FALSE;
+         }
+         
+      }
+      
+      propagate;
+   }
+
+   FindBench(who=$)
+   {
+      local oRoom, i, cBench, cDist, Dist, each_obj;
+
+      oRoom = Send(who,@GetOwner);
+      cBench = $;
+      cDist = 25;
+
+      foreach i in Send(oRoom,@GetHolderPassive)
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,viBench)
+         {
+            Dist = Send(who,@SquareddistanceTo,#what=each_obj);
+            if Dist < cDist
+            {
+               cDist = Dist;
+               cBench = each_obj;
+            }
+         }
+      }
+
+      if cBench = $
+      {
+         return cBench = $;
+      }
+      
+      return GetClass(cBench);
    }
 
    CastSpell(who=$,lTargets=$)

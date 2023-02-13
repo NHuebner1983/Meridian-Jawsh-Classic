@@ -168,7 +168,11 @@ messages:
 
             Create(&ReagentBag)
          ],
-      $,$,$];
+         $,
+         [
+            SID_CRAFTMAGICROBES
+         ],
+         $];
 
       return;
    }

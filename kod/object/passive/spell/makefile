@@ -56,6 +56,7 @@ BOFS = animate.bof \
        teleportspell.bof \
        utility.bof \
        walspell.bof \
-       crafting.bof
+       crafting.bof \
+       refine.bof
 
 !include $(KODDIR)\kod.mak

@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftHammer_name_rsc = "craft hammer"
-   CraftHammer_icon_rsc = icremace.bgf
+   CraftHammer_icon_rsc = icraftham.bgf
    CraftHammer_desc_rsc = \
       "Craft a hammer from wood and iron ingots. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &Hammer
+   voTool = &BlackSmithsHammer
+   viBench  = &CraftingAnvil
 
 properties:
 
@@ -42,6 +44,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,20],plReagents);
+      plReagents = Cons([&Lumber,5],plReagents);
 
       return;
    }

@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-CraftNeruditeArmor is Crafting
+CraftNerudite is Crafting
 
 constants:
 
@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftNeruditeArmor_name_rsc = "craft nerudite armor"
-   CraftNeruditeArmor_icon_rsc = icremace.bgf
+   CraftNeruditeArmor_icon_rsc = icraftnerua.bgf
    CraftNeruditeArmor_desc_rsc = \
       "Craft a nerudite armor from kriipa leather and nerudite ingots."
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &NeruditeArmor
+   voTool = &BlackSmithsHammer
+   viBench  = &KocatanAnvil
 
 properties:
 
@@ -42,6 +44,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&NeruditeIngot,40],plReagents);
+      plReagents = Cons([&KriipaLeather,15],plReagents);
 
       return;
    }

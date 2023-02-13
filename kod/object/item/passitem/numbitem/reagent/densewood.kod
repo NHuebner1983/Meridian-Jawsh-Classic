@@ -37,10 +37,12 @@ classvars:
    viItem_type = ITEMTYPE_REAGENT
 
    viGround_group = 2
+   viRefined      = &DenseLumber
+   viRefinedAt    = &KocatanSplittingStump
 
 properties:
 
-   piNumber = 1
+   piNumber = 2
 
 messages:
 

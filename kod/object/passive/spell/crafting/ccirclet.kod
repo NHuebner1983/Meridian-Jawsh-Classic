@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftCirclet_name_rsc = "craft circlet"
-   CraftCirclet_icon_rsc = icremace.bgf
+   CraftCirclet_icon_rsc = icraftcirclet.bgf
    CraftCirclet_desc_rsc = \
       "Craft a circlet from jewl of froz and iron ingots. "
 
@@ -33,7 +33,9 @@ classvars:
    viSpell_level = 4
    viSpellExertion = 15
 
-   vrGear = &Circlet
+   vrGear   = &Circlet
+   voTool   = &BlackSmithsHammer
+   viBench  = &GoadsAnvil
 
 properties:
 
@@ -42,6 +44,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&Ruby,10],plReagents);
+      plReagents = Cons([&IronIngot,20],plReagents);
 
       return;
    }

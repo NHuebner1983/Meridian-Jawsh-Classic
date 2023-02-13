@@ -115,9 +115,15 @@ messages:
             Create(&PracticeArrow),
             Create(&Arrow),
             Create(&LongBow),
-            Create(&PracticeBow)
+            Create(&PracticeBow),
+            Create(&DrawKnife)
          ],
-      $,$,$];
+         $,
+         [
+            SID_CRAFTBATTLEBOW,
+            SID_CRAFTLONGBOW
+         ],
+         $];
 
       return;
    }

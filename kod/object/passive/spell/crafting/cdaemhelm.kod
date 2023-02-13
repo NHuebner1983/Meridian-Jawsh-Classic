@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftDaemonHelm_name_rsc = "craft daemon helm"
-   CraftDaemonHelm_icon_rsc = icremace.bgf
+   CraftDaemonHelm_icon_rsc = icraftdaemhelm.bgf
    CraftDaemonHelm_desc_rsc = \
       "Craft a daemon helm from wood, leather, and iron ingots. "
 
@@ -33,7 +33,9 @@ classvars:
    viSpell_level = 6
    viSpellExertion = 15
 
-   vrGear = &DaemonHelm
+   vrGear   = &DaemonHelm
+   voTool   = &BlackSmithsHammer
+   viBench  = &GoadsAnvil
 
 properties:
 
@@ -42,6 +44,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,15],plReagents);
+      plReagents = Cons([&Leather,20],plReagents);
 
       return;
    }

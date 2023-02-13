@@ -19,7 +19,7 @@ resources:
    //include Gathering.lkod
 
    Gathering_name_rsc = "gathering"
-   Gathering_icon_rsc = iGathering.bgf
+   Gathering_icon_rsc = igathering.bgf
    Gathering_desc_rsc = "This skill allows you to gather useful plants for there fibers."
                         
 classvars:

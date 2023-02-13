@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftAxe_name_rsc = "craft axe"
-   CraftAxe_icon_rsc = icremace.bgf
+   CraftAxe_icon_rsc = icraftaxe.bgf
    CraftAxe_desc_rsc = \
       "Craft a axe from wood and iron ingots. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &Axe
+   voTool = &BlackSmithsHammer
+   viBench  = &CraftingAnvil
 
 properties:
 
@@ -42,6 +44,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,10],plReagents);
+      plReagents = Cons([&Lumber,5],plReagents);
 
       return;
    }

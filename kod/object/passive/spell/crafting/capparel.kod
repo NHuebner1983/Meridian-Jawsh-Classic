@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftApparel_name_rsc = "craft apparel"
-   CraftApparel_icon_rsc = icremace.bgf
+   CraftApparel_icon_rsc = icraftapparel.bgf
    CraftApparel_desc_rsc = \
       "Craft several different garments from silk thread. "
 
@@ -35,6 +35,7 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &ShirtBase
+   viBench  = &Loom
 
 properties:
 
@@ -43,6 +44,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&SilkThread,50],plReagents);
 
       return;
    }

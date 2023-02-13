@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-CraftScaleArmor is Crafting
+CraftScale is Crafting
 
 constants:
 
@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftScaleArmor_name_rsc = "craft scale armor"
-   CraftScaleArmor_icon_rsc = icremace.bgf
+   CraftScaleArmor_icon_rsc = icraftscalea.bgf
    CraftScaleArmor_desc_rsc = \
       "Craft a scale armor from leather and iron ingots. "
 
@@ -34,6 +34,7 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &ScaleArmor
+   viBench  = &CraftingAnvil
 
 properties:
 
@@ -42,6 +43,9 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,30],plReagents);
+      plReagents = Cons([&Leather,15],plReagents);
+      plReagents = Cons([&SilkThread,10],plReagents);
 
       return;
    }

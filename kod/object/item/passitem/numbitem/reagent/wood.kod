@@ -36,6 +36,8 @@ classvars:
    viItem_type = ITEMTYPE_REAGENT
 
    viGround_group = 2
+   viRefined      = &Lumber
+   viRefinedAt    = &SplittingStump
 
 properties:
 

@@ -284,6 +284,18 @@ messages:
 
       return;
    }
+   SetForSale()
+   {
+      plFor_sale = [
+         $,$,
+         [
+            SID_CRAFTCIRCLET,
+            SID_CRAFTDAEMONHELM
+         ],
+         $];
+
+      return;
+   }
 
 end
 //////////////////////////////////////////////////////////////////////////////

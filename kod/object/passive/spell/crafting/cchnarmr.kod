@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-CraftChainArmor is Crafting
+CraftChain is Crafting
 
 constants:
 
@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftChainArmor_name_rsc = "craft chain armor"
-   CraftChainArmor_icon_rsc = icremace.bgf
+   CraftChainArmor_icon_rsc = icraftchaina.bgf
    CraftChainArmor_desc_rsc = \
       "Craft a chain armor from wood, leather, and iron ingots. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &ChainArmor
+   voTool = &BlackSmithsHammer
+   viBench  = &CraftingAnvil
 
 properties:
 
@@ -42,6 +44,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,10],plReagents);
+      plReagents = Cons([&Leather,15],plReagents);
 
       return;
    }

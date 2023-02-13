@@ -33,9 +33,9 @@ classvars:
    vrDead_name = ore_dead_name_rsc
 
    viTreasure_type = TID_ORE
-   vcResource = &OreChunk
-   viSkill    = SKID_MINING
-   viTool     = &PickAxe
+   vcResource      = &OreChunk
+   viSkill         = SKID_MINING
+   viTool          = &PickAxe
 
 properties:
 

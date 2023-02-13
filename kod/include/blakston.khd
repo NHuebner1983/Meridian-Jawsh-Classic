@@ -1895,8 +1895,8 @@
 
    TID_LOW_HUMAN     = 31
    TID_MEDIUM_HUMAN  = 32
-   TID_HIGH_HUMAN    = 33
 
+   TID_TROLL         = 33
    TID_CAVE_ORC      = 34
    TID_ORC_WIZARD    = 35
    TID_ORC_CHIEF     = 36
@@ -2496,6 +2496,10 @@
    SID_CRAFTLONGSWORD      = 234
    SID_CRAFTAPPAREL        = 235
    SID_CRAFTMAGICROBES     = 236
+   SID_SMELTING            = 237
+   SID_HEWING              = 238
+   SID_TANNING             = 239
+   SID_SPINNING            = 240
    
    SID_VAULT_LOADOUT = 200
    

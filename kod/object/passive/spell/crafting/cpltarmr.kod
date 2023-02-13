@@ -8,7 +8,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-CraftPlateArmor is Crafting
+CraftPlate is Crafting
 
 constants:
 
@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftPlateArmor_name_rsc = "craft plate armor"
-   CraftPlateArmor_icon_rsc = icremace.bgf
+   CraftPlateArmor_icon_rsc = icraftplatea.bgf
    CraftPlateArmor_desc_rsc = \
       "Craft a plate armor from wood, leather. and iron ingots. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &PlateArmor
+   voTool = &BlackSmithsHammer
+   viBench  = &CraftingAnvil
 
 properties:
 
@@ -42,6 +44,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,40],plReagents);
+      plReagents = Cons([&Leather,15],plReagents);
 
       return;
    }

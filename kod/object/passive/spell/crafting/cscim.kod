@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftScimitar_name_rsc = "craft scimitar"
-   CraftScimitar_icon_rsc = icremace.bgf
+   CraftScimitar_icon_rsc = icraftscim.bgf
    CraftScimitar_desc_rsc = \
       "Craft a scimitar from wood and iron ingots. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &Scimitar
+   voTool = &BlackSmithsHammer
+   viBench  = &CraftingAnvil
 
 properties:
 
@@ -42,6 +44,9 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&IronIngot,30],plReagents);
+      plReagents = Cons([&Lumber,5],plReagents);
+      plReagents = Cons([&Leather,5],plReagents);
 
       return;
    }

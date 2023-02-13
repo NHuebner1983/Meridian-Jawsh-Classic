@@ -35,14 +35,20 @@ BGFS = neeleme.bgf neelemeX.bgf iunholyt.bgf xeoneru.bgf xeoneruX.bgf \
        riijafol.bgf riijafolX.bgf shalliege.bgf legionhelm.bgf legionhelmb.bgf goldnecklace.bgf \
        croco.bgf crocoX.bgf vozun.bgf vozunX.bgf hellwasp.bgf hellwaspX.bgf seekerc.bgf seekercX.bgf \
        lightsw.bgf lightswov.bgf povlightsw.bgf bersaxe.bgf bersaxeov.bgf povbersaxe.bgf seekera.bgf \
-	    seekeraX.bgf seekerb.bgf seekerbX.bgf neruaxe.bgf neruaxeov.bgf povneruaxe.bgf khelm.bgf khelmb.bgf \
-	    scale.bgf blkhyhead.bgf goldhyhead.bgf grnhyhead.bgf redhyhead.bgf tyranthorns.bgf venom.bgf \
-	    twnbladov.bgf twnblad.bgf povtwnblad.bgf mountgolem.bgf mountgolemX.bgf amoeba.bgf amoebaX.bgf \
-	    steakmeal.bgf masterwand.bgf masterwandov.bgf povmastwand.bgf pickaxe.bgf pickaxeov.bgf povpickaxe.bgf \
-	    qorcite.bgf emeraldvein.bgf diamondvein.bgf sapphirevein.bgf rubyvein.bgf uncutvein.bgf orevein.bgf \
-	    neruorevein.bgf minotaur.bgf imining.bgf ring02.bgf densewood.bgf denselumber.bgf trollhide.bgf \
+	   seekeraX.bgf seekerb.bgf seekerbX.bgf neruaxe.bgf neruaxeov.bgf povneruaxe.bgf khelm.bgf khelmb.bgf \
+	   scale.bgf blkhyhead.bgf goldhyhead.bgf grnhyhead.bgf redhyhead.bgf tyranthorns.bgf venom.bgf \
+	   twnbladov.bgf twnblad.bgf povtwnblad.bgf mountgolem.bgf mountgolemX.bgf amoeba.bgf amoebaX.bgf \
+	   steakmeal.bgf masterwand.bgf masterwandov.bgf povmastwand.bgf pickaxe.bgf pickaxeov.bgf povpickaxe.bgf \
+	   qorcite.bgf emeraldvein.bgf diamondvein.bgf sapphirevein.bgf rubyvein.bgf uncutvein.bgf orevein.bgf \
+	   neruorevein.bgf minotaur.bgf imining.bgf ring02.bgf densewood.bgf denselumber.bgf trollhide.bgf \
        leather.bgf silkthread.bgf rawsilk.bgf ironingot.bgf neruingot.bgf kriipahide.bgf kriipaleather.bgf \
-       wood.bgf lumber.bgf resplant.bgf \
+       wood.bgf lumber.bgf resplant.bgf forge.bgf loom.bgf shavehorse.bgf splitstump.bgf craftanvil.bgf \
+	   spinwheel.bgf tanrack.bgf forgehammer.bgf drawknife.bgf icraftapparel.bgf icraftaxe.bgf icraftbbow.bgf \
+	   icraftchaina.bgf icraftcirclet.bgf icraftdaemhelm.bgf icraftgaunt.bgf icraftgldshld.bgf icraftgoldshld.bgf \
+	   icraftham.bgf icrafthelm.bgf icraftivy.bgf icraftknightshld.bgf icraftlbow.bgf icraftleatha.bgf \
+	   icraftlongsword.bgf icraftmace.bgf icraftmagicrobe.bgf icraftmyssword.bgf icraftnerua.bgf icraftnerushld.bgf \
+	   icraftnerusword.bgf icraftplatea.bgf icraftscalea.bgf icraftscim.bgf icraftshortsword.bgf icraftsmallshld.bgf \
+	   igathering.bgf ihewing.bgf ilogging.bgf ismelting.bgf ispinning.bgf itanning.bgf \
 
 !include $(RESOURCEDIR)\copy.mak
 

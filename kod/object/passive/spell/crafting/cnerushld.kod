@@ -17,7 +17,7 @@ constants:
 resources:
 
    CraftNeruditeShield_name_rsc = "craft nerudite shield"
-   CraftNeruditeShield_icon_rsc = icremace.bgf
+   CraftNeruditeShield_icon_rsc = icraftnerushld.bgf
    CraftNeruditeShield_desc_rsc = \
       "Craft a nerudite shield from dense wood, kriipa leather, and nerudite ingots. "
 
@@ -34,6 +34,8 @@ classvars:
    viSpellExertion = 15
 
    vrGear = &NeruditeShield
+   voTool = &BlackSmithsHammer
+   viBench  = &KocatanAnvil
 
 properties:
 
@@ -42,6 +44,9 @@ messages:
    ResetReagents()
    {
       plReagents = $;
+      plReagents = Cons([&NeruditeIngot,20],plReagents);
+      plReagents = Cons([&DenseLumber,10],plReagents);
+      plReagents = Cons([&KriipaLeather,10],plReagents);
 
       return;
    }

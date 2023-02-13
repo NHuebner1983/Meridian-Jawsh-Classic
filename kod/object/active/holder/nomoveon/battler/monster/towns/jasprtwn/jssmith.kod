@@ -111,12 +111,22 @@ messages:
             Create(&ShortSword),
             Create(&Hammer),
             Create(&Mace),
-            Create(&PickAxe)
+            Create(&PickAxe),
+            Create(&BlacksmithsHammer)
          ],
          [
-            SKID_PROFICIENCY_SCIMITAR
-         ], 
-      $,$];
+            SKID_PROFICIENCY_SCIMITAR,
+            SKID_MINING
+         ],
+         [
+            SID_CRAFTGAUNTLETS,
+            SID_CRAFTHELMET,
+            SID_CRAFTSCALEARMOR,
+            SID_CRAFTKNIGHTSHIELD,
+            SID_CRAFTMYSTICSWORD,
+            SID_CRAFTSCIMITAR
+         ],
+         $];
 
       return;
    }
