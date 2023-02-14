@@ -6208,6 +6208,7 @@ messages:
       plItemTemplates = cons(create(&ForgetPotionSkills),plItemTemplates);
       plItemTemplates = cons(create(&ForgetPotionRiija),plItemTemplates);
       plItemTemplates = cons(create(&ForgetPotionJala),plItemTemplates);
+      plItemTemplates = cons(create(&ForgetPotionCrafting),plItemTemplates);
 
       plItemTemplates = cons(create(&IllusionaryFormPotion),plItemTemplates);
       plItemTemplates = cons(create(&PurifyPotion),plItemTemplates);
