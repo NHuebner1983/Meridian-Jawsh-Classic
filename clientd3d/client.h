@@ -50,7 +50,7 @@ typedef INT64 int64;
 enum {False = 0, True = 1};
 
 #define MAJOR_REV 52   /* Major version of client program */
-#define MINOR_REV 53   /* Minor version of client program; must be in [0, 64] */
+#define MINOR_REV 54   /* Minor version of client program; must be in [0, 64] */
 
 #define MAXAMOUNT 9     /* Max # of digits in a server integer */
 #define MAXSTRINGLEN 512 /* Max length of a string loaded from string table */
