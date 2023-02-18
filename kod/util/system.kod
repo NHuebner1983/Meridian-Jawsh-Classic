@@ -3873,7 +3873,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTKNIGHTSHIELD,#class=&CraftKnightShield);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTMYSTICSWORD,#class=&CraftMysticSword);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTPLATEARMOR,#class=&CraftPlate);
-      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTDAEMONHELM,#class=&CraftDeamonHelm);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTDAEMONHELM,#class=&CraftDaemonHelm);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTGUILDSHIELD,#class=&CraftGuildShield);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSCIMITAR,#class=&CraftScimitar);
       Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTLONGSWORD,#class=&CraftLongSword);
