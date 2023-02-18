@@ -356,6 +356,7 @@ resources:
    school_faren_rsc = "Faren"
    school_riija_rsc = "Riija"
    school_jala_rsc = "Jala"
+   school_crafting_rsc = "Crafting"
    school_wc_rsc = "Weapons Craft"
 
    system_message_sound = system.ogg
@@ -3850,6 +3851,39 @@ messages:
       // Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
 
+      //Crafting skills
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTMACE,#class=&CraftMace);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTAXE,#class=&CraftAxe);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTHAMMER,#class=&CraftHammer);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTCHAINARMOR,#class=&CraftChain);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTIVYCIRCLET,#class=&CraftIvyCirclet);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTLEATHERARMOR,#class=&CraftLeather);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTNERUDITESWORD,#class=&CraftNeruditeSword);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSHORTSWORD,#class=&CraftShortSword);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSMALLSHIELD,#class=&CraftSmallShield);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTBATTLEBOW,#class=&CraftBattleBow);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTNERUDITESHIELD,#class=&CraftNeruditeShield);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTGOLDSHIELD,#class=&CraftGoldShield);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTGAUNTLETS,#class=&CraftGauntlets);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTHELMET,#class=&CraftHelmet);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTCIRCLET,#class=&CraftCirclet);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSCALEARMOR,#class=&CraftScale);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTLONGBOW,#class=&CraftLongBow);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTNERUDITEARMOR,#class=&CraftNerudite);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTKNIGHTSHIELD,#class=&CraftKnightShield);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTMYSTICSWORD,#class=&CraftMysticSword);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTPLATEARMOR,#class=&CraftPlate);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTDAEMONHELM,#class=&CraftDaemonHelm);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTGUILDSHIELD,#class=&CraftGuildShield);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTSCIMITAR,#class=&CraftScimitar);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTLONGSWORD,#class=&CraftLongSword);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTAPPAREL,#class=&CraftApparel);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CRAFTMAGICROBES,#class=&CraftMagicRobes);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SMELTING,#class=&Smelting);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SPINNING,#class=&Spinning);
+      Send(self,@CreateOneSpellIfNew,#num=SID_HEWING,#class=&Hewing);
+      Send(self,@CreateOneSpellIfNew,#num=SID_TANNING,#class=&Tanning);
+
       return;
    }
 
@@ -3903,6 +3937,7 @@ messages:
       Send(self,@CreateOneItemAttIfNew,#num=IA_BONDED,#class=&ItemAttBonded);
       Send(self,@CreateOneItemAttIfNew,#num=WA_GLOWING,#class=&WeapAttGlowing);
       Send(self,@CreateOneItemAttIfNew,#num=IA_MADE,#class=&ItemAttMade);
+      Send(self,@CreateOneItemAttIfNew,#num=IA_CRAFTED,#class=&ItemAttCrafted);
 
       // Keep these last, it's called the most often
       Send(self,@CreateOneItemAttIfNew,#num=IA_PKPOINTER,#class=&ItemAttPKPointer);
@@ -4073,6 +4108,8 @@ messages:
        Send(self,@CreateOneSKillIfNew,#num=SKID_DISARM,#class=&Disarm);
        Send(self,@CreateOneSKillIfNew,#num=SKID_TAUNT,#class=&Taunt);
        Send(self,@CreateOneSKillIfNew,#num=SKID_MINING,#class=&Mining);
+       Send(self,@CreateOneSKillIfNew,#num=SKID_LOGGING,#class=&Logging);
+       Send(self,@CreateOneSKillIfNew,#num=SKID_GATHERING,#class=&Gathering);
 
        return;
    }
@@ -4424,6 +4461,13 @@ messages:
       Create(&RubyVeinTreasure);
       Create(&UncutVeinTreasure);
       Create(&NeruditeOreVeinTreasure);
+
+      //Trees
+      Create(&ResTreeTreasure);
+      Create(&DenseTreeTreasure);
+
+      //Plants
+      Create(&ResPlantTreasure);
 
       // Death Realm
       Create(&IceReaverTreasure);
@@ -5929,6 +5973,13 @@ messages:
       plMonsterTemplates = cons(create(&UncutVein),plMonsterTemplates);
       plMonsterTemplates = cons(create(&NeruditeVein),plMonsterTemplates);
 
+      //Tree
+      plMonsterTemplates = cons(create(&ResTree),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DenseTree),plMonsterTemplates);
+
+      //Plants
+      plMonsterTemplates = cons(create(&ResPlant),plMonsterTemplates);
+
       return;
    }
 
@@ -6157,6 +6208,7 @@ messages:
       plItemTemplates = cons(create(&ForgetPotionSkills),plItemTemplates);
       plItemTemplates = cons(create(&ForgetPotionRiija),plItemTemplates);
       plItemTemplates = cons(create(&ForgetPotionJala),plItemTemplates);
+      plItemTemplates = cons(create(&ForgetPotionCrafting),plItemTemplates);
 
       plItemTemplates = cons(create(&IllusionaryFormPotion),plItemTemplates);
       plItemTemplates = cons(create(&PurifyPotion),plItemTemplates);
@@ -6396,6 +6448,24 @@ messages:
       plItemTemplates = cons(create(&IndianHat),plItemTemplates);
 
       plItemTemplates = cons(create(&Souls),plItemTemplates);
+
+      //Crafting Reagents
+      plItemTemplates = cons(create(&DenseWood),plItemTemplates);
+      plItemTemplates = cons(create(&DenseLumber),plItemTemplates);
+      plItemTemplates = cons(create(&TrollHide),plItemTemplates);
+      plItemTemplates = cons(create(&Leather),plItemTemplates);
+      plItemTemplates = cons(create(&Wood),plItemTemplates);
+      plItemTemplates = cons(create(&Lumber),plItemTemplates);
+      plItemTemplates = cons(create(&NeruditeIngot),plItemTemplates);
+      plItemTemplates = cons(create(&IronIngot),plItemTemplates);
+      plItemTemplates = cons(create(&RawSilk),plItemTemplates);
+      plItemTemplates = cons(create(&SilkThread),plItemTemplates);
+      plItemTemplates = cons(create(&KriipaHide),plItemTemplates);
+      plItemTemplates = cons(create(&KriipaLeather),plItemTemplates);
+
+      //Crafting tools
+      plItemTemplates = cons(create(&DrawKnife),plItemTemplates);
+      plItemTemplates = cons(create(&BlacksmithsHammer),plItemTemplates);
 
       return;
    }
@@ -8089,7 +8159,7 @@ messages:
 
          iCount++;
 
-         temp = [ SS_QOR,SS_RIIJA,SS_KRAANAN,SS_SHALILLE,SS_FAREN,SS_JALA,SKS_FENCING ];
+         temp = [ SS_QOR,SS_RIIJA,SS_KRAANAN,SS_SHALILLE,SS_FAREN,SS_JALA,SKS_FENCING,SS_CRAFTING ];
 
          if iHP = 0
          {
@@ -8494,6 +8564,9 @@ messages:
 	     case SS_JALA:
 		    sSchoolName = SetString($, "Jala");
 	     break;
+	     case SS_CRAFTING:
+		    sSchoolName = SetString($, "Crafting");
+	     break;
 	  }
 	  
 	  return sSchoolName;
@@ -8521,6 +8594,9 @@ messages:
          case SS_JALA:
             return school_jala_rsc;
          break;
+         case SS_CRAFTING:
+            return school_crafting_rsc;
+         break;
       }
 
      return $;
@@ -8544,6 +8620,8 @@ messages:
       Send(self,@PrintSpells,#iSchool=SS_RIIJA);
       GodLog("Jala");
       Send(self,@PrintSpells,#iSchool=SS_JALA);
+      GodLog("Crafting");
+      Send(self,@PrintSpells,#iSchool=SS_CRAFTING);
 
       return;
    }

@@ -91,7 +91,12 @@ messages:
             Create(&Shirt,#color=XLAT_TO_BLACK),
             Create(&Shirt,#color=XLAT_TO_GRAY) 
          ],
-      $,$,$];
+         $,
+         [
+            SID_SPINNING,
+            SID_CRAFTAPPAREL
+         ],
+         $];
 
       return;
    }

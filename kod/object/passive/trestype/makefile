@@ -8,7 +8,7 @@ DEPEND = ..\trestype.bof
 BOFS = wimptres.bof notres.bof spquent.bof med-tght.bof wmp-medt.bof \
    tought.bof mediumt.bof ghostt.bof verytght.bof orctres.bof \
    fairytrs.bof entt.bof mummytrs.bof emptytres.bof \
-   lowhumt.bof medhumt.bof highhumt.bof rattres.bof ratstres.bof zombiet.bof \
+   lowhumt.bof medhumt.bof trollt.bof rattres.bof ratstres.bof zombiet.bof \
    caveorct.bof orcwizt.bof orcpitt.bof avart.bof avarsht.bof \
    avarcht.bof lupkingt.bof dflyt.bof licht.bof \
    dethspdt.bof skel2t.bof skel3t.bof skel4t.bof narthylt.bof \
@@ -25,6 +25,7 @@ BOFS = wimptres.bof notres.bof spquent.bof med-tght.bof wmp-medt.bof \
    drgrandpatrentt.bof drgreenseekert.bof drgreyseekert.bof drblackhydrat.bof \
    drbrownseekert.bof drchimerat.bof drcrocot.bof drcrushersproutt.bof drcyclopst.bof drdeathmitemaget.bof \
    drdeathmitescoutt.bof drdeathmitesoldiert.bof drdeathmitetankt.bof drdulahant.bof drfallenmonkt.bof \
-   drfollowerofqort.bof drfrenzysproutt.bof drhellwaspt.bof drrevenantbt.bof drspittersproutt.bof 
+   drfollowerofqort.bof drfrenzysproutt.bof drhellwaspt.bof drrevenantbt.bof drspittersproutt.bof \
+   restreet.bof resplantt.bof densetreet.bof 
 
 !include $(KODDIR)\kod.mak

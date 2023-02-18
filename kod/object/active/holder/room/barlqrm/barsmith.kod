@@ -60,6 +60,8 @@ messages:
    CreateStandardObjects()
    {
 
+      Send(self,@NewHold,#what=Create(&TanningRack),
+            #new_row=2,#new_col=10,#new_angle=ANGLE_SOUTH_WEST);
       Send(self,@NewHold,#what=Create(&BarloqueBlacksmith),
          #new_row=4,#new_col=7,#fine_row=32,#fine_col=32);
       Send(self,@NewHold,#what=Create(&Firepit),

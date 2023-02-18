@@ -62,7 +62,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [[ &Avar, 80], [&AvarShaman, 10], [&AvarChieftain,10]];
+      plMonsters = [[ &Avar, 70], [&AvarShaman, 10], [&AvarChieftain,10], [&DenseTree, 10] ];
       plGenerators = [ [16,21], [14,36], [13,58], [50,45], [43,17] ];
 
       propagate;
@@ -106,6 +106,15 @@ messages:
       plEdge_Exits = $;
       plEdge_Exits = Cons([LEAVE_NORTH, RID_KD3, 59, 32, ROTATE_NONE], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_EAST, RID_KE4, 16, 1, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      
+      Send(self,@NewHold,#what=Create(&KocatanSplittingStump),
+            #new_row=26,#new_col=46,#fine_row=18,#fine_col=28);
 
       propagate;
    }

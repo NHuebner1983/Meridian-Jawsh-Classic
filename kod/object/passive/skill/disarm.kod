@@ -100,7 +100,7 @@ messages:
    {
       local iAbil,iModifier,oOppWeapon, oHoldSpell;
 
-      if oTarget <> $ AND IsClass(oTarget, &Ore)
+      if oTarget <> $ AND IsClass(oTarget, &Resource)
       {
          // You can't disarm a rock.
          return FALSE;
