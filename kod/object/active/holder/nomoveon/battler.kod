@@ -810,7 +810,7 @@ messages:
       iChanceToHit = iOffense * Send(SETTINGS_OBJECT,@GetEqualChanceToHit) / iDefense;
       iChanceToHit = bound(iChanceToHit,125,2000);
 
-      if iChanceToHit >= random(1,1000) OR ISClass(what,&Ore)
+      if iChanceToHit >= random(1,1000) OR ISClass(what,&Resource)
       {
          // We hit!
 		 if isClass(what, &Servant)
@@ -1501,7 +1501,7 @@ messages:
             }
             else if damage > 99
             {
-               if what <> $ AND IsClass(what, &Ore)
+               if what <> $ AND IsClass(what, &Resource)
                {
                   // I be minining!
                   Send(self,@MsgSendUser,#message_rsc=battler_hit_ore);

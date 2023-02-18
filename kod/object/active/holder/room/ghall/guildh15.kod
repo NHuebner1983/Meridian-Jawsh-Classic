@@ -270,6 +270,8 @@ messages:
       local oLever;
 
       // Create ornamental items.
+      Send(self,@NewHold,#what=Create(&GoadsAnvil),
+            #new_row=13,#new_col=14,#new_angle=ANGLE_NORTH);
       Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SACRIFICIALBOWL),
             #new_row=4,#new_col=14,
             #fine_row=0,#fine_col=0,

@@ -27,8 +27,9 @@ messages:
 
    Constructed()
    {
-      plTreasure = [ [ &KriipaClaw, 60 ],
-                     [ &Yrxlsap, 40 ]
+      plTreasure = [ [ &KriipaClaw, 40 ],
+                     [ &Yrxlsap, 30 ],
+                     [ &KriipaHide, 30 ]
                    ];
 
       propagate;

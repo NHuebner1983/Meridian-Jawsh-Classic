@@ -100,7 +100,7 @@ messages:
    {
       local iReqStat, iAbil, iModifier, oOppWeapon, oHoldSpell, rTauntMsg;
 
-      if oTarget <> $ AND IsClass(oTarget, &Ore)
+      if oTarget <> $ AND IsClass(oTarget, &Resource)
       {
          // We can't taunt a rock...
          return FALSE;
