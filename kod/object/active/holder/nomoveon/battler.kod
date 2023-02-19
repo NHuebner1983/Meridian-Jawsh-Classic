@@ -42,7 +42,9 @@ resources:
    // battler_defender_miss - Psychochild's attack is blocked by you.
    // battler_defender_fail - Psychochild's scimitar scrapes you, failing to cause any real harm.
 
-   battler_hit_ore = "You swing your pickaxe and land a sturdy hit."
+   battler_hit_ore = "You swing your pickaxe at the ore."
+   battler_hit_tree = "You swing your axe at the tree."
+   battler_hit_plant = "You search threw leaves for silk."
    battler_attacker_hit = "%sYour %s %s %s%q for ~k~B%i~B%s damage."
    battler_attacker_slay = "%sYour %s %s %s%q."
    battler_attacker_miss = "%sYour attack %s %s%q."
@@ -1501,11 +1503,20 @@ messages:
             }
             else if damage > 99
             {
-               if what <> $ AND IsClass(what, &Resource)
+               if what <> $ AND IsClass(what, &Ore)
                {
-                  // I be minining!
                   Send(self,@MsgSendUser,#message_rsc=battler_hit_ore);
-               } else {
+               } 
+               else what <> $ AND IsClass(what, &ResTree)
+               {
+                  Send(self,@MsgSendUser,#message_rsc=battler_hit_tree);
+               } 
+               else what <> $ AND IsClass(what, &ResPlant)
+               {
+                  Send(self,@MsgSendUser,#message_rsc=battler_hit_plant);
+               } 
+               else
+               {
                   if (IsClass(what,&User))
                   {
                      Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
