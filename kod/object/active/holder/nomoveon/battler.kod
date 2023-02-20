@@ -42,7 +42,9 @@ resources:
    // battler_defender_miss - Psychochild's attack is blocked by you.
    // battler_defender_fail - Psychochild's scimitar scrapes you, failing to cause any real harm.
 
-   battler_hit_ore = "You swing your pickaxe and land a sturdy hit."
+   battler_hit_ore = "You swing your pickaxe at the ore."
+   battler_hit_tree = "You swing your axe at the tree."
+   battler_hit_plant = "You search through leaves for silk."
    battler_attacker_hit = "%sYour %s %s %s%q for ~k~B%i~B%s damage."
    battler_attacker_slay = "%sYour %s %s %s%q."
    battler_attacker_miss = "%sYour attack %s %s%q."
@@ -1501,25 +1503,19 @@ messages:
             }
             else if damage > 99
             {
-               if what <> $ AND IsClass(what, &Resource)
+               if (IsClass(what,&User))
                {
-                  // I be minining!
-                  Send(self,@MsgSendUser,#message_rsc=battler_hit_ore);
-               } else {
-                  if (IsClass(what,&User))
-                  {
-                     Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
-                           #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-                           #parm4=Send(what,@GetDef),#type5=STRING_RESOURCE,
-                           #parm5=Send(what,@GetName),#parm6=damage/100,#parm7=rColor);
-                  }
-                  else
-                  {
-                     Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit_mob,
-                           #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-                           #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
-                           #parm6=damage/100,#parm7=rColor);
-                  }
+                  Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
+                        #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                        #parm4=Send(what,@GetDef),#type5=STRING_RESOURCE,
+                        #parm5=Send(what,@GetName),#parm6=damage/100,#parm7=rColor);
+               }
+               else
+               {
+                  Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit_mob,
+                        #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                        #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
+                        #parm6=damage/100,#parm7=rColor);
                }
             }
             else

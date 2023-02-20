@@ -31,7 +31,7 @@ classvars:
    viTreasure_type = TID_RESPLANT
    vcResource = &RawSilk
    viSkill    = SKID_GATHERING
-   viByHand   = TRUE
+   viTool     = &Sickel
 
 properties:
 

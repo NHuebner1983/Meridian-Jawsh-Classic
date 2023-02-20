@@ -30,7 +30,7 @@ classvars:
    viTreasure_type = TID_RESTREE
    vcResource = &Wood
    viSkill    = SKID_LOGGING
-   viTool     = &Axe
+   viTool     = &CuttingAxe
 
 properties:
 
