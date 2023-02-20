@@ -36,7 +36,6 @@ classvars:
 
    vcResource = $
    viSkill    = $
-   viByHand   = FALSE
    viTool     = $
 
 properties:
@@ -57,12 +56,6 @@ messages:
    {
       if (oStroke <> $)
          AND (IsClass(oStroke,&DMSpell) OR IsClass(oStroke,&Smite))
-      {
-         return TRUE;
-      }
-
-      if (oStroke <> $)
-         AND (IsClass(oStroke,&Unarmed) AND viByHand = TRUE)
       {
          return TRUE;
       }

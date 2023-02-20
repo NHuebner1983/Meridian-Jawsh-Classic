@@ -1503,40 +1503,19 @@ messages:
             }
             else if damage > 99
             {
-               if what <> $ AND IsClass(what, &Ore)
+               if (IsClass(what,&User))
                {
-                  Send(self,@MsgSendUser,#message_rsc=battler_hit_ore);
-               } 
-               else 
+                  Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
+                        #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                        #parm4=Send(what,@GetDef),#type5=STRING_RESOURCE,
+                        #parm5=Send(what,@GetName),#parm6=damage/100,#parm7=rColor);
+               }
+               else
                {
-                  if what <> $ AND IsClass(what, &ResTree)
-                  {
-                     Send(self,@MsgSendUser,#message_rsc=battler_hit_tree);
-                  }
-                  else 
-                  {
-                     if what <> $ AND IsClass(what, &ResPlant)
-                     {
-                        Send(self,@MsgSendUser,#message_rsc=battler_hit_plant);
-                     }
-                     else
-                     {
-                        if (IsClass(what,&User))
-                        {
-                           Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
-                                 #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-                                 #parm4=Send(what,@GetDef),#type5=STRING_RESOURCE,
-                                 #parm5=Send(what,@GetName),#parm6=damage/100,#parm7=rColor);
-                        }
-                        else
-                        {
-                           Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit_mob,
-                                 #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-                                 #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
-                                 #parm6=damage/100,#parm7=rColor);
-                        }
-                     }
-                  }
+                  Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit_mob,
+                        #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                        #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
+                        #parm6=damage/100,#parm7=rColor);
                }
             }
             else

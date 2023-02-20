@@ -89,7 +89,9 @@ messages:
             Create(&Axe),
             Create(&Shortsword),
             Create(&Mace),
-            Create(&BlacksmithsHammer)
+            Create(&BlacksmithsHammer),
+            Create(&CuttingAxe),
+            Create(&Sickel)
          ],
          $,
          [
