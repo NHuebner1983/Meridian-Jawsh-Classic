@@ -850,6 +850,10 @@ resources:
 
    pvp_notify_wav = gong.ogg
 
+   cant_fight_pickaxe   = "You can't fight with a pickaxe!"
+   cant_fight_sickel    = "You can't fight with a sickel!"
+   cant_fight_axe       = "You can't fight with a wood cutting axe!"
+
 classvars:
 
    viHand_space = 2
@@ -5886,6 +5890,33 @@ messages:
          }
          
          return FALSE;
+      }
+
+      if IsClass(what, &Monster) AND NOT IsClass(what, &Ore)
+      {
+         if IsClass(use_weapon,&PickAxe)
+         {
+            Send(self,@MsgSendUser,#message_rsc=cant_fight_pickaxe);
+            return FALSE;
+         }
+      }
+
+      if IsClass(what, &Monster) AND NOT IsClass(what, &ResTree)
+      {
+         if IsClass(use_weapon,&CuttingAxe)
+         {
+            Send(self,@MsgSendUser,#message_rsc=cant_fight_axe);
+            return FALSE;
+         }
+      }
+
+      if IsClass(what, &Monster) AND NOT IsClass(what, &ResPlant)
+      {
+         if IsClass(use_weapon,&Sickel)
+         {
+            Send(self,@MsgSendUser,#message_rsc=cant_fight_sickel);
+            return FALSE;
+         }
       }
 
       // Check attack time.
