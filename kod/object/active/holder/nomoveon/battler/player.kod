@@ -851,7 +851,7 @@ resources:
    pvp_notify_wav = gong.ogg
 
    cant_fight_pickaxe   = "You can't fight with a pickaxe!"
-   cant_fight_sickel    = "You can't fight with a sickel!"
+   cant_fight_Sickle    = "You can't fight with a Sickle!"
    cant_fight_axe       = "You can't fight with a wood cutting axe!"
 
 classvars:
@@ -5912,9 +5912,9 @@ messages:
 
       if IsClass(what, &Monster) AND NOT IsClass(what, &ResPlant)
       {
-         if IsClass(use_weapon,&Sickel)
+         if IsClass(use_weapon,&Sickle)
          {
-            Send(self,@MsgSendUser,#message_rsc=cant_fight_sickel);
+            Send(self,@MsgSendUser,#message_rsc=cant_fight_Sickle);
             return FALSE;
          }
       }

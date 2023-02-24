@@ -91,7 +91,7 @@ messages:
             Create(&Mace),
             Create(&BlacksmithsHammer),
             Create(&CuttingAxe),
-            Create(&Sickel)
+            Create(&Sickle)
          ],
          $,
          [
