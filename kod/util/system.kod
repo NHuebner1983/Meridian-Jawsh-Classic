@@ -6411,7 +6411,7 @@ messages:
       plItemTemplates = cons(create(&Mace),plItemTemplates);
       plItemTemplates = cons(create(&PickAxe),plItemTemplates);
       plItemTemplates = cons(create(&CuttingAxe),plItemTemplates);
-      plItemTemplates = cons(create(&Sickle),plItemTemplates);
+      plItemTemplates = cons(create(&Sickel),plItemTemplates);
 
       // Rods
       plItemTemplates = cons(create(&ShieldRod),plItemTemplates);
