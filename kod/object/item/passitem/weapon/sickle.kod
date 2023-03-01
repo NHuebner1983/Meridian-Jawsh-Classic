@@ -16,19 +16,19 @@ constants:
 
 resources:
 
-   Sickel_name_rsc = "sickel"
-   Sickel_icon_rsc = shswd.bgf
-   Sickel_desc_rsc = \
-   "Crafted by Colhorr this sickel is made to slice plants.  "
+   Sickle_name_rsc = "Sickle"
+   Sickle_icon_rsc = shswd.bgf
+   Sickle_desc_rsc = \
+   "Crafted by Colhorr this Sickle is made to slice plants.  "
 
-   Sickel_window_overlay_rsc = povshswd.bgf
-   Sickel_player_overlay = shswdov.bgf
+   Sickle_window_overlay_rsc = povshswd.bgf
+   Sickle_player_overlay = shswdov.bgf
 
 classvars:
 
-   vrName = Sickel_name_rsc
-   vrIcon = Sickel_icon_rsc
-   vrDesc = Sickel_desc_rsc
+   vrName = Sickle_name_rsc
+   vrIcon = Sickle_icon_rsc
+   vrDesc = Sickle_desc_rsc
 
    viWeaponType = WEAPON_TYPE_SLASH
    viWeaponQuality = WEAPON_QUALITY_LOW
@@ -41,9 +41,9 @@ classvars:
    viHits_init_min = 300
    viHits_init_max = 1000
 
-   vrWeapon_window_overlay = Sickel_window_overlay_rsc
+   vrWeapon_window_overlay = Sickle_window_overlay_rsc
 
-   vrWeapon_overlay = Sickel_player_overlay
+   vrWeapon_overlay = Sickle_player_overlay
 
    viGround_group = 1
    viInventory_group = 3

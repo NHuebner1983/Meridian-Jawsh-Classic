@@ -9,6 +9,6 @@ BOFS =  shrtswrd.bof mystswrd.bof mace.bof bkdagger.bof spirhamm.bof\
         scimitar.bof longswrd.bof hammer.bof ranged.bof axe.bof goldswrd.bof \
         riijaswd.bof neruswd.bof huntsw.bof unique.bof testswrd.bof \
         neruaxe.bof twinblade.bof lightsword.bof maul.bof bersaxe.bof pickaxe.bof \
-        basewand.bof weapwand.bof cuttingaxe.bof sickel.bof \
+        basewand.bof weapwand.bof cuttingaxe.bof sickle.bof \
 
 !include $(KODDIR)\kod.mak

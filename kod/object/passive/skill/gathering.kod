@@ -20,7 +20,7 @@ resources:
 
    Gathering_name_rsc = "gathering"
    Gathering_icon_rsc = igathering.bgf
-   Gathering_desc_rsc = "This skill allows you to gather useful plants for there fibers. Requires a sickel. "
+   Gathering_desc_rsc = "This skill allows you to gather useful plants for there fibers. Requires a Sickle. "
                         
 classvars:
 
