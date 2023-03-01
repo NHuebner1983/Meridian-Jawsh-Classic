@@ -95,6 +95,7 @@ resources:
    dm_get_spells_command = "get spells"
    dm_get_skills_command = "get skills"
    dm_get_money_command = "get money"
+   dm_get_CRAFTING = "get crafting"
    dm_boost_stats_command = "boost stats"
    dm_PK_enable_command = "PK enable"
    dm_PK_disable_command = "PK disable"

@@ -56,32 +56,48 @@ messages:
 
    CanPayCosts(who=$,lTargets=$,iSpellPower=0)
    {
-      local cResource;
+      local cResource, oBench;
       
       cResource = First(lTargets);
+      oBench    = viBench;
 
       if lTargets = $
+         OR NOT IsClass(cResource,&PassiveItem)
       {
          return FALSE;
+      }
+
+      if IsClass(cResource,&NeruditeOreChunk)
+      {
+         oBench = &KocatanForge;
+      }
+
+      if IsClass(cResource,&DenseWood)
+      {
+         oBench = &KocatanSplittingStump;
+      }
+      
+      if IsClass(cResource,&KriipaHide)
+      {
+         oBench = &KocatanTanningRack;
       }
 
       if cResource = $
          OR Send(cResource,@GetRefinedVersion) = $
       {
-         Send(who,@MsgSendUser,#message_rsc=Cant_Refine_Here);
-         return FALSE;
-      }
-
-      if Send(cResource,@GetRefinedAt) <> viBench
-         OR NOT IsClass(cResource,&PassiveItem)
-      {
          Send(who,@MsgSendUser,#message_rsc=Cant_Refine);
          return FALSE;
       }
 
-      if viBench <> $
+      if Send(cResource,@GetRefinedAt) <> oBench
       {
-         if viBench <> Send(Self,@FindBench,#who=who)
+         Send(who,@MsgSendUser,#message_rsc=Cant_Refine_Here);
+         return FALSE;
+      }
+
+      if oBench <> $
+      {
+         if oBench <> Send(Self,@FindBench,#who=who,#Bench=oBench)
          {
             Send(who,@MsgSendUser,#message_rsc=No_WorkBench);
             return FALSE;
@@ -91,7 +107,7 @@ messages:
       propagate;
    }
 
-   FindBench(who=$)
+   FindBench(who=$,Bench=$)
    {
       local oRoom, i, cBench, cDist, Dist, each_obj;
 
@@ -102,7 +118,7 @@ messages:
       foreach i in Send(oRoom,@GetHolderPassive)
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
-         if IsClass(each_obj,viBench)
+         if IsClass(each_obj,Bench)
          {
             Dist = Send(who,@SquareddistanceTo,#what=each_obj);
             if Dist < cDist
