@@ -5912,7 +5912,7 @@ messages:
 
       if IsClass(what, &Monster) AND NOT IsClass(what, &ResPlant)
       {
-         if IsClass(use_weapon,&Sickle)
+         if IsClass(use_weapon,&Sickel)
          {
             Send(self,@MsgSendUser,#message_rsc=cant_fight_Sickle);
             return FALSE;
