@@ -52,25 +52,30 @@ messages:
       return;
    }
 
-   CanMonsterFight(who=$, oStroke = $, use_weapon = $)
+   GetTool()
    {
-      if (oStroke <> $)
-         AND (IsClass(oStroke,&DMSpell) OR IsClass(oStroke,&Smite))
-      {
-         return TRUE;
-      }
-
-      if use_weapon = $
-         OR NOT (IsClass(use_weapon,viTool))
-      {
-         Send(who,@MsgSendUser,#message_rsc=Resource_cannot_hit);
-
-         return FALSE;
-      }
-
-
-      return TRUE;
+      return viTool;
    }
+
+   //CanMonsterFight(who=$, oStroke = $, use_weapon = $)
+   //{
+   //   if (oStroke <> $)
+   //      AND (IsClass(oStroke,&DMSpell) OR IsClass(oStroke,&Smite))
+   //   {
+   //      return TRUE;
+   //   }
+//
+   //   if use_weapon = $
+   //      OR NOT (IsClass(use_weapon,viTool))
+   //   {
+   //      Send(who,@MsgSendUser,#message_rsc=Resource_cannot_hit);
+//
+   //      return FALSE;
+   //   }
+//
+//
+   //   return TRUE;
+   //}
 
    AssessDamage(what=$)
    "This is called when something causes damage to us."
