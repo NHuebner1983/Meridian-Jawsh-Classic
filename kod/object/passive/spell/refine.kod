@@ -59,39 +59,12 @@ messages:
       local cResource, oBench;
       
       cResource = First(lTargets);
-      oBench    = viBench;
-
-      if lTargets = $
-         OR NOT IsClass(cResource,&PassiveItem)
-      {
-         return FALSE;
-      }
-
-      if IsClass(cResource,&NeruditeOreChunk)
-      {
-         oBench = &KocatanForge;
-      }
-
-      if IsClass(cResource,&DenseWood)
-      {
-         oBench = &KocatanSplittingStump;
-      }
-      
-      if IsClass(cResource,&KriipaHide)
-      {
-         oBench = &KocatanTanningRack;
-      }
+      oBench    = Send(cResource,@GetRefinedAt);
 
       if cResource = $
          OR Send(cResource,@GetRefinedVersion) = $
       {
          Send(who,@MsgSendUser,#message_rsc=Cant_Refine);
-         return FALSE;
-      }
-
-      if Send(cResource,@GetRefinedAt) <> oBench
-      {
-         Send(who,@MsgSendUser,#message_rsc=Cant_Refine_Here);
          return FALSE;
       }
 
