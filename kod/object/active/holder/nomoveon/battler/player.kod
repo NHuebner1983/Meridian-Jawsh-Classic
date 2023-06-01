@@ -853,6 +853,7 @@ resources:
    cant_fight_pickaxe   = "You can't fight with a pickaxe!"
    cant_fight_Sickle    = "You can't fight with a Sickle!"
    cant_fight_axe       = "You can't fight with a wood cutting axe!"
+   cant_Harvest         = "You can't harvest with this weapon!"
 
 classvars:
 
@@ -5879,7 +5880,9 @@ messages:
 
    TryAttack(what = $,use_weapon = $,stroke_obj=$,aoe_burst=FALSE)
    {
-      local i, iRange, oSpell, state;
+      local i, iRange, oSpell, state, oTool, oWeapon;
+
+      oWeapon = Send(self,@GetWeapon);
 
       // Can't target self.
       if what = self
@@ -5892,9 +5895,20 @@ messages:
          return FALSE;
       }
 
+      if IsClass(what, &Resource)
+      {
+         oTool = Send(what,@GetTool);
+
+         if NOT IsClass(oWeapon,oTool)
+         {
+            Send(self,@MsgSendUser,#message_rsc=cant_Harvest);
+            return FALSE;
+         }
+      }
+
       if IsClass(what, &Monster) AND NOT IsClass(what, &Ore)
       {
-         if IsClass(use_weapon,&PickAxe)
+         if IsClass(oWeapon,&PickAxe)
          {
             Send(self,@MsgSendUser,#message_rsc=cant_fight_pickaxe);
             return FALSE;
@@ -5903,7 +5917,7 @@ messages:
 
       if IsClass(what, &Monster) AND NOT IsClass(what, &ResTree)
       {
-         if IsClass(use_weapon,&CuttingAxe)
+         if IsClass(oWeapon,&CuttingAxe)
          {
             Send(self,@MsgSendUser,#message_rsc=cant_fight_axe);
             return FALSE;
@@ -5912,12 +5926,13 @@ messages:
 
       if IsClass(what, &Monster) AND NOT IsClass(what, &ResPlant)
       {
-         if IsClass(use_weapon,&Sickel)
+         if IsClass(oWeapon,&Sickel)
          {
             Send(self,@MsgSendUser,#message_rsc=cant_fight_Sickle);
             return FALSE;
          }
       }
+      
 
       // Check attack time.
       if NOT Send(self,@IsOkayAttackTime) AND NOT aoe_burst
